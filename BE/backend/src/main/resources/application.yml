@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    password: ${DATABASE_PASSWORD}
+    username: ${DATABASE_ID}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL55Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        highlight_sql: true
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+    database: mysql
+  #      open-in-view: false
+
+logging:
+  level:
+    org.hibernate.sql: info
+    org.hibernate.type.descriptor.sql: trace
+  #    org.hibernate.type: trace
