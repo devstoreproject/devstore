@@ -21,6 +21,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class User extends Auditable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Column(updatable = false)
     private Long id;
     private String nickName;
     private String password;
