@@ -24,13 +24,34 @@ public class OrderHistory extends Auditable {
     @Column(updatable = false)
     private long id;
     private String orderNumber;
-    private long deliveryPrice;
-    private long totalPrice;
-    private long discountedPrice;
+
+    @Embedded
+    @AttributeOverrides(
+            @AttributeOverride(name = "value", column = @Column(name = "DELIVERY_PRICE"))
+    )
+    private Price deliveryPrice;
+    @Embedded
+    @AttributeOverrides(
+            @AttributeOverride(name = "value", column = @Column(name = "TOTAL_PRICE"))
+    )
+    private Price totalPrice;
+    @Embedded
+    @AttributeOverrides(
+            @AttributeOverride(name = "value", column = @Column(name = "DISCOUNT_PRICE"))
+    )
+    private Price discountedPrice;
 
     @Embedded
     private Address address;
 
     @Enumerated(STRING)
     private OrderStatus orderStatus = OrderStatus.INCART;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
+    @OneToOne(fetch = LAZY)
+    private Cart cart;
+    @OneToOne(fetch = LAZY)
+    private Payment payment;
 }
