@@ -24,6 +24,7 @@ public class User extends Auditable {
     @Column(updatable = false)
     private Long id;
     private String nickName;
+    private String profileImage;
     private String password;
     private String email;
     private LocalDateTime lastConnectedDate;
@@ -39,8 +40,9 @@ public class User extends Auditable {
     @Enumerated(STRING)
     private UserRole userRole = UserRole.CLIENT;
 
-    public User(String nickName, String password, String email, int mileage, Address address, Grade grade, ProviderId providerId, UserRole userRole) {
+    public User(String nickName,String profileImage ,String password, String email, int mileage, Address address, Grade grade, ProviderId providerId, UserRole userRole) {
         this.nickName = nickName;
+        this.profileImage = profileImage;
         this.password = password;
         this.email = email;
         this.lastConnectedDate = LocalDateTime.now();
