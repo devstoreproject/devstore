@@ -11,7 +11,9 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -34,13 +36,14 @@ public class Item {
     private String description;
     //상세 정보
 
-    @Enumerated
+    @Enumerated(STRING)
     private ItemStatus itemStatus = ItemStatus.ON_STACK;
     @Embedded
     private Price price;
-    @Enumerated
+    @Enumerated(STRING)
     private Category category;
 
+    // 연관관계 매핑 //
     @OneToMany(mappedBy = "item")
     private List<Spec> specList = new ArrayList<>();
     @OneToMany(mappedBy = "cart")
