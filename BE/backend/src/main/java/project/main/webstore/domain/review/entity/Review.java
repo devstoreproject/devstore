@@ -4,10 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.main.webstore.audit.Auditable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -17,8 +16,10 @@ public class Review extends Auditable {
     @GeneratedValue
     @Column(unique = true, updatable = false)
     private long id;
-    private String imagePath;
     private String comment;
     private int rating;
+
+    @ElementCollection
+    List<String> imagePathList = new ArrayList<>();
 
 }

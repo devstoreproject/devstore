@@ -6,7 +6,10 @@ import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.question.enums.QnaStatus;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -18,7 +21,8 @@ public class Question extends Auditable {
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
     private Long id;
-    private String imagePath;
+    @ElementCollection(fetch = EAGER)
+    List<String> imagePathList = new ArrayList<>();
     private boolean isSecret;
 
     @Lob
