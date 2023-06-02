@@ -8,6 +8,8 @@ import project.main.webstore.valueObject.Duration;
 import project.main.webstore.valueObject.Price;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static javax.persistence.GenerationType.IDENTITY;
