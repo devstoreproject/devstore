@@ -5,7 +5,10 @@ import lombok.NoArgsConstructor;
 import project.main.webstore.audit.Auditable;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -19,6 +22,9 @@ public class Notice extends Auditable {
     private Long id;
 
     private String title;
+
+    @ElementCollection(fetch = EAGER)
+    List<String> imagePathList = new ArrayList<>();
 
     @Lob
     private String content;

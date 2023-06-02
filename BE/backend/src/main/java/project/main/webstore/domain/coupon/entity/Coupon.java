@@ -8,6 +8,7 @@ import project.main.webstore.valueObject.Duration;
 import project.main.webstore.valueObject.Price;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -23,7 +24,7 @@ public class Coupon extends Auditable {
     private String name;
     //사용 전 사용 후 만료
     private CouponStatus couponStatus;
-
+    private String serialNumber = UUID.randomUUID().toString();
     @Embedded
     @AttributeOverrides(
             @AttributeOverride(name="value",column = @Column(name = "DISCOUNT_PRICE"))
