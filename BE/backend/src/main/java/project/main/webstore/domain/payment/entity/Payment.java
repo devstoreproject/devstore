@@ -17,7 +17,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Payment /*extends Auditable*/ {
+public class Payment extends Auditable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)

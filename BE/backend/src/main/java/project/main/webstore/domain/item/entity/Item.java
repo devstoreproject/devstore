@@ -2,6 +2,7 @@ package project.main.webstore.domain.item.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.enums.ItemStatus;
 import project.main.webstore.valueObject.Price;
@@ -42,4 +43,11 @@ public class Item {
 
     @OneToMany(mappedBy = "item")
     private List<Spec> specList = new ArrayList<>();
+    @OneToMany(mappedBy = "cart")
+    private List<CartItem> cartItems = new ArrayList<>();
+
+    //PicedItem 연관관계 매핑
+    @OneToOne(fetch = LAZY)
+    private PickedItem pickedItem;
+
 }
