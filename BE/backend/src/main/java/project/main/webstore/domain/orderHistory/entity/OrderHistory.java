@@ -4,8 +4,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.main.webstore.audit.Auditable;
+import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.orderHistory.enums.OrderStatus;
+import project.main.webstore.domain.payment.entity.Payment;
+import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.valueObject.Address;
+import project.main.webstore.valueObject.Price;
 
 import javax.persistence.*;
 
