@@ -23,4 +23,13 @@ public class Like extends Auditable {
     private int count;
 
     //연관관계 매핑
+    // item
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "ITEM_ID")
+    private Item item;
+    //user
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
+
 }

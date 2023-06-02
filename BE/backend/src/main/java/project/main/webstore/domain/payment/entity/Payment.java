@@ -1,38 +1,39 @@
 package project.main.webstore.domain.payment.entity;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.domain.Auditable;
+import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.coupon.entity.Coupon;
+import project.main.webstore.domain.orderHistory.entity.OrderHistory;
 import project.main.webstore.domain.payment.enums.PaymentStatus;
+import project.main.webstore.domain.users.entity.User;
 
 import javax.persistence.*;
 
-import java.time.LocalDateTime;
-
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Payment extends Auditable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
-    private long Id;
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private Users user;
-//    @ManyToOne
-//    @JoinColumn(name = "coupon_id")
-//    private Coupon coupon;
-//    @ManyToOne
-//    @JoinColumn(name = "orderHistory_id")
-//    private OrderHistory orderHistory;
+    private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private PaymentStatus paymentStatus;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "COUPON_ID")
+    private Coupon coupon;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "ORDERHISTORY_ID")
+    private OrderHistory orderHistory;
 }

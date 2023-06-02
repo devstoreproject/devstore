@@ -11,11 +11,22 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 public class CartItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
-    private long id;
+    private Long id;
+
+    // 연관관계 매핑 //
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "ITEM_ID")
+    private Item item;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "CART_ID")
+    private Cart cart;
+
+
 }
