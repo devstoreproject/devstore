@@ -1,5 +1,6 @@
 package project.main.webstore.domain.review.entity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.main.webstore.audit.Auditable;
@@ -10,18 +11,21 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static lombok.AccessLevel.*;
+
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Review extends Auditable {
-    @ElementCollection
-    List<String> imagePathList = new ArrayList<>();
     @Id
     @GeneratedValue
-    @Column(unique = true, updatable = false)
+    @Column(updatable = false)
     private Long id;
     private String comment;
     private int rating;
+
+    @ElementCollection
+    List<String> imagePathList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
@@ -29,4 +33,12 @@ public class Review extends Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ITEM_ID")
     private Item item;
+
+    public Review(String comment, int rating, List<String> imagePathList, User user, Item item) {
+        this.comment = comment;
+        this.rating = rating;
+        this.imagePathList = imagePathList;
+        this.user = user;
+        this.item = item;
+    }
 }
