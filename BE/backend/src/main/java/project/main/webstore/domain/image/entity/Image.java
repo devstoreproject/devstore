@@ -1,13 +1,10 @@
-package project.main.webstore.domain.image;
+package project.main.webstore.domain.image.entity;
 
 import lombok.Getter;
 import project.main.webstore.audit.Auditable;
-import project.main.webstore.domain.enums.Category;
-import project.main.webstore.domain.review.entity.Review;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
 import static javax.persistence.InheritanceType.*;
 
@@ -23,9 +20,9 @@ public class Image extends Auditable {
     private String realTitle;
     private String savedTitle;
     private String imagePath;
-    private String type;
-    private int imageSort;
+    private String ext;
+    private int imageOrder;
 
     //썸네일용 하나 추가
-
+    private String thumbnailPath;
 }
