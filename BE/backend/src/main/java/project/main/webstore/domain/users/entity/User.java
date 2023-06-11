@@ -17,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(name = "USERS")
 @Entity
 public class User extends Auditable {
     @Id
