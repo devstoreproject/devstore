@@ -21,5 +21,6 @@ public interface ReviewRepository {
     Slice<Review> findByItemIdSlice(Pageable pageable, Long itemId);
     Review save(Review review);
     List<Review> findAll();
-
+    void deleteAll();
+    void deleteById(Long id);
 }
