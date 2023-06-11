@@ -11,15 +11,12 @@ import java.util.List;
 import static lombok.Builder.Default;
 
 @Getter
-@Builder
-@AllArgsConstructor
 public class ReviewGetResponseDto {
     private Long reviewId;
     private Long userId;
     private Long itemId;
     private String comment;
-    @Default
-    List<String> imagePathList = new ArrayList<>();
+    List<String> imagePathList;
 
     @Builder(builderMethodName = "dtoBuilder", buildMethodName = "dtoBuild")
     public ReviewGetResponseDto(Review review) {
@@ -27,7 +24,7 @@ public class ReviewGetResponseDto {
         this.userId = review.getUser().getId();
         this.itemId = review.getItem().getId();
         this.comment = review.getComment();
-        this.imagePathList = review.getImagePathList();
+        this.imagePathList = List.of(review.getReviewImageList().get(0).getImagePath());
     }
 }
 
