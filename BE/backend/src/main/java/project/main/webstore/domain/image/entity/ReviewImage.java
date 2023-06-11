@@ -1,4 +1,4 @@
-package project.main.webstore.domain.image;
+package project.main.webstore.domain.image.entity;
 
 import project.main.webstore.domain.review.entity.Review;
 
