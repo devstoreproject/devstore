@@ -40,11 +40,14 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 //	testImplementation 'org.springframework.security:spring-security-test'
-
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	//querydsl 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}" // querydsl 라이브러리
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}" //  Querydsl 관련 코드 생성 기능 제공
 
+	implementation 'com.github.downgoon:marvin:1.5.5'
+	implementation 'com.github.downgoon:MarvinPlugins:1.5.5'
+	implementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
