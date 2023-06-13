@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.domain.image.entity.ReviewImage;
+import project.main.webstore.domain.review.dto.ReviewIdResponseDto;
 import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
 import project.main.webstore.domain.review.dto.ReviewUpdateRequestDto;
 import project.main.webstore.domain.review.entity.Review;
@@ -24,7 +25,7 @@ public class ReviewService {
     private final ReviewValidService reviewValidService;
     private final FileUploader fileUploader;
 
-    public Long postReview(ReviewPostRequestDto dto, Long userId, Long itemId, List<MultipartFile> fileList) {
+    public ReviewIdResponseDto postReview(ReviewPostRequestDto dto, Long userId, Long itemId, List<MultipartFile> fileList) {
         //TODO : User 검증 및 item 검증 필요
         //TODO: User, Iteme Review와 매핑이 필요하다.
         Review review = new Review(dto);
@@ -34,12 +35,12 @@ public class ReviewService {
             review.addReviewImage(reviewImage);
         }
         reviewRepository.save(review);
-        return review.getId();
+        return new ReviewIdResponseDto(review.getId(), userId, itemId);
     }
 
-    public Long updateReview(ReviewUpdateRequestDto dto, List<MultipartFile> fileList, Long userId, Long itemId) {
+    public ReviewIdResponseDto updateReview(ReviewUpdateRequestDto dto, List<MultipartFile> fileList, Long userId, Long itemId, Long reviewId) {
         //TODO : 검증을 진행할 떄 userId가 맞는지 검증을 진행할 것 이를 Controller에서 진행할 지 아니면 Service에서 진행할 지 모르겠다.
-        Review review = reviewValidService.validReview(dto.getReviewId());
+        Review review = reviewValidService.validReview(reviewId);
         Optional.ofNullable(dto.getRating()).ifPresent((review::setRating));
         Optional.ofNullable(dto.getComment()).ifPresent((review::setComment));
 
@@ -57,7 +58,7 @@ public class ReviewService {
             }
         }
 
-        return review.getId();
+        return new ReviewIdResponseDto(reviewId, userId, itemId);
     }
 
     public void deleteReview(Long reviewId) {
