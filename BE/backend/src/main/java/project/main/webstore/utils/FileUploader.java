@@ -3,7 +3,6 @@ package project.main.webstore.utils;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class FileUploader {
     @Value("${cloud.aws.s3.bucket-resizing}")
     private String bucketResizing;
 
-    public Image uploadImage(MultipartFile uploadFile, String uploadDir){
+    public Image uploadImage(MultipartFile uploadFile, String uploadDir, int order, boolean isRepresentative) {
         String originalFilename = uploadFile.getOriginalFilename();
         String uploadImageName = createFileName(originalFilename);
         String ext = extractExt(originalFilename);
@@ -43,14 +42,15 @@ public class FileUploader {
         String fileName = uploadDir + "/" + uploadImageName;
         ObjectMetadata metadata = createMetadata(uploadFile);
 
-        String imagePath = saveImage(uploadFile,fileName,uploadDir,bucketOrigin);
+        String imagePath = saveImage(uploadFile, fileName, uploadDir, bucketOrigin);
 
         MultipartFile resizeImage = resizeImage(fileName, ext, uploadFile, 785);
-        String resizedPath = saveImage(resizeImage,fileName,uploadDir,bucketResizing);
+        String resizedPath = saveImage(resizeImage, fileName, uploadDir, bucketResizing);
 
-        return new Image(originalFilename,uploadImageName,imagePath,ext,resizedPath);
+        return new Image(originalFilename, uploadImageName, imagePath, ext, resizedPath, order, isRepresentative);
     }
-    public String saveImage(MultipartFile uploadFile,String fileName, String uploadDir,String bucketName){
+
+    public String saveImage(MultipartFile uploadFile, String fileName, String uploadDir, String bucketName) {
         ObjectMetadata metadata = createMetadata(uploadFile);
 
         try {
@@ -59,7 +59,7 @@ public class FileUploader {
                             bucketName, fileName, uploadFile.getInputStream(), metadata
                     ).withCannedAcl(CannedAccessControlList.PublicRead)
             );
-        }catch (IOException e){
+        } catch (IOException e) {
             log.error("#### S3 Upload IOException", e.getMessage());
             e.printStackTrace();
         }
@@ -67,13 +67,14 @@ public class FileUploader {
         return amazonS3Client.getUrl(bucketName, fileName).toString();
     }
 
-    private ObjectMetadata createMetadata(MultipartFile multipartFile){
+    private ObjectMetadata createMetadata(MultipartFile multipartFile) {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(multipartFile.getContentType());
         metadata.setContentLength(multipartFile.getSize());
 
         return metadata;
     }
+
     private String createFileName(String originalFileName) {
         String uuid = UUID.randomUUID().toString();
         String ext = extractExt(originalFileName);
@@ -89,7 +90,7 @@ public class FileUploader {
 
     public void deleteS3Image(String imagePath) {
         String object_key = getImageKey(imagePath);
-        String thum_key = object_key.replace("origin","resized");
+        String thum_key = object_key.replace("origin", "resized");
         try {
             amazonS3Client.deleteObject(bucketOrigin, object_key);
             amazonS3Client.deleteObject(bucketResizing, thum_key);
@@ -103,9 +104,9 @@ public class FileUploader {
         return imagePath.replace(S3_BUCKET_PATH, "");
     }
 
-    public Image patchImage(MultipartFile uploadFile , String imagePath, String uploadDir) {
+    public Image patchImage(MultipartFile uploadFile, String imagePath, String uploadDir, int order, boolean isRepresentative) {
         deleteS3Image(imagePath);
-        Image upload = uploadImage(uploadFile,uploadDir);
+        Image upload = uploadImage(uploadFile, uploadDir, order, isRepresentative);
         return upload;
     }
 
@@ -117,7 +118,7 @@ public class FileUploader {
             int originWidth = image.getWidth();
             int originHeight = image.getHeight();
             //애초에 작으면 리사이징 안하고 탈출
-            if(originWidth < targetWidth)
+            if (originWidth < targetWidth)
                 return originalImage;
 
             MarvinImage imageMarvin = new MarvinImage(image);
