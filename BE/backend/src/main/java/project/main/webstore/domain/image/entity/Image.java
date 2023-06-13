@@ -1,15 +1,15 @@
 package project.main.webstore.domain.image.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 
 import javax.persistence.*;
+import java.util.Objects;
 
-import static javax.persistence.GenerationType.*;
-import static javax.persistence.InheritanceType.*;
+import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.InheritanceType.JOINED;
 
 @Entity
 @Getter
@@ -39,7 +39,7 @@ public class Image extends Auditable {
         this.isRepresentative = isRepresentative;
     }
 
-    public Image(String realTitle, String savedTitle, String imagePath, String ext, String thumbnailPath,int imageOrder, boolean isRepresentative) {
+    public Image(String realTitle, String savedTitle, String imagePath, String ext, String thumbnailPath, int imageOrder, boolean isRepresentative) {
         this.realTitle = realTitle;
         this.savedTitle = savedTitle;
         this.imagePath = imagePath;
@@ -47,5 +47,18 @@ public class Image extends Auditable {
         this.thumbnailPath = thumbnailPath;
         this.imageOrder = imageOrder;
         this.isRepresentative = isRepresentative;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Image image = (Image) o;
+        return id.equals(image.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
