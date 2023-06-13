@@ -1,14 +1,12 @@
 package project.main.webstore.domain.review.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.review.entity.Review;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static lombok.Builder.Default;
+import java.util.stream.Collectors;
 
 @Getter
 public class ReviewGetResponseDto {
@@ -16,7 +14,7 @@ public class ReviewGetResponseDto {
     private Long userId;
     private Long itemId;
     private String comment;
-    List<String> imagePathList;
+    List<ImageDto> imageList;
 
     @Builder(builderMethodName = "dtoBuilder", buildMethodName = "dtoBuild")
     public ReviewGetResponseDto(Review review) {
@@ -24,7 +22,7 @@ public class ReviewGetResponseDto {
         this.userId = review.getUser().getId();
         this.itemId = review.getItem().getId();
         this.comment = review.getComment();
-        this.imagePathList = List.of(review.getReviewImageList().get(0).getImagePath());
+        this.imageList = review.getReviewImageList().stream().map(ImageDto::new).collect(Collectors.toList());
     }
 }
 

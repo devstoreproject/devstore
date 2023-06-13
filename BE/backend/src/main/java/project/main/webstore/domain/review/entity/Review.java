@@ -13,7 +13,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static lombok.AccessLevel.*;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -26,7 +26,7 @@ public class Review extends Auditable {
     @Setter
     private String comment;
     @Setter
-    private int rating;
+    private Integer rating;
 
 //    @Setter
 //    @ElementCollection
@@ -46,6 +46,16 @@ public class Review extends Auditable {
     private List<ReviewImage> reviewImageList = new ArrayList<>();
     //삭제 시 주의할 점 ! 일단 무조건적인 삭제가 아니라 무조건 S3에서 삭제한 후 발동해야된다.
 
+    public void addReviewImage(ReviewImage reviewImage){
+        this.reviewImageList.add(reviewImage);
+        reviewImage.setReview(this);
+    }
+
+    // #### 편의 메서드 #### //
+    public void addUserAndItem(User user, Item item){
+        this.user = user;
+        this.item = item;
+    }
     //리뷰 생성할 때
     public Review(String comment, int rating, List<ReviewImage> reviewImageList, User user, Item item) {
         this.comment = comment;
