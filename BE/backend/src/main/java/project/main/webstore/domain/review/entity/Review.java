@@ -28,10 +28,6 @@ public class Review extends Auditable {
     @Setter
     private Integer rating;
 
-//    @Setter
-//    @ElementCollection
-//    List<String> imagePathList = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Setter
