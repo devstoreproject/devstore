@@ -40,11 +40,10 @@ public class FileUploader {
         String ext = extractExt(originalFilename);
 
         String fileName = uploadDir + "/" + uploadImageName;
-        ObjectMetadata metadata = createMetadata(uploadFile);
 
         String imagePath = saveImage(uploadFile, fileName, uploadDir, bucketOrigin);
 
-        MultipartFile resizeImage = resizeImage(fileName, ext, uploadFile, 785);
+        MultipartFile resizeImage = resizeImage(fileName, ext, uploadFile, 300);
         String resizedPath = saveImage(resizeImage, fileName, uploadDir, bucketResizing);
 
         return new Image(originalFilename, uploadImageName, imagePath, ext, resizedPath, order, isRepresentative);
@@ -52,7 +51,6 @@ public class FileUploader {
 
     public String saveImage(MultipartFile uploadFile, String fileName, String uploadDir, String bucketName) {
         ObjectMetadata metadata = createMetadata(uploadFile);
-
         try {
             amazonS3Client.putObject(
                     new PutObjectRequest(
@@ -66,7 +64,6 @@ public class FileUploader {
 
         return amazonS3Client.getUrl(bucketName, fileName).toString();
     }
-
     private ObjectMetadata createMetadata(MultipartFile multipartFile) {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(multipartFile.getContentType());
@@ -111,12 +108,15 @@ public class FileUploader {
     }
 
     private MultipartFile resizeImage(String fileName, String ext, MultipartFile originalImage, int targetWidth) {
+        log.info("###target width = {}", targetWidth);
         try {
             // 리사이징 위한 BufferedImage 변환
             BufferedImage image = ImageIO.read(originalImage.getInputStream());
             //비율 유지를 위한 w,h 받아오기
             int originWidth = image.getWidth();
             int originHeight = image.getHeight();
+            log.info("###original width = {}", originWidth);
+            log.info("###original height = {}", originHeight);
             //애초에 작으면 리사이징 안하고 탈출
             if (originWidth < targetWidth)
                 return originalImage;
@@ -130,11 +130,17 @@ public class FileUploader {
             scale.process(imageMarvin.clone(), imageMarvin, null, null, false);
 
             BufferedImage imageNoAlpha = imageMarvin.getBufferedImageNoAlpha();
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(imageNoAlpha, ext, baos);
+            ImageIO.write(imageNoAlpha, ext.substring(1), baos);  //false
             baos.flush();
 
-            return new MockMultipartFile(fileName, baos.toByteArray());
+
+
+            MultipartFile file =  new MockMultipartFile(fileName, baos.toByteArray());
+            System.out.println("print size = ### " + file.getSize());
+            System.out.println("#### " + file.getInputStream());
+            return file;
 
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 리사이즈에 실패했습니다.");
