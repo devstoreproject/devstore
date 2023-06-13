@@ -7,7 +7,6 @@ import java.util.List;
 
 @Getter
 public class ReviewUpdateRequestDto {
-    private Long reviewId;
     @NotNull
     private Long userId;
     private String comment;
