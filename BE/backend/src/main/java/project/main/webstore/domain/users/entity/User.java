@@ -54,4 +54,8 @@ public class User extends Auditable {
         this.providerId = providerId;
         this.userRole = userRole;
     }
+
+    public User(Long id) {
+        this.id = id;
+    }
 }
