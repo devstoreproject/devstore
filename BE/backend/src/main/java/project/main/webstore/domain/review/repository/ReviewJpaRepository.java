@@ -41,4 +41,8 @@ public interface ReviewJpaRepository extends JpaRepository<Review,Long>,ReviewRe
     @Override
     @Query("select r from Review r where r.item.id =:itemId")
     Slice<Review> findByItemIdSlice(Pageable pageable, @Param("itemId") Long itemId);
+
+    @Override
+    @Query("select r from Review r")
+    Page<Review> findAllPage(Pageable pageable);
 }
