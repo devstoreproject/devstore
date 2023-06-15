@@ -1,5 +1,6 @@
 package project.main.webstore.domain.review.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -65,5 +66,15 @@ public class Review extends Auditable {
     public Review(ReviewPostRequestDto dto) {
         this.comment = dto.getComment();
         this.rating = dto.getRating();
+    }
+
+    @Builder(builderMethodName = "stubBuilder",buildMethodName = "stubBuild")
+    public Review(Long id, String comment, Integer rating, User user, Item item, List<ReviewImage> reviewImageList) {
+        this.id = id;
+        this.comment = comment;
+        this.rating = rating;
+        this.user = user;
+        this.item = item;
+        this.reviewImageList = reviewImageList;
     }
 }

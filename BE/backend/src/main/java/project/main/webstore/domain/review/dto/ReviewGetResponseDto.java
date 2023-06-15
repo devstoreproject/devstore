@@ -22,7 +22,8 @@ public class ReviewGetResponseDto {
         this.userId = review.getUser().getId();
         this.itemId = review.getItem().getId();
         this.comment = review.getComment();
-        this.imageList = review.getReviewImageList().stream().map(ImageDto::new).collect(Collectors.toList());
+        this.imageList = review.getReviewImageList() != null ? review.getReviewImageList().stream().map(ImageDto::new).collect(Collectors.toList()) : null;
     }
+    //TODO: User, Item 엔티티 만들어지면 그 때 작업 진행하자.
 }
 
