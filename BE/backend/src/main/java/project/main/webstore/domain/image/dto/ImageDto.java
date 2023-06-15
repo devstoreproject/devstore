@@ -10,6 +10,7 @@ public class ImageDto {
     private String thumbnailPath;
     private boolean isRepresentative;
     private String title;
+    private int imageOrder;
 
     public ImageDto(Image image) {
         this.imageId = image.getId();
@@ -17,5 +18,6 @@ public class ImageDto {
         this.thumbnailPath = image.getThumbnailPath();
         this.isRepresentative = image.isRepresentative();
         this.title = image.getRealTitle();
+        this.imageOrder = image.getImageOrder();
     }
 }

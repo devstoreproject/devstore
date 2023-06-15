@@ -53,4 +53,7 @@ public class Item {
     @OneToOne(fetch = LAZY)
     private PickedItem pickedItem;
 
+    public Item(Long id) {
+        this.id = id;
+    }
 }
