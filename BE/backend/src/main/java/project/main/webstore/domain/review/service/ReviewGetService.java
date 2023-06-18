@@ -3,15 +3,14 @@ package project.main.webstore.domain.review.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.review.dto.ReviewGetResponseDto;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.mapper.ReviewMapper;
 import project.main.webstore.domain.review.repository.ReviewRepository;
-
-import java.util.List;
+import project.main.webstore.domain.users.entity.User;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +22,9 @@ public class ReviewGetService {
 
     public ReviewGetResponseDto getReviewByReviewId(Long reviewId) {
         Review findReview = reviewValidService.validReview(reviewId);
+        //추 후 삭제
+        findReview.setUser(new User(1L));
+        findReview.setItem(new Item(1L));
         return mapper.reviewGetResponse(findReview);
     }
 
