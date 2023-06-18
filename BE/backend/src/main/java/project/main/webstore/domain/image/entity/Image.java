@@ -4,16 +4,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
+import project.main.webstore.domain.image.dto.ImageInfoDto;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.InheritanceType.JOINED;
 
 @Entity
 @Getter
-@Inheritance(strategy = JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "Category")
 @NoArgsConstructor
 public class Image extends Auditable {
@@ -21,14 +21,14 @@ public class Image extends Auditable {
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
     private Long id;
-    private String realTitle;
-    private String savedTitle;
+    private String originalName;
+    private String uploadName;
     private String imagePath;
     private String ext;
     @Setter
     private int imageOrder;
-
-    //썸네일용 하나 추가
+    @Column(updatable = false)
+    private String hash;
     private String thumbnailPath;
     @Setter
     private boolean isRepresentative;
@@ -39,15 +39,27 @@ public class Image extends Auditable {
         this.isRepresentative = isRepresentative;
     }
 
-    public Image(String realTitle, String savedTitle, String imagePath, String ext, String thumbnailPath, int imageOrder, boolean isRepresentative) {
-        this.realTitle = realTitle;
-        this.savedTitle = savedTitle;
+    public Image(String originalName, String uploadName, String imagePath, String ext, String thumbnailPath, int imageOrder, boolean isRepresentative, String hash) {
+        this.originalName = originalName;
+        this.uploadName = uploadName;
         this.imagePath = imagePath;
         this.ext = ext;
         this.thumbnailPath = thumbnailPath;
         this.imageOrder = imageOrder;
         this.isRepresentative = isRepresentative;
+        this.hash = hash;
     }
+        public Image(ImageInfoDto info, String imagePath, String thumbnailPath, String hash) {
+        this.originalName =info.getOriginalName();
+        this.uploadName =info.getUploadName();
+        this.imagePath =imagePath;
+        this.ext =info.getExt();
+        this.thumbnailPath =thumbnailPath;
+        this.imageOrder =info.getOrder();
+        this.isRepresentative =info.isRepresentative();
+        this.hash = hash;
+    }
+
 
     @Override
     public boolean equals(Object o) {

@@ -5,6 +5,9 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.google.common.io.ByteSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import marvin.image.MarvinImage;
@@ -15,13 +18,18 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
+import project.main.webstore.exception.BusinessLogicException;
+import project.main.webstore.exception.CommonExceptionCode;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,22 +42,43 @@ public class FileUploader {
     @Value("${cloud.aws.s3.bucket-resizing}")
     private String bucketResizing;
 
-    public Image uploadImage(MultipartFile uploadFile, String uploadDir, int order, boolean isRepresentative) {
-        String originalFilename = uploadFile.getOriginalFilename();
-        String uploadImageName = createFileName(originalFilename);
-        String ext = extractExt(originalFilename);
+    //단건 업로드
+    public Image uploadImage(ImageInfoDto info) {
+        MultipartFile resizeImage = resizeImage(info.getMultipartFile() , info.getFileName(), info.getExt(), 300);
+        String hash = createHashByMD5(resizeImage);
+        //해시 값을 추가
+        String imagePath = saveImage(info.getMultipartFile(), info.getFileName(), bucketOrigin);
 
-        String fileName = uploadDir + "/" + uploadImageName;
+        String thumbnailPath = saveImage(resizeImage, info.getFileName(), bucketResizing);
 
-        String imagePath = saveImage(uploadFile, fileName, uploadDir, bucketOrigin);
-
-        MultipartFile resizeImage = resizeImage(fileName, ext, uploadFile, 300);
-        String resizedPath = saveImage(resizeImage, fileName, uploadDir, bucketResizing);
-
-        return new Image(originalFilename, uploadImageName, imagePath, ext, resizedPath, order, isRepresentative);
+        return new Image(info,imagePath,thumbnailPath, hash);
     }
 
-    public String saveImage(MultipartFile uploadFile, String fileName, String uploadDir, String bucketName) {
+    public List<Image> uploadImage(List<ImageInfoDto> infoList) {
+        List<Image> answer = new ArrayList<>();
+        //해쉬 코드를 모두 만든다.
+        List<MultipartFile> thumList = infoList.stream().map(info -> resizeImage(info.getMultipartFile(), info.getFileName(), info.getExt(), 300)).collect(Collectors.toList());
+        List<String> hashList = thumList.stream().map(this::createHashByMD5).collect(Collectors.toList());
+
+        //검증
+        validImageAlreadyHas(hashList);
+
+        //저장 로직 실행
+        for (int i = 0; i < infoList.size(); i++) {
+            ImageInfoDto info = infoList.get(i);
+            String originalPath = saveImage(info.getMultipartFile(), info.getFileName(), bucketOrigin);
+            String thumbnailPath = saveImage(thumList.get(i), info.getFileName(), bucketResizing);
+
+            Image image = new Image(info, originalPath, thumbnailPath, hashList.get(i));
+            answer.add(image);
+        }
+
+        return answer;
+    }
+    
+    
+
+    public String saveImage(MultipartFile uploadFile, String fileName, String bucketName) {
         ObjectMetadata metadata = createMetadata(uploadFile);
         try {
             amazonS3Client.putObject(
@@ -64,19 +93,13 @@ public class FileUploader {
 
         return amazonS3Client.getUrl(bucketName, fileName).toString();
     }
+
     private ObjectMetadata createMetadata(MultipartFile multipartFile) {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(multipartFile.getContentType());
         metadata.setContentLength(multipartFile.getSize());
 
         return metadata;
-    }
-
-    private String createFileName(String originalFileName) {
-        String uuid = UUID.randomUUID().toString();
-        String ext = extractExt(originalFileName);
-
-        return uuid.concat(ext);
     }
 
     private String extractExt(String originalFileName) {
@@ -101,13 +124,7 @@ public class FileUploader {
         return imagePath.replace(S3_BUCKET_PATH, "");
     }
 
-    public Image patchImage(MultipartFile uploadFile, String imagePath, String uploadDir, int order, boolean isRepresentative) {
-        deleteS3Image(imagePath);
-        Image upload = uploadImage(uploadFile, uploadDir, order, isRepresentative);
-        return upload;
-    }
-
-    private MultipartFile resizeImage(String fileName, String ext, MultipartFile originalImage, int targetWidth) {
+    private MultipartFile resizeImage(MultipartFile originalImage, String fileName, String ext, int targetWidth) {
         log.info("###target width = {}", targetWidth);
         try {
             // 리사이징 위한 BufferedImage 변환
@@ -132,12 +149,11 @@ public class FileUploader {
             BufferedImage imageNoAlpha = imageMarvin.getBufferedImageNoAlpha();
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(imageNoAlpha, ext.substring(1), baos);  //false
+            ImageIO.write(imageNoAlpha, ext.substring(1), baos);
             baos.flush();
 
 
-
-            MultipartFile file =  new MockMultipartFile(fileName, baos.toByteArray());
+            MultipartFile file = new MockMultipartFile(fileName, baos.toByteArray());
             System.out.println("print size = ### " + file.getSize());
             System.out.println("#### " + file.getInputStream());
             return file;
@@ -145,5 +161,28 @@ public class FileUploader {
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 리사이즈에 실패했습니다.");
         }
+    }
+
+    public String createHashByMD5(MultipartFile file) {
+
+        try {
+            byte[] bytes = file.getBytes();
+            ByteSource byteSource = ByteSource.wrap(bytes);
+            HashCode hash = byteSource.hash(Hashing.md5());
+            return hash.toString();
+        } catch (IOException e) {
+            log.error("#### TransByte Error ####");
+            e.printStackTrace();
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_ERROR);
+        }
+    }
+
+    public boolean checkImageAllHas(List<String> uploadHashList) {
+        return uploadHashList.size() == uploadHashList.stream().distinct().collect(Collectors.toList()).size();
+    }
+
+    public void validImageAlreadyHas(List<String> hashList){
+        if(!checkImageAllHas(hashList))
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_ALREADY_HAS);
     }
 }

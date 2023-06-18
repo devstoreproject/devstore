@@ -17,7 +17,7 @@ public class ImageDto {
         this.originalPath = image.getImagePath();
         this.thumbnailPath = image.getThumbnailPath();
         this.isRepresentative = image.isRepresentative();
-        this.title = image.getRealTitle();
+        this.title = image.getOriginalName();
         this.imageOrder = image.getImageOrder();
     }
 }
