@@ -33,12 +33,6 @@ public class Image extends Auditable {
     @Setter
     private boolean isRepresentative;
 
-    //이미지 순서 및 대표값인지 여부 저장
-    public void setOrderAndRepresentative(int order, boolean isRepresentative){
-        this.imageOrder = order;
-        this.isRepresentative = isRepresentative;
-    }
-
     public Image(String originalName, String uploadName, String imagePath, String ext, String thumbnailPath, int imageOrder, boolean isRepresentative, String hash) {
         this.originalName = originalName;
         this.uploadName = uploadName;
@@ -49,17 +43,23 @@ public class Image extends Auditable {
         this.isRepresentative = isRepresentative;
         this.hash = hash;
     }
-        public Image(ImageInfoDto info, String imagePath, String thumbnailPath, String hash) {
-        this.originalName =info.getOriginalName();
-        this.uploadName =info.getUploadName();
-        this.imagePath =imagePath;
-        this.ext =info.getExt();
-        this.thumbnailPath =thumbnailPath;
-        this.imageOrder =info.getOrder();
-        this.isRepresentative =info.isRepresentative();
+
+    public Image(ImageInfoDto info, String imagePath, String thumbnailPath, String hash) {
+        this.originalName = info.getOriginalName();
+        this.uploadName = info.getUploadName();
+        this.imagePath = imagePath;
+        this.ext = info.getExt();
+        this.thumbnailPath = thumbnailPath;
+        this.imageOrder = info.getOrder();
+        this.isRepresentative = info.isRepresentative();
         this.hash = hash;
     }
 
+    //이미지 순서 및 대표값인지 여부 저장
+    public void setOrderAndRepresentative(int order, boolean isRepresentative) {
+        this.imageOrder = order;
+        this.isRepresentative = isRepresentative;
+    }
 
     @Override
     public boolean equals(Object o) {

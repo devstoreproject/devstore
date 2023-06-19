@@ -38,7 +38,7 @@ public class ReviewService {
         List<ImageSortDto> imageSortInfoList = dto.getInfoList();
 
         if (imageSortInfoList.size() != fileList.size()) {
-            throw new BusinessLogicException(CommonExceptionCode.IMAGE_ALREADY_HAS);
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_INFO_COUNT_MISMATCH);
         }
 
         List<ImageInfoDto> infoList = createImageInfoList(fileList, imageSortInfoList);
@@ -47,8 +47,8 @@ public class ReviewService {
         List<Image> imageList = fileUploader.uploadImage(infoList);
         //이미지 DB 저장 로직
         imageList.stream().map(image -> new ReviewImage(image, review)).forEach(review::addReviewImage);
-        reviewRepository.save(review);
-        return new ReviewIdResponseDto(review.getId(), userId, itemId);
+        Review savedReview = reviewRepository.save(review);
+        return new ReviewIdResponseDto(savedReview.getId(), savedReview.getUser().getId(), savedReview.getItem().getId());
     }
 
     public ReviewIdResponseDto postReview(ReviewPostRequestDto dto, Long userId, Long itemId) {
