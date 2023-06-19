@@ -55,8 +55,9 @@ public class ReviewService {
         //TODO : User 검증 및 item 검증 필요
         //TODO: User, Iteme Review와 매핑이 필요하다.
         Review review = new Review(dto);
-        reviewRepository.save(review);
-        return new ReviewIdResponseDto(review.getId(), userId, itemId);
+        Review savedReview = reviewRepository.save(review);
+
+        return new ReviewIdResponseDto(savedReview.getId(), savedReview.getUser().getId(),savedReview.getItem().getId());
     }
 
     public ReviewIdResponseDto updateReview(ReviewUpdateRequestDto dto, List<MultipartFile> fileList, Long userId, Long itemId, Long reviewId) {
