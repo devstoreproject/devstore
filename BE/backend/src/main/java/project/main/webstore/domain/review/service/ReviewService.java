@@ -35,6 +35,17 @@ public class ReviewService {
         return savedReview;
     }
 
+    private static void imageValid(List<ImageInfoDto> imageInfoList) {
+        boolean check = imageInfoList.stream().noneMatch(ImageInfoDto::isRepresentative);
+        if(check){
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_HAS_ALWAYS_REPRESENTATIVE);
+        }
+        check = imageInfoList.stream().distinct().count() != imageInfoList.size();
+        if(check){
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_ORDER_ALWAYS_UNIQUE);
+        }
+    }
+
     public Review postReview(List<ImageInfoDto> imageInfoList, Review review, Long userId, Long itemId) {
         //TODO : User 검증 및 item 검증 필요
 
@@ -42,6 +53,9 @@ public class ReviewService {
 //        if (imageSortInfoList.size() != fileList.size()) {
 //            throw new BusinessLogicException(CommonExceptionCode.IMAGE_INFO_COUNT_MISMATCH);
 //        }
+
+        //TODO:메서드 따로 뺴야함
+        imageValid(imageInfoList);
 
         //이미지 저장 로직
         List<Image> imageList = fileUploader.uploadImage(imageInfoList);
@@ -51,7 +65,7 @@ public class ReviewService {
         return savedReview;
     }
 
-    public Review patchReview(List<ImageInfoDto> imageInfoDtoList,List<Long> deleteIdList,Review review, Long userId, Long itemId, Long reviewId) {
+    public Review patchReview(List<ImageInfoDto> imageInfoList,List<Long> deleteIdList,Review review, Long userId, Long itemId, Long reviewId) {
         //TODO: 연관관계 찾기
         Review findReview = reviewValidService.validReview(reviewId);
         //기본적인 정보 존재한다면 변경
@@ -59,7 +73,11 @@ public class ReviewService {
         Optional.ofNullable(review.getComment()).ifPresent((findReview::setComment));
 
 
-        patchImage(imageInfoDtoList, findReview,deleteIdList);
+        //TODO:메서드 따로 뺴야함
+        imageValid(imageInfoList);
+
+
+        patchImage(imageInfoList, findReview,deleteIdList);
 
         return findReview;
     }
