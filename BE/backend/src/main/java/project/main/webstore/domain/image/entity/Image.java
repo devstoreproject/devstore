@@ -43,6 +43,17 @@ public class Image extends Auditable {
         this.isRepresentative = isRepresentative;
         this.hash = hash;
     }
+    public Image(Long id,String originalName, String uploadName, String imagePath, String ext, String thumbnailPath, int imageOrder, boolean isRepresentative, String hash) {
+        this.id = id;
+        this.originalName = originalName;
+        this.uploadName = uploadName;
+        this.imagePath = imagePath;
+        this.ext = ext;
+        this.thumbnailPath = thumbnailPath;
+        this.imageOrder = imageOrder;
+        this.isRepresentative = isRepresentative;
+        this.hash = hash;
+    }
 
     public Image(ImageInfoDto info, String imagePath, String thumbnailPath, String hash) {
         this.originalName = info.getOriginalName();

@@ -13,7 +13,8 @@ public enum CommonExceptionCode implements ExceptionCode {
     PARAMETER_ERROR(HttpStatus.NOT_ACCEPTABLE,"Parameter가 존재하지 않습니다."),
     IMAGE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"이미지 파일의 해쉬값을 찾을 수 없습니다."),
     IMAGE_ALREADY_HAS(HttpStatus.BAD_REQUEST,"이미지가 이미 존재합니다."),
-    IMAGE_INFO_COUNT_MISMATCH(HttpStatus.BAD_REQUEST,"이미지와 정보의 수가 일치하지 않습니다.")
+    IMAGE_INFO_COUNT_MISMATCH(HttpStatus.BAD_REQUEST,"이미지와 정보의 수가 일치하지 않습니다."),
+    IMAGE_HAS_ALWAYS_REPRESENTATIVE(HttpStatus.BAD_REQUEST,"대표 이미지가 한개 있어야합니다.")
     ;
 
     private final HttpStatus httpStatus;

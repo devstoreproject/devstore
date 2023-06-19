@@ -21,8 +21,7 @@ public class ReviewImage extends Image{
     private Review review;
 
     public ReviewImage(Image image, Review review) {
-        super(image.getOriginalName(), image.getUploadName(), image.getImagePath(), image.getExt(), image.getThumbnailPath(), image.getImageOrder(), image.isRepresentative(),image.getHash());
+        super(image.getId() != null ? image.getId():null,image.getOriginalName(), image.getUploadName(), image.getImagePath(), image.getExt(), image.getThumbnailPath(), image.getImageOrder(), image.isRepresentative(),image.getHash());
         this.review = review;
     }
-
 }
