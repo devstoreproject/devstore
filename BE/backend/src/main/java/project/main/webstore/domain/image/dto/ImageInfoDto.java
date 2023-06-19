@@ -1,5 +1,6 @@
 package project.main.webstore.domain.image.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 @Getter
 public class ImageInfoDto {
+    private Long id;
     private MultipartFile multipartFile;
     @Setter
     private MultipartFile thumbFile;
@@ -21,7 +23,9 @@ public class ImageInfoDto {
     private String fileName;
     private String ext;
 
-    public ImageInfoDto(MultipartFile multipartFile, int order, boolean representative, String uploadDir) {
+    @Builder(builderMethodName = "dtoBuilder")
+    public ImageInfoDto(MultipartFile multipartFile, Long id, int order, boolean representative, String uploadDir) {
+        this.id = id;
         this.multipartFile = multipartFile;
         this.order = order;
         this.representative = representative;
