@@ -1,5 +1,6 @@
 package project.main.webstore.domain.review.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import project.main.webstore.domain.image.dto.ImageSortPatchInfo;
 
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class ReviewUpdateRequestDto {
     @NotNull
     private Long userId;

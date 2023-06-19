@@ -115,7 +115,7 @@ public class ReviewService {
         Optional<ImageSortPatchInfo> representative = sortDtoList.stream()
                 .filter(ImageSortPatchInfo::isRepresentative)
                 .findFirst();
-        ImageSortPatchInfo info = representative.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.IMAGE_ERROR));
+        ImageSortPatchInfo info = representative.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.IMAGE_HAS_ALWAYS_REPRESENTATIVE));
 
         //대표 값이 기존에 저장된 파일 내에 있을 경우 변경
         if (info.getImageId() != null) {
@@ -187,5 +187,4 @@ public class ReviewService {
             fileUploader.deleteS3Image(path);
         }
     }
-
 }
