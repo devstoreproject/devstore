@@ -10,6 +10,8 @@ import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.repository.ReviewRepository;
 import project.main.webstore.domain.users.entity.User;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -44,4 +46,9 @@ public class ReviewGetService {
         return reviewPage;
     }
 
+    public List<Review> getBestReview(Long reviewId, Long itemId, Long userId, int count) {
+        //검증 먼저 진행 필요
+        List<Review> topNList = reviewRepository.findTopN(reviewId, count);
+        return topNList;
+    }
 }

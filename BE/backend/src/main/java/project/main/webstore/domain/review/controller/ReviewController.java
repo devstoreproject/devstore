@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
+import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.review.dto.ReviewGetResponseDto;
 import project.main.webstore.domain.review.dto.ReviewIdResponseDto;
 import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
@@ -16,6 +17,7 @@ import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.mapper.ReviewMapper;
 import project.main.webstore.domain.review.service.ReviewGetService;
 import project.main.webstore.domain.review.service.ReviewService;
+import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.UriCreator;
@@ -46,7 +48,8 @@ public class ReviewController {
             List<ImageInfoDto> imageInfoDtoList = imageMapper.toLocalDtoList(imageList, postDto.getInfoList(), UPLOAD_DIR);
             savedReview = service.postReview(imageInfoDtoList, review, postDto.getUserId(), itemId);
         }
-
+        savedReview.setItem(new Item(1L));
+        savedReview.setUser(new User(1L));
         ReviewIdResponseDto response = reviewMapper.toDto(savedReview);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
         URI uri = UriCreator.createUri("/api/item", "/review", itemId, responseDto.getData().getReviewId());
@@ -65,7 +68,7 @@ public class ReviewController {
     }
 
     @GetMapping("/review")
-    public ResponseEntity getReviewAllPage(Pageable pageable, Long userId) {
+    public ResponseEntity getReviewAllPage(Pageable pageable, @RequestParam Long userId) {
         Page<Review> reviewPage = getService.getReviewPage(userId, pageable);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
@@ -127,13 +130,31 @@ public class ReviewController {
     }
 
     @PostMapping("/item/{itemId}/review/{reviewId}/like")
-    public ResponseEntity addLikeReview(@PathVariable Long reviewId, @PathVariable Long itemId, Long userId) {
+    public ResponseEntity addLikeReview(@PathVariable Long reviewId,
+                                        @PathVariable Long itemId,
+                                        @RequestParam Long userId) {
         Review review = service.addLikeReview(reviewId, itemId, userId);
         ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(review);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
 
         URI uri = UriCreator.createUri("/api/item", "/review", review.getItem().getId(), review.getId());
         return ResponseEntity.ok().header("Location", uri.toString()).body(responseDto);
+    }
 
+
+    //테스트 필요
+    @GetMapping("/item/{itemId}/review/{reviewId}/best")
+    public ResponseEntity getBestReview(@PathVariable Long reviewId,
+                                        @PathVariable Long itemId,
+                                        @RequestParam Long userId,
+                                        @RequestParam int count) {
+        List<Review> bestReview = getService.getBestReview(reviewId, itemId, userId, count);
+        List<ReviewGetResponseDto> reviewGetResponseDtos = reviewMapper.toGetListResponse(bestReview);
+
+        var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
+                .data(reviewGetResponseDtos)
+                .customCode(ResponseCode.OK)
+                .build();
+        return ResponseEntity.ok(responseDto);
     }
 }
