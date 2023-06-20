@@ -1,6 +1,7 @@
 package project.main.webstore.domain.review.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,9 +54,10 @@ public class ReviewController {
 
     @GetMapping("/review/{reviewId}")
     public ResponseEntity getReview(@PathVariable Long reviewId) {
-        ReviewGetResponseDto response = getService.getReviewByReviewId(reviewId);
+        Review findReview = getService.getReviewByReviewId(reviewId);
+        ReviewGetResponseDto reviewGetResponseDto = reviewMapper.toGetDtoResponse(findReview);
         var responseDto = ResponseDto.<ReviewGetResponseDto>builder()
-                .data(response)
+                .data(reviewGetResponseDto)
                 .customCode(ResponseCode.OK)
                 .build();
         return ResponseEntity.ok(responseDto);
@@ -63,19 +65,37 @@ public class ReviewController {
 
     @GetMapping("/review")
     public ResponseEntity getReviewAllPage(Pageable pageable,Long userId) {
-        getService.getReviewPage(userId,pageable);
-        return null;
+        Page<Review> reviewPage = getService.getReviewPage(userId, pageable);
+        Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
+        var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
+                .customCode(ResponseCode.OK)
+                .data(responsePageDto)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/item/{itemId}/review")
     public ResponseEntity getReviewPageByItemId(Pageable pageable, @PathVariable Long itemId) {
-        getService.getReviewPageByItemId(pageable,itemId);
-        return null;
+        Page<Review> reviewPage = getService.getReviewPageByItemId(pageable, itemId);
+        Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
+        var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
+                .customCode(ResponseCode.OK)
+                .data(responsePageDto)
+                .build();
+
+        return ResponseEntity.ok(response);
 
     }
     @GetMapping("/user/{userId}/review")
     public ResponseEntity getReviewListByUserId(Pageable pageable,@PathVariable Long userId) {
-        getService.getReviewPageByUserId(pageable,userId);
-        return null;
+        Page<Review> reviewPage = getService.getReviewPageByUserId(pageable, userId);
+        Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
+        var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
+                .customCode(ResponseCode.OK)
+                .data(responsePageDto)
+                .build();
+
+        return ResponseEntity.ok(response);
 
     }
 
