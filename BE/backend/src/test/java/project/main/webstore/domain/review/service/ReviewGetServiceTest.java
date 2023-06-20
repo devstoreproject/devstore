@@ -14,12 +14,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import project.main.webstore.domain.review.dto.ReviewGetResponseDto;
 import project.main.webstore.domain.review.entity.Review;
-import project.main.webstore.domain.review.mapper.ReviewMapper;
 import project.main.webstore.domain.review.repository.ReviewRepository;
 import project.main.webstore.domain.review.stub.ReviewStub;
 import project.main.webstore.exception.BusinessLogicException;
 
-import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,8 +28,6 @@ class ReviewGetServiceTest {
     private ReviewRepository reviewRepository;
     @Mock
     private ReviewValidService reviewValidService;
-    @Mock
-    private ReviewMapper reviewMapper;
     private ReviewStub reviewStub = new ReviewStub();
 
     private Long reviewId = 1L;
@@ -46,14 +42,12 @@ class ReviewGetServiceTest {
         ReviewGetResponseDto expected = reviewStub.reviewGetResponseDto(review);
 
         given(reviewValidService.validReview(ArgumentMatchers.anyLong())).willReturn(review);
-        given(reviewMapper.reviewGetResponse(ArgumentMatchers.any(Review.class))).willReturn(expected);
         // when
-        ReviewGetResponseDto result = reviewGetService.getReviewByReviewId(reviewId);
+        Review result = reviewGetService.getReviewByReviewId(reviewId);
         // then
-        Assertions.assertThat(result.getReviewId()).isEqualTo(review.getId());
-        Assertions.assertThat(result.getItemId()).isEqualTo(review.getItem().getId());
-        Assertions.assertThat(result.getUserId()).isEqualTo(review.getUser().getId());
-        Assertions.assertThat(result.getReviewId()).as("assertion 수행 이전에 넣어줘야한다.즉 맨 마지막에 나오면 에러 터짐 ㅎㅎ").isEqualTo(reviewId);
+        Assertions.assertThat(result.getItem().getId()).isEqualTo(review.getItem().getId());
+        Assertions.assertThat(result.getUser().getId()).isEqualTo(review.getUser().getId());
+        Assertions.assertThat(result.getId()).as("assertion 수행 이전에 넣어줘야한다.즉 맨 마지막에 나오면 에러 터짐 ㅎㅎ").isEqualTo(reviewId);
     }
 
     @Test
@@ -71,55 +65,49 @@ class ReviewGetServiceTest {
         int page = 0;
         int size = 3;
         Page<Review> reviewPage = reviewStub.createPageReview(page, size);
-        Page<ReviewGetResponseDto> expected = reviewStub.reviewGetResponseDtoPage(page, size);
         PageRequest pageInfo = PageRequest.of(0, 3);
         // given
         BDDMockito.given(reviewRepository.findAllPage(ArgumentMatchers.any(Pageable.class))).willReturn(reviewPage);
-        BDDMockito.given(reviewMapper.reviewGetPageResponse(any(Page.class))).willReturn(expected);
 
         // when
-        Page<ReviewGetResponseDto> result = reviewGetService.getReviewPage(userId,pageInfo);
+        Page<Review> result = reviewGetService.getReviewPage(userId, pageInfo);
         // then
-        Assertions.assertThat(result).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
+        Assertions.assertThat(result).usingRecursiveFieldByFieldElementComparator().isEqualTo(reviewPage);
         Assertions.assertThat(result.getSize()).isEqualTo(size);
     }
 
     @Test
     @DisplayName("userId 이용한 리뷰 전체 조회(페이지) : 성공")
-    void getReviewPageByUserIdTest() throws Exception{
+    void getReviewPageByUserIdTest() throws Exception {
         int page = 0;
         int size = 3;
         Page<Review> reviewPage = reviewStub.createPageReview(page, size);
-        Page<ReviewGetResponseDto> expected = reviewStub.reviewGetResponseDtoPage(page, size);
         PageRequest pageInfo = PageRequest.of(0, 3);
         // given
         BDDMockito.given(reviewRepository.findByUserIdPage(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.anyLong())).willReturn(reviewPage);
-        BDDMockito.given(reviewMapper.reviewGetPageResponse(any(Page.class))).willReturn(expected);
 
         // when
-        Page<ReviewGetResponseDto> result = reviewGetService.getReviewPageByUserId(pageInfo, userId);
+        Page<Review> result = reviewGetService.getReviewPageByUserId(pageInfo, userId);
         // then
-        Assertions.assertThat(result).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
+        Assertions.assertThat(result).usingRecursiveFieldByFieldElementComparator().isEqualTo(reviewPage);
         Assertions.assertThat(result.getSize()).isEqualTo(size);
 
     }
 
     @Test
     @DisplayName("itemId 이용한 리뷰 전체 조회(페이지) : 성공")
-    void getReviewPageByItemIdTest() throws Exception{
+    void getReviewPageByItemIdTest() throws Exception {
         int page = 0;
         int size = 3;
         Page<Review> reviewPage = reviewStub.createPageReview(page, size);
-        Page<ReviewGetResponseDto> expected = reviewStub.reviewGetResponseDtoPage(page, size);
         PageRequest pageInfo = PageRequest.of(0, 3);
         // given
         BDDMockito.given(reviewRepository.findByItemIdPage(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.anyLong())).willReturn(reviewPage);
-        BDDMockito.given(reviewMapper.reviewGetPageResponse(any(Page.class))).willReturn(expected);
 
         // when
-        Page<ReviewGetResponseDto> result = reviewGetService.getReviewPageByItemId(pageInfo, itemId);
+        Page<Review> result = reviewGetService.getReviewPageByItemId(pageInfo, itemId);
         // then
-        Assertions.assertThat(result).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
+        Assertions.assertThat(result).usingRecursiveFieldByFieldElementComparator().isEqualTo(reviewPage);
         Assertions.assertThat(result.getSize()).isEqualTo(size);
     }
 }
