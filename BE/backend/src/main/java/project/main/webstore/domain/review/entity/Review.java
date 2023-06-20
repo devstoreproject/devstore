@@ -68,6 +68,19 @@ public class Review extends Auditable {
         this.rating = dto.getRating();
     }
 
+    @Builder(builderMethodName = "patchBuilder")
+    public Review(Long id, String comment, Integer rating) {
+        this.id = id;
+        this.comment = comment;
+        this.rating = rating;
+    }
+
+    @Builder(builderMethodName = "postBuilder")
+    public Review(String comment, Integer rating) {
+        this.comment = comment;
+        this.rating = rating;
+    }
+
     @Builder(builderMethodName = "stubBuilder",buildMethodName = "stubBuild")
     public Review(Long id, String comment, Integer rating, User user, Item item, List<ReviewImage> reviewImageList) {
         this.id = id;
