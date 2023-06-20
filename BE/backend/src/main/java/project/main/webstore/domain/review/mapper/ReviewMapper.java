@@ -39,17 +39,17 @@ public class ReviewMapper {
         return new ReviewIdResponseDto(review.getId(),review.getUser().getId(),review.getItem().getId());
     }
 
-    public ReviewGetResponseDto reviewGetResponse(Review review){
+    public ReviewGetResponseDto toGetDtoResponse(Review review){
         return ReviewGetResponseDto.dtoBuilder()
                 .review(review)
                 .dtoBuild();
     }
 
-    public Page<ReviewGetResponseDto> reviewGetPageResponse(Page<Review> reviewPage){
+    public Page<ReviewGetResponseDto> toGetPageResponse(Page<Review> reviewPage){
         return reviewPage.map(ReviewGetResponseDto::new);
     }
 
-    public Slice<ReviewGetResponseDto> reviewGetSliceResponse(Slice<Review> reviewSlice){
+    public Slice<ReviewGetResponseDto> toGetSliceResponse(Slice<Review> reviewSlice){
         return reviewSlice.map(ReviewGetResponseDto::new);
     }
 }
