@@ -32,10 +32,11 @@ public class ReviewController {
     private final ReviewService service;
     private final ReviewMapper reviewMapper;
     private final ImageMapper imageMapper;
+
     @PostMapping("/item/{itemId}/review")
     public ResponseEntity postReview(@PathVariable Long itemId,
                                      @RequestPart ReviewPostRequestDto postDto,
-                                     @RequestPart(required = false) List<MultipartFile> imageList){
+                                     @RequestPart(required = false) List<MultipartFile> imageList) {
         Review review = reviewMapper.toEntity(postDto);
 
         Review savedReview;
@@ -43,7 +44,7 @@ public class ReviewController {
             savedReview = service.postReview(review, postDto.getUserId(), itemId);
         } else {
             List<ImageInfoDto> imageInfoDtoList = imageMapper.toLocalDtoList(imageList, postDto.getInfoList(), UPLOAD_DIR);
-            savedReview = service.postReview(imageInfoDtoList,review,postDto.getUserId(),itemId);
+            savedReview = service.postReview(imageInfoDtoList, review, postDto.getUserId(), itemId);
         }
 
         ReviewIdResponseDto response = reviewMapper.toDto(savedReview);
@@ -64,7 +65,7 @@ public class ReviewController {
     }
 
     @GetMapping("/review")
-    public ResponseEntity getReviewAllPage(Pageable pageable,Long userId) {
+    public ResponseEntity getReviewAllPage(Pageable pageable, Long userId) {
         Page<Review> reviewPage = getService.getReviewPage(userId, pageable);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
@@ -74,6 +75,7 @@ public class ReviewController {
 
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/item/{itemId}/review")
     public ResponseEntity getReviewPageByItemId(Pageable pageable, @PathVariable Long itemId) {
         Page<Review> reviewPage = getService.getReviewPageByItemId(pageable, itemId);
@@ -86,8 +88,9 @@ public class ReviewController {
         return ResponseEntity.ok(response);
 
     }
+
     @GetMapping("/user/{userId}/review")
-    public ResponseEntity getReviewListByUserId(Pageable pageable,@PathVariable Long userId) {
+    public ResponseEntity getReviewListByUserId(Pageable pageable, @PathVariable Long userId) {
         Page<Review> reviewPage = getService.getReviewPageByUserId(pageable, userId);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
@@ -102,7 +105,7 @@ public class ReviewController {
     @DeleteMapping("/item/{itemId}/review/{reviewId}")
     public ResponseEntity deleteReview(@PathVariable Long itemId,
                                        @PathVariable Long reviewId
-                                       ){
+    ) {
         service.deleteReview(reviewId);
         return ResponseEntity.ok(ResponseDto.builder().data(null).customCode(ResponseCode.OK).build());
     }
@@ -112,25 +115,25 @@ public class ReviewController {
                                       @PathVariable Long reviewId,
                                       @RequestPart ReviewUpdateRequestDto patchDto,
                                       @RequestPart List<MultipartFile> imageList
-                                      ){
+    ) {
         Review review = reviewMapper.toEntity(patchDto, reviewId);
         List<ImageInfoDto> imageInfoList = imageMapper.toLocalDtoList(imageList, patchDto.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
-        Review patchReview = service.patchReview(imageInfoList,patchDto.getDeleteImageId(),review, patchDto.getUserId(), itemId, reviewId);
+        Review patchReview = service.patchReview(imageInfoList, patchDto.getDeleteImageId(), review, patchDto.getUserId(), itemId, reviewId);
         ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(patchReview);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
 
         URI uri = UriCreator.createUri("/api/item", "/review", itemId, responseDto.getData().getReviewId());
-        return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
+        return ResponseEntity.ok().header("Location", uri.toString()).body(responseDto);
     }
 
-    @PostMapping("/review/{reviewId}/like")
-    public ResponseEntity addLikeReview(@PathVariable Long reviewId, Long userId) {
-        Review review = service.addLikeReview(reviewId, userId);
+    @PostMapping("/item/{itemId}/review/{reviewId}/like")
+    public ResponseEntity addLikeReview(@PathVariable Long reviewId, @PathVariable Long itemId, Long userId) {
+        Review review = service.addLikeReview(reviewId, itemId, userId);
         ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(review);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
 
         URI uri = UriCreator.createUri("/api/item", "/review", review.getItem().getId(), review.getId());
-        return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
+        return ResponseEntity.ok().header("Location", uri.toString()).body(responseDto);
 
     }
 }
