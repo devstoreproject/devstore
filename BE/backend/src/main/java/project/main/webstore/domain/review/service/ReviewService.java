@@ -26,7 +26,19 @@ public class ReviewService {
     private final ReviewValidService reviewValidService;
     private final FileUploader fileUploader;
 
-    public Review addLikeReview(Long reviewId, Long userId) {
+    private static void imageValid(List<ImageInfoDto> imageInfoList) {
+        boolean check = imageInfoList.stream().noneMatch(ImageInfoDto::isRepresentative);
+        if (check) {
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_HAS_ALWAYS_REPRESENTATIVE);
+        }
+        check = imageInfoList.stream().map(ImageInfoDto::getOrder).distinct().count() != imageInfoList.size();
+        if (check) {
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_ORDER_ALWAYS_UNIQUE);
+        }
+    }
+
+    public Review addLikeReview(Long reviewId, Long itemId, Long userId) {
+        //TODO: item, user 검증 먼저 진행할 필요 존재
         Review findReview = reviewValidService.validReview(reviewId);
         Like like = new Like(new User(1L), findReview);
         findReview.addLike(like);
@@ -41,17 +53,6 @@ public class ReviewService {
 
 
         return savedReview;
-    }
-
-    private static void imageValid(List<ImageInfoDto> imageInfoList) {
-        boolean check = imageInfoList.stream().noneMatch(ImageInfoDto::isRepresentative);
-        if(check){
-            throw new BusinessLogicException(CommonExceptionCode.IMAGE_HAS_ALWAYS_REPRESENTATIVE);
-        }
-        check = imageInfoList.stream().map(ImageInfoDto::getOrder).distinct().count() != imageInfoList.size();
-        if(check){
-            throw new BusinessLogicException(CommonExceptionCode.IMAGE_ORDER_ALWAYS_UNIQUE);
-        }
     }
 
     public Review postReview(List<ImageInfoDto> imageInfoList, Review review, Long userId, Long itemId) {
@@ -73,7 +74,7 @@ public class ReviewService {
         return savedReview;
     }
 
-    public Review patchReview(List<ImageInfoDto> imageInfoList,List<Long> deleteIdList,Review review, Long userId, Long itemId, Long reviewId) {
+    public Review patchReview(List<ImageInfoDto> imageInfoList, List<Long> deleteIdList, Review review, Long userId, Long itemId, Long reviewId) {
         //TODO: 연관관계 찾기
         Review findReview = reviewValidService.validReview(reviewId);
         //기본적인 정보 존재한다면 변경
@@ -85,7 +86,7 @@ public class ReviewService {
         imageValid(imageInfoList);
 
 
-        patchImage(imageInfoList, findReview,deleteIdList);
+        patchImage(imageInfoList, findReview, deleteIdList);
 
         return findReview;
     }
@@ -100,10 +101,10 @@ public class ReviewService {
 
     // #### 내부 동작 메서드 #### //
     //사진 저장
-    private void patchImage(List<ImageInfoDto> infoList, Review review,List<Long> deleteIdList) {
+    private void patchImage(List<ImageInfoDto> infoList, Review review, List<Long> deleteIdList) {
         List<ReviewImage> imageList = review.getReviewImageList();
 
-        if(infoList.isEmpty() == false){
+        if (infoList.isEmpty() == false) {
             List<ImageInfoDto> addImageList = infoList.stream().filter(info -> info.getId() == null).collect(Collectors.toList());
             List<ImageInfoDto> savedImageList = infoList.stream().filter(info -> info.getId() != null).collect(Collectors.toList());
 
@@ -124,7 +125,7 @@ public class ReviewService {
     }
 
     private void changeRepresentativeAndOrder(List<ImageInfoDto> requestInfoList, List<ReviewImage> imageList) {
-        for(int i = 0; i < requestInfoList.size(); i++){
+        for (int i = 0; i < requestInfoList.size(); i++) {
             ImageInfoDto requestInfo = requestInfoList.get(i);
 
             Optional<ReviewImage> first = imageList.stream().filter(image -> image.getId() == requestInfo.getId()).findFirst();
@@ -140,8 +141,8 @@ public class ReviewService {
         for (int i = 0; i < deleteId.size(); i++) {
             Long id = deleteId.get(i);
             int index;
-            for (index = 0 ; index < reviewImageList.size(); index++){
-                if(reviewImageList.get(index).getId() == id){
+            for (index = 0; index < reviewImageList.size(); index++) {
+                if (reviewImageList.get(index).getId() == id) {
                     break;
                 }
             }
