@@ -67,19 +67,19 @@ public class ReviewStub {
         return ReviewPostRequestDto.stubBuilder().userId(userId).infoList(null).comment("사진이 없는 리뷰").rating(10).stubBuild();
     }
 
-    public ReviewPostRequestDto reviewPostRequestDto(Long userId) {
-        return ReviewPostRequestDto.stubBuilder().userId(userId).infoList(imageSortListDto()).comment("사진이 없는 리뷰").rating(10).stubBuild();
+    public ReviewPostRequestDto reviewPostRequestDto(Long userId,boolean target) {
+        return ReviewPostRequestDto.stubBuilder().userId(userId).infoList(imageSortListDto(target)).comment("사진이 없는 리뷰").rating(10).stubBuild();
     }
 
     public ReviewUpdateRequestDto reviewUpdateRequestDto(Long userId,boolean target) {
-        return new ReviewUpdateRequestDto(userId, "이것은 수정입니다.", 5, List.of(1L), imageSortPatchInfoList(target));
+        return new ReviewUpdateRequestDto(userId, "이것은 수정입니다.", 5, List.of(1L), imageSortListDto(target));
     }
 
     //이미지단 이동
-    public List<ImageSortDto> imageSortListDto() {
+    public List<ImageSortDto> imageSortListDto(boolean target) {
         return Stream.of(
                 imageSortDto(0, false),
-                imageSortDto(1, true)
+                imageSortDto(1, target)
         ).collect(Collectors.toList());
     }
 
