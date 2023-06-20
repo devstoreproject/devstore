@@ -2,9 +2,11 @@ package project.main.webstore.domain.image.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ImageSortDto {
     private Long id;
     private int orderNumber;

@@ -11,6 +11,7 @@ import project.main.webstore.domain.review.dto.ReviewUpdateRequestDto;
 import project.main.webstore.domain.review.entity.Review;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ReviewMapper {
@@ -38,7 +39,6 @@ public class ReviewMapper {
     public ReviewIdResponseDto toDto(Review review){
         return new ReviewIdResponseDto(review.getId(),review.getUser().getId(),review.getItem().getId());
     }
-
     public ReviewGetResponseDto toGetDtoResponse(Review review){
         return ReviewGetResponseDto.dtoBuilder()
                 .review(review)
@@ -47,6 +47,9 @@ public class ReviewMapper {
 
     public Page<ReviewGetResponseDto> toGetPageResponse(Page<Review> reviewPage){
         return reviewPage.map(ReviewGetResponseDto::new);
+    }
+    public List<ReviewGetResponseDto> toGetListResponse(List<Review> reviewList){
+        return reviewList.stream().map(ReviewGetResponseDto::new).collect(Collectors.toList());
     }
 
     public Slice<ReviewGetResponseDto> toGetSliceResponse(Slice<Review> reviewSlice){
