@@ -95,21 +95,23 @@ public class ReviewService {
     private void patchImage(List<ImageInfoDto> infoList, Review review,List<Long> deleteIdList) {
         List<ReviewImage> imageList = review.getReviewImageList();
 
-        List<ImageInfoDto> addImageList = infoList.stream().filter(info -> info.getId() == null).collect(Collectors.toList());
-        List<ImageInfoDto> savedImageList = infoList.stream().filter(info -> info.getId() != null).collect(Collectors.toList());
+        if(infoList.isEmpty() == false){
+            List<ImageInfoDto> addImageList = infoList.stream().filter(info -> info.getId() == null).collect(Collectors.toList());
+            List<ImageInfoDto> savedImageList = infoList.stream().filter(info -> info.getId() != null).collect(Collectors.toList());
 
-        changeRepresentativeAndOrder(savedImageList, imageList);
+            changeRepresentativeAndOrder(savedImageList, imageList);
 
 
-        if (deleteIdList.isEmpty() == false) {
-            //사진 삭제하는 경우
-            List<ReviewImage> deleteImage = findImageById(deleteIdList, review);
-            List<String> deleteImagePath = deleteImage.stream().map(Image::getImagePath).collect(Collectors.toList());
+            if (deleteIdList != null) {
+                //사진 삭제하는 경우
+                List<ReviewImage> deleteImage = findImageById(deleteIdList, review);
+                List<String> deleteImagePath = deleteImage.stream().map(Image::getImagePath).collect(Collectors.toList());
 
-            deleteImageList(imageList, deleteIdList, deleteImagePath);
+                deleteImageList(imageList, deleteIdList, deleteImagePath);
+            }
+            List<Image> uploadedImageList = fileUploader.uploadImage(addImageList);
+            uploadedImageList.stream().map(image -> new ReviewImage(image, review)).forEach(review::addReviewImage);
         }
-        List<Image> uploadedImageList = fileUploader.uploadImage(addImageList);
-        uploadedImageList.stream().map(image -> new ReviewImage(image, review)).forEach(review::addReviewImage);
 
     }
 
