@@ -2,8 +2,9 @@ package project.main.webstore.domain.like.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.main.webstore.audit.Auditable;
-import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.users.entity.User;
 
 import javax.persistence.*;
@@ -21,16 +22,23 @@ public class Like extends Auditable {
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
     private Long id;
-    private int count;
 
     //연관관계 매핑
     // item
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "ITEM_ID")
-    private Item item;
+//    @ManyToOne(fetch = LAZY)
+//    @JoinColumn(name = "ITEM_ID")
+//    private Item item;
     //user
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "USER_ID")
     private User user;
 
+    @ManyToOne(fetch = LAZY)
+    @Setter
+    private Review review;
+
+    public Like(User user, Review review) {
+        this.user = user;
+        this.review = review;
+    }
 }

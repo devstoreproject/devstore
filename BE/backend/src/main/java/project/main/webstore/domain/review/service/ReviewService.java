@@ -6,8 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.domain.image.entity.ReviewImage;
+import project.main.webstore.domain.like.entity.Like;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.repository.ReviewRepository;
+import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.exception.CommonExceptionCode;
 import project.main.webstore.utils.FileUploader;
@@ -20,11 +22,17 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class ReviewService {
-    private final String UPLOAD_DIR = "review";
     private final ReviewRepository reviewRepository;
     private final ReviewValidService reviewValidService;
     private final FileUploader fileUploader;
 
+    public Review addLikeReview(Long reviewId, Long userId) {
+        Review findReview = reviewValidService.validReview(reviewId);
+        Like like = new Like(new User(1L), findReview);
+        findReview.addLike(like);
+
+        return findReview;
+    }
 
     public Review postReview(Review review, Long userId, Long itemId) {
         //TODO : User 검증 및 item 검증 필요

@@ -43,4 +43,5 @@ public class ReviewGetService {
         Page<Review> reviewPage = reviewRepository.findByItemIdPage(pageable, itemId);
         return reviewPage;
     }
+
 }
