@@ -7,6 +7,7 @@ import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.like.entity.Like;
 import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
 import project.main.webstore.domain.users.entity.User;
 
@@ -28,7 +29,6 @@ public class Review extends Auditable {
     private String comment;
     @Setter
     private Integer rating;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Setter
@@ -43,6 +43,10 @@ public class Review extends Auditable {
     private List<ReviewImage> reviewImageList = new ArrayList<>();
     //삭제 시 주의할 점 ! 일단 무조건적인 삭제가 아니라 무조건 S3에서 삭제한 후 발동해야된다.
 
+    //좋아요 count
+    @OneToMany(mappedBy = "review",cascade = CascadeType.ALL)
+    private List<Like> likeList = new ArrayList<>();
+
     public void addReviewImage(ReviewImage reviewImage){
         this.reviewImageList.add(reviewImage);
         reviewImage.setReview(this);
@@ -52,6 +56,11 @@ public class Review extends Auditable {
     public void addUserAndItem(User user, Item item){
         this.user = user;
         this.item = item;
+    }
+
+    public void addLike(Like like) {
+        this.likeList.add(like);
+        like.setReview(this);
     }
     //리뷰 생성할 때
     public Review(String comment, int rating, List<ReviewImage> reviewImageList, User user, Item item) {

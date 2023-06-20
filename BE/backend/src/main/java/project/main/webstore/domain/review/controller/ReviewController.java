@@ -122,4 +122,15 @@ public class ReviewController {
         URI uri = UriCreator.createUri("/api/item", "/review", itemId, responseDto.getData().getReviewId());
         return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
     }
+
+    @PostMapping("/review/{reviewId}/like")
+    public ResponseEntity addLikeReview(@PathVariable Long reviewId, Long userId) {
+        Review review = service.addLikeReview(reviewId, userId);
+        ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(review);
+        var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
+
+        URI uri = UriCreator.createUri("/api/item", "/review", review.getItem().getId(), review.getId());
+        return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
+
+    }
 }
