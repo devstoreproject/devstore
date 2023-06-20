@@ -40,7 +40,7 @@ public class ReviewService {
         if(check){
             throw new BusinessLogicException(CommonExceptionCode.IMAGE_HAS_ALWAYS_REPRESENTATIVE);
         }
-        check = imageInfoList.stream().distinct().count() != imageInfoList.size();
+        check = imageInfoList.stream().map(ImageInfoDto::getOrder).distinct().count() != imageInfoList.size();
         if(check){
             throw new BusinessLogicException(CommonExceptionCode.IMAGE_ORDER_ALWAYS_UNIQUE);
         }
