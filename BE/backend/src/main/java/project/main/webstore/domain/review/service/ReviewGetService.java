@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.review.entity.Review;
-import project.main.webstore.domain.review.mapper.ReviewMapper;
 import project.main.webstore.domain.review.repository.ReviewRepository;
 import project.main.webstore.domain.users.entity.User;
 
@@ -17,7 +16,6 @@ import project.main.webstore.domain.users.entity.User;
 public class ReviewGetService {
     private final ReviewRepository reviewRepository;
     private final ReviewValidService reviewValidService;
-    private final ReviewMapper mapper;
 
     public Review getReviewByReviewId(Long reviewId) {
         Review findReview = reviewValidService.validReview(reviewId);
@@ -28,8 +26,7 @@ public class ReviewGetService {
     }
 
 
-
-    public Page<Review> getReviewPage(Long userId,Pageable pageable){
+    public Page<Review> getReviewPage(Long userId, Pageable pageable) {
         //TODO UserId를 이용해 검증할 필요가 있다. 관리자가 맞는지 검증할 필요가 있다.
         Page<Review> reviewPage = reviewRepository.findAllPage(pageable);
         return reviewPage;
