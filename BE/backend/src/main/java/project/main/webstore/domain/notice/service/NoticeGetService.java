@@ -14,7 +14,7 @@ import project.main.webstore.exception.BusinessLogicException;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NoticeGetService {
-    private NoticeRepository repository;
+    private final NoticeRepository repository;
 
     //단순하게 조회하는 것
     public Notice getNotice(Long noticeId) {

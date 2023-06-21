@@ -1,5 +1,6 @@
 package project.main.webstore.domain.notice.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@AllArgsConstructor
 public class Notice extends Auditable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -37,8 +39,19 @@ public class Notice extends Auditable {
     @JoinColumn(name = "USER_ID")
     private User user;
 
+    public Notice(Long id, String title, String content) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+    }
+
     public void addReviewImage(NoticeImage image){
         this.noticeImageList.add(image);
         image.setNotice(this);
+    }
+
+    public Notice(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 }

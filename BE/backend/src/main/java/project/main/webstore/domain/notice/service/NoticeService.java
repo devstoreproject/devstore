@@ -19,22 +19,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class NoticeService {
-    private NoticeRepository repository;
-    private FileUploader fileUploader;
-    private ImageUtils imageUtils;
-    private NoticeGetService noticeGetService;
+    private final NoticeRepository repository;
+    private final FileUploader fileUploader;
+    private final ImageUtils imageUtils;
+    private final NoticeGetService noticeGetService;
+
     //사진 없을 떄
-    public Notice postNotice(Long userId, Notice notice){
+    public Notice postNotice(Notice notice,Long userId){
         //TODO: user 검증 여부 체크
 
         //user 찾기
-
         return repository.save(notice);
     }
 
     //사진 있을 때
     public Notice postNotice(Notice notice, List<ImageInfoDto> imageInfoList, Long userId){
-
         //이미지 파일 검증
         imageUtils.imageValid(imageInfoList);
 
@@ -50,11 +49,16 @@ public class NoticeService {
 
     public Notice patchNotice(List<ImageInfoDto> imageInfoList, List<Long> deleteIdList, Notice notice,Long userId){
         Notice findNotice = noticeGetService.getNotice(notice.getId());
+
         Optional.ofNullable(notice.getContent()).ifPresent(findNotice::setContent);
         Optional.ofNullable(notice.getTitle()).ifPresent(findNotice::setTitle);
 
-        patchImage(imageInfoList,notice,deleteIdList);
+        List<Image> imageList = imageUtils.patchImage(imageInfoList,findNotice.getNoticeImageList(),deleteIdList);
 
+        if (imageList.isEmpty() == false) {
+            imageList.stream().map(image -> new NoticeImage(image, notice)).forEach(findNotice::addReviewImage);
+
+        }
         return findNotice;
     }
 
@@ -69,30 +73,5 @@ public class NoticeService {
         repository.delete(notice);
     }
 
-    private void patchImage(List<ImageInfoDto> infoList, Notice notice, List<Long> deleteIdList) {
-        List<NoticeImage> imageList = notice.getNoticeImageList();
-
-        if (infoList.isEmpty() == false) {
-            List<ImageInfoDto> addImageList = infoList.stream().filter(info -> info.getId() == null).collect(Collectors.toList());
-            List<ImageInfoDto> savedImageList = infoList.stream().filter(info -> info.getId() != null).collect(Collectors.toList());
-
-            imageUtils.changeRepresentativeAndOrder(savedImageList, imageList);
-
-            if (deleteIdList != null) {
-                //사진 삭제하는 경우
-                List<NoticeImage> deleteImage = findImageById(deleteIdList, notice);
-                List<String> deleteImagePath = deleteImage.stream().map(Image::getImagePath).collect(Collectors.toList());
-
-                imageUtils.deleteImageList(imageList, deleteIdList, deleteImagePath);
-            }
-            List<Image> uploadedImageList = fileUploader.uploadImage(addImageList);
-            uploadedImageList.stream().map(image -> new NoticeImage(image, notice)).forEach(notice::addReviewImage);
-        }
-    }
-
-    private List<NoticeImage> findImageById(List<Long> deleteImageId, Notice notice) {
-        List<NoticeImage> noticeImageList = notice.getNoticeImageList().stream().filter(image -> deleteImageId.contains(image.getId())).collect(Collectors.toList());
-        return noticeImageList;
-    }
 
 }
