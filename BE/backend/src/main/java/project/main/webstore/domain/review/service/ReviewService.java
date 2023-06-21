@@ -1,6 +1,7 @@
 package project.main.webstore.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -108,6 +110,10 @@ public class ReviewService {
             List<ImageInfoDto> addImageList = infoList.stream().filter(info -> info.getId() == null).collect(Collectors.toList());
             List<ImageInfoDto> savedImageList = infoList.stream().filter(info -> info.getId() != null).collect(Collectors.toList());
 
+            log.info("#### add{}",addImageList);
+            log.info("#### saved{}",savedImageList);
+
+
             changeRepresentativeAndOrder(savedImageList, imageList);
 
 
@@ -131,6 +137,8 @@ public class ReviewService {
             Optional<ReviewImage> first = imageList.stream().filter(image -> image.getId() == requestInfo.getId()).findFirst();
 
             ReviewImage image = first.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.IMAGE_NOT_FOUND));
+
+            log.info("### ReviewImage = {}",image);
 
             image.setRepresentative(requestInfo.isRepresentative());
             image.setImageOrder(requestInfo.getOrder());
