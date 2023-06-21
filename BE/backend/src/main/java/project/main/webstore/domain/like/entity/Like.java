@@ -41,4 +41,8 @@ public class Like extends Auditable {
         this.user = user;
         this.review = review;
     }
+
+    public Like(Review review) {
+        this.review = review;
+    }
 }
