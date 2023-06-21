@@ -19,13 +19,23 @@ public class ImageMapper {
                 .uploadDir(uploadDir)
                 .build();
     }
+    public ImageInfoDto toLocalDto(ImageSortDto sortDto) {
+        return new ImageInfoDto(sortDto.getId(), sortDto.getOrderNumber(), sortDto.isRepresentative());
+    }
     public List<ImageInfoDto> toLocalDtoList(List<MultipartFile>fileList,List<ImageSortDto> imageSortDto,String uploadDir){
         List<ImageInfoDto> result = new ArrayList<>();
         //TODO: 예외처리 하나 있으면 좋아보인다. mapping Exception 이런것들
+        int j = 0;
+        for(int i = 0 ; i < imageSortDto.size(); i++){
+            ImageInfoDto infoDto;
+            if(imageSortDto.get(i).getId() == null){
+                infoDto = toLocalDto(fileList.get(j++), imageSortDto.get(i), uploadDir);
 
-        for(int i = 0 ; i < fileList.size(); i++){
-            ImageInfoDto imageInfoDto = toLocalDto(fileList.get(i), imageSortDto.get(i), uploadDir);
-            result.add(imageInfoDto);
+            }else{
+                infoDto = toLocalDto(imageSortDto.get(i));
+            }
+
+            result.add(infoDto);
         }
         return result;
     }

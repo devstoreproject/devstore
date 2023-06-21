@@ -1,6 +1,7 @@
 package project.main.webstore.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
@@ -9,7 +10,6 @@ import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.like.entity.Like;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.repository.ReviewRepository;
-import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.exception.CommonExceptionCode;
 import project.main.webstore.utils.FileUploader;
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -27,11 +28,11 @@ public class ReviewService {
     private final FileUploader fileUploader;
 
     private static void imageValid(List<ImageInfoDto> imageInfoList) {
-        boolean check = imageInfoList.stream().noneMatch(ImageInfoDto::isRepresentative);
-        if (check) {
+        List<ImageInfoDto> checkRepresentative = imageInfoList.stream().filter(info -> info.isRepresentative()).collect(Collectors.toList());
+        if (checkRepresentative.size() != 1) {
             throw new BusinessLogicException(CommonExceptionCode.IMAGE_HAS_ALWAYS_REPRESENTATIVE);
         }
-        check = imageInfoList.stream().map(ImageInfoDto::getOrder).distinct().count() != imageInfoList.size();
+        boolean check = imageInfoList.stream().map(ImageInfoDto::getOrder).distinct().count() != imageInfoList.size();
         if (check) {
             throw new BusinessLogicException(CommonExceptionCode.IMAGE_ORDER_ALWAYS_UNIQUE);
         }
@@ -40,7 +41,7 @@ public class ReviewService {
     public Review addLikeReview(Long reviewId, Long itemId, Long userId) {
         //TODO: item, user 검증 먼저 진행할 필요 존재
         Review findReview = reviewValidService.validReview(reviewId);
-        Like like = new Like(new User(1L), findReview);
+        Like like = new Like(findReview);
         findReview.addLike(like);
 
         return findReview;
@@ -108,6 +109,10 @@ public class ReviewService {
             List<ImageInfoDto> addImageList = infoList.stream().filter(info -> info.getId() == null).collect(Collectors.toList());
             List<ImageInfoDto> savedImageList = infoList.stream().filter(info -> info.getId() != null).collect(Collectors.toList());
 
+            log.info("#### add{}",addImageList);
+            log.info("#### saved{}",savedImageList);
+
+
             changeRepresentativeAndOrder(savedImageList, imageList);
 
 
@@ -131,6 +136,8 @@ public class ReviewService {
             Optional<ReviewImage> first = imageList.stream().filter(image -> image.getId() == requestInfo.getId()).findFirst();
 
             ReviewImage image = first.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.IMAGE_NOT_FOUND));
+
+            log.info("### ReviewImage = {}",image);
 
             image.setRepresentative(requestInfo.isRepresentative());
             image.setImageOrder(requestInfo.getOrder());
