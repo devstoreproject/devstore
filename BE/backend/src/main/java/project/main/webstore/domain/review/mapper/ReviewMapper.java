@@ -37,7 +37,8 @@ public class ReviewMapper {
     }
 
     public ReviewIdResponseDto toDto(Review review){
-        return new ReviewIdResponseDto(review.getId(),review.getUser().getId(),review.getItem().getId());
+//        return new ReviewIdResponseDto(review.getId(),review.getUser().getId(),review.getItem().getId());
+        return new ReviewIdResponseDto(review.getId(),1L,1L);
     }
     public ReviewGetResponseDto toGetDtoResponse(Review review){
         return ReviewGetResponseDto.dtoBuilder()

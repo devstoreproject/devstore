@@ -45,11 +45,4 @@ public interface ReviewJpaRepository extends JpaRepository<Review,Long>,ReviewRe
     @Override
     @Query("select r from Review r")
     Page<Review> findAllPage(Pageable pageable);
-
-    @Override
-    @Query(value = "SELECT r.* FROM review r " +
-            "WHERE r.id = :reviewId " +
-            "ORDER BY COUNT(r.like) DESC " +
-            "LIMIT :count",nativeQuery = true)
-    List<Review> findTopN(@Param("reviewId") Long reviewId, @Param("count") int count);
 }

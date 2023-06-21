@@ -116,8 +116,8 @@ public class ReviewController {
     @PatchMapping("/item/{itemId}/review/{reviewId}")
     public ResponseEntity patchReview(@PathVariable Long itemId,
                                       @PathVariable Long reviewId,
-                                      @RequestPart ReviewUpdateRequestDto patchDto,
-                                      @RequestPart List<MultipartFile> imageList
+                                      @RequestPart(required = false) ReviewUpdateRequestDto patchDto,
+                                      @RequestPart(required = false) List<MultipartFile> imageList
     ) {
         Review review = reviewMapper.toEntity(patchDto, reviewId);
         List<ImageInfoDto> imageInfoList = imageMapper.toLocalDtoList(imageList, patchDto.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
@@ -137,18 +137,19 @@ public class ReviewController {
         ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(review);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
 
-        URI uri = UriCreator.createUri("/api/item", "/review", review.getItem().getId(), review.getId());
+//        URI uri = UriCreator.createUri("/api/item", "/review", review.getItem().getId(), review.getId());
+        URI uri = UriCreator.createUri("/api/item", "/review", 1L, review.getId());
         return ResponseEntity.ok().header("Location", uri.toString()).body(responseDto);
     }
 
 
     //테스트 필요
-    @GetMapping("/item/{itemId}/review/{reviewId}/best")
-    public ResponseEntity getBestReview(@PathVariable Long reviewId,
-                                        @PathVariable Long itemId,
+    //TODO: 수정 필요 예외 레포지토리 단에서 오류 발생 네이티브 쿼리 학습한 이후 다시 작업
+    @GetMapping("/item/{itemId}/review/best")
+    public ResponseEntity getBestReview(@PathVariable Long itemId,
                                         @RequestParam Long userId,
                                         @RequestParam int count) {
-        List<Review> bestReview = getService.getBestReview(reviewId, itemId, userId, count);
+        List<Review> bestReview = getService.getBestReview(itemId, userId, count);
         List<ReviewGetResponseDto> reviewGetResponseDtos = reviewMapper.toGetListResponse(bestReview);
 
         var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()

@@ -10,6 +10,8 @@ import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.repository.ReviewRepository;
 import project.main.webstore.domain.users.entity.User;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -46,9 +48,14 @@ public class ReviewGetService {
         return reviewPage;
     }
 
-    public List<Review> getBestReview(Long reviewId, Long itemId, Long userId, int count) {
+    public List<Review> getBestReview(Long itemId, Long userId, int count) {
         //검증 먼저 진행 필요
-        List<Review> topNList = reviewRepository.findTopN(reviewId, count);
-        return topNList;
+        List<Review> allList = reviewRepository.findByItemId(itemId);
+        Collections.sort(allList, (s1, s2) -> s1.getLikeList().size() - s2.getLikeList().size());
+        List<Review> answer = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            answer.add(allList.get(i));
+        }
+        return answer;
     }
 }
