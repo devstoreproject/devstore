@@ -17,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(name = "USERS")
 @Entity
 public class User extends Auditable {
     @Id
@@ -52,5 +53,9 @@ public class User extends Auditable {
         this.grade = grade;
         this.providerId = providerId;
         this.userRole = userRole;
+    }
+
+    public User(Long id) {
+        this.id = id;
     }
 }
