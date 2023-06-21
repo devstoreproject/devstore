@@ -37,6 +37,4 @@ public interface ReviewRepository {
 
     void deleteById(Long id);
 
-    List<Review> findTopN(Long reviewId, int count);
-
 }
