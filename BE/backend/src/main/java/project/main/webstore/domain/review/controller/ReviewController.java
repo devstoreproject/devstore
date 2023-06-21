@@ -116,8 +116,8 @@ public class ReviewController {
     @PatchMapping("/item/{itemId}/review/{reviewId}")
     public ResponseEntity patchReview(@PathVariable Long itemId,
                                       @PathVariable Long reviewId,
-                                      @RequestPart ReviewUpdateRequestDto patchDto,
-                                      @RequestPart List<MultipartFile> imageList
+                                      @RequestPart(required = false) ReviewUpdateRequestDto patchDto,
+                                      @RequestPart(required = false) List<MultipartFile> imageList
     ) {
         Review review = reviewMapper.toEntity(patchDto, reviewId);
         List<ImageInfoDto> imageInfoList = imageMapper.toLocalDtoList(imageList, patchDto.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);

@@ -39,12 +39,12 @@ public class Review extends Auditable {
     private Item item;
 
     @Setter
-    @OneToMany(mappedBy = "review",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "review",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<ReviewImage> reviewImageList = new ArrayList<>();
     //삭제 시 주의할 점 ! 일단 무조건적인 삭제가 아니라 무조건 S3에서 삭제한 후 발동해야된다.
 
     //좋아요 count
-    @OneToMany(mappedBy = "review",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "review",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likeList = new ArrayList<>();
 
     public void addReviewImage(ReviewImage reviewImage){
