@@ -1,20 +1,25 @@
 package project.main.webstore.domain.image.utils;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.exception.CommonExceptionCode;
+import project.main.webstore.utils.FileUploader;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class ImageUtils {
+    private final FileUploader fileUploader;
 
     public void imageValid(List<ImageInfoDto> imageInfoList) {
-        List<ImageInfoDto> checkRepresentative = imageInfoList.stream().filter(info -> info.isRepresentative()).collect(Collectors.toList());
+        List<ImageInfoDto> checkRepresentative = imageInfoList.stream().filter(ImageInfoDto::isRepresentative).collect(Collectors.toList());
         if (checkRepresentative.size() != 1) {
             throw new BusinessLogicException(CommonExceptionCode.IMAGE_HAS_ALWAYS_REPRESENTATIVE);
         }
@@ -24,7 +29,40 @@ public class ImageUtils {
         }
     }
 
-    public void changeRepresentativeAndOrder(List<ImageInfoDto> requestInfoList, List<? extends Image> imageList) {
+    public List<Image> patchImage(List<ImageInfoDto> infoList, List<? extends Image> imageList, List<Long> deleteIdList) {
+        if (infoList.isEmpty() == false) {
+            List<ImageInfoDto> addImageList = infoList.stream().filter(info -> info.getId() == null).collect(Collectors.toList());
+            List<ImageInfoDto> savedImageList = infoList.stream().filter(info -> info.getId() != null).collect(Collectors.toList());
+
+            changeRepresentativeAndOrder(savedImageList, imageList);
+
+            if (deleteIdList != null) {
+                //사진 삭제하는 경우
+                patchDeleteImage(imageList, deleteIdList);
+            }
+            return fileUploader.uploadImage(addImageList);
+
+        }
+        return new ArrayList<>();
+    }
+
+    public void deleteImage(List<String> deletePath) {
+        for (String path : deletePath) {
+            fileUploader.deleteS3Image(path);
+        }
+    }
+
+    private void patchDeleteImage(List<? extends Image> imageList, List<Long> deleteIdList) {
+        List<? extends Image> deleteImage = findImageById(deleteIdList, imageList);
+        List<String> deleteImagePath = deleteImage.stream().map(Image::getImagePath).collect(Collectors.toList());
+        deleteImageList(imageList, deleteIdList, deleteImagePath);
+    }
+
+    private List<? extends Image> findImageById(List<Long> deleteImageId, List<? extends Image> imageList) {
+        return imageList.stream().filter(image -> deleteImageId.contains(image.getId())).collect(Collectors.toList());
+    }
+
+    private void changeRepresentativeAndOrder(List<ImageInfoDto> requestInfoList, List<? extends Image> imageList) {
         for (int i = 0; i < requestInfoList.size(); i++) {
             ImageInfoDto requestInfo = requestInfoList.get(i);
 
@@ -37,8 +75,7 @@ public class ImageUtils {
         }
     }
 
-
-    public void deleteImageList(List<? extends Image> imageList, List<Long> deleteId, List<String> deleteImagePath) {
+    private void deleteImageList(List<? extends Image> imageList, List<Long> deleteId, List<String> deleteImagePath) {
         for (int i = 0; i < deleteId.size(); i++) {
             Long id = deleteId.get(i);
             int index;
@@ -49,12 +86,6 @@ public class ImageUtils {
             }
             imageList.remove(index);
             deleteImage(deleteImagePath);
-        }
-    }
-
-    public void deleteImage(List<String> deletePath) {
-        for (String path : deletePath) {
-            fileUploader.deleteS3Image(path);
         }
     }
 }
