@@ -1,4 +1,4 @@
-package project.main.webstore.domain.users.enums;
+package project.main.webstore.domain.user.enums;
 
 import lombok.AllArgsConstructor;
 

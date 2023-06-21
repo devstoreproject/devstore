@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.item.entity.Item;
-import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.domain.user.entity.User;
 
 import javax.persistence.*;
 
@@ -14,6 +14,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
+@Table(name = "Likes")
 @NoArgsConstructor(access = PROTECTED)
 public class Like extends Auditable {
     @Id

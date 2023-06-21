@@ -10,7 +10,7 @@ public class ResponseDto<T> {
     private String message;
 
     @Builder
-    protected ResponseDto(T data, CustomCode customCode) {
+    public ResponseDto(T data, CustomCode customCode) {
         this.data = data;
         this.code = customCode.getCode();
         this.message = customCode.getMessage();

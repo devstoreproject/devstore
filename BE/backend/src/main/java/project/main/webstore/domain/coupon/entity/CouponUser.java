@@ -2,7 +2,7 @@ package project.main.webstore.domain.coupon.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.domain.user.entity.User;
 
 import javax.persistence.*;
 
