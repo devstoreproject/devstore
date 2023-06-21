@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 public class NoticeImage extends Image {
     @Setter
     @ManyToOne
-    @JoinColumn(name = "NOTICE_IMAGE")
+    @JoinColumn(name = "NOTICE_ID")
     private Notice notice;
 
     public NoticeImage(Image image, Notice notice) {
