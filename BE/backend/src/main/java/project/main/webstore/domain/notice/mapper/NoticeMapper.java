@@ -1,9 +1,8 @@
 package project.main.webstore.domain.notice.mapper;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import project.main.webstore.domain.notice.dto.NoticeIdResponseDto;
-import project.main.webstore.domain.notice.dto.NoticePatchRequestDto;
-import project.main.webstore.domain.notice.dto.NoticePostRequestDto;
+import project.main.webstore.domain.notice.dto.*;
 import project.main.webstore.domain.notice.entity.Notice;
 
 @Component
@@ -21,5 +20,13 @@ public class NoticeMapper {
 
     public NoticeIdResponseDto toResponseDto(Notice notice) {
         return new NoticeIdResponseDto(notice.getId());
+    }
+
+    public Page<NoticeGetSimpleResponseDto> toGetSimplePageResponse (Page<Notice> notice) {
+        return notice.map(NoticeGetSimpleResponseDto::new);
+    }
+
+    public NoticeGetResponseDto toGetRseponseGetDto(Notice notice) {
+        return new NoticeGetResponseDto(notice);
     }
 }
