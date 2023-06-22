@@ -104,7 +104,6 @@ class ReviewServiceTest {
                 .hasMessage("이미지 순서는 중복될 수 없습니다.");
 
 
-
     }
     @Test
     @DisplayName("리뷰 수정 사진 제외 수정 : 성공")
