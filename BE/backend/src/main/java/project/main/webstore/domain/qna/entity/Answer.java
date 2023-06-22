@@ -1,10 +1,9 @@
-package project.main.webstore.domain.answer.entity;
+package project.main.webstore.domain.qna.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.main.webstore.audit.Auditable;
-import project.main.webstore.domain.question.entity.Question;
-import project.main.webstore.domain.question.enums.QnaStatus;
+import project.main.webstore.domain.qna.enums.QnaStatus;
 import project.main.webstore.domain.users.entity.User;
 
 import javax.persistence.*;
