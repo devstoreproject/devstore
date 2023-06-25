@@ -2,6 +2,7 @@ package project.main.webstore.domain.qna.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.qna.enums.QnaStatus;
 import project.main.webstore.domain.users.entity.User;
@@ -12,14 +13,17 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.NONE;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = PROTECTED)
 public class Question extends Auditable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Setter(NONE)
     @Column(updatable = false)
     private Long id;
 //    @ElementCollection(fetch = EAGER)  이미지 여부 체크할 필요 있음
