@@ -29,7 +29,7 @@ public class QnaService {
 
         Optional.ofNullable(request.getQnaStatus()).ifPresent(find::setQnaStatus);
         Optional.ofNullable(request.getComment()).ifPresent(find::setComment);
-        Optional.ofNullable(request.isSecret()).ifPresent(find::setSecret);
+        find.setSecret(request.isSecret());
 
         return find;
     }
@@ -48,7 +48,10 @@ public class QnaService {
     }
 
     public void deleteAnswer(Long userId, Long answerId){
-        answerRepository.deleteById(answerId);
+        Answer find = answerRepository.findById(answerId).orElseThrow(() -> new BusinessLogicException(QnaExceptionCode.QUESTION_NOT_FOUND));
+        find.getQuestion().setQnaStatus(QnaStatus.ANSWER_COMPLETE);
+
+        answerRepository.delete(find);
     }
 
     private Question validQuestion(Long questionId) {
