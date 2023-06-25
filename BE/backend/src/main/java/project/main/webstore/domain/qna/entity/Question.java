@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
+import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.qna.enums.QnaStatus;
 import project.main.webstore.domain.users.entity.User;
 
@@ -39,7 +40,30 @@ public class Question extends Auditable {
     @ManyToOne(fetch = LAZY)
     private User user;
 
-    @OneToOne(fetch = EAGER)
+    @OneToOne(fetch = EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "QUESTION_ID")
     private Answer answer;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "ITEM_ID")
+    private Item item;
+
+    public Question(boolean isSecret, String comment, Long userId,Long itemId) {
+        this.item = new Item(itemId);
+        this.isSecret = isSecret;
+        this.comment = comment;
+        this.user = new User(userId);
+    }
+
+    public Question(Long id, boolean isSecret, String comment, Long userId, Long itemId) {
+        this.id = id;
+        this.isSecret = isSecret;
+        this.comment = comment;
+        this.user = new User(id);
+        this.item = new Item(id);
+    }
+
+    public Question(Long id) {
+        this.id = id;
+    }
 }

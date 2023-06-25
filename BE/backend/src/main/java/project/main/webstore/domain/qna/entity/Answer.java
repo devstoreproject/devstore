@@ -44,4 +44,11 @@ public class Answer extends Auditable {
         question.setAnswer(this);
     }
 
+    public Answer(boolean isSecret, String comment, Long questionId, Long userId) {
+        this.isSecret = isSecret;
+        this.qnaStatus = QnaStatus.ANSWER_COMPLETE;
+        this.comment = comment;
+        this.question = new Question(questionId);
+        this.user = new User(userId);
+    }
 }
