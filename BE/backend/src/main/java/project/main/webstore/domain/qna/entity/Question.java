@@ -7,8 +7,6 @@ import project.main.webstore.domain.qna.enums.QnaStatus;
 import project.main.webstore.domain.users.entity.User;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
@@ -24,8 +22,8 @@ public class Question extends Auditable {
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
     private Long id;
-    @ElementCollection(fetch = EAGER)
-    List<String> imagePathList = new ArrayList<>();
+//    @ElementCollection(fetch = EAGER)  이미지 여부 체크할 필요 있음
+//    List<String> imagePathList = new ArrayList<>();
     private boolean isSecret;
 
     @Lob
@@ -36,4 +34,8 @@ public class Question extends Auditable {
 
     @ManyToOne(fetch = LAZY)
     private User user;
+
+    @OneToOne(fetch = EAGER)
+    @JoinColumn(name = "QUESTION_ID")
+    private Answer answer;
 }
