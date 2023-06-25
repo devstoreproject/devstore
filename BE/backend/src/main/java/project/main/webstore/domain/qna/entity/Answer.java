@@ -39,4 +39,9 @@ public class Answer extends Auditable {
     private User user;
 
     // 연관관계 편의 메서드 //
+    public void addQuestion(Question question){
+        this.question = question;
+        question.setAnswer(this);
+    }
+
 }

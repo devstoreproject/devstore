@@ -1,6 +1,6 @@
 package project.main.webstore.domain.qna.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import project.main.webstore.exception.BusinessLogicException;
 
 @Service
 @Transactional(readOnly = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class QnaGetService {
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
