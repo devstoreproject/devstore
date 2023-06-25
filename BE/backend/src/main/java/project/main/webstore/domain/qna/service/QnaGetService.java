@@ -17,12 +17,12 @@ public class QnaGetService {
     private final QuestionRepository questionRepository;
 
     //Item 게시판에 들어갈 로직
-    public Page<Question> findAllQnaByItemId(Pageable pageable, Long itemId) {
+    public Page<Question> findQnaByItemId(Pageable pageable, Long itemId) {
         return questionRepository.findAllByItemId(pageable, itemId);
     }
 
     //사용자 상세 정보 페이지 들어갈 변수
-    public Page<Question> findQuestionById(Pageable pageable, Long userId) {
+    public Page<Question> findQnaByUserId(Pageable pageable, Long userId) {
         return questionRepository.findAllQnaByUserId(pageable, userId);
     }
 

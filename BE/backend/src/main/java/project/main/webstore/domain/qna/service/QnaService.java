@@ -21,10 +21,15 @@ public class QnaService {
     private final AnswerRepository answerRepository;
 
     public Question postQuestion(Question question) {
+        //TODO : userId를 찾는 로직 필요
+        //item 찾는 로직 필요
+        //item에 저장하는 로직 필요
+
         return questionRepository.save(question);
     }
 
     public Question patchQuestion(Question request){
+        //TODO : userId 찾는 로직 필요
         Question find = validQuestion(request.getId());
 
         Optional.ofNullable(request.getQnaStatus()).ifPresent(find::setQnaStatus);
@@ -34,17 +39,17 @@ public class QnaService {
         return find;
     }
 
-    public void deleteQuestion(Long questionId){
+    public void deleteQuestion(Long questionId,Long userId){
         questionRepository.deleteById(questionId);
     }
 
-    public Question postAnswer(Long userId,Answer answer){
-        //userId 조회하는 기능 필요
+    public Answer postAnswer(Answer answer){
+        //TODO : userId 조회하는 기능 필요 answer.getUser().getId() 활용
         Question find = validQuestion(answer.getQuestion().getId());
         find.setQnaStatus(QnaStatus.ANSWER_COMPLETE);
         answer.addQuestion(find);
 
-        return find;
+        return answer;
     }
 
     public void deleteAnswer(Long userId, Long answerId){
