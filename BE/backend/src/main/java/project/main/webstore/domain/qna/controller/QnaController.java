@@ -52,8 +52,8 @@ public class QnaController {
 
     //시큐리티 적용 이후 변경예정
     @GetMapping("/admin")
-    public ResponseEntity getQnaByStatus(@RequestParam Long userId) {
-        Page<Question> result = getService.findQuestionByStatus(userId);
+    public ResponseEntity getQnaByStatus(@RequestParam Long userId, Pageable pageable) {
+        Page<Question> result = getService.findQuestionByStatus(userId, pageable);
         Page<QuestionDto> response = mapper.toResponsePage(result);
         var responseDto = ResponseDto.<Page<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);

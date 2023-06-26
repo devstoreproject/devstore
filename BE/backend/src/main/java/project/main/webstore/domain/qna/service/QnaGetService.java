@@ -33,7 +33,7 @@ public class QnaGetService {
     }
 
     //관리자를 위한 미 답변 질문 리스트 체크 메서드
-    public Page<Question> findQuestionByStatus(Long userId) {
-        return questionRepository.findByStatus();
+    public Page<Question> findQuestionByStatus(Long userId, Pageable pageable) {
+        return questionRepository.findByStatus(pageable);
     }
 }

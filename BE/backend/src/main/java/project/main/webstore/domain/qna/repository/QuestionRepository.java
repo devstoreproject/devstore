@@ -13,5 +13,5 @@ public interface QuestionRepository extends JpaRepository<Question,Long> {
     Page<Question> findAllQnaByUserId(Pageable pageable, Long userId);
 
     @Query("select q from Question  q where q.qnaStatus = project.main.webstore.domain.qna.enums.QnaStatus.REGISTER")
-    Page<Question> findByStatus();
+    Page<Question> findByStatus(Pageable pageable);
 }
