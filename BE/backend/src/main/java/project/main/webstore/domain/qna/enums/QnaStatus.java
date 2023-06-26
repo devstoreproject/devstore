@@ -1,4 +1,4 @@
-package project.main.webstore.domain.question.enums;
+package project.main.webstore.domain.qna.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

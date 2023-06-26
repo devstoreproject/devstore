@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.enums.ItemStatus;
+import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.valueObject.Price;
 
 import javax.persistence.*;
@@ -49,6 +50,8 @@ public class Item {
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems = new ArrayList<>();
 
+    @OneToMany(mappedBy = "item")
+    private List<Question> qestuionList;
     //PicedItem 연관관계 매핑
     @OneToOne(fetch = LAZY)
     private PickedItem pickedItem;
