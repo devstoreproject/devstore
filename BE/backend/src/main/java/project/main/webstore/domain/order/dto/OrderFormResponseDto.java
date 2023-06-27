@@ -15,10 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderFormResponseDto { // 주문 폼 작성 ResponseDto
     private Long orderId;
-
-//    private List<OrderItemResponseDto> orderItems;
-
-
     private String orderNumber;
     private String recipient;
     private String email;
@@ -28,6 +24,8 @@ public class OrderFormResponseDto { // 주문 폼 작성 ResponseDto
     private String addressSimple;
     private String addressDetail;
     private String message; // 선택사항
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
 //    private int count;
 //    private int price;
@@ -36,8 +34,5 @@ public class OrderFormResponseDto { // 주문 폼 작성 ResponseDto
 //    private int totalPrice;
 //    private int price;
 //    private int mileage;
-
 //    private OrdersStatus  ordersStatus;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
 }

@@ -9,13 +9,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class OrderItemPostDto {
-//    @NotNull
-//    private Long cartItemId;
-//    @NotNull
-//    private Long itemId;
-//    @NotNull
-//    private int itemCount;
-
     @NotNull
     private int itemCount;
     @NotNull
