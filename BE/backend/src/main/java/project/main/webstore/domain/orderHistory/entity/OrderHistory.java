@@ -3,8 +3,12 @@ package project.main.webstore.domain.orderHistory.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.Cart;
+import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.order.entity.OrderItem;
+import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.orderHistory.enums.OrderStatus;
 import project.main.webstore.domain.payment.entity.Payment;
 import project.main.webstore.domain.users.entity.User;
@@ -13,10 +17,13 @@ import project.main.webstore.valueObject.Price;
 
 import javax.persistence.*;
 
+import java.util.List;
+
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class OrderHistory extends Auditable {
@@ -53,6 +60,19 @@ public class OrderHistory extends Auditable {
     private User user;
     @OneToOne(fetch = LAZY)
     private Cart cart;
-    @OneToOne(fetch = LAZY)
+
+    //TODO: Payment 연관관계 추가
+    @OneToOne(mappedBy = "orderHistory")
     private Payment payment;
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+        if(payment.getOrderHistory() != this) {
+            payment.setOrderHistory(this);
+        }
+    }
+
+    //TODO: OrderItem 추가
+    @OneToMany(mappedBy = "orderHistory")
+    private List<OrderItem> orderItems;
 }
