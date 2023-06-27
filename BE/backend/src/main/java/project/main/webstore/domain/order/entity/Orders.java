@@ -92,7 +92,7 @@ public class Orders extends Auditable {
     }
 
     // 연관관계 매핑
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
     @OneToMany(mappedBy = "order")
     private List<Coupon> coupons = new ArrayList<>();

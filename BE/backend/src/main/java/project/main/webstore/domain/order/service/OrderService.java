@@ -72,7 +72,7 @@ public class OrderService {
     }
 
     public Orders getOrder(long orderId) {
-    return findOrder(orderId);
+        return findOrder(orderId);
     }
 
     // 주문 정보 생성 service
