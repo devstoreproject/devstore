@@ -2,8 +2,10 @@ package project.main.webstore.domain.payment.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.coupon.entity.Coupon;
+import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.orderHistory.entity.OrderHistory;
 import project.main.webstore.domain.payment.enums.PaymentStatus;
 import project.main.webstore.domain.users.entity.User;
@@ -36,4 +38,8 @@ public class Payment extends Auditable {
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "ORDERHISTORY_ID")
     private OrderHistory orderHistory;
+
+    @Setter
+    @OneToOne(fetch = LAZY)
+    private Orders order;
 }

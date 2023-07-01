@@ -2,8 +2,10 @@ package project.main.webstore.domain.coupon.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.coupon.enums.CouponStatus;
+import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.payment.entity.Payment;
 import project.main.webstore.valueObject.Duration;
 import project.main.webstore.valueObject.Price;
@@ -57,4 +59,8 @@ public class Coupon extends Auditable {
     //payment  쿠폰 결제 : 하나의 결제에 여러개의 쿠폰을 사용할 수 있다. ->   여러개의 쿠폰이 하나의 결제에 사용이 가능하다. ManyToOne
     @ManyToOne(fetch = LAZY)
     private Payment payment;
+
+    @Setter
+    @ManyToOne(fetch = LAZY)
+    private Orders order;
 }
