@@ -44,8 +44,8 @@ public class PaymentController {
     @GetMapping("/post-vlaid/{orderNumber}")
     public ResponseEntity validPayment(@ModelAttribute PrepareData prepareData,
                                        @RequestParam String iamId,
-                                       @RequestParam String orderNumber,
-                                       @RequestParam long userId){
+                                       @PathVariable String orderNumber,
+                                       @RequestParam long userId){  //로그인 성공 시 로직 변경 필요
         String s = paymentService.validatePayment(prepareData, iamId, orderNumber, userId);
         var responseDto = ResponseDto.builder().data(s).build();
         return ResponseEntity.ok(responseDto);
