@@ -28,4 +28,11 @@ public class UriCreator {
                 .buildAndExpand(resourceId)
                 .toUri();
     }
+    public static URI createUri(String defaultUrl, String resourceId) {
+        return UriComponentsBuilder
+                .newInstance()
+                .path("api/" + defaultUrl + "/resource-id")
+                .buildAndExpand(resourceId)
+                .toUri();
+    }
 }

@@ -9,13 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.payment.exception.PaymentExceptionCode;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.redis.RedisUtils;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -31,23 +29,10 @@ public class PaymentService {
     private final int SAVE_PAY_ACCESS_TIME = 10;
     //AOP 이용 가능성 확인   사전 등록 -> 사전 등록 시 레디스에 캐시 메모리로 저장, 이후 진짜 저장할 떄 DB에 저장 하면 좋지 않나? 하는 조그만한 생각을 가지고 있음
 
-    private static void validPriceEquals(int iamPrice, int checkPrice) {
-        if (checkPrice != iamPrice) {
-            throw new BusinessLogicException(PaymentExceptionCode.PAYMENT_AMOUNT_CONFLICT);
-        }
-    }
-
-    private static void validPaymentAccessTime(PrepareData findByKey) {
-        if(findByKey == null){
-            throw new BusinessLogicException(PaymentExceptionCode.PAYMENT_ACCESS_TIME_ERROR);
-        }
-    }
 
     //프론트엔드와의 상의를 통해 데이터를 변경할 필요가 있을 수 있음
-    public PrepareData postPrepare(String orderNumber, int amount, Orders order) {
-        PrepareData prepareData = null;
+    public PrepareData postPrepare(PrepareData prepareData) {
         try {
-            prepareData = new PrepareData(orderNumber, new BigDecimal(amount));
             IamportResponse<Prepare> iamportResponse = client.postPrepare(prepareData);
         } catch (IamportResponseException e) {
             if (e.getHttpStatusCode() == 401) { //검증 실패 ( 토큰 문제)
@@ -70,8 +55,7 @@ public class PaymentService {
         redisUtils.set(prepareData.getMerchant_uid(),prepareData,SAVE_PAY_ACCESS_TIME);
         return prepareData;
     }
-
-    //사전 저장 데이터와의 일치 여부 체크용
+    //사후 검증
     public String validatePayment(PrepareData prepareData, String impUid, String orderNumber, long userId)
     {
         PrepareData findByKey = (PrepareData) redisUtils.findByKey(prepareData.getMerchant_uid());
@@ -110,8 +94,8 @@ public class PaymentService {
         return "결제 성공";
     }
 
-    //결제 사후 검증
-    private IamportResponse<Prepare> getPrepare(String orderNumber, int price) {
+    //사전 검증
+    public IamportResponse<Prepare> getPrepare(String orderNumber, int price) {
         IamportResponse<Prepare> prepare = null;
         PrepareData findByKey = (PrepareData) redisUtils.findByKey(orderNumber);
 
@@ -155,4 +139,16 @@ public class PaymentService {
             throw new BusinessLogicException(PaymentExceptionCode.FABRICATED_PAYMENT);
         }
     }
+    private void validPriceEquals(int iamPrice, int checkPrice) {
+        if (checkPrice != iamPrice) {
+            throw new BusinessLogicException(PaymentExceptionCode.PAYMENT_AMOUNT_CONFLICT);
+        }
+    }
+
+    private void validPaymentAccessTime(PrepareData findByKey) {
+        if(findByKey == null){
+            throw new BusinessLogicException(PaymentExceptionCode.PAYMENT_ACCESS_TIME_ERROR);
+        }
+    }
+
 }
