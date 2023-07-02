@@ -7,6 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum OrdersStatus {
     ORDER_COMPLETE("주문 완료"),
+    DEPOSIT_COMPLETE("입금 완료"),
+
     ORDER_CANCEL("주문 취소");
 
     public String ordersStauts;
