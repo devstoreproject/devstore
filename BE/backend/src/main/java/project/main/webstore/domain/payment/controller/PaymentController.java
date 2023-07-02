@@ -41,5 +41,14 @@ public class PaymentController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/post-vlaid/{orderNumber}")
+    public ResponseEntity validPayment(@ModelAttribute PrepareData prepareData,
+                                       @RequestParam String iamId,
+                                       @RequestParam String orderNumber,
+                                       @RequestParam long userId){
+        String s = paymentService.validatePayment(prepareData, iamId, orderNumber, userId);
+        var responseDto = ResponseDto.builder().data(s).build();
+        return ResponseEntity.ok(responseDto);
+    }
     //결제 취소 조회는 order 완성되고 난 이후 작업 진행 예정
 }
