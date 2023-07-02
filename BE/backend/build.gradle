@@ -22,12 +22,13 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 //	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -49,8 +50,12 @@ dependencies {
 	implementation 'com.github.downgoon:MarvinPlugins:1.5.5'
 	implementation 'org.springframework.boot:spring-boot-starter-test'
 
-	// https://mvnrepository.com/artifact/com.google.guava/guava
+
 	implementation 'com.google.guava:guava:31.1-jre'
+	//스웨거
+	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+	//아임포트
+	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 
 }
 
