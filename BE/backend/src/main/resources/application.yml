@@ -7,7 +7,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL55Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         highlight_sql: true
@@ -15,11 +15,14 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
     database: mysql
-    open-in-view: false
+#    open-in-view: false
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 20MB
+  redis:
+    host: localhost
+    port: 6379
 logging:
   level:
     org.hibernate.sql: info
@@ -35,3 +38,16 @@ cloud:
     credentials:
       accessKey: ${S3_ACCESS_KEY}
       secretKey: ${S3_SECRET_KEY}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    tags-sorter: alpha
+    disable-swagger-default-url: true
+    path: /swagger-ui
+  paths-to-match: /api/**
+
+iamport:
+  api-key: 1558762544126242
+  secret-key: rHqopNfJBD7yr39miijLfcRG6VXeIxGgXgrXIjGqsgoK5tGpRHJ8mfm9z3IIvYdHeSzUf0AkGzMxO1ab
