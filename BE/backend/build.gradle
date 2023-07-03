@@ -19,7 +19,6 @@ configurations {
 		extendsFrom annotationProcessor
 	}
 }
-
 repositories {
 	mavenCentral()
 	maven { url 'https://jitpack.io' }
@@ -56,7 +55,6 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 	//아임포트
 	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
-
 }
 
 tasks.named('test') {
