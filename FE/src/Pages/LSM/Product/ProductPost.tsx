@@ -1,3 +1,11 @@
+import ProductForm from 'Components/LSM/Product/ProductForm/ProductForm';
+import ProductTitle from 'Components/LSM/Product/ProductTitle';
+
 export default function ProductPost() {
-  return <div>ProductPost</div>;
+  return (
+    <div className="mx-24 my-16">
+      <ProductTitle />
+      <ProductForm />
+    </div>
+  );
 }
