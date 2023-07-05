@@ -3,7 +3,7 @@ import ProductTitle from 'Components/LSM/Product/ProductTitle';
 
 export default function ProductPost() {
   return (
-    <div className="mx-24 my-16">
+    <div className="my-16">
       <ProductTitle />
       <ProductForm />
     </div>

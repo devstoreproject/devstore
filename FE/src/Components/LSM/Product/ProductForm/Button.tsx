@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 
 export default function Button() {
-  const path: string = useLocation().pathname.slice(9);
+  const path: string = useLocation().pathname.slice(19);
   const postButtonList = [
     { id: 1, name: '등록하기' },
     { id: 2, name: '돌아가기' },
