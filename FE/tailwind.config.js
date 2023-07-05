@@ -4,7 +4,15 @@ module.exports = {
   theme: {
     extend: {
       padding: {
+        95: '23.75rem',
+        104: '26rem',
         112: '28rem',
+        120: '30rem',
+        128: '32rem',
+        136: '34rem',
+        175: '43.75rem',
+        200: '50rem',
+        250: '62.5rem',
       },
       lineHeight: {
         12: '3rem',
