@@ -4,9 +4,8 @@ import SignIn from 'Pages/KYH/SignIn';
 import SignUp from 'Pages/KYH/SignUp';
 import SleeperAccount from 'Pages/KYH/SleeperAccount';
 import Mypage from 'Pages/KYH/Mypage';
-import ProductList from 'Components/KYH/ProductList/ProductList';
-import ReturnOrExchange from 'Components/KYH/ReturnOrExchange/ReturnOrExchange';
-import ProductInquiry from 'Components/KYH/ProductInquiry/ProductInquiry';
+
+import Admin from 'Pages/KYH/Admin';
 
 function App() {
   return (
@@ -16,9 +15,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/sleeperaccount" element={<SleeperAccount />} />
         <Route path="/mypage/*" element={<Mypage />} />
-        <Route path="/admin/productlist" element={<ProductList />} />
-        <Route path="/admin/returnorexchange" element={<ReturnOrExchange />} />
-        <Route path="/admin/productinquiry" element={<ProductInquiry />} />
+        <Route path="/admin/*" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   );
