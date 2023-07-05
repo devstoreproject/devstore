@@ -18,7 +18,7 @@ export default function ContentsList() {
     '14',
   ];
   return (
-    <ul className="flex flex-wrap items-center w-full">
+    <ul className="flex flex-wrap items-center w-full ">
       {contents.map((content, idx) => (
         <ContentsItem
           key={idx}
