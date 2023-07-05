@@ -35,6 +35,12 @@ module.exports = {
         175: '43.75rem',
         200: '50rem',
         250: '62.5rem',
+        365: '91.25rem',
+        1460: '1460px',
+      },
+      maxWidth: {
+        365: '91.25rem',
+        1460: '1460px',
       },
       height: {
         100: '25rem',
@@ -47,6 +53,7 @@ module.exports = {
       boxShadow: {
         signBox: '0px 3px 8px rgba(0, 0, 0, 0.24)',
         btn: 'rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;',
+        contentsBox: '5px 10px 8px rgba(0, 0, 0, 0.3)',
       },
     },
   },
