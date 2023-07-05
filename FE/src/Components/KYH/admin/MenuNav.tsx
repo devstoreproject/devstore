@@ -16,11 +16,11 @@ export default function MenuNav() {
             to={menu.to}
             className={({ isActive }) =>
               isActive
-                ? 'text-xl flex bg-light-black text-neon-green h-14 rounded-lg items-center'
-                : 'text-xl flex h-14 items-center'
+                ? 'flex bg-light-black text-neon-green h-14 rounded-lg items-center'
+                : 'flex h-14 items-center'
             }
           >
-            <div className="mx-4 text-2xl">{menu.icon}</div>
+            <div className="mx-4 text-xl">{menu.icon}</div>
             <span>{menu.text}</span>
           </NavLink>
         </li>
