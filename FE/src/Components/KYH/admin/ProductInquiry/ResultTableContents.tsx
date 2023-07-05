@@ -1,6 +1,6 @@
 export default function ResultTableContents() {
   return (
-    <div className="flex w-full h-12 border-b rounded-t-lg border-b-gray-400">
+    <div className="flex h-12 pl-10 border-b rounded-t-lg border-b-gray-400">
       <p className="text-center truncate leading-12 w-96">
         알파스캔 AOC Q32V3S QHD IPS 75 시력보호 알파알파알파
       </p>
