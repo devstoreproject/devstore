@@ -3,12 +3,16 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      padding: {
+        112: '28rem',
+      },
       lineHeight: {
         12: '3rem',
       },
       colors: {
         'neon-green': '#00FF00',
         'light-gray': '#F7F8FA',
+        'light-black': '#333333',
       },
       width: {
         104: '26rem',

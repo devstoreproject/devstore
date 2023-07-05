@@ -3,7 +3,7 @@ import Table from './Table';
 
 export default function ProductList() {
   return (
-    <div className="flex flex-col w-screen min-h-screen pt-20 pl-48 bg-light-gray">
+    <div className="flex flex-col">
       <span className="mb-6 text-xl font-bold">판매 상품</span>
       <Table />
       <div className="flex items-center justify-between w-5/6 mt-6">
