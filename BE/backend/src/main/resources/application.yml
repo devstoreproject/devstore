@@ -1,0 +1,53 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    password: ${DATABASE_PASSWORD}
+    username: ${DATABASE_ID}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL55Dialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        highlight_sql: true
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+    database: mysql
+#    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+  redis:
+    host: localhost
+    port: 6379
+logging:
+  level:
+    org.hibernate.sql: info
+    org.hibernate.type.descriptor.sql: trace
+  #    org.hibernate.type: trace
+cloud:
+  aws:
+    s3:
+      bucket-origin: devstore-image-origin
+      bucket-resizing: devstore-image-resized
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    tags-sorter: alpha
+    disable-swagger-default-url: true
+    path: /swagger-ui
+  paths-to-match: /api/**
+
+iamport:
+  api-key: ${IAMPORT_API_KEY}
+  secret-key: ${SECRET_KEY}
