@@ -51,3 +51,22 @@ springdoc:
 iamport:
   api-key: ${IAMPORT_API_KEY}
   secret-key: ${SECRET_KEY}
+  
+mail:
+  address:
+    admin: ${ADMIN}
+  smtp:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_ID}
+    password: ${MAIL_PASSWORD}
+    auth: true
+    starttls:
+      enable: true
+  subject:
+    member:
+      registration: 가입 환영한다 얼간이들아
+  template:
+    name:
+      member:
+        join: email-registration-member
