@@ -1,4 +1,4 @@
-package project.main.webstore.email.email;
+package project.main.webstore.email;
 
 import org.springframework.stereotype.Component;
 

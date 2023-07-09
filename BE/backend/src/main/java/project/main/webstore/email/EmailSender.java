@@ -1,4 +1,4 @@
-package project.main.webstore.email.email;
+package project.main.webstore.email;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailSendException;

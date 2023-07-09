@@ -8,13 +8,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import project.main.webstore.email.email.EmailSendable;
-import project.main.webstore.email.email.SimpleEmailSendable;
-import project.main.webstore.email.email.TemplateEmailSendable;
+import project.main.webstore.email.EmailSendable;
+import project.main.webstore.email.SimpleEmailSendable;
+import project.main.webstore.email.TemplateEmailSendable;
 
 import java.util.Properties;
 
