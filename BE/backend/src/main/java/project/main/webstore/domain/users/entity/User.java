@@ -2,10 +2,12 @@ package project.main.webstore.domain.users.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.users.enums.Grade;
 import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.enums.UserRole;
+import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.valueObject.Address;
 
 import javax.persistence.*;
@@ -19,6 +21,7 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @Table(name = "USERS")
 @Entity
+@Setter
 public class User extends Auditable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -30,7 +33,6 @@ public class User extends Auditable {
     private String email;
     private LocalDateTime lastConnectedDate;
     private int mileage;
-
     @Embedded
     private Address address;
 
@@ -40,7 +42,8 @@ public class User extends Auditable {
     private ProviderId providerId = ProviderId.JWT;
     @Enumerated(STRING)
     private UserRole userRole = UserRole.CLIENT;
-
+    @Enumerated(STRING)
+    private UserStatus userStatus = UserStatus.TMP;
 
     public User(String nickName, String profileImage, String password, String email, int mileage, Address address, Grade grade, ProviderId providerId, UserRole userRole) {
         this.nickName = nickName;
