@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import project.main.webstore.email.EmailSendable;
@@ -42,13 +40,8 @@ public class javaConfig {
     private String tlsEnable;
 
     @Bean
-    public IamportClient iamportClient(){
+    public IamportClient iamportClient() {
         return new IamportClient(apiKey, secretKey);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
