@@ -20,6 +20,12 @@ import NoticeEdit from 'Pages/LSM/Notice/NoticeEdit';
 import NoticeDetail from 'Pages/LSM/Notice/NoticeDetail';
 import ProductPost from 'Pages/LSM/Product/ProductPost';
 import ProductEdit from 'Pages/LSM/Product/ProductEdit';
+import Cart from 'Pages/KHJ/Cart';
+import CheckList from 'Pages/KHJ/CheckList';
+import Purchase from 'Pages/KHJ/Purchase';
+import PurComplete from 'Pages/KHJ/PurComplete';
+import PurComDetail from 'Pages/KHJ/PurComDetail';
+import Order from 'Pages/KHJ/Order';
 
 function App() {
   return (
@@ -47,6 +53,13 @@ function App() {
           <Route path="productlist/post" element={<ProductPost />} />
           <Route path="productlist/edit" element={<ProductEdit />} />
         </Route>
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checklist" element={<CheckList />} />
+        <Route path="/purchase" element={<Purchase />}>
+          <Route path="complete" element={<PurComplete />} />
+          <Route path="detail" element={<PurComDetail />} />
+        </Route>
+        <Route path="order" element={<Order />} />
       </Routes>
     </BrowserRouter>
   );

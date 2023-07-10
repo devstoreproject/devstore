@@ -1,3 +1,13 @@
 @tailwind base;
+
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background: #f7f8fa;
+  /* padding-top: 92px; */
+}
+
+em {
+  font-style: normal;
+}
