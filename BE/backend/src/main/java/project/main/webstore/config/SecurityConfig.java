@@ -21,6 +21,7 @@ import project.main.webstore.security.jwt.filter.JwtVerificationFilter;
 import project.main.webstore.security.jwt.handler.FailAuthenticationHandler;
 import project.main.webstore.security.jwt.handler.SuccessAuthenticationHandler;
 import project.main.webstore.security.jwt.utils.JwtTokenizer;
+import project.main.webstore.security.jwt.utils.TransMessageUtils;
 
 import java.util.Arrays;
 
@@ -32,6 +33,7 @@ public class SecurityConfig {
     private final JwtTokenizer jwtTokenizer;
     private final ObjectMapper objectMapper;
     private final RedisUtils redisUtils;
+    private final TransMessageUtils transMessageUtils;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
@@ -77,7 +79,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity builder) throws Exception {
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
-            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer,objectMapper,redisUtils);
+            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer,redisUtils,transMessageUtils);
             jwtAuthenticationFilter.setFilterProcessesUrl("/api/login");          // 로그인 경로 체크
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new SuccessAuthenticationHandler());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new FailAuthenticationHandler());

@@ -27,13 +27,17 @@ import java.util.Map;
 public class JwtVerificationFilter extends OncePerRequestFilter {
     private final JwtTokenizer tokenizer;
 
-    private static void setAuthenticationToContext(Map<String, Object> claims) {
+    private void setAuthenticationToContext(Map<String, Object> claims) {
         LinkedHashMap userInfoMap = (LinkedHashMap) claims.get("userInfo");
+
+        //리펙토링 대상
         Long id =  Long.valueOf((String)userInfoMap.get("userId"));
         String email = (String) userInfoMap.get("email");
         String nickName = (String) userInfoMap.get("nickName");
         UserRole userRole = UserRole.transEnum((String) userInfoMap.get("userRole"));
         UserInfoDto userInfo = new UserInfoDto(id, email, nickName, userRole);
+
+
         List<GrantedAuthority> authorityList = AuthorityUtils.createAuthorityList(userInfo.getUserRole().getRole());
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userInfo, null, authorityList);
         SecurityContextHolder.getContext().setAuthentication(authentication);

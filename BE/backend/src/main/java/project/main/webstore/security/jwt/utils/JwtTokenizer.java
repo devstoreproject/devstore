@@ -9,11 +9,13 @@ import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import project.main.webstore.security.dto.UserInfoDto;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -31,8 +33,33 @@ public class JwtTokenizer {
         return Encoders.BASE64.encode(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
+    public String delegateAccessToken(UserInfoDto userInfo) {
+        Map<String, Object> claims = new HashMap<>();
+
+        claims.put("userInfo", userInfo);
+        String subject = userInfo.getEmail();
+        Date expiration = getTokenExpiration(getAccessTokenExpirationMinutes());
+
+        String base64EncodedSecretKey = encodeBase64SecretKey(getSecretKey());
+
+        String accessToken = generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
+
+        return accessToken;
+    }
+
+    public String delegateRefreshToken(UserInfoDto userInfo) {
+        String subject = userInfo.getEmail();
+        Date expiration = getTokenExpiration(getRefreshTokenExpirationMinutes());
+        String base64EncodedSecretKey = encodeBase64SecretKey(getSecretKey());
+
+        String refreshToken = generateRefreshToken(subject, expiration, base64EncodedSecretKey);
+
+        return refreshToken;
+    }
+
+
     //인증된 사용자에게 JWT 토큰 발급 위한 메서드
-    public String generateAccessToken(Map<String, Object> claims,
+    private String generateAccessToken(Map<String, Object> claims,
                                       String subject,
                                       Date expiration,
                                       String base64EncodedSecretKey) {
@@ -48,7 +75,7 @@ public class JwtTokenizer {
     }
 
     //Access 만료 시 Access 생성해주는 메서드
-    public String generateRefreshToken(String subject, Date expiration, String base64EncodedSecretKey) {
+    private String generateRefreshToken(String subject, Date expiration, String base64EncodedSecretKey) {
         Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
 
         return Jwts.builder()
@@ -85,7 +112,6 @@ public class JwtTokenizer {
 
         return expiration;
     }
-
 
     private Key getKeyFromBase64EncodedKey(String base64EncodedSecretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(base64EncodedSecretKey);

@@ -1,10 +1,14 @@
 package project.main.webstore.security.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.enums.UserRole;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserInfoDto {
     private String userIdStr;
     private Long userId;
