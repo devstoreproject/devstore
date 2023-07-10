@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .authenticationEntryPoint(new UserAuthEntryPoint());
         http
                 .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().authenticated()                // 요청에 대한 권한별 분류
+                .anyRequest().permitAll()                // 요청에 대한 권한별 분류
                 );
         return http.build();
     }
