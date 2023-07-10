@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
+import project.main.webstore.domain.users.dto.UserPostRequestDto;
 import project.main.webstore.domain.users.enums.Grade;
 import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.enums.UserRole;
@@ -35,6 +36,7 @@ public class User extends Auditable implements Principal {
     private String email;
     private LocalDateTime lastConnectedDate;
     private int mileage;
+
     @Embedded
     private Address address;
 
@@ -76,5 +78,11 @@ public class User extends Auditable implements Principal {
         this.email = email;
         this.userRole = userRole;
         this.userStatus = userStatus;
+    }
+
+    public User(UserPostRequestDto post) {
+        this.nickName = post.getName();
+        this.password = post.getPassword();
+        this.email = post.getEmail();
     }
 }

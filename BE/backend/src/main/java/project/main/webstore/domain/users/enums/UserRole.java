@@ -10,4 +10,13 @@ public enum UserRole {
 
     ;
     private String role;
+
+    public static UserRole transEnum(String str){
+        if(str.equals(UserRole.CLIENT.name()))
+            return UserRole.CLIENT;
+        else if (str.equals(UserRole.ADMIN.name())) {
+            return UserRole.ADMIN;
+        }
+        return null;
+    }
 }
