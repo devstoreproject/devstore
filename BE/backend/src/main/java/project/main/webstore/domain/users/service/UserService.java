@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +18,6 @@ import project.main.webstore.domain.users.repository.UserRepository;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.utils.FileUploader;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,6 +30,7 @@ public class UserService {
     private final FileUploader fileUploader;
 
     public User postUser(User user, ImageInfoDto imageInfo) {
+        //TODO : admin을 직접 입명하는 것 필요 즉 admin이 직접 admin의 권한을 부여하는 것이 필요하다. 구상은 admin이 계정 중 직접 admin을 부여하는 것을 고려 중
         verifyExistsEmail(user.getEmail());
         setEncryptedPassword(user);
 
@@ -85,7 +83,6 @@ public class UserService {
         return userPage;
     }
 
-    //사진이 없을 때 PatchUser
     public User patchUser(User user, ImageInfoDto imageInfo) {
         User findUser = validUserExist(user.getId());
         if (findUser.getProviderId() != ProviderId.JWT) { //소셜 로그인 검증

@@ -1,21 +1,28 @@
 package project.main.webstore.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import project.main.webstore.security.jwt.filter.JwtAuthenticationFilter;
+import project.main.webstore.security.jwt.utils.JwtTokenizer;
 
 import java.util.Arrays;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final JwtTokenizer jwtTokenizer;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
@@ -25,8 +32,10 @@ public class SecurityConfig {
                 .cors(withDefaults())    // corsConfigurationSource 이름의 등록 빈 사용
                 .formLogin().disable()   // 폼로그인 비활성화
                 .httpBasic().disable()   //전송마다 사용자 이름과 비밀번호 헤더에 같이 전달
+                .apply(new CustomFilterConfigurer());
+        http
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll()                // 요청에 대한 권한별 분류
+                .anyRequest().permitAll()                // 요청에 대한 권한별 분류
                 );
         return http.build();
     }
@@ -45,5 +54,19 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();   // 구현체
         source.registerCorsConfiguration("/**", configuration);     //모든 URL에 정책 적용
         return source;
+    }
+
+
+
+    public class CustomFilterConfigurer extends AbstractHttpConfigurer<CustomFilterConfigurer, HttpSecurity> {
+        @Override
+        public void configure(HttpSecurity builder) throws Exception {
+            AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
+
+            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer);
+            jwtAuthenticationFilter.setFilterProcessesUrl("/api/login");          // 로그인 경로 체크
+
+            builder.addFilter(jwtAuthenticationFilter);  //필터체인에 추가
+        }
     }
 }

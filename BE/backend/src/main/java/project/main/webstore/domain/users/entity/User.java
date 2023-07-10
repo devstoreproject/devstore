@@ -11,6 +11,8 @@ import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.valueObject.Address;
 
 import javax.persistence.*;
+import javax.security.auth.Subject;
+import java.security.Principal;
 import java.time.LocalDateTime;
 
 import static javax.persistence.EnumType.STRING;
@@ -22,7 +24,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "USERS")
 @Entity
 @Setter
-public class User extends Auditable {
+public class User extends Auditable implements Principal {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
@@ -45,6 +47,11 @@ public class User extends Auditable {
     @Enumerated(STRING)
     private UserStatus userStatus = UserStatus.TMP;
 
+    @Override
+    public String getName() {
+        return getEmail();
+    }
+
     public User(String nickName, String profileImage, String password, String email, int mileage, Address address, Grade grade, ProviderId providerId, UserRole userRole) {
         this.nickName = nickName;
         this.profileImage = profileImage;
@@ -60,5 +67,14 @@ public class User extends Auditable {
 
     public User(Long id) {
         this.id = id;
+    }
+
+    protected User(Long id, String nickName, String password, String email, UserRole userRole, UserStatus userStatus) {
+        this.id = id;
+        this.nickName = nickName;
+        this.password = password;
+        this.email = email;
+        this.userRole = userRole;
+        this.userStatus = userStatus;
     }
 }
