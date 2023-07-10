@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -31,7 +31,8 @@ public class RedisConfig {
 
         //일반적인 key:value의 경우 시리얼라이저
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class)); // JSON 직렬화를 위해 Jackson2JsonRedisSerializer 사용
+//        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class)); // JSON 직렬화를 위해 Jackson2JsonRedisSerializer 사용
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
         // Hash를 사용할 경우 시리얼라이저
         //redisTemplate.setHashKeySerializer(new StringRedisSerializer());

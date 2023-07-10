@@ -51,7 +51,7 @@ springdoc:
 iamport:
   api-key: ${IAMPORT_API_KEY}
   secret-key: ${SECRET_KEY}
-  
+
 mail:
   address:
     admin: ${ADMIN}
@@ -70,3 +70,8 @@ mail:
     name:
       member:
         join: email-registration-member
+
+jwt:
+  key: ${JWT_SECRET_KEY}
+  access-token-expiration-minutes: 30
+  refresh-token-expiration-minutes: 420

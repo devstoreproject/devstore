@@ -30,11 +30,10 @@ public class UserService {
     private final FileUploader fileUploader;
 
     public User postUser(User user, ImageInfoDto imageInfo) {
+        //TODO : admin을 직접 입명하는 것 필요 즉 admin이 직접 admin의 권한을 부여하는 것이 필요하다. 구상은 admin이 계정 중 직접 admin을 부여하는 것을 고려 중
         verifyExistsEmail(user.getEmail());
         setEncryptedPassword(user);
-
-        saveProfileImage(user, imageInfo);
-
+        saveProfileImageIfHas(user, imageInfo);
         User savedUser = userRepository.save(user);
 
         //이벤트 발급필요
@@ -82,7 +81,6 @@ public class UserService {
         return userPage;
     }
 
-    //사진이 없을 때 PatchUser
     public User patchUser(User user, ImageInfoDto imageInfo) {
         User findUser = validUserExist(user.getId());
         if (findUser.getProviderId() != ProviderId.JWT) { //소셜 로그인 검증
@@ -93,7 +91,7 @@ public class UserService {
         Optional.ofNullable(user.getAddress()).ifPresent(findUser::setAddress);
         Optional.ofNullable(user.getNickName()).ifPresent(findUser::setNickName);
 
-        saveProfileImage(user, imageInfo);
+        saveProfileImageIfHas(user, imageInfo);
 
         return findUser;
     }
@@ -102,8 +100,11 @@ public class UserService {
     /*
      * 회원이 존재 하면 예외 발생
      * */
-    private User verifyExistsEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_EXIST));
+    private void verifyExistsEmail(String email) {
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        if(byEmail.isPresent()){
+            throw new BusinessLogicException(UserExceptionCode.USER_EXIST);
+        }
     }
 
     private void setEncryptedPassword(User user) {
@@ -130,7 +131,7 @@ public class UserService {
         findUser.setUserStatus(UserStatus.ACTIVE);
     }
 
-    private void saveProfileImage(User user, ImageInfoDto imageInfo) {
+    private void saveProfileImageIfHas(User user, ImageInfoDto imageInfo) {
         if (imageInfo != null) {
             Image image = fileUploader.uploadImage(imageInfo);
             user.setProfileImage(image.getImagePath());

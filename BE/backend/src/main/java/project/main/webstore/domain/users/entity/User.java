@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
+import project.main.webstore.domain.users.dto.UserPostRequestDto;
 import project.main.webstore.domain.users.enums.Grade;
 import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.enums.UserRole;
@@ -11,6 +12,8 @@ import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.valueObject.Address;
 
 import javax.persistence.*;
+import javax.security.auth.Subject;
+import java.security.Principal;
 import java.time.LocalDateTime;
 
 import static javax.persistence.EnumType.STRING;
@@ -22,7 +25,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "USERS")
 @Entity
 @Setter
-public class User extends Auditable {
+public class User extends Auditable implements Principal {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
@@ -33,6 +36,7 @@ public class User extends Auditable {
     private String email;
     private LocalDateTime lastConnectedDate;
     private int mileage;
+
     @Embedded
     private Address address;
 
@@ -44,6 +48,11 @@ public class User extends Auditable {
     private UserRole userRole = UserRole.CLIENT;
     @Enumerated(STRING)
     private UserStatus userStatus = UserStatus.TMP;
+
+    @Override
+    public String getName() {
+        return getEmail();
+    }
 
     public User(String nickName, String profileImage, String password, String email, int mileage, Address address, Grade grade, ProviderId providerId, UserRole userRole) {
         this.nickName = nickName;
@@ -60,5 +69,20 @@ public class User extends Auditable {
 
     public User(Long id) {
         this.id = id;
+    }
+
+    protected User(Long id, String nickName, String password, String email, UserRole userRole, UserStatus userStatus) {
+        this.id = id;
+        this.nickName = nickName;
+        this.password = password;
+        this.email = email;
+        this.userRole = userRole;
+        this.userStatus = userStatus;
+    }
+
+    public User(UserPostRequestDto post) {
+        this.nickName = post.getName();
+        this.password = post.getPassword();
+        this.email = post.getEmail();
     }
 }

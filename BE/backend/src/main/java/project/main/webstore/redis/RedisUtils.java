@@ -2,7 +2,6 @@ package project.main.webstore.redis;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -12,7 +11,8 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtils {
     private final RedisTemplate<String, Object> redisTemplate;
     public void set(String key, Object o, int minutes) {
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
+//        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
+//        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.opsForValue().set(key, o, minutes, TimeUnit.MINUTES);
     }
 
