@@ -18,6 +18,7 @@ import project.main.webstore.redis.RedisUtils;
 import project.main.webstore.security.jwt.entryPoint.UserAuthEntryPoint;
 import project.main.webstore.security.jwt.filter.JwtAuthenticationFilter;
 import project.main.webstore.security.jwt.filter.JwtVerificationFilter;
+import project.main.webstore.security.jwt.handler.FailAuthenticationHandler;
 import project.main.webstore.security.jwt.handler.SuccessAuthenticationHandler;
 import project.main.webstore.security.jwt.utils.JwtTokenizer;
 
@@ -79,6 +80,7 @@ public class SecurityConfig {
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer,objectMapper,redisUtils);
             jwtAuthenticationFilter.setFilterProcessesUrl("/api/login");          // 로그인 경로 체크
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new SuccessAuthenticationHandler());
+            jwtAuthenticationFilter.setAuthenticationFailureHandler(new FailAuthenticationHandler());
 
             JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer);
 
