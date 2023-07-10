@@ -2,6 +2,11 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
+    screens: {
+      sm: { min: '320px', max: '768px' },
+      md: { min: '769px', max: '1023px' },
+      lg: { min: '1024px', max: '1980px' },
+    },
     extend: {
       padding: {
         95: '23.75rem',
@@ -49,6 +54,7 @@ module.exports = {
         120: '30rem',
         128: '32rem',
         136: '34rem',
+        150: '37.5rem',
       },
       boxShadow: {
         signBox: '0px 3px 8px rgba(0, 0, 0, 0.24)',
