@@ -6,7 +6,7 @@ export default function ResultTableContents() {
       <span className="flex items-center justify-center w-36">
         12315648942315
       </span>
-      <span className="w-56 text-center truncate leading-12">
+      <span className="ml-4 text-center truncate w-52 leading-12">
         단순 변심 단순 변심 단순 변심 단순 변심
       </span>
       <span className="flex items-center justify-center w-32">2023.06.27</span>

@@ -7,7 +7,11 @@ import { AiOutlineSound } from 'react-icons/ai';
 import { MdOutlineReviews } from 'react-icons/md';
 import { BsFillQuestionCircleFill } from 'react-icons/bs';
 
-export default function MenuNav() {
+interface HomeNavigateProp {
+  fold: boolean;
+}
+
+export default function MenuNav({ fold }: HomeNavigateProp) {
   return (
     <ul>
       {menuList.map((menu) => (
@@ -21,7 +25,7 @@ export default function MenuNav() {
             }
           >
             <div className="mx-4 text-xl">{menu.icon}</div>
-            <span>{menu.text}</span>
+            <p className={`truncate ${fold ? 'hidden' : ''}`}>{menu.text}</p>
           </NavLink>
         </li>
       ))}
