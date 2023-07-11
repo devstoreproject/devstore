@@ -31,7 +31,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         LinkedHashMap userInfoMap = (LinkedHashMap) claims.get("userInfo");
 
         //리펙토링 대상
-        Long id =  Long.valueOf((String)userInfoMap.get("userId"));
+        Long id =  Long.valueOf((String)userInfoMap.get("userIdStr"));
         String email = (String) userInfoMap.get("email");
         String nickName = (String) userInfoMap.get("nickName");
         UserRole userRole = UserRole.transEnum((String) userInfoMap.get("userRole"));
