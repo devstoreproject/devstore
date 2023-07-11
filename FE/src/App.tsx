@@ -20,6 +20,7 @@ import NoticeEdit from 'Pages/LSM/Notice/NoticeEdit';
 import NoticeDetail from 'Pages/LSM/Notice/NoticeDetail';
 import ProductPost from 'Pages/LSM/Product/ProductPost';
 import ProductEdit from 'Pages/LSM/Product/ProductEdit';
+import AdminMain from 'Components/KYH/admin/AdminMain/AdminMain';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="subscription" element={<Subscription />} />
         </Route>
         <Route path="/admin" element={<Admin />}>
+          <Route path="" element={<AdminMain />} />
           <Route path="productlist" element={<ProductList />} />
           <Route path="returnorexchange" element={<ReturnOrExchange />} />
           <Route path="productinquiry" element={<ProductInquiry />} />
