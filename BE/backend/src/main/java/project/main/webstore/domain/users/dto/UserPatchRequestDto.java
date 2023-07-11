@@ -4,16 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import project.main.webstore.domain.image.dto.ImageSortDto;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Getter
 @AllArgsConstructor
-public class UserPostRequestDto {
-    @NotBlank
-    @Email
-    private String email;
+public class UserPatchRequestDto {
+
     //패스워드 검증용 필드 필요
     @NotBlank
     private String password;
