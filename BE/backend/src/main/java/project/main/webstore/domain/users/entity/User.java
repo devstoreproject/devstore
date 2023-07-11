@@ -1,9 +1,11 @@
 package project.main.webstore.domain.users.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
+import project.main.webstore.domain.users.dto.UserPatchRequestDto;
 import project.main.webstore.domain.users.dto.UserPostRequestDto;
 import project.main.webstore.domain.users.enums.Grade;
 import project.main.webstore.domain.users.enums.ProviderId;
@@ -12,7 +14,6 @@ import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.valueObject.Address;
 
 import javax.persistence.*;
-import javax.security.auth.Subject;
 import java.security.Principal;
 import java.time.LocalDateTime;
 
@@ -80,9 +81,27 @@ public class User extends Auditable implements Principal {
         this.userStatus = userStatus;
     }
 
+    @Builder(builderMethodName = "jwtBuilder")
     public User(UserPostRequestDto post) {
-        this.nickName = post.getName();
+        this.nickName = post.getNickname();
         this.password = post.getPassword();
         this.email = post.getEmail();
+        this.lastConnectedDate = LocalDateTime.now();
+        this.address = new Address(post.getZipCode(),post.getAddressSimple(),post.getAddressDetail(), post.getPhone());
+        this.grade = Grade.NORMAL;
+        this.providerId = ProviderId.JWT;
+        this.userRole = UserRole.CLIENT;
+        this.userStatus = UserStatus.TMP;
+    }
+    @Builder(builderMethodName = "patchBuilder")
+    public User(UserPatchRequestDto patch) {
+        this.nickName = patch.getNickname();
+        this.password = patch.getPassword();
+        this.lastConnectedDate = LocalDateTime.now();
+        this.address = new Address(patch.getZipCode(),patch.getAddressSimple(),patch.getAddressDetail(), patch.getPhone());
+        this.grade = Grade.NORMAL;
+        this.providerId = ProviderId.JWT;
+        this.userRole = UserRole.CLIENT;
+        this.userStatus = UserStatus.TMP;
     }
 }

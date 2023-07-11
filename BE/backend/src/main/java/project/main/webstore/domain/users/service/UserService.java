@@ -11,7 +11,6 @@ import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.enums.ProviderId;
-import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.repository.UserRepository;
@@ -72,11 +71,7 @@ public class UserService {
         return validUserExist(userId);
     }
 
-    public Page<User> getUserPage(Long userId, Pageable pageable) {
-        User user = validUserExist(userId);
-        if (user.getUserRole() != UserRole.ADMIN) {
-            throw new BusinessLogicException(UserExceptionCode.USER_NOT_ACCESS);
-        }
+    public Page<User> getUserPage(Pageable pageable) {
         Page<User> userPage = userRepository.findUserPage(pageable);
         return userPage;
     }
@@ -116,7 +111,7 @@ public class UserService {
      * 회원이 없으명 예외 발생
      * */
     // 내부 동작 메서드 //
-    public User validUserExist(Long UserId) {
+    private User validUserExist(Long UserId) {
         return userRepository.findById(UserId).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
     }
 
