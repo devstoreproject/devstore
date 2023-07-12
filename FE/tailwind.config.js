@@ -62,6 +62,8 @@ module.exports = {
         signBox: '0px 3px 8px rgba(0, 0, 0, 0.24)',
         btn: 'rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;',
         contentsBox: '5px 10px 8px rgba(0, 0, 0, 0.3)',
+        contentsBoxYminus: '5px -3px 8px rgba(0, 0, 0, 0.05)',
+        border: '0 0 0 1px rgba(209, 213, 219, 1)',
       },
       transitionProperty: {
         width: 'width',
