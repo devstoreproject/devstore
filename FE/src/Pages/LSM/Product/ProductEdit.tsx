@@ -3,7 +3,7 @@ import ProductTitle from 'Components/LSM/Product/ProductTitle';
 
 export default function ProductEdit() {
   return (
-    <div className="my-16">
+    <div className="pr-16 mb-16">
       <ProductTitle />
       <ProductForm />
     </div>

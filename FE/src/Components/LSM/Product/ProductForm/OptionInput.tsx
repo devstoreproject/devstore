@@ -7,7 +7,7 @@ export default function OptionInput() {
   ];
 
   return (
-    <div className="my-20">
+    <div className="w-full my-20">
       <p className="mb-6 text-subtitle-gray">옵션 등록</p>
       {optionList.map((option) => {
         return (
@@ -20,7 +20,7 @@ export default function OptionInput() {
               type="text"
               placeholder="텍스트를 입력해 주세요"
               disabled
-              className="w-full px-5 py-3 border rounded-3xl border-gray"
+              className="px-5 py-3 border lg:w-full rounded-3xl border-gray"
             />
             <button
               type="button"

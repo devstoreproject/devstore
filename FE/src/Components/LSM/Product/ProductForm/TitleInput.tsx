@@ -8,7 +8,7 @@ export default function TitleInput() {
         id="productTitle"
         type="text"
         placeholder="상품명을 입력해 주세요"
-        className="w-full px-5 py-3 border rounded-3xl border-gray"
+        className="px-5 py-3 border lg:w-full rounded-3xl border-gray"
       />
     </div>
   );
