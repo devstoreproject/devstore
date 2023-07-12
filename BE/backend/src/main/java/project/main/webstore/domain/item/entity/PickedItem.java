@@ -17,7 +17,9 @@ public class PickedItem {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
-    private Long id;
+    private Long pickedId;
+
+    @OneToMany(mappedBy = "pickedItem")
 
     //연관관계매핑
     @ManyToOne(fetch = LAZY)
