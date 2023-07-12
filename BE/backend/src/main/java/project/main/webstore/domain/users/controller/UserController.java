@@ -41,7 +41,7 @@ public class UserController {
         }
         User result = service.postUser(user, infoDto);
         UserIdResponseDto response = userMapper.toDto(result);
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED);
+        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED).build();
         URI location = UriCreator.createUri("/api/users/{userId}", response.getUserId());
 
         return ResponseEntity.created(location).body(responseDto);
