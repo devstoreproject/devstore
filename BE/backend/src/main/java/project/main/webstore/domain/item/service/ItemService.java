@@ -34,9 +34,7 @@ public class ItemService {
 
     // 기존 등록된 item 검증 후 등록
     public Item writeItem(Item item) {
-//        Optional<Item> optionalItem = itemRepository.findByItemName(item.getItemName());
-//        if(optionalItem.isPresent()) throw new BusinessLogicException(CommonExceptionCode.ITEM_EXIST);
-        Item findItem = findVerifiedItem(item.getItemId());
+        Item findItem = validItem(item.getItemId());
 
         return itemRepository.save(findItem);
     }
@@ -54,7 +52,7 @@ public class ItemService {
 
     //TODO: findItem -?
     public Item editItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item) {
-        Item findItem = findVerifiedItem(item.getItemId());
+        Item findItem = validItem(item.getItemId());
 
         Optional.ofNullable(item.getCategory()).ifPresent(findItem::setCategory);
         Optional.ofNullable(item.getItemName()).ifPresent(findItem::setItemName);
@@ -73,7 +71,7 @@ public class ItemService {
         return itemRepository.save(findItem);
     }
     public void deleteItem(Long itemId) {
-        Item findItem = findVerifiedItem(itemId);
+        Item findItem = validItem(itemId);
 
         // TODO:
         List<ItemImage> itemImageList = findItem.getItemImageList();
@@ -83,7 +81,7 @@ public class ItemService {
 
         itemRepository.delete(findItem);
     }
-    public Item findVerifiedItem(Long itemId) {
+    public Item validItem(Long itemId) {
         Optional<Item> optionalItem = itemRepository.findByItemId(itemId);
         return optionalItem.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND));
     }

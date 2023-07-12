@@ -19,8 +19,8 @@ public class PickedItem {
     @Column(updatable = false)
     private Long pickedId;
 
-    @OneToMany(mappedBy = "pickedItem")
-
+    @OneToOne(mappedBy = "pickedItem")
+    private Item item;
     //연관관계매핑
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name ="USER_ID")
