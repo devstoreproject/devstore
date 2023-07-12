@@ -21,7 +21,7 @@ public class SpecPatchDto {
     public SpecPatchDto(String itemName, Long specId, String content) {
         this.itemName = itemName;
         this.specId = specId;
-        this.content  = content;
+        this.content = content;
     }
 
     //    @Builder

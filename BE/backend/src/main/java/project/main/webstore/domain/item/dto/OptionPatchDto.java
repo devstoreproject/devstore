@@ -15,7 +15,7 @@ public class OptionPatchDto {
 
     @Builder
     public OptionPatchDto(String optionDetail) {
-        this.optionId =  getOptionId();
+        this.optionId = getOptionId();
         this.optionDetail = optionDetail;
     }
 }

@@ -1,6 +1,9 @@
 package project.main.webstore.domain.item.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -13,9 +16,9 @@ public class SpecResponseDto {
     @Builder
 
     public SpecResponseDto(Long specId, String itemName, String content) {
-        this.specId   = specId;
+        this.specId = specId;
         this.itemName = itemName;
-        this.content  = content;
+        this.content = content;
     }
     //    public SpecResponseDto(Spec spec) {
 //        this.specId = spec.getSpecId();

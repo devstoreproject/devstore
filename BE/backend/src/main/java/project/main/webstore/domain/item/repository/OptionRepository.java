@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OptionRepository extends JpaRepository<ItemOption, Long> {
-    @Query("SELECT i FROM ItemOption i WHERE i.detail = :detail")
-    Page<ItemOption> findByDetail(@Param("detail")String detail, Pageable pageRequest);
+    @Query("SELECT i FROM ItemOption i WHERE i.item.detail = :detail")
+    Page<ItemOption> findByDetail(@Param("detail") String detail, Pageable pageRequest);
     @Query("SELECT i FROM ItemOption i WHERE i.item.id = :itemId")
     List<ItemOption> findAllByItemId(@Param("itemId") Long itemId);
 }

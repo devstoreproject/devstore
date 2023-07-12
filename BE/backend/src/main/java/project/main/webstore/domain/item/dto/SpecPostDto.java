@@ -19,8 +19,8 @@ public class SpecPostDto {
 
     @Builder
     public SpecPostDto(Long itemId, String itemName, String content) {
-        this.itemId   = itemId;
+        this.itemId = itemId;
         this.itemName = itemName;
-        this.content     = content;
+        this.content = content;
     }
 }

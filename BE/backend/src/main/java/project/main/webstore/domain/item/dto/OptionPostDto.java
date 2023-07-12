@@ -1,6 +1,7 @@
 package project.main.webstore.domain.item.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -8,7 +9,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 public class OptionPostDto {
-    private Long   itemId;
+    private Long itemId;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z\\d`~!@#$%^&*()-_=+\\s]*$")
     @Size(min = 0, max = 100)
@@ -16,7 +17,7 @@ public class OptionPostDto {
 
     @Builder
     public OptionPostDto(Long itemId, String optionDetail) {
-        this.itemId       = itemId;
+        this.itemId = itemId;
         this.optionDetail = optionDetail;
     }
 }
