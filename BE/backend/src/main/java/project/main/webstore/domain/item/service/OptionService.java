@@ -26,7 +26,7 @@ public class OptionService {
     private final ItemService itemService;
 
     public ItemOption writeOption(ItemOption itemOption, Long itemId) {
-        Item findItem = itemService.findVerifiedItem(itemId);
+        Item findItem = itemService.validItem(itemId);
         itemOption.setItem(findItem);
 
         return optionRepository.save(itemOption);
@@ -49,7 +49,7 @@ public class OptionService {
     }
     public Page<ItemOption> getOptions(Long itemId, Pageable pageable) {
         Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("specId"));
-        Item findItem = itemService.findVerifiedItem(itemId);
+        Item findItem = itemService.validItem(itemId);
         String detail = findItem.getDetail();
 
         return optionRepository.findByDetail(detail, pageRequest);

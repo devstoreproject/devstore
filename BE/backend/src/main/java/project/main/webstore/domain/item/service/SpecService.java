@@ -26,7 +26,7 @@ public class SpecService {
 
     // TODO: itemSpec
     public ItemSpec writeSpec(ItemSpec itemSpec, Long itemId) {
-        Item findItem = itemService.findVerifiedItem(itemId);
+        Item findItem = itemService.validItem(itemId);
         itemSpec.setItem(findItem);
 
         return specRepository.save(itemSpec);
@@ -50,7 +50,7 @@ public class SpecService {
 
     public Page<ItemSpec> getSpecs(Long itemId, Pageable pageable) {
         Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("specId"));
-        Item findItem = itemService.findVerifiedItem(itemId);
+        Item findItem = itemService.validItem(itemId);
         String specs = findItem.getSpecs();
 
         return specRepository.findBySpecs(specs, pageRequest);

@@ -42,15 +42,15 @@ public class ItemController {
     private final ImageMapper imageMapper;
 
     @PostMapping("/create/item")
-    public ResponseEntity createItem(@RequestPart ItemPostDto itemPostDto,
+    public ResponseEntity createItem(@RequestPart ItemPostDto post,
                                      @RequestPart List<MultipartFile> imageList) {
-        Item writeItem = itemMapper.itemPostDtoToItem(itemPostDto);
+        Item request = itemMapper.itemPostDtoToItem(post);
         Item result;
         if (imageList != null) {
-            List<ImageInfoDto> imageInfoList = imageMapper.toLocalDtoList(imageList, itemPostDto.getInfoList(), UPLOAD_DIR);
-            result = itemService.writeItem(writeItem, imageInfoList);
+            List<ImageInfoDto> imageInfoList = imageMapper.toLocalDtoList(imageList, post.getInfoList(), UPLOAD_DIR);
+            result = itemService.writeItem(request, imageInfoList);
         } else {
-            result = itemService.writeItem(writeItem);
+            result = itemService.writeItem(request);
         }
         ItemIdResponseDto response = itemMapper.itemIdResponseDto(result);
         URI location = UriCreator.createUri(UPLOAD_DIR, result.getItemId());
@@ -86,7 +86,7 @@ public class ItemController {
     // 단일 아이템 조회
     @GetMapping("/{item-Id}")
     public ResponseEntity getItem(@PathVariable("item-Id") @Positive Long itemId) {
-        Item item = itemService.findVerifiedItem(itemId);
+        Item item = itemService.validItem(itemId);
         ItemResponseDto response = itemMapper.itemToItemResponseDto(item);
         var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
 
