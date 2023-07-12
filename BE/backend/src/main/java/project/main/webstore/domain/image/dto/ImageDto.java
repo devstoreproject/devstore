@@ -3,6 +3,8 @@ package project.main.webstore.domain.image.dto;
 import lombok.Getter;
 import project.main.webstore.domain.image.entity.Image;
 
+import java.util.List;
+
 @Getter
 public class ImageDto {
     private Long imageId;
