@@ -16,7 +16,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Optional<Item> findByItemId(Long itemId);
     Optional<Item> findByItemName(String itemName);
     @Query("SELECT i FROM Item i WHERE i.category = :category")
-    Page<Item> findItemByCategory(Category category, Pageable pageable);
+    Page<Item> findItemByCategory(@Param("category") Category category, Pageable pageable);
     @Query("SELECT i FROM Item i WHERE i.itemName LIKE %:itemName%")     // 대소문자 구분 없이 사용
     Page<Item> findByItemNameContainingIgnoreCase(@Param("itemName") String itemName, Pageable pageable);
 }

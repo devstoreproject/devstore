@@ -201,8 +201,8 @@ public class ItemController {
 
     // 단일
     @GetMapping("/{item-id}/option/{option-Id}")
-        public ResponseEntity getItemOption(@PathVariable("item-id") @Positive Long itemId,
-                                            @PathVariable("option-id") @Positive Long optionId) {
+    public ResponseEntity getItemOption(@PathVariable("item-id") @Positive Long itemId,
+                                        @PathVariable("option-id") @Positive Long optionId) {
         ItemOption result = optionService.getOption(optionId);
         OptionResponseDto response = itemMapper.optionToGetResponse(result);
         var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
@@ -213,7 +213,7 @@ public class ItemController {
 
     // 리스트
     @GetMapping("/{item-id}/option")
-    public ResponseEntity getOptionList(@PathVariable("item-id") Long itemId){
+    public ResponseEntity getOptionList(@PathVariable("item-id") Long itemId) {
         List<ItemOption> result = optionService.getOptions(itemId);
         List<OptionResponseDto> response = itemMapper.optionToGetListResponse(result);
 

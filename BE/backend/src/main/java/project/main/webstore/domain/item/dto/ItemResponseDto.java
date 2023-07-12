@@ -1,9 +1,10 @@
 package project.main.webstore.domain.item.dto;
 
-import lombok.*;
-import project.main.webstore.domain.item.entity.Item;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.main.webstore.domain.item.enums.Category;
-import project.main.webstore.valueObject.Price;
 
 import java.util.List;
 

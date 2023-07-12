@@ -7,10 +7,7 @@ import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.entity.ItemSpec;
 import project.main.webstore.valueObject.Price;
 
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 @Component
@@ -45,6 +42,7 @@ public class ItemMapper {
                 .build();
 
     }
+
     // Price Method
     private Price transPrice(Integer price) {
         return Price.builder().value(price).build();
@@ -125,6 +123,7 @@ public class ItemMapper {
 
         return itemResponseDtos;
     }
+
     public ItemIdResponseDto itemIdResponseDto(Item item) {
         return new ItemIdResponseDto(item.getItemId());
     }
@@ -150,7 +149,7 @@ public class ItemMapper {
                 .build();
     }
 
-        // itemSpec Mapper
+    // itemSpec Mapper
     public ItemSpec specPostDtoToSpec(SpecPostDto specPostDto) {
         return ItemSpec.builder()
                 .content(specPostDto.getContent())

@@ -6,12 +6,10 @@ import lombok.Setter;
 import project.main.webstore.domain.image.dto.ImageSortDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
-import project.main.webstore.valueObject.Price;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 @Getter
@@ -22,12 +20,12 @@ public class ItemPatchDto {
     private Category category;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$")
-    private String   itemName;
+    private String itemName;
     @NotNull
-    private int      itemCount;
+    private int itemCount;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z\\d`~!@#$%^&*()-_=+\\s]*$")
-    private String  description;
+    private String description;
     @NotNull
     private Integer itemPrice;
     @NotNull

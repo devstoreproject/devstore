@@ -2,16 +2,12 @@ package project.main.webstore.domain.item.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import project.main.webstore.domain.image.dto.ImageSortDto;
-import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
-import project.main.webstore.valueObject.Price;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 @Getter
@@ -21,12 +17,12 @@ public class ItemPostDto {
     private Category category;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$")
-    private String   itemName;
+    private String itemName;
     @NotNull
-    private int      itemCount;
+    private int itemCount;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z\\d`~!@#$%^&*()-_=+\\s]*$")
-    private String   description;
+    private String description;
     @NotNull
     private Integer itemPrice;
     @NotNull
@@ -37,11 +33,11 @@ public class ItemPostDto {
 
     @Builder
     public ItemPostDto(Category category, String itemName, int itemCount, String description, Integer itemPrice, Integer deliveryPrice) {
-        this.category  = category;
-        this.itemName  = itemName;
+        this.category = category;
+        this.itemName = itemName;
         this.itemCount = itemCount;
-        this.description   = description;
-        this.itemPrice     = itemPrice;
+        this.description = description;
+        this.itemPrice = itemPrice;
         this.deliveryPrice = deliveryPrice;
     }
 }
