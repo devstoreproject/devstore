@@ -2,7 +2,7 @@ import { BsCheck } from 'react-icons/bs';
 
 export default function CheckBox() {
   return (
-    <div className="relative flex items-center justify-center">
+    <div className="relative flex items-center justify-between">
       <div className="absolute top-4.5 left-4 text-white">
         <BsCheck />
       </div>
