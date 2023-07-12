@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+import Main from 'Pages/LSM/Main';
 import SignIn from 'Pages/KYH/SignIn';
 import SignUp from 'Pages/KYH/SignUp';
 import SleeperAccount from 'Pages/KYH/SleeperAccount';
@@ -27,11 +28,16 @@ import PurComplete from 'Pages/KHJ/PurComplete';
 import PurComDetail from 'Pages/KHJ/PurComDetail';
 import Order from 'Pages/KHJ/Order';
 import AdminMain from 'Components/KYH/admin/AdminMain/AdminMain';
+import Footer from 'Pages/LSM/Footer';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route element={<Footer />}>
+          <Route path="/" element={<Main />} />
+        </Route>
+
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/sleeperaccount" element={<SleeperAccount />} />
@@ -39,6 +45,7 @@ function App() {
         <Route path="/notice/post" element={<NoticePost />} />
         <Route path="/notice/edit" element={<NoticeEdit />} />
         <Route path="/notice/detail" element={<NoticeDetail />} />
+
         <Route path="/mypage" element={<Mypage />}>
           <Route path="orderlist" element={<OrderList />} />
           <Route path="userinfo" element={<UserInfo />} />
@@ -47,6 +54,7 @@ function App() {
           <Route path="coupons" element={<Coupons />} />
           <Route path="subscription" element={<Subscription />} />
         </Route>
+
         <Route path="/admin" element={<Admin />}>
           <Route path="" element={<AdminMain />} />
           <Route path="productlist" element={<ProductList />} />
