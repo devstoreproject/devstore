@@ -6,6 +6,11 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum Category {
-    COMPUTER,MONITOR
+    COMPUTER,
+    MONITOR,
+    MOUSE,
+    HEADSET,
+    CHAIR,
+    DESK
     ;
 }
