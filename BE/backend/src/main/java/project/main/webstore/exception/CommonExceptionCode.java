@@ -17,7 +17,16 @@ public enum CommonExceptionCode implements ExceptionCode {
     IMAGE_HAS_ALWAYS_REPRESENTATIVE(HttpStatus.BAD_REQUEST,"대표 이미지가 한개 있어야합니다."),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND,"이미지를 찾을 수 없습니다."),
     IMAGE_ORDER_ALWAYS_UNIQUE(HttpStatus.BAD_REQUEST,"이미지 순서는 중복될 수 없습니다."),
-    NOT_HAVE_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED,"리프레시토큰이 없습니다.")
+    NOT_HAVE_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED,"리프레시토큰이 없습니다."),
+    ITEM_EXIST(HttpStatus.CONFLICT,"중복된 아이템입니다."),
+    ITEM_NOT_FOUND(HttpStatus.NOT_FOUND,"아이템이 존재하지 않습니다."),
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 주문내역이 존재하지 않습니다"),
+    ORDER_ALREADY_CANCEL(HttpStatus.NOT_FOUND,"이미 취소된 주문입니다."),
+    ORDER_CANCEL_FAIL(HttpStatus.NOT_FOUND,"주문 취소를 실패했습니다."),
+    ORDER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND,"주문한 아이템 정보가 존재하지 않습니다."),
+    SPEC_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 스펙이 존재하지 않습니다."),
+    OPTION_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 옵션이 존재하지 않습니다.");
+
     ;
 
     private final HttpStatus httpStatus;
