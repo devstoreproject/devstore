@@ -28,13 +28,13 @@ import PurComplete from 'Pages/KHJ/PurComplete';
 import PurComDetail from 'Pages/KHJ/PurComDetail';
 import Order from 'Pages/KHJ/Order';
 import AdminMain from 'Components/KYH/admin/AdminMain/AdminMain';
-import Footer from 'Pages/LSM/Footer';
+import BasicLayout from 'Pages/LSM/BasicLayout';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Footer />}>
+        <Route element={<BasicLayout />}>
           <Route path="/" element={<Main />} />
         </Route>
 

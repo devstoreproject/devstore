@@ -6,12 +6,13 @@ import SearchNav from 'Components/KHJ/Nav/SearchNav';
 export default function Nav() {
   return (
     <>
-      <header className="fixed top-0 left-0 w-full">
+      <header className="fixed top-0 left-0 z-10 w-full">
         <NavTop />
         <NavBottom />
       </header>
       <GlobalNav />
       <SearchNav />
+      <div className="h-20"></div>
     </>
   );
 }
