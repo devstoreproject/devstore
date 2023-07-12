@@ -172,14 +172,14 @@ public class ItemController {
 //    @GetMapping("/spec")
 
     // TODO: itemOption
-    @PostMapping("/{item-Id}/spec")
-    private ResponseEntity createItemOption(@PathVariable("item-Id") @Positive Long itemId,
-                                            @RequestBody @Valid OptionPostDto optionPostDto) {
-        ItemOption itemOption = itemMapper.optionPostDtoToOption(optionPostDto);
-        ItemOption writeOption = optionService.writeOption(itemOption, itemId);
-
-        return new ResponseEntity<>(itemMapper.optionResponseToOption(writeOption), HttpStatus.OK);
-    }
+//    @PostMapping("/{item-Id}/spec")
+//    private ResponseEntity createItemOption(@PathVariable("item-Id") @Positive Long itemId,
+//                                            @RequestBody @Valid OptionPostDto optionPostDto) {
+//        ItemOption itemOption = itemMapper.optionPostDtoToOption(optionPostDto);
+//        ItemOption writeOption = optionService.writeOption(itemOption, itemId);
+//
+//        return new ResponseEntity<>(itemMapper.optionResponseToOption(writeOption), HttpStatus.OK);
+//    }
 
     @PatchMapping("/option/{option-Id}")
     public ResponseEntity editItemOption(@PathVariable("option-Id") @Positive Long OptionId,

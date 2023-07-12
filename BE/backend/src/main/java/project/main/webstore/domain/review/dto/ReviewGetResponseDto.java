@@ -20,7 +20,7 @@ public class ReviewGetResponseDto {
     public ReviewGetResponseDto(Review review) {
         this.reviewId = review.getId();
         this.userId = review.getUser().getId();
-        this.itemId = review.getItem().getId();
+        this.itemId = review.getItem().getItemId();
         this.comment = review.getComment();
         this.imageList = review.getReviewImageList() != null ? review.getReviewImageList().stream().map(ImageDto::new).collect(Collectors.toList()) : null;
     }
