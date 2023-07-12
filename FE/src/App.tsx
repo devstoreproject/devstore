@@ -26,6 +26,7 @@ import Purchase from 'Pages/KHJ/Purchase';
 import PurComplete from 'Pages/KHJ/PurComplete';
 import PurComDetail from 'Pages/KHJ/PurComDetail';
 import Order from 'Pages/KHJ/Order';
+import AdminMain from 'Components/KYH/admin/AdminMain/AdminMain';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="subscription" element={<Subscription />} />
         </Route>
         <Route path="/admin" element={<Admin />}>
+          <Route path="" element={<AdminMain />} />
           <Route path="productlist" element={<ProductList />} />
           <Route path="returnorexchange" element={<ReturnOrExchange />} />
           <Route path="productinquiry" element={<ProductInquiry />} />

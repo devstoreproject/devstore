@@ -9,7 +9,7 @@ export default function ProductList() {
     navigate('/admin/productlist/post');
   };
   const editBtnHandler = () => {
-    navigate('/admin/productlist/post');
+    navigate('/admin/productlist/edit');
   };
   return (
     <div className="flex flex-col">

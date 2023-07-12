@@ -2,6 +2,11 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
+    screens: {
+      sm: { min: '320px', max: '768px' },
+      md: { min: '769px', max: '1023px' },
+      lg: { min: '1024px', max: '1980px' },
+    },
     extend: {
       padding: {
         95: '23.75rem',
@@ -26,6 +31,8 @@ module.exports = {
         'label-gray': '#333',
       },
       width: {
+        25: '6.25rem',
+        26: '6.5rem',
         95: '23.75rem',
         104: '26rem',
         112: '28rem',
@@ -49,6 +56,7 @@ module.exports = {
         120: '30rem',
         128: '32rem',
         136: '34rem',
+        150: '37.5rem',
       },
       boxShadow: {
         signBox: '0px 3px 8px rgba(0, 0, 0, 0.24)',
@@ -56,6 +64,10 @@ module.exports = {
         contentsBox: '5px 10px 8px rgba(0, 0, 0, 0.3)',
         contentsBoxYminus: '5px -3px 8px rgba(0, 0, 0, 0.05)',
         border: '0 0 0 1px rgba(209, 213, 219, 1)',
+      },
+      transitionProperty: {
+        width: 'width',
+        padding: 'padding',
       },
     },
   },
