@@ -23,7 +23,7 @@ export default function GlobalNav() {
         text: '공지사항',
       },
       {
-        to: '/notice',
+        to: '/notica',
         text: '고객센터',
       },
     ],
@@ -32,9 +32,9 @@ export default function GlobalNav() {
   const service = linkTo.service;
 
   return (
-    <nav className="fixed left-0 top-0 w-80 h-full pt-24 px-5 box-border bg-white opacity-80 hidden">
-      <div className="bg-neon-green box-border rounded-xl">
-        <Link to="/login" className="flex py-5 px-5">
+    <nav className="box-border fixed top-0 left-0 hidden h-full px-5 pt-24 bg-white w-80 opacity-80">
+      <div className="box-border bg-neon-green rounded-xl">
+        <Link to="/login" className="flex px-5 py-5">
           <BsFillPersonFill size={24} />
           <span className="block ml-3">로그인</span>
         </Link>
