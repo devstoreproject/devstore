@@ -27,10 +27,9 @@ public class ItemPostDto {
     private Integer itemPrice;
     @NotNull
     private Integer deliveryPrice;
-
     private int totalCount;
-    private List<OptionDto> optionList;
-
+    private List<OptionPostRequestDto> optionList;
+    private List<ItemPostSpecDto> specList;
     private List<ImageSortDto> infoList;
 
 

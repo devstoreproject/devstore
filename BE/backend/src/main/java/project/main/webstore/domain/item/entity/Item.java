@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.image.entity.ItemImage;
+import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.enums.ItemStatus;
 import project.main.webstore.domain.order.entity.OrderItem;
@@ -16,7 +17,9 @@ import project.main.webstore.valueObject.Price;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -28,7 +31,7 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 public class Item {
     @Setter
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
     List<ItemImage> itemImageList = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -40,16 +43,16 @@ public class Item {
     private String itemName;
     @Column(nullable = false)
     @Setter
-    private int itemCount;
+    private Integer itemCount;
     @Lob
     @Setter
     private String description;
-    @Column(nullable = false)
-    @Setter
-    private String detail;
-    @Column(nullable = false)
-    @Setter
-    private String specs;
+//    @Column(nullable = false)
+//    @Setter
+//    private String detail;
+//    @Column(nullable = false)
+//    @Setter
+//    private String specs;
 
     //상세 정보
 
@@ -59,7 +62,6 @@ public class Item {
     @Embedded
     @Setter
     @Column(nullable = false)
-
     @AttributeOverrides(
             @AttributeOverride(name = "value", column = @Column(name = "ITEM_PRICE"))
     )
@@ -78,25 +80,33 @@ public class Item {
     private Category category;
 
     // 연관관계 매핑 //
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item",orphanRemoval = true,cascade = ALL)
     private List<ItemSpec> specList = new ArrayList<>();
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item",orphanRemoval = true,cascade = ALL)
     private List<ItemOption> optionList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item",cascade = ALL)
     private List<CartItem> cartItemList = new ArrayList<>();
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item",cascade = ALL)
     private List<OrderItem> orderItemList = new ArrayList<>();
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item",cascade = ALL,orphanRemoval = true)
     private List<Review> reviewList = new ArrayList<>();
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item",cascade = ALL,orphanRemoval = true)
     private List<Question> questionList = new ArrayList<>();
     //PickedItem 연관관계 매핑
-    @OneToOne(fetch = LAZY)
-    private PickedItem pickedItem;
+    @OneToMany(fetch = LAZY,cascade = ALL,mappedBy = "item")
+    private List<PickedItem> pickedItem;
 
-    public Item(PickedItem pickedItem) {
-        this.pickedItem = pickedItem;
+    public Item(String itemName, int itemCount, String description, Integer itemPrice, Integer deliveryPrice, Category category, List<ItemSpec> specList, List<ItemOption> optionList) {
+        this.itemName = itemName;
+        this.itemCount = itemCount;
+        this.description = description;
+        this.itemStatus = ItemStatus.ON_STACK;
+        this.itemPrice = Price.builder().value(itemPrice).build();
+        this.deliveryPrice = Price.builder().value(deliveryPrice).build();
+        this.category = category;
+        this.specList = specList;
+        this.optionList = optionList;
     }
 
     public Item(Long itemId) {
@@ -116,10 +126,17 @@ public class Item {
         this.category = category;
     }
 
-    // Price Method
-    public Item(Price itemPrice, Price deliveryPrice) {
-        this.itemPrice = itemPrice;
-        this.deliveryPrice = deliveryPrice;
+    @Builder(builderMethodName = "post")
+    public Item(ItemPostDto post) {
+        this.itemName = post.getItemName();
+        this.itemCount = post.getItemCount();
+        this.description = post.getDescription();
+        this.itemStatus = ItemStatus.ON_STACK;
+        this.itemPrice = Price.builder().value(post.getItemPrice()).build();
+        this.deliveryPrice = Price.builder().value(post.getDeliveryPrice()).build();
+        this.category = post.getCategory();
+        this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getItemName(),spec.getContent(),this)).collect(Collectors.toList()) : null;
+        this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(),option.getItemCount(),this)).collect(Collectors.toList()) : null;
     }
 
     public void addSpec(ItemSpec itemSpec) {
@@ -137,15 +154,6 @@ public class Item {
             itemOption.setItem(this);
         }
     }
-
-
-//    public void addCartItemLIst(CartItem cartItem) {
-//        this.cartItemList.add(cartItem);
-//        cartItem.setItem(this);
-//        if(cartItem.getItem() != this) {
-//            cartItem.setItem(this);
-//        }
-//    }
 
     public void addReview(Review review) {
         this.reviewList.add(review);
@@ -172,5 +180,19 @@ public class Item {
         this.itemImageList.add(image);
         image.setItem(this);
     }
+
+    public int getTotalPrice(){
+        if(optionList.isEmpty()){
+            return 0;
+        }
+       return this.optionList.stream().mapToInt(ItemOption::getItemCount).sum();
+    }
+
+    // Price Method
+    public void addPrice(Price itemPrice, Price deliveryPrice) {
+        this.itemPrice = itemPrice;
+        this.deliveryPrice = deliveryPrice;
+    }
+
 }
 

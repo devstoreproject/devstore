@@ -19,10 +19,16 @@ public class PickedItem {
     @Column(updatable = false)
     private Long pickedId;
 
-    @OneToOne(mappedBy = "pickedItem")
+    @ManyToOne
+    @JoinColumn(name ="ITEM_ID")
     private Item item;
     //연관관계매핑
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name ="USER_ID")
     private User user;
+
+    public PickedItem(Item item, User user) {
+        this.item = item;
+        this.user = user;
+    }
 }
