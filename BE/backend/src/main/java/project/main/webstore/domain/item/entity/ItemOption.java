@@ -25,8 +25,8 @@ public class ItemOption {
     @Setter
     private String optionDetail;
 
-    //TODO : 옵션별 수량 존재하지 않는
-    private int itemCount;
+    @Setter
+    private Integer itemCount;
 
     @Setter
     @ManyToOne(fetch = LAZY)
@@ -34,9 +34,21 @@ public class ItemOption {
     private Item item;
 
     @Builder
-    public ItemOption(Long optionId, String optionDetail, Item item) {
+    public ItemOption(Long optionId, String optionDetail, Item item,Integer itemCount) {
         this.optionId = optionId;
+        this.itemCount = itemCount;
         this.optionDetail = optionDetail;
         this.item = item;
+    }
+
+    public ItemOption(String optionDetail, int itemCount, Item item) {
+        this.optionDetail = optionDetail;
+        this.itemCount = itemCount;
+        this.item = item;
+    }
+
+    public ItemOption(String optionDetail, int itemCount) {
+        this.optionDetail = optionDetail;
+        this.itemCount = itemCount;
     }
 }

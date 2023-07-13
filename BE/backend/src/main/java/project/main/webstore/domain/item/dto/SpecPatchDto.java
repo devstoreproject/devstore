@@ -12,15 +12,13 @@ import javax.validation.constraints.Pattern;
 public class SpecPatchDto {
     @NotNull
     private String itemName;
-    private Long specId;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z\\d`~!@#$%^&*()-_=+\\s]*$")
     private String content;
 
     @Builder
-    public SpecPatchDto(String itemName, Long specId, String content) {
+    public SpecPatchDto(String itemName, String content) {
         this.itemName = itemName;
-        this.specId = specId;
         this.content = content;
     }
 }

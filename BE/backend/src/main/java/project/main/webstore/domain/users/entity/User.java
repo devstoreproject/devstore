@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
+import project.main.webstore.domain.item.entity.PickedItem;
 import project.main.webstore.domain.users.dto.UserPatchRequestDto;
 import project.main.webstore.domain.users.dto.UserPostRequestDto;
 import project.main.webstore.domain.users.enums.Grade;
@@ -16,6 +17,7 @@ import project.main.webstore.valueObject.Address;
 import javax.persistence.*;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -49,6 +51,9 @@ public class User extends Auditable implements Principal {
     private UserRole userRole = UserRole.CLIENT;
     @Enumerated(STRING)
     private UserStatus userStatus = UserStatus.TMP;
+
+    @OneToMany(mappedBy = "user")
+    private List<PickedItem> pickedItemList;
 
     @Override
     public String getName() {

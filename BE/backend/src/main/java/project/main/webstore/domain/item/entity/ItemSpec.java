@@ -48,8 +48,14 @@ public class ItemSpec {
         this.content  = content;
     }
 
+    public ItemSpec(String itemName, String content, Item item) {
+        this.itemName = itemName;
+        this.content = content;
+        this.item = item;
+    }
     /*
    - spec 작성시 해당 item과 itemId를 가져와 연동하여 작성해야 되는지?
    - post시 item/{item-id}/spec (?)
      */
+
 }
