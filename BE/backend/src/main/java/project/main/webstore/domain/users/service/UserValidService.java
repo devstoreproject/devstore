@@ -14,4 +14,8 @@ public class UserValidService {
     public User validByMail(String email) {
         return repository.findByEmail(email).orElseThrow(()-> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
     }
+
+    public User validUser(Long userId) {
+        return repository.findById(userId).orElseThrow(()-> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
+    }
 }

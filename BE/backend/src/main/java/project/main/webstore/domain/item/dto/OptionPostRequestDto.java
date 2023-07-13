@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class OptionDto {
+public class OptionPostRequestDto {
     private String optionDetail;
     private int itemCount;
 }

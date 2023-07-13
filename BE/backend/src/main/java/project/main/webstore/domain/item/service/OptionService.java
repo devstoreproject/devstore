@@ -2,10 +2,6 @@ package project.main.webstore.domain.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.item.entity.Item;
@@ -28,32 +24,33 @@ public class OptionService {
     public ItemOption writeOption(ItemOption itemOption, Long itemId) {
         Item findItem = itemService.validItem(itemId);
         itemOption.setItem(findItem);
+        findItem.getOptionList().add(itemOption);
 
         return optionRepository.save(itemOption);
     }
 
     public ItemOption editOption(ItemOption itemOption) {
         ItemOption findOption= findVerifiedOption(itemOption.getOptionId());
-        findOption.setOptionDetail(itemOption.getOptionDetail());
-        return optionRepository.save(findOption);
+        Optional.ofNullable(itemOption.getItemCount()).ifPresent(findOption::setItemCount);
+        Optional.ofNullable(itemOption.getOptionDetail()).ifPresent(findOption::setOptionDetail);
+        return findOption;
     }
 
     public void deleteOption(Long optionId) {
         ItemOption findOption = findVerifiedOption(optionId);
-
+        List<ItemOption> optionList = findOption.getItem().getOptionList();
+        for (ItemOption itemOption : optionList) {
+            if(itemOption.getOptionId() == optionId)
+                optionList.remove(itemOption);
+                break;
+        }
         optionRepository.delete(findOption);
     }
 
     public ItemOption getOption(Long optionId) {
         return findVerifiedOption(optionId);
     }
-    public Page<ItemOption> getOptions(Long itemId, Pageable pageable) {
-        Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("specId"));
-        Item findItem = itemService.validItem(itemId);
-        String detail = findItem.getDetail();
 
-        return optionRepository.findByDetail(detail, pageRequest);
-    }
     public List<ItemOption> getOptions(Long itemId) {
         return optionRepository.findAllByItemId(itemId);
     }
