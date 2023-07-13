@@ -2,10 +2,6 @@ package project.main.webstore.domain.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.item.entity.Item;
@@ -14,6 +10,7 @@ import project.main.webstore.domain.item.repository.SpecRepository;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.exception.CommonExceptionCode;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,13 +31,20 @@ public class SpecService {
 
     public ItemSpec editSpec(ItemSpec itemSpec) {
         ItemSpec findSpec = findVerifiedSpec(itemSpec.getSpecId());
-        findSpec.setContent(itemSpec.getContent());
+        Optional.ofNullable(itemSpec.getItemName()).ifPresent(findSpec::setItemName);
+        Optional.ofNullable(itemSpec.getContent()).ifPresent(findSpec::setContent);
         return specRepository.save(findSpec);
     }
 
     public void deleteSpec(Long specId) {
         ItemSpec findSpec = findVerifiedSpec(specId);
-
+        List<ItemSpec> specList = findSpec.getItem().getSpecList();
+        for (ItemSpec itemSpec : specList) {
+            if(itemSpec.getSpecId() == specId){
+                specList.remove(itemSpec);
+                break;
+            }
+        }
         specRepository.delete(findSpec);
     }
 
@@ -48,12 +52,9 @@ public class SpecService {
         return findVerifiedSpec(specId);
     }
 
-    public Page<ItemSpec> getSpecs(Long itemId, Pageable pageable) {
-        Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("specId"));
+    public List<ItemSpec> getSpecs(Long itemId) {
         Item findItem = itemService.validItem(itemId);
-        String specs = findItem.getSpecs();
-
-        return specRepository.findBySpecs(specs, pageRequest);
+        return findItem.getSpecList();
     }
 
     public ItemSpec findVerifiedSpec(Long specId) {
