@@ -1,8 +1,10 @@
 package project.main.webstore.domain.review.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,7 @@ import project.main.webstore.utils.UriCreator;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "리뷰 컨트롤러", description = "리뷰 관련 API")
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -35,18 +38,21 @@ public class ReviewController {
     private final ReviewMapper reviewMapper;
     private final ImageMapper imageMapper;
 
-    @PostMapping("/item/{itemId}/review")
+    @PostMapping(path = "/item/{itemId}/review",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity postReview(@PathVariable Long itemId,
-                                     @RequestPart ReviewPostRequestDto postDto,
+                                     @RequestPart ReviewPostRequestDto post,
                                      @RequestPart(required = false) List<MultipartFile> imageList) {
-        Review review = reviewMapper.toEntity(postDto);
+        Review review = reviewMapper.toEntity(post);
 
         Review savedReview;
         if (imageList == null) {
-            savedReview = service.postReview(review, postDto.getUserId(), itemId);
+            savedReview = service.postReview(review, post.getUserId(), itemId);
         } else {
-            List<ImageInfoDto> imageInfoDtoList = imageMapper.toLocalDtoList(imageList, postDto.getInfoList(), UPLOAD_DIR);
-            savedReview = service.postReview(imageInfoDtoList, review, postDto.getUserId(), itemId);
+            List<ImageInfoDto> imageInfoDtoList = imageMapper.toLocalDtoList(imageList, post.getInfoList(), UPLOAD_DIR);
+            savedReview = service.postReview(imageInfoDtoList, review, post.getUserId(), itemId);
         }
         savedReview.setItem(new Item(1L));
         savedReview.setUser(new User(1L));
@@ -89,7 +95,6 @@ public class ReviewController {
                 .build();
 
         return ResponseEntity.ok(response);
-
     }
 
     @GetMapping("/user/{userId}/review")
@@ -113,7 +118,9 @@ public class ReviewController {
         return ResponseEntity.ok(ResponseDto.builder().data(null).customCode(ResponseCode.OK).build());
     }
 
-    @PatchMapping("/item/{itemId}/review/{reviewId}")
+    @PatchMapping(path = "/item/{itemId}/review/{reviewId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity patchReview(@PathVariable Long itemId,
                                       @PathVariable Long reviewId,
                                       @RequestPart(required = false) ReviewUpdateRequestDto patchDto,

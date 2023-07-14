@@ -15,12 +15,12 @@ public class ImageMapper {
                 .multipartFile(file)
                 .order(sortDto.getOrderNumber())
                 .representative(sortDto.isRepresentative())
-                .id(sortDto.getId())
+                .id(sortDto.getImageId())
                 .uploadDir(uploadDir)
                 .build();
     }
     public ImageInfoDto toLocalDto(ImageSortDto sortDto) {
-        return new ImageInfoDto(sortDto.getId(), sortDto.getOrderNumber(), sortDto.isRepresentative());
+        return new ImageInfoDto(sortDto.getImageId(), sortDto.getOrderNumber(), sortDto.isRepresentative());
     }
     public List<ImageInfoDto> toLocalDtoList(List<MultipartFile>fileList,List<ImageSortDto> imageSortDto,String uploadDir){
         List<ImageInfoDto> result = new ArrayList<>();
@@ -28,7 +28,7 @@ public class ImageMapper {
         int j = 0;
         for(int i = 0 ; i < imageSortDto.size(); i++){
             ImageInfoDto infoDto;
-            if(imageSortDto.get(i).getId() == null){
+            if(imageSortDto.get(i).getImageId() == null){
                 infoDto = toLocalDto(fileList.get(j++), imageSortDto.get(i), uploadDir);
 
             }else{
