@@ -55,7 +55,7 @@ class ReviewServiceTest {
 
         SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
-                softAssertions.assertThat(result.getItem().getId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
+                softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
         });
 
     }
@@ -74,7 +74,7 @@ class ReviewServiceTest {
         Review result = reviewService.postReview(imageInfoList, postReview, userId, itemId);
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
-            softAssertions.assertThat(result.getItem().getId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
+            softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
             softAssertions.assertThat(result.getReviewImageList()).as("저장된 이미지의 정보 일치 여부 체크").isEqualTo(excepted.getReviewImageList());
         });
     }
