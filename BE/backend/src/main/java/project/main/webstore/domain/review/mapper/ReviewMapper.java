@@ -3,7 +3,6 @@ package project.main.webstore.domain.review.mapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
-import project.main.webstore.domain.image.dto.ImageSortDto;
 import project.main.webstore.domain.review.dto.ReviewGetResponseDto;
 import project.main.webstore.domain.review.dto.ReviewIdResponseDto;
 import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
@@ -15,12 +14,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class ReviewMapper {
-
-    private Long userId;
-    private String comment;
-    private int rating;
-    private List<ImageSortDto> infoList;
-
     public Review toEntity(ReviewPostRequestDto post){
         return Review.postBuilder()
                 .rating(post.getRating())
@@ -37,8 +30,7 @@ public class ReviewMapper {
     }
 
     public ReviewIdResponseDto toDto(Review review){
-//        return new ReviewIdResponseDto(review.getId(),review.getUser().getId(),review.getItem().getId());
-        return new ReviewIdResponseDto(review.getId(),1L,1L);
+        return new ReviewIdResponseDto(review.getId(),review.getUser().getId(),review.getItem().getItemId());
     }
     public ReviewGetResponseDto toGetDtoResponse(Review review){
         return ReviewGetResponseDto.dtoBuilder()
