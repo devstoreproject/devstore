@@ -39,7 +39,7 @@ const menuList = [
     text: '판매 상품 리스트',
     icon: <RiFileListFill />,
   },
-  { to: '/admin/any1', text: '주문 전 상품 내역', icon: <FaBox /> },
+  { to: '/admin/orderedlist', text: '주문 된 상품 내역', icon: <FaBox /> },
   {
     to: '/admin/returnorexchange',
     text: '반품 교환 신청 확인',
@@ -48,7 +48,7 @@ const menuList = [
   { to: '/admin/eventvanner', text: '이벤트 배너', icon: <BiSolidStar /> },
   { to: '/admin/any2', text: '공지사항', icon: <AiOutlineSound /> },
   { to: '/admin/any3', text: '매출', icon: <FaChartLine /> },
-  { to: '/admin/any4', text: '리뷰', icon: <MdOutlineReviews /> },
+  { to: '/admin/reviewmanagement', text: '리뷰', icon: <MdOutlineReviews /> },
   {
     to: '/admin/productinquiry',
     text: '상품 문의',

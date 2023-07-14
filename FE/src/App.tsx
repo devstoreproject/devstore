@@ -29,6 +29,9 @@ import PurComDetail from 'Pages/KHJ/PurComDetail';
 import Order from 'Pages/KHJ/Order';
 import AdminMain from 'Components/KYH/admin/AdminMain/AdminMain';
 import BasicLayout from 'Pages/LSM/BasicLayout';
+import Purchasement from 'Pages/CYW/Purchasement';
+import OrderedList from 'Pages/CYW/OrderedList';
+import ReviewManagement from 'Pages/CYW/ReviewManagement';
 
 function App() {
   return (
@@ -62,6 +65,8 @@ function App() {
           <Route path="productinquiry" element={<ProductInquiry />} />
           <Route path="productlist/post" element={<ProductPost />} />
           <Route path="productlist/edit" element={<ProductEdit />} />
+          <Route path="reviewmanagement" element={<ReviewManagement />} />
+          <Route path="orderedlist" element={<OrderedList />} />
         </Route>
         <Route path="/cart" element={<Cart />} />
         <Route path="/checklist" element={<CheckList />} />
@@ -70,6 +75,7 @@ function App() {
           <Route path="detail" element={<PurComDetail />} />
         </Route>
         <Route path="order" element={<Order />} />
+        <Route path="/purchasement" element={<Purchasement />} />
       </Routes>
     </BrowserRouter>
   );
