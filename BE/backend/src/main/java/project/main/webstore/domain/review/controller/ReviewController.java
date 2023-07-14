@@ -30,7 +30,7 @@ import project.main.webstore.utils.UriCreator;
 import java.net.URI;
 import java.util.List;
 
-@Tag(name = "리뷰 컨트롤러", description = "리뷰 관련 API")
+@Tag(name = "리뷰 API", description = "리뷰 관련 API")
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
