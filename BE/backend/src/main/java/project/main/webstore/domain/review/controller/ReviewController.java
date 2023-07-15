@@ -45,10 +45,10 @@ public class ReviewController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    @ApiResponse(responseCode = "201",description = "리뷰 등록 성공")
+    @ApiResponse(responseCode = "201", description = "리뷰 등록 성공")
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> postReview(@PathVariable Long itemId,
-                                     @RequestPart ReviewPostRequestDto post,
-                                     @RequestPart(required = false) List<MultipartFile> imageList) {
+                                                                       @RequestPart ReviewPostRequestDto post,
+                                                                       @RequestPart(required = false) List<MultipartFile> imageList) {
         Review review = reviewMapper.toEntity(post);
 
         Review savedReview;
@@ -66,7 +66,7 @@ public class ReviewController {
         return ResponseEntity.created(uri).body(responseDto);
     }
 
-    @ApiResponse(responseCode = "200",description = "리뷰 단건 조회")
+    @ApiResponse(responseCode = "200", description = "리뷰 단건 조회")
     @GetMapping("/review/{reviewId}")
     public ResponseEntity<ResponseDto<ReviewGetResponseDto>> getReview(@PathVariable Long reviewId) {
         Review findReview = getService.getReviewByReviewId(reviewId);
@@ -78,10 +78,10 @@ public class ReviewController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @ApiResponse(responseCode = "200",description = "리뷰 전체 조회")
+    @ApiResponse(responseCode = "200", description = "리뷰 전체 조회")
     @GetMapping("/review")
     public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewAllPage(Pageable pageable, @RequestParam Long userId, @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal,userId);
+        CheckLoginUser.validUserSame(principal, userId);
         CheckLoginUser.validAdmin(principal);
         Page<Review> reviewPage = getService.getReviewPage(pageable);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
@@ -93,7 +93,7 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiResponse(responseCode = "200",description = "해당 아이템에 존재하는 리뷰 전체 출력")
+    @ApiResponse(responseCode = "200", description = "해당 아이템에 존재하는 리뷰 전체 출력")
     @GetMapping("/item/{itemId}/review")
     public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(Pageable pageable, @PathVariable Long itemId) {
         Page<Review> reviewPage = getService.getReviewPageByItemId(pageable, itemId);
@@ -106,7 +106,7 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiResponse(responseCode = "200",description = "특정 회원이 작성한 리뷰 전체 조회")
+    @ApiResponse(responseCode = "200", description = "특정 회원이 작성한 리뷰 전체 조회")
     @GetMapping("/user/{userId}/review")
     public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewListByUserId(Pageable pageable, @PathVariable Long userId) {
         Page<Review> reviewPage = getService.getReviewPageByUserId(pageable, userId);
@@ -119,14 +119,15 @@ public class ReviewController {
         return ResponseEntity.ok(response);
 
     }
-    @ApiResponse(responseCode = "204",description = "특정 리뷰 삭제")
+
+    @ApiResponse(responseCode = "204", description = "특정 리뷰 삭제")
     @DeleteMapping("/item/{itemId}/review/{reviewId}")
     public ResponseEntity deleteReview(@PathVariable Long itemId,
                                        @PathVariable Long reviewId,
                                        @RequestParam Long userId,
                                        @AuthenticationPrincipal Object principal
     ) {
-        CheckLoginUser.validUserSame(principal,userId);
+        CheckLoginUser.validUserSame(principal, userId);
         service.deleteReview(reviewId);
         return ResponseEntity.noContent().build();
     }
@@ -134,14 +135,14 @@ public class ReviewController {
     @PatchMapping(path = "/item/{itemId}/review/{reviewId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponse(responseCode = "200",description = "리뷰 수정")
+    @ApiResponse(responseCode = "200", description = "리뷰 수정")
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> patchReview(@PathVariable Long itemId,
-                                      @PathVariable Long reviewId,
-                                      @RequestPart(required = false) ReviewUpdateRequestDto patch,
-                                      @RequestPart(required = false) List<MultipartFile> imageList,
-                                      @AuthenticationPrincipal Object principal
+                                                                        @PathVariable Long reviewId,
+                                                                        @RequestPart(required = false) ReviewUpdateRequestDto patch,
+                                                                        @RequestPart(required = false) List<MultipartFile> imageList,
+                                                                        @AuthenticationPrincipal Object principal
     ) {
-        CheckLoginUser.validUserSame(principal,patch.getUserId());
+        CheckLoginUser.validUserSame(principal, patch.getUserId());
         Review review = reviewMapper.toEntity(patch, reviewId);
         List<ImageInfoDto> imageInfoList = imageMapper.toLocalDtoList(imageList, patch.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
         Review patchReview = service.patchReview(imageInfoList, patch.getDeleteImageId(), review, patch.getUserId(), itemId, reviewId);
@@ -152,13 +153,13 @@ public class ReviewController {
         return ResponseEntity.ok().header("Location", uri.toString()).body(responseDto);
     }
 
-    @ApiResponse(responseCode = "200",description = "리뷰 좋아요 \n 로그인 회원만 사용 가능")
+    @ApiResponse(responseCode = "200", description = "리뷰 좋아요 \n 로그인 회원만 사용 가능")
     @PostMapping("/item/{itemId}/review/{reviewId}/like")
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> addLikeReview(@PathVariable Long reviewId,
-                                        @PathVariable Long itemId,
-                                        @RequestParam Long userId,
-                                        @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal,userId);
+                                                                          @PathVariable Long itemId,
+                                                                          @RequestParam Long userId,
+                                                                          @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
         Review review = service.addLikeReview(reviewId, itemId, userId);
         ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(review);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
@@ -167,13 +168,13 @@ public class ReviewController {
         return ResponseEntity.ok().header("Location", uri.toString()).body(responseDto);
     }
 
-    @ApiResponse(responseCode = "200",description = "특정 상품에서 좋아요가 가장 많은 리뷰 순으로 정렬, count 만큼 반환 \n 관리자만 사용 가능")
+    @ApiResponse(responseCode = "200", description = "특정 상품에서 좋아요가 가장 많은 리뷰 순으로 정렬, count 만큼 반환 \n 관리자만 사용 가능")
     @GetMapping("/item/{itemId}/review/best")
     public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getBestReview(@PathVariable Long itemId,
-                                        @RequestParam Long userId,
-                                        @RequestParam int count,
-                                        @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal,userId);
+                                                                                 @RequestParam Long userId,
+                                                                                 @RequestParam int count,
+                                                                                 @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
         CheckLoginUser.validAdmin(principal);
         List<Review> result = getService.getBestReview(itemId, count);
         List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
