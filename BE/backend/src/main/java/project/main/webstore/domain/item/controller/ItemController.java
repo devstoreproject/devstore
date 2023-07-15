@@ -1,8 +1,11 @@
 package project.main.webstore.domain.item.controller;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +31,7 @@ import java.util.List;
 @RequestMapping("api/items")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "상품 API")
 public class ItemController {
     private static final String ITEM_DEFAULT_URL = "/api/items";
     private final String UPLOAD_DIR = "item";
@@ -36,8 +40,11 @@ public class ItemController {
     private final ImageMapper imageMapper;
 
     //상품과 스펙, 옵션을 모두 등록
-    @PostMapping
-    public ResponseEntity createItem(@RequestPart ItemPostDto post,
+    @PostMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponse(responseCode = "201", description = "상품 등록 성공")
+    public ResponseEntity<ResponseDto<ItemIdResponseDto>> createItem(@RequestPart ItemPostDto post,
                                      @RequestPart List<MultipartFile> imageList,
                                      @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
@@ -58,8 +65,13 @@ public class ItemController {
     }
 
     //상품이든 뭐든 다 변경하는 것 (있는 것만 체크)
-    @PatchMapping("/{item-Id}")
-    public ResponseEntity patchItem(@PathVariable("item-Id")
+    @PatchMapping(
+            path = "/item/{itemId}/review",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ApiResponse(responseCode = "200", description = "리뷰 수정 성공")
+    public ResponseEntity<ResponseDto<ItemIdResponseDto>> patchItem(@PathVariable("item-Id")
                                      @RequestPart ItemPatchDto patch,
                                      @RequestPart List<MultipartFile> imageList,
                                      @AuthenticationPrincipal Object principal) {
@@ -71,12 +83,13 @@ public class ItemController {
 
         ItemIdResponseDto response = itemMapper.toIdResponse(result);
         URI uri = UriCreator.createUri(UPLOAD_DIR, result.getItemId());
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
+        var responseDto = ResponseDto.<ItemIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok().header("Location", uri.toString()).body(responseDto);
     }
 
     @DeleteMapping("/{item-Id}")
+    @ApiResponse(responseCode = "204", description = "상품 삭제 성공")
     public ResponseEntity deleteItem(@PathVariable("item-Id") @Positive Long itemId, @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
         itemService.deleteItem(itemId);
@@ -86,50 +99,54 @@ public class ItemController {
 
     // 단일 아이템 조회
     @GetMapping("/{item-Id}")
-    public ResponseEntity getItem(@PathVariable("item-Id") @Positive Long itemId) {
+    @ApiResponse(responseCode = "200", description = " 단건 조회")
+    public ResponseEntity<ResponseDto<ItemResponseDto>> getItem(@PathVariable("item-Id") @Positive Long itemId) {
         Item item = itemService.validItem(itemId);
         ItemResponseDto response = itemMapper.toGetResponseDto(item);
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
+        var responseDto = ResponseDto.<ItemResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
 
-    // 아이템 리스트 조회
     @GetMapping("/search/itemName")
-    public ResponseEntity searchItem(@RequestParam String itemName, Pageable pageable) {
+    @ApiResponse(responseCode = "200", description = "아이템 별 상품 조회 (페이징)")
+    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> searchItem(@RequestParam String itemName, Pageable pageable) {
         Page<Item> result = itemService.searchItem(itemName, pageable);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
+        var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
 
     // 아이템 카테고리별 조회
     @GetMapping("search/category")
-    public ResponseEntity getItemByCategory(@RequestParam Category category, Pageable pageable) {
+    @ApiResponse(responseCode = "200", description = "상품 카테고리별 조회 페이징")
+    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByCategory(@RequestParam Category category, Pageable pageable) {
         Page<Item> result = itemService.findItemByCategory(category, pageable);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
+        var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
 
     //전체 조회 (페이징)
     @GetMapping
-    public ResponseEntity getItemByHighPrice(Pageable pageable) {
+    @ApiResponse(responseCode = "200", description = "전체 상품 조회 페이징")
+    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByHighPrice(Pageable pageable) {
         Page<Item> result = itemService.findItemPage(pageable);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
+        var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
 
     //이미 찜이 되어있으면 최소 아니면 찜 하기 기능 구현 완료
     @PostMapping("/{itemId}/favorite")
-    public ResponseEntity pickItem(@PathVariable @Positive Long itemId, @RequestParam Long userId,@AuthenticationPrincipal Object principal){
+    @ApiResponse(responseCode = "200", description = "상품 좋아요 기능")
+    public ResponseEntity<ResponseDto<PickedItemDto>> pickItem(@PathVariable @Positive Long itemId, @RequestParam Long userId,@AuthenticationPrincipal Object principal){
         CheckLoginUser.validUserSame(principal,userId);
         PickedItemDto result = itemService.pickItem(itemId, userId);
 
-        var responseDto = ResponseDto.builder().data(result).customCode(ResponseCode.OK).build();
+        var responseDto = ResponseDto.<PickedItemDto>builder().data(result).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
 
