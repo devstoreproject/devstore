@@ -2,6 +2,8 @@ package project.main.webstore.domain.order.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -9,10 +11,10 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-
-//TODO: 사용 여부 고려
 @Getter
-public class OrderPostDto { // 주문한 아이템 정보 PostDto
+@Setter
+@RequiredArgsConstructor
+public class OrderPatchDto { // 주문이 들어간 다음에는 수정 불기 -> formpatch만 가능
     @NotEmpty
     @Pattern(regexp = "^[a-zA-Z가-힣]*$")
     @Size(min = 2, max = 10, message = "올바른 형식의 이름을 입력하세요")
@@ -45,23 +47,15 @@ public class OrderPostDto { // 주문한 아이템 정보 PostDto
     @Size(min = 0, max = 20)
     private String message;
 
-//    private Long orderFormId;
-    private List<OrderItemPostDto> orderItems;
-
-
     @Builder
-    public OrderPostDto(String recipient, String email, String mobileNumber, String homeNumber, String zipCode,
-                        String addressSimple, String addressDetail, String message,
-                        Long orderFormId, List<OrderItemPostDto> orderItems) {
+    public OrderPatchDto(String recipient, String mobileNumber, String homeNumber,
+                        String zipCode, String addressSimple, String addressDetail, String message) {
         this.recipient = recipient;
-        this.email = email;
         this.mobileNumber = mobileNumber;
         this.homeNumber = homeNumber;
         this.zipCode = zipCode;
         this.addressSimple = addressSimple;
         this.addressDetail = addressDetail;
         this.message = message;
-//        this.orderFormId = orderFormId;
-        this.orderItems = orderItems;
     }
 }

@@ -1,21 +1,45 @@
 package project.main.webstore.domain.order.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.checkerframework.common.value.qual.ArrayLen;
+import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.order.entity.Orders;
+import project.main.webstore.domain.orderHistory.enums.OrderStatus;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
-public class OrderResponseDto { // 주문 폼 작성완료 정보 ResponseDto
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrderResponseDto {
+    // OrderOrderForm
     private String orderNumber;
     private String recipient;
     private String email;
     private String mobileNumber;
-    private String homeNumber; // 선택사항
+    private String homeNumber;
     private String zipCode;
     private String addressSimple;
     private String addressDetail;
-    private String message; // 선택사항
-    private int count;
-    private int totalPrice;
+    private String message;
 
+
+    private Long orderId;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
+//    private List<OrderFormResponseDto> orderFormList;
+    private List<OrderItemResponseDto> orderItemList;
+    private int totalPrice;
+    private OrderStatus ordersStatus;
+
+    public void OrderResponseDto(Item item) {
+        this.totalPrice = item.getTotalPrice();
+    }
+
+    public OrderResponseDto(OrderStatus ordersStatus) {
+        this.ordersStatus = ordersStatus;
+    }
 }

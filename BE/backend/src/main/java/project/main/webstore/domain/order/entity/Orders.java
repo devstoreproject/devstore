@@ -1,68 +1,70 @@
 package project.main.webstore.domain.order.entity;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.coupon.entity.Coupon;
-import project.main.webstore.domain.order.dto.OrderFormPostDto;
+import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.order.dto.OrderPostDto;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.payment.entity.Payment;
+import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.valueObject.Address;
 import project.main.webstore.valueObject.Price;
 
 import javax.persistence.*;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
-import static lombok.AccessLevel.PUBLIC;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @Entity
 @Table(name = "ORDERS")
 @NoArgsConstructor
 public class Orders extends Auditable {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter
     private Long orderId;
     @Setter
+    @Column(insertable = false, updatable = false)
     private String orderNumber;
     @Setter
+    @Column(insertable = false, updatable = false)
     private String recipient; // 배송받는사람
     @Setter
+    @Column(insertable = false, updatable = false)
     private String email; // 이메일
     @Setter
+    @Column(insertable = false, updatable = false)
     private String zipCode;
     @Setter
+    @Column(insertable = false, updatable = false)
     private String addressSimple;
     @Setter
+    @Column(insertable = false, updatable = false)
     private String addressDetail;
     @Setter
+    @Column(insertable = false, updatable = false)
     private String mobileNumber; // 핸드폰번호
     @Setter
+    @Column(insertable = false, updatable = false)
     private String homeNumber; // 유선번호
     @Setter
+    @Column(insertable = false, updatable = false)
     private String message; // 배송요청사항
-
-    // Dummy Data용
-    @Setter
-    private int itemCount;
-    @Setter
-    private String itemName;
-    @Setter
-    private int itemPrice;
+    @Embedded
+    private Address address;
 
     @Setter
     @Enumerated(value = EnumType.STRING)
     private OrdersStatus ordersStatus = OrdersStatus.ORDER_COMPLETE;
 
-//    @Embedded
-//    @Column(insertable = false, updatable = false)
-//    private Address address;
 
     @Embedded
     @AttributeOverrides(
@@ -84,28 +86,74 @@ public class Orders extends Auditable {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<Long> orderCartItem = new ArrayList<>();
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "ITEM_ID")
+    private Item item;
 
-    public void setOrderCartItem(Long cartItemId) {
-        orderCartItem.add(cartItemId);
-    }
 
     // 연관관계 매핑
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
     @OneToMany(mappedBy = "order")
     private List<Coupon> coupons = new ArrayList<>();
-
     @OneToOne(mappedBy = "order")
     private Payment payment;
+
+    // item Method
+    @Builder
+    public Orders(String recipient, String email, String mobileNumber, String homeNumber,
+                  String zipCode, String addressSimple, String addressDetail, String message, OrdersStatus ordersStatus) {
+        this.recipient = recipient;
+        this.email = email;
+        this.mobileNumber = mobileNumber;
+        this.homeNumber = homeNumber;
+        this.zipCode = zipCode;
+        this.addressSimple = addressSimple;
+        this.addressDetail = addressDetail;
+        this.message = message;
+        this.ordersStatus = ordersStatus;
+    }
+
+    @Builder
+    public static Orders toEntity(OrderPostDto orderPostDto) {
+        return Orders.builder()
+                .recipient(orderPostDto.getRecipient())
+                .email(orderPostDto.getEmail())
+                .mobileNumber(orderPostDto.getMobileNumber())
+                .homeNumber(orderPostDto.getHomeNumber())
+                .zipCode(orderPostDto.getZipCode())
+                .addressSimple(orderPostDto.getAddressSimple())
+                .addressDetail(orderPostDto.getAddressDetail())
+                .message(orderPostDto.getMessage())
+                .build();
+    }
 
     public void setUser(User user) {
         this.user = user;
     }
 
-        public void setOrderItems(OrderItem orderItem) {
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+//    public void setInfo(ShippingInfo info) {
+//        this.info = info;
+//    }
+
+    public void Item(Item item){
+        this.item = item;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public void addOrderItems(OrderItem orderItem) {
+        this.orderItems.add(orderItem);
         if (orderItem.getOrder() != this) {
             orderItem.setOrder(this);
         }
@@ -125,52 +173,13 @@ public class Orders extends Auditable {
         }
     }
 
-    @Builder
-    public Orders(String recipient, String email, String mobileNumber, String homeNumber,
-                  String zipCode,String addressSimple,String addressDetail, String message) {
-        this.recipient     = recipient;
-        this.email         = email;
-        this.mobileNumber  = mobileNumber;
-        this.homeNumber    = homeNumber;
-        this.message       = message;
-        this.zipCode       = zipCode;
-        this.addressSimple = addressSimple;
-        this.addressDetail = addressDetail;
+    // Price Method
+    public int getTotalPrice() {
+        int totalPrice = 0;
+
+        for (OrderItem orderItem: orderItems) {
+            totalPrice += (orderItem.getItemPrice() * orderItem.getItemCount());
+        }
+        return totalPrice;
     }
-
-    @Builder
-    public Orders(Long orderId, String recipient, String email, String mobileNumber, String homeNumber,
-                  String zipCode,String addressSimple,String addressDetail, String message) {
-        this.orderId = orderId;
-        this.recipient     = recipient;
-        this.email         = email;
-        this.mobileNumber  = mobileNumber;
-        this.homeNumber    = homeNumber;
-        this.message       = message;
-        this.zipCode       = zipCode;
-        this.addressSimple = addressSimple;
-        this.addressDetail = addressDetail;
-
-    }
-
-    public Orders(int itemCount, String itemName, int itemPrice) {
-        this.itemCount = itemCount;
-        this.itemName = itemName;
-        this.itemPrice = itemPrice;
-    }
-
-
-
-//    public static Orders toEntity(OrderFormPostDto orderFormPostDto) {
-//        return Orders.builder()
-//                .recipient(orderFormPostDto.getRecipient())
-//                .email(orderFormPostDto.getEmail())
-//                .mobileNumber(orderFormPostDto.getMobileNumber())
-//                .homeNumber(orderFormPostDto.getHomeNumber())
-//                .zipCode(orderFormPostDto.getZipCode())
-//                .addressSimple(orderFormPostDto.getAddressSimple())
-//                .addressDetail(orderFormPostDto.getAddressDetail())
-//                .message(orderFormPostDto.getMessage())
-//                .build();
-//    }
 }
