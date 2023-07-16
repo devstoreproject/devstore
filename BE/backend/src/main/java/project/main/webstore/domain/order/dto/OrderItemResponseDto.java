@@ -1,15 +1,22 @@
 package project.main.webstore.domain.order.dto;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class OrderItemResponseDto {
-    protected int itemCount;
+    private Long itemId;
     private String itemName;
+    private int itemCount;
     private int itemPrice;
-    //    private List<ItemResponseDto> items;
+
+    @Builder
+    public OrderItemResponseDto(Long itemId, String itemName, int itemCount, int itemPrice) {
+        this.itemId = itemId;
+        this.itemName = itemName;
+        this.itemCount = itemCount;
+        this.itemPrice = itemPrice;
+    }
 }
