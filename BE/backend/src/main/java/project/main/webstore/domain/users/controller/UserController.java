@@ -37,7 +37,7 @@ public class UserController {
         User user = userMapper.toEntity(post);
         ImageInfoDto infoDto =null;
         if (image != null) {
-            infoDto = imageMapper.toLocalDto(image, post.getImageInfo(), UPLOAD_DIR);
+            infoDto = imageMapper.toLocalDto(image, UPLOAD_DIR);
         }
         User result = service.postUser(user, infoDto);
         UserIdResponseDto response = userMapper.toDto(result);

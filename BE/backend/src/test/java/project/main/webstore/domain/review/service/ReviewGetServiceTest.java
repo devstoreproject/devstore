@@ -45,7 +45,7 @@ class ReviewGetServiceTest {
         // when
         Review result = reviewGetService.getReviewByReviewId(reviewId);
         // then
-        Assertions.assertThat(result.getItem().getId()).isEqualTo(review.getItem().getId());
+        Assertions.assertThat(result.getItem().getItemId()).isEqualTo(review.getItem().getItemId());
         Assertions.assertThat(result.getUser().getId()).isEqualTo(review.getUser().getId());
         Assertions.assertThat(result.getId()).as("assertion 수행 이전에 넣어줘야한다.즉 맨 마지막에 나오면 에러 터짐 ㅎㅎ").isEqualTo(reviewId);
     }
@@ -70,7 +70,7 @@ class ReviewGetServiceTest {
         BDDMockito.given(reviewRepository.findAllPage(ArgumentMatchers.any(Pageable.class))).willReturn(reviewPage);
 
         // when
-        Page<Review> result = reviewGetService.getReviewPage(userId, pageInfo);
+        Page<Review> result = reviewGetService.getReviewPage(pageInfo);
         // then
         Assertions.assertThat(result).usingRecursiveFieldByFieldElementComparator().isEqualTo(reviewPage);
         Assertions.assertThat(result.getSize()).isEqualTo(size);
