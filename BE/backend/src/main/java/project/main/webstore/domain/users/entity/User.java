@@ -55,6 +55,10 @@ public class User extends Auditable implements Principal {
     @OneToMany(mappedBy = "user")
     private List<PickedItem> pickedItemList;
 
+    // shipping Info 추가
+    @OneToOne(mappedBy = "user")
+    private ShippingInfo Info;
+
     @Override
     public String getName() {
         return getEmail();
