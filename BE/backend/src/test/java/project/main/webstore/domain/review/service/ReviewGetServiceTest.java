@@ -70,7 +70,7 @@ class ReviewGetServiceTest {
         BDDMockito.given(reviewRepository.findAllPage(ArgumentMatchers.any(Pageable.class))).willReturn(reviewPage);
 
         // when
-        Page<Review> result = reviewGetService.getReviewPage(userId, pageInfo);
+        Page<Review> result = reviewGetService.getReviewPage(pageInfo);
         // then
         Assertions.assertThat(result).usingRecursiveFieldByFieldElementComparator().isEqualTo(reviewPage);
         Assertions.assertThat(result.getSize()).isEqualTo(size);

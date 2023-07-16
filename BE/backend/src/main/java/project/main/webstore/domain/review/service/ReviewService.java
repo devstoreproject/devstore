@@ -41,6 +41,8 @@ public class ReviewService {
     public Review addLikeReview(Long reviewId, Long itemId, Long userId) {
         //TODO: item, user 검증 먼저 진행할 필요 존재
         Review findReview = reviewValidService.validReview(reviewId);
+        if(findReview.getItem().getItemId() != itemId){
+        }
         Like like = new Like(findReview);
         findReview.addLike(like);
 
