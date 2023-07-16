@@ -40,4 +40,13 @@ public class ImageMapper {
         return result;
     }
 
+    public ImageInfoDto toLocalDto(MultipartFile file, String uploadDir) {
+        return ImageInfoDto.dtoBuilder()
+                .multipartFile(file)
+                .order(1)
+                .representative(true)
+                .id(null)
+                .uploadDir(uploadDir)
+                .build();
+    }
 }

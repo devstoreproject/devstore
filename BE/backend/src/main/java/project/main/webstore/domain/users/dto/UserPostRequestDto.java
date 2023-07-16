@@ -27,5 +27,4 @@ public class UserPostRequestDto {
     private String addressSimple;
     private String addressDetail;
 
-    private ImageSortDto imageInfo;
 }
