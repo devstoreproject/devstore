@@ -114,7 +114,6 @@ public class Item {
         this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getName(),spec.getContent(),this)).collect(Collectors.toList()) : null;
         this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(),option.getItemCount(),option.getAdditionalPrice(),this)).collect(Collectors.toList()) : null;
     }
-    @Builder(builderMethodName = "patch")
     public Item(ItemPatchDto patch) {
         this.itemName = patch.getName();
         this.defaultCount = patch.getDefaultCount();
