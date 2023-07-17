@@ -65,13 +65,13 @@ public class ItemService {
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);
 
-        List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
-
-        if (imageList.isEmpty() == false) {
-            imageList.stream().map(image -> new ItemImage(image, item)).forEach(findItem::addItemImage);
+        if(imageInfoDtoList != null){
+            List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
+            if (imageList.isEmpty() == false) {
+                imageList.stream().map(image -> new ItemImage(image, item)).forEach(findItem::addItemImage);
+            }
         }
-
-        return itemRepository.save(findItem);
+        return findItem;
     }
 
     public void deleteItem(Long itemId) {
@@ -95,11 +95,10 @@ public class ItemService {
 
     public Page<Item> searchItem(String itemName, Pageable pageable) {
         if(itemName == null) {
-            itemName = "";
+            return itemRepository.findAll(pageable);
         }
-        Pageable pageRequest = PageRequest.of(pageable.getPageNumber(),pageable.getPageSize(), Sort.by("itemId"));
 
-        return itemRepository.findByItemNameContainingIgnoreCase(itemName, pageRequest);
+        return itemRepository.findByItemName(itemName, pageable);
     }
 
     // 아이템 최신순 정렬
@@ -112,9 +111,7 @@ public class ItemService {
     // 카테고리 조회
 
     public Page<Item> findItemByCategory(Category category, Pageable pageable) {
-        Pageable pageRequest = PageRequest.of(pageable.getPageNumber(),pageable.getPageSize(),Sort.by("itemId").descending());
-
-        return itemRepository.findItemByCategory(category, pageRequest);
+        return itemRepository.findItemByCategory(category, pageable);
     }
     // 높은 가격순 정렬
 

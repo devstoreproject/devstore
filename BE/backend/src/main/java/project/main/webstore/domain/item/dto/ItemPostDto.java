@@ -37,11 +37,11 @@ public class ItemPostDto {
     @NotNull
     @Schema(description = "배달비",example = "3000")
     private Integer deliveryPrice;
-    @Schema(description = "같이 저장될 상품 옵션들 정보",implementation = OptionPostRequestDto.class)
+    @Schema(description = "같이 저장될 상품 옵션들 정보")
     private List<OptionPostRequestDto> optionList;
-    @Schema(description = "같이 저장될 상품 스펙 정보",implementation = ItemPostSpecDto.class)
+    @Schema(description = "같이 저장될 상품 스펙 정보")
     private List<ItemPostSpecDto> specList;
-    @Schema(description = "저장될 이미지 정보",implementation = ImageSortDto.class)
+    @Schema(description = "저장될 이미지 정보")
     private List<ImageSortDto> infoList;
 
 }

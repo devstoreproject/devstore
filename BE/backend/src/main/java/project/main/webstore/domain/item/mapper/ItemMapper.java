@@ -22,9 +22,7 @@ public class ItemMapper {
         if (itemPatchDto == null) {
             return null;
         }
-        return Item.patch()
-                .patch(itemPatchDto)
-                .build();
+        return new Item(itemPatchDto);
 
     }
 
