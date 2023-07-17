@@ -21,7 +21,7 @@ public class SpecMapper {
     public ItemSpec specPatchDtoToSpec(SpecPatchDto specpatchDto) {
         return ItemSpec.builder()
                 .content(specpatchDto.getContent())
-                .name(specpatchDto.getItemName())
+                .name(specpatchDto.getName())
                 .build();
     }
 

@@ -98,7 +98,7 @@ public class ItemService {
             return itemRepository.findAll(pageable);
         }
 
-        return itemRepository.findByItemName(itemName, pageable);
+        return itemRepository.findByItemNameContainingIgnoreCase(itemName, pageable);
     }
 
     // 아이템 최신순 정렬
