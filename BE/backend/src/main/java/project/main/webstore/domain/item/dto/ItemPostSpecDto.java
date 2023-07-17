@@ -4,7 +4,6 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 @Getter
 public class ItemPostSpecDto {
@@ -12,7 +11,6 @@ public class ItemPostSpecDto {
     private String itemName;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z\\d`~!@#$%^&*()-_=+\\s]*$")
-    @Size(min = 0, max = 100)
     private String content;
 
 

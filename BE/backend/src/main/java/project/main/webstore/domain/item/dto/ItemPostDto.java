@@ -1,5 +1,6 @@
 package project.main.webstore.domain.item.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import project.main.webstore.domain.image.dto.ImageSortDto;
@@ -14,6 +15,7 @@ import java.util.List;
 public class ItemPostDto {
     @NotBlank
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$")
+    @Schema(example = "COMPUTER",allowableValues = {"COMPUTER", "MONITOR", "MOUSE", "HEADSET", "CHAIR", "DESK"})
     private Category category;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$")
@@ -27,7 +29,6 @@ public class ItemPostDto {
     private Integer itemPrice;
     @NotNull
     private Integer deliveryPrice;
-    private int totalCount;
     private List<OptionPostRequestDto> optionList;
     private List<ItemPostSpecDto> specList;
     private List<ImageSortDto> infoList;
