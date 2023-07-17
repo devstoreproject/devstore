@@ -8,4 +8,6 @@ import lombok.NoArgsConstructor;
 public class OptionPostRequestDto {
     private String optionDetail;
     private int itemCount;
+    private int additionalPrice;
+
 }
