@@ -124,7 +124,7 @@ public class ItemController {
     // 아이템 카테고리별 조회
     @GetMapping("search/category")
     @ApiResponse(responseCode = "200", description = "상품 카테고리별 조회 페이징")
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByCategory(@RequestParam() Category category, Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByCategory(@RequestParam Category category, Pageable pageable) {
         Page<Item> result = itemService.findItemByCategory(category, pageable);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
