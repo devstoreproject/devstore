@@ -22,7 +22,7 @@ public class SpecResponseDto {
     }
     public SpecResponseDto(ItemSpec spec) {
         this.specId = spec.getSpecId();
-        this.itemName = spec.getItemName();
+        this.itemName = spec.getName();
         this.content = spec.getContent();
     }
 

@@ -31,7 +31,7 @@ public class SpecService {
 
     public ItemSpec editSpec(ItemSpec itemSpec) {
         ItemSpec findSpec = findVerifiedSpec(itemSpec.getSpecId());
-        Optional.ofNullable(itemSpec.getItemName()).ifPresent(findSpec::setItemName);
+        Optional.ofNullable(itemSpec.getName()).ifPresent(findSpec::setName);
         Optional.ofNullable(itemSpec.getContent()).ifPresent(findSpec::setContent);
         return specRepository.save(findSpec);
     }
