@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
-@Schema(name="리뷰 Patch 응답 스키마" )
+@Schema(description="리뷰 Patch 응답 스키마" )
 @AllArgsConstructor
 public class ReviewUpdateRequestDto {
     @NotNull
