@@ -20,7 +20,6 @@ import project.main.webstore.domain.item.mapper.ItemMapper;
 import project.main.webstore.domain.item.service.ItemService;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
-import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
 
 import javax.validation.constraints.Positive;
@@ -45,9 +44,9 @@ public class ItemController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(responseCode = "201", description = "상품 등록 성공")
     public ResponseEntity<ResponseDto<ItemIdResponseDto>> createItem(@RequestPart ItemPostDto post,
-                                     @RequestPart List<MultipartFile> imageList,
+                                     @RequestPart(required = false) List<MultipartFile> imageList,
                                      @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validAdmin(principal);
+//        CheckLoginUser.validAdmin(principal);
 
         Item request = itemMapper.toEntity(post);
         Item result;
@@ -76,7 +75,7 @@ public class ItemController {
                                      @RequestPart ItemPatchDto patch,
                                      @RequestPart List<MultipartFile> imageList,
                                      @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validAdmin(principal);
+//        CheckLoginUser.validAdmin(principal);
         Item request = itemMapper.itemPatchDtoToItem(patch);
         List<ImageInfoDto> imageInfoDtoList = imageMapper.toLocalDtoList(imageList, patch.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
 
@@ -92,7 +91,7 @@ public class ItemController {
     @DeleteMapping("/{item-Id}")
     @ApiResponse(responseCode = "204", description = "상품 삭제 성공")
     public ResponseEntity deleteItem(@PathVariable("item-Id") @Positive Long itemId, @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validAdmin(principal);
+//        CheckLoginUser.validAdmin(principal);
         itemService.deleteItem(itemId);
         URI location = UriCreator.createUri(ITEM_DEFAULT_URL);
         return ResponseEntity.noContent().header("Location",location.toString()).build();
@@ -144,7 +143,7 @@ public class ItemController {
     @PostMapping("/{itemId}/favorite")
     @ApiResponse(responseCode = "200", description = "상품 좋아요 기능")
     public ResponseEntity<ResponseDto<PickedItemDto>> pickItem(@PathVariable @Positive Long itemId, @RequestParam Long userId,@AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
+//        CheckLoginUser.validUserSame(principal,userId);
         PickedItemDto result = itemService.pickItem(itemId, userId);
 
         var responseDto = ResponseDto.<PickedItemDto>builder().data(result).customCode(ResponseCode.OK).build();

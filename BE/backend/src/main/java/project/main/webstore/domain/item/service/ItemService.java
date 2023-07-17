@@ -39,13 +39,13 @@ public class ItemService {
 
     // 기존 등록된 item 검증 후 등록
     public Item postItem(Item item) {
-        Item findItem = validItem(item.getItemId());
+        validItemExist(item);
 
-        return itemRepository.save(findItem);
+        return itemRepository.save(item);
     }
+
     public Item postItem(Item item, List<ImageInfoDto> imageInfoList) {
-        Optional<Item> optionalItem = itemRepository.findByItemName(item.getItemName());
-        if(optionalItem.isPresent()) throw new BusinessLogicException(CommonExceptionCode.ITEM_EXIST);
+        validItemExist(item);
 
         //이미지를 저장하고 이미지 info를 저장한다.
         List<Image> images = fileUploader.uploadImage(imageInfoList);
@@ -73,6 +73,7 @@ public class ItemService {
 
         return itemRepository.save(findItem);
     }
+
     public void deleteItem(Long itemId) {
         Item findItem = validItem(itemId);
 
@@ -90,8 +91,8 @@ public class ItemService {
                 .orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND));
 
     }
-
     // 아이템 검색
+
     public Page<Item> searchItem(String itemName, Pageable pageable) {
         if(itemName == null) {
             itemName = "";
@@ -101,26 +102,25 @@ public class ItemService {
         return itemRepository.findByItemNameContainingIgnoreCase(itemName, pageRequest);
     }
 
-
     // 아이템 최신순 정렬
+
     private Page<Item> findItemByPageRequest(Pageable pageable) {
         Pageable pageRequest = PageRequest.of(pageable.getPageNumber(),pageable.getPageSize(),Sort.by("itemId").descending());
 
         return itemRepository.findAll(pageRequest);
     }
-
     // 카테고리 조회
+
     public Page<Item> findItemByCategory(Category category, Pageable pageable) {
         Pageable pageRequest = PageRequest.of(pageable.getPageNumber(),pageable.getPageSize(),Sort.by("itemId").descending());
 
         return itemRepository.findItemByCategory(category, pageRequest);
     }
-
     // 높은 가격순 정렬
+
     public Page<Item> findItemPage(Pageable pageable) {
         return itemRepository.findAll(pageable);
     }
-
     public PickedItemDto pickItem(Long itemId, Long userId) {
         Item find = validItem(itemId);
         User findUser = userValidService.validUser(userId);
@@ -146,5 +146,12 @@ public class ItemService {
             result.setPicked(true);
         }
         return result;
+    }
+
+    private void validItemExist(Item item) {
+        Optional<Item> findItem = itemRepository.findByItemId(item.getItemId());
+        if(findItem.isPresent()){
+            throw new BusinessLogicException(CommonExceptionCode.ITEM_EXIST);
+        }
     }
 }

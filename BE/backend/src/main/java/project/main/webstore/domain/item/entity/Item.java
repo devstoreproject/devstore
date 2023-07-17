@@ -111,7 +111,7 @@ public class Item {
         this.itemPrice = Price.builder().value(post.getItemPrice()).build();
         this.deliveryPrice = Price.builder().value(post.getDeliveryPrice()).build();
         this.category = post.getCategory();
-        this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getItemName(),spec.getContent(),this)).collect(Collectors.toList()) : null;
+        this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getName(),spec.getContent(),this)).collect(Collectors.toList()) : null;
         this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(),option.getItemCount(),option.getAdditionalPrice(),this)).collect(Collectors.toList()) : null;
     }
     @Builder(builderMethodName = "patch")

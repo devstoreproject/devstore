@@ -22,28 +22,26 @@ public class ItemPostDto {
     private Category category;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$")
+    @Schema(description = "상품 이름",example = "맥북")
     private String name;
     @NotNull
-    @Schema(description = "옵션이 없는 상품 수량")
+    @Schema(description = "옵션이 없는 기본상품 수량",example = "10")
     private int defaultCount;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z\\d`~!@#$%^&*()-_=+\\s]*$")
+    @Schema(description = "상품 설명",defaultValue = "상품에 대한 상세 설명")
     private String description;
     @NotNull
+    @Schema(description = "기본이 되는 상품 가격",example = "10000000")
     private Integer itemPrice;
     @NotNull
+    @Schema(description = "배달비",example = "3000")
     private Integer deliveryPrice;
-    @Schema(description = "같이 저장될 상품 옵션들 정보")
+    @Schema(description = "같이 저장될 상품 옵션들 정보",implementation = OptionPostRequestDto.class)
     private List<OptionPostRequestDto> optionList;
-    @Schema(description = "같이 저장될 상품 스펙 정보")
+    @Schema(description = "같이 저장될 상품 스펙 정보",implementation = ItemPostSpecDto.class)
     private List<ItemPostSpecDto> specList;
+    @Schema(description = "저장될 이미지 정보",implementation = ImageSortDto.class)
     private List<ImageSortDto> infoList;
 
-    public int getTotalCount() {
-        if(!this.optionList.isEmpty()){
-            int optionTotalCount = this.optionList.stream().mapToInt(OptionPostRequestDto::getItemCount).sum();
-            return this.defaultCount + optionTotalCount;
-        }
-        return this.defaultCount;
-    }
 }
