@@ -60,7 +60,6 @@ public class ItemService {
 
         Optional.ofNullable(item.getCategory()).ifPresent(findItem::setCategory);
         Optional.ofNullable(item.getItemName()).ifPresent(findItem::setItemName);
-        Optional.ofNullable(item.getTotalCount()).ifPresent(findItem::setTotalCount);
         Optional.ofNullable(item.getDefaultCount()).ifPresent(findItem::setDefaultCount);
         Optional.ofNullable(item.getDescription()).ifPresent(findItem::setDescription);
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
@@ -148,12 +147,4 @@ public class ItemService {
         }
         return result;
     }
-
-    // favorite item
-
-//    public Item createFavorite(Long itemId) {
-//    }
-//
-//    public Item cancleFavorite(Long itemId) {
-//    }
 }

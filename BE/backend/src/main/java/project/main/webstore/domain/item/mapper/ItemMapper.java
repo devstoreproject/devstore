@@ -47,11 +47,12 @@ public class ItemMapper {
             ItemResponseDto itemResponseDto = ItemResponseDto.builder()
                     .itemId(item.getItemId())
                     .category(item.getCategory())
-                    .itemName(item.getItemName())
-                    .itemCount(item.getTotalCount())
+                    .name(item.getItemName())
+                    .defaultCount(item.getDefaultCount())
                     .description(item.getDescription())
                     .itemPrice(item.getItemPrice().getValue())
                     .deliveryPrice(item.getDeliveryPrice().getValue())
+
                     .build();
 
             List<SpecResponseDto> specResponseDtos = item.getSpecList().stream().map(itemSpec -> {
