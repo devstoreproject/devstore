@@ -22,13 +22,8 @@ public class ItemMapper {
         if (itemPatchDto == null) {
             return null;
         }
-        return Item.builder()
-                .category(itemPatchDto.getCategory())
-                .category(itemPatchDto.getCategory())
-                .itemName(itemPatchDto.getItemName())
-                .description(itemPatchDto.getDescription())
-                .itemPrice(transPrice(itemPatchDto.getItemPrice()))
-                .deliveryPrice(transPrice(itemPatchDto.getDeliveryPrice()))
+        return Item.patch()
+                .patch(itemPatchDto)
                 .build();
 
     }
@@ -53,7 +48,7 @@ public class ItemMapper {
                     .itemId(item.getItemId())
                     .category(item.getCategory())
                     .itemName(item.getItemName())
-                    .itemCount(item.getItemCount())
+                    .itemCount(item.getTotalCount())
                     .description(item.getDescription())
                     .itemPrice(item.getItemPrice().getValue())
                     .deliveryPrice(item.getDeliveryPrice().getValue())

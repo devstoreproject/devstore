@@ -48,6 +48,7 @@ public class ItemController {
                                      @RequestPart List<MultipartFile> imageList,
                                      @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
+
         Item request = itemMapper.toEntity(post);
         Item result;
         if (imageList != null) {

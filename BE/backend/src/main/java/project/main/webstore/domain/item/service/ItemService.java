@@ -55,13 +55,13 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    //TODO: findItem -?
     public Item patchItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item) {
         Item findItem = validItem(item.getItemId());
 
         Optional.ofNullable(item.getCategory()).ifPresent(findItem::setCategory);
         Optional.ofNullable(item.getItemName()).ifPresent(findItem::setItemName);
-        Optional.ofNullable(item.getItemCount()).ifPresent(findItem::setItemCount);
+        Optional.ofNullable(item.getTotalCount()).ifPresent(findItem::setTotalCount);
+        Optional.ofNullable(item.getDefaultCount()).ifPresent(findItem::setDefaultCount);
         Optional.ofNullable(item.getDescription()).ifPresent(findItem::setDescription);
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);

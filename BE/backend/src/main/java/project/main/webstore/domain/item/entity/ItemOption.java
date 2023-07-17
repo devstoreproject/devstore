@@ -25,6 +25,7 @@ public class ItemOption {
     @Setter
     private String optionDetail;
 
+    private int additionalPrice;
     @Setter
     private Integer itemCount;
 
@@ -41,14 +42,16 @@ public class ItemOption {
         this.item = item;
     }
 
-    public ItemOption(String optionDetail, int itemCount, Item item) {
+    public ItemOption(String optionDetail, int itemCount,int additionalPrice, Item item) {
         this.optionDetail = optionDetail;
         this.itemCount = itemCount;
+        this.additionalPrice = additionalPrice;
         this.item = item;
     }
 
-    public ItemOption(String optionDetail, int itemCount) {
+    public ItemOption(String optionDetail, int itemCount,int additionalPrice) {
         this.optionDetail = optionDetail;
         this.itemCount = itemCount;
+        this.additionalPrice = additionalPrice;
     }
 }
