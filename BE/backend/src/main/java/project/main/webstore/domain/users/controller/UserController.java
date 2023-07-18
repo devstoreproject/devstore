@@ -35,15 +35,17 @@ public class UserController {
     private final UserService service;
     private final UserMapper userMapper;
     private final ImageMapper imageMapper;
+
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    @ApiResponse(responseCode = "201",description = "회원 가입")
-    public ResponseEntity<ResponseDto<UserIdResponseDto>> postUser(@RequestPart UserPostRequestDto post,
-                                   @RequestPart(required = false) MultipartFile image) {
+    @ApiResponse(responseCode = "201", description = "회원 가입")
+    public ResponseEntity<ResponseDto<UserIdResponseDto>> postUser(
+            @RequestPart UserPostRequestDto post,
+            @RequestPart(required = false) MultipartFile image) {
         User user = userMapper.toEntity(post);
-        ImageInfoDto infoDto =null;
+        ImageInfoDto infoDto = null;
         if (image != null) {
             infoDto = imageMapper.toLocalDto(image, UPLOAD_DIR);
         }
@@ -58,16 +60,16 @@ public class UserController {
     @PatchMapping(path = "/{userId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponse(responseCode = "200",description = "사용자 정보 수정")
+    @ApiResponse(responseCode = "200", description = "사용자 정보 수정")
     public ResponseEntity<ResponseDto<UserIdResponseDto>> patchUser(@PathVariable Long userId,
-                                    @RequestPart UserPatchRequestDto patch,
-                                    @RequestPart(required = false) MultipartFile image,
-                                    @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
+                                                                    @RequestPart UserPatchRequestDto patch,
+                                                                    @RequestPart(required = false) MultipartFile image,
+                                                                    @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
         User request = userMapper.toEntity(patch);
         request.setId(userId);
         ImageInfoDto infoDto = null;
-        if(image != null){
+        if (image != null) {
             infoDto = imageMapper.toLocalDto(image, patch.getImageInfo(), UPLOAD_DIR);
         }
         User result = service.patchUser(request, infoDto);
@@ -76,15 +78,15 @@ public class UserController {
         var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
         URI location = UriCreator.createUri("/users/{userId}", response.getUserId());
 
-        return ResponseEntity.ok().header("Location",location.toString()).body(responseDto);
+        return ResponseEntity.ok().header("Location", location.toString()).body(responseDto);
     }
 
     //관리자 or 당사자만 볼 수 있음
     @GetMapping("/{userId}")
-    @ApiResponse(responseCode = "200",description = "사용자 조회")
+    @ApiResponse(responseCode = "200", description = "사용자 조회")
     public ResponseEntity getUser(@PathVariable Long userId,
-                                  @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
+                                  @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
         User result = service.getUser(userId);
         UserGetResponseDto response = userMapper.toGetDtoResponse(result);
         var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
@@ -93,9 +95,9 @@ public class UserController {
     }
 
     @GetMapping
-    @ApiResponse(responseCode = "200",description = "사용자 정보 리스트 조회\n 관리자만 가능한 코드")
+    @ApiResponse(responseCode = "200", description = "사용자 정보 리스트 조회\n 관리자만 가능한 코드")
     public ResponseEntity getUserPage(@AuthenticationPrincipal Object principal,
-                                      Pageable pageable){
+                                      Pageable pageable) {
         CheckLoginUser.validAdmin(principal);
         Page<User> result = service.getUserPage(pageable);
         Page<UserGetResponseDto> response = userMapper.toGetDtoResponse(result);
@@ -103,11 +105,12 @@ public class UserController {
 
         return ResponseEntity.ok(responseDto);
     }
+
     @DeleteMapping("/{userId}")
-    @ApiResponse(responseCode = "204",description = "사용자 삭제")
+    @ApiResponse(responseCode = "204", description = "사용자 삭제")
     public ResponseEntity deleteUser(@PathVariable Long userId,
-                                     @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
+                                     @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
         service.deleteUser(userId);
 
         return ResponseEntity.noContent().build();

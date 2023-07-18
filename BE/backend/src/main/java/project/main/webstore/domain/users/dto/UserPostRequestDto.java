@@ -3,6 +3,7 @@ package project.main.webstore.domain.users.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -10,6 +11,8 @@ import javax.validation.constraints.Pattern;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@Schema(description = "데이터 전달 시 application/json 형식으로 전달해줘야한다.")
 public class UserPostRequestDto {
     @NotBlank
     @Email
