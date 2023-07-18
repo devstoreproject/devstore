@@ -15,6 +15,7 @@ import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.repository.UserRepository;
 import project.main.webstore.exception.BusinessLogicException;
+import project.main.webstore.security.dto.LoginDto;
 import project.main.webstore.utils.FileUploader;
 
 import java.util.Optional;
@@ -131,5 +132,13 @@ public class UserService {
             Image image = fileUploader.uploadImage(imageInfo);
             user.setProfileImage(image.getImagePath());
         }
+    }
+
+    // tmp 임시
+    public User tmpLogin(LoginDto loginDto){
+        String encode = passwordEncoder.encode(loginDto.getPassword());
+        Optional<User> byEmail = userRepository.findByEmail(loginDto.getUsername());
+
+        return byEmail.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_LOGIN));
     }
 }
