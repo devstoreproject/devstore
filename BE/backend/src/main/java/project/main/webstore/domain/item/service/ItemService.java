@@ -46,8 +46,8 @@ public class ItemService {
 
     public Item postItem(Item item, List<ImageInfoDto> imageInfoList) {
         validItemExist(item);
+        imageUtils.imageValid(imageInfoList);
 
-        //이미지를 저장하고 이미지 info를 저장한다.
         List<Image> images = fileUploader.uploadImage(imageInfoList);
         List<ItemImage> imageList = images.stream().map(image -> new ItemImage(image, item)).collect(Collectors.toList());
         item.setItemImageList(imageList);
@@ -66,6 +66,7 @@ public class ItemService {
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);
 
         if(imageInfoDtoList != null){
+            imageUtils.imageValid(imageInfoDtoList);
             List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
             if (imageList.isEmpty() == false) {
                 imageList.stream().map(image -> new ItemImage(image, item)).forEach(findItem::addItemImage);

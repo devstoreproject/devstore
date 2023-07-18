@@ -28,6 +28,7 @@ import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @Tag(name = "리뷰 API", description = "리뷰 관련 API")
@@ -144,7 +145,10 @@ public class ReviewController {
     ) {
         CheckLoginUser.validUserSame(principal, patch.getUserId());
         Review review = reviewMapper.toEntity(patch, reviewId);
-        List<ImageInfoDto> imageInfoList = imageMapper.toLocalDtoList(imageList, patch.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
+        List<ImageInfoDto> imageInfoList = new ArrayList<>();
+        if (patch.getImageSortAndRepresentativeInfo()!= null) {
+            imageInfoList = imageMapper.toLocalDtoList(imageList, patch.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
+        }
         Review patchReview = service.patchReview(imageInfoList, patch.getDeleteImageId(), review, patch.getUserId(), itemId, reviewId);
         ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(patchReview);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
