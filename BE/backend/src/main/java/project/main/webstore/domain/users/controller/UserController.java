@@ -1,8 +1,11 @@
 package project.main.webstore.domain.users.controller;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,54 +29,64 @@ import java.net.URI;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Tag(name = "사용자 API", description = "사용자 조회 등의 기능 포함")
 public class UserController {
     private final String UPLOAD_DIR = "user";
     private final UserService service;
     private final UserMapper userMapper;
     private final ImageMapper imageMapper;
-    @PostMapping
-    public ResponseEntity postUser(@RequestPart UserPostRequestDto post,
-                                   @RequestPart(required = false) MultipartFile image) {
+
+    @PostMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ApiResponse(responseCode = "201", description = "회원 가입")
+    public ResponseEntity<ResponseDto<UserIdResponseDto>> postUser(
+            @RequestPart UserPostRequestDto post,
+            @RequestPart(required = false) MultipartFile image) {
         User user = userMapper.toEntity(post);
-        ImageInfoDto infoDto =null;
+        ImageInfoDto infoDto = null;
         if (image != null) {
             infoDto = imageMapper.toLocalDto(image, UPLOAD_DIR);
         }
         User result = service.postUser(user, infoDto);
         UserIdResponseDto response = userMapper.toDto(result);
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED).build();
-        URI location = UriCreator.createUri("/api/users/{userId}", response.getUserId());
+        var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
+        URI location = UriCreator.createUri("/users/{userId}", response.getUserId());
 
         return ResponseEntity.created(location).body(responseDto);
     }
 
-    //어드민은 절대자의 권한이 존재한다. -|> 절대자의 권한을 사용하자.
-    @PatchMapping("/{userId}")
-    public ResponseEntity patchUser(@PathVariable Long userId,
-                                    @RequestPart UserPatchRequestDto patch,
-                                    @RequestPart(required = false) MultipartFile image,
-                                    @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
+    @PatchMapping(path = "/{userId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponse(responseCode = "200", description = "사용자 정보 수정")
+    public ResponseEntity<ResponseDto<UserIdResponseDto>> patchUser(@PathVariable Long userId,
+                                                                    @RequestPart UserPatchRequestDto patch,
+                                                                    @RequestPart(required = false) MultipartFile image,
+                                                                    @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
         User request = userMapper.toEntity(patch);
         request.setId(userId);
         ImageInfoDto infoDto = null;
-        if(image != null){
+        if (image != null) {
             infoDto = imageMapper.toLocalDto(image, patch.getImageInfo(), UPLOAD_DIR);
         }
         User result = service.patchUser(request, infoDto);
 
         UserIdResponseDto response = userMapper.toDto(result);
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED);
-        URI location = UriCreator.createUri("/api/users/{userId}", response.getUserId());
+        var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
+        URI location = UriCreator.createUri("/users/{userId}", response.getUserId());
 
-        return ResponseEntity.ok().header("Location",location.toString()).body(responseDto);
+        return ResponseEntity.ok().header("Location", location.toString()).body(responseDto);
     }
 
     //관리자 or 당사자만 볼 수 있음
     @GetMapping("/{userId}")
+    @ApiResponse(responseCode = "200", description = "사용자 조회")
     public ResponseEntity getUser(@PathVariable Long userId,
-                                  @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
+                                  @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
         User result = service.getUser(userId);
         UserGetResponseDto response = userMapper.toGetDtoResponse(result);
         var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
@@ -82,8 +95,9 @@ public class UserController {
     }
 
     @GetMapping
+    @ApiResponse(responseCode = "200", description = "사용자 정보 리스트 조회\n 관리자만 가능한 코드")
     public ResponseEntity getUserPage(@AuthenticationPrincipal Object principal,
-                                      Pageable pageable){
+                                      Pageable pageable) {
         CheckLoginUser.validAdmin(principal);
         Page<User> result = service.getUserPage(pageable);
         Page<UserGetResponseDto> response = userMapper.toGetDtoResponse(result);
@@ -91,10 +105,12 @@ public class UserController {
 
         return ResponseEntity.ok(responseDto);
     }
+
     @DeleteMapping("/{userId}")
+    @ApiResponse(responseCode = "204", description = "사용자 삭제")
     public ResponseEntity deleteUser(@PathVariable Long userId,
-                                     @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
+                                     @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
         service.deleteUser(userId);
 
         return ResponseEntity.noContent().build();

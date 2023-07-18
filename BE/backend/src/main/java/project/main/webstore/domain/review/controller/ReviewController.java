@@ -41,7 +41,7 @@ public class ReviewController {
     private final ReviewMapper reviewMapper;
     private final ImageMapper imageMapper;
 
-    @PostMapping(path = "/item/{itemId}/review",
+    @PostMapping(path = "/items/{itemId}/review",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -94,7 +94,7 @@ public class ReviewController {
     }
 
     @ApiResponse(responseCode = "200", description = "해당 아이템에 존재하는 리뷰 전체 출력")
-    @GetMapping("/item/{itemId}/review")
+    @GetMapping("/items/{itemId}/review")
     public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(Pageable pageable, @PathVariable Long itemId) {
         Page<Review> reviewPage = getService.getReviewPageByItemId(pageable, itemId);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
@@ -121,7 +121,7 @@ public class ReviewController {
     }
 
     @ApiResponse(responseCode = "204", description = "특정 리뷰 삭제")
-    @DeleteMapping("/item/{itemId}/review/{reviewId}")
+    @DeleteMapping("/items/{itemId}/review/{reviewId}")
     public ResponseEntity deleteReview(@PathVariable Long itemId,
                                        @PathVariable Long reviewId,
                                        @RequestParam Long userId,
@@ -132,7 +132,7 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(path = "/item/{itemId}/review/{reviewId}",
+    @PatchMapping(path = "/items/{itemId}/review/{reviewId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(responseCode = "200", description = "리뷰 수정")
@@ -154,7 +154,7 @@ public class ReviewController {
     }
 
     @ApiResponse(responseCode = "200", description = "리뷰 좋아요 \n 로그인 회원만 사용 가능")
-    @PostMapping("/item/{itemId}/review/{reviewId}/like")
+    @PostMapping("/items/{itemId}/review/{reviewId}/like")
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> addLikeReview(@PathVariable Long reviewId,
                                                                           @PathVariable Long itemId,
                                                                           @RequestParam Long userId,
@@ -169,7 +169,7 @@ public class ReviewController {
     }
 
     @ApiResponse(responseCode = "200", description = "특정 상품에서 좋아요가 가장 많은 리뷰 순으로 정렬, count 만큼 반환 \n 관리자만 사용 가능")
-    @GetMapping("/item/{itemId}/review/best")
+    @GetMapping("/items/{itemId}/review/best")
     public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getBestReview(@PathVariable Long itemId,
                                                                                  @RequestParam Long userId,
                                                                                  @RequestParam int count,

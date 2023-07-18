@@ -1,8 +1,10 @@
 package project.main.webstore.domain.notice.controller;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,8 +32,10 @@ public class NoticeController {
     private final NoticeMapper noticeMapper;
     private final ImageMapper imageMapper;
 
-    @PostMapping
-    public ResponseEntity postNotice(@RequestPart(required = false) List<MultipartFile> imageList,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+                 produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponse(responseCode = "201",description = "공지 등록")
+    public ResponseEntity<ResponseDto<NoticeIdResponseDto>> postNotice(@RequestPart(required = false) List<MultipartFile> imageList,
                                      @RequestPart NoticePostRequestDto postDto) {
         Notice requsetNotice = noticeMapper.toEntity(postDto);
         Notice responseNotice;
@@ -49,8 +53,11 @@ public class NoticeController {
         return ResponseEntity.created(uri).body(responseDto);
     }
 
-    @PatchMapping("/{noticeId}")
-    public ResponseEntity patchNotice(@PathVariable Long noticeId,
+    @PatchMapping(path = "/{noticeId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponse(responseCode = "200", description = "공지 수정")
+    public ResponseEntity<ResponseDto<NoticeIdResponseDto>> patchNotice(@PathVariable Long noticeId,
                                       @RequestPart(required = false) List<MultipartFile> imageList,
                                       @RequestPart NoticePatchRequestDto patchDto) {
         Notice notice = noticeMapper.toEntity(patchDto, noticeId);
@@ -66,14 +73,16 @@ public class NoticeController {
     }
 
     @DeleteMapping("/{noticeId}")
+    @ApiResponse(responseCode = "204",description = "공지 삭제 완료")
     public ResponseEntity deleteNotice(@PathVariable Long noticeId) {
         service.deleteNotice(noticeId);
         var responseDto = ResponseDto.builder().data(null).customCode(ResponseCode.OK).build();
-        return ResponseEntity.ok().body(responseDto);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("")
-    public ResponseEntity getNoticeAll(Pageable pageable) {
+    @GetMapping()
+    @ApiResponse(responseCode = "200",description = "공지 전체 조회")
+    public ResponseEntity<ResponseDto<Page<NoticeGetSimpleResponseDto>>> getNoticeAll(Pageable pageable) {
         Page<Notice> responseEntity = getService.getSimpleNotice(pageable);
         Page<NoticeGetSimpleResponseDto> responsePage = noticeMapper.toGetSimplePageResponse(responseEntity);
         var responseDto = ResponseDto.<Page<NoticeGetSimpleResponseDto>>builder()
@@ -84,7 +93,8 @@ public class NoticeController {
     }
 
     @GetMapping("/{noticeId}")
-    public ResponseEntity getNotice(@PathVariable Long noticeId) {
+    @ApiResponse(responseCode = "200",description = "공지사항 단건 조회")
+    public ResponseEntity<ResponseDto<NoticeGetResponseDto>> getNotice(@PathVariable Long noticeId) {
         Notice responseEntity = getService.getNotice(noticeId);
         NoticeGetResponseDto response = noticeMapper.toGetRseponseGetDto(responseEntity);
         var responseDto = ResponseDto.<NoticeGetResponseDto>builder()

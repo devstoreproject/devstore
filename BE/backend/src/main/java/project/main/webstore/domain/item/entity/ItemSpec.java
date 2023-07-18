@@ -21,7 +21,7 @@ public class ItemSpec {
     @Setter
     private Long specId;
     @Setter
-    private String itemName;
+    private String name;
     @Setter
     private String content;
 
@@ -35,23 +35,23 @@ public class ItemSpec {
         this.content = content;
     }
 
-    // specPatchDto Builder
-    public void specPatchDto(ItemSpec specPatch) {
-        this.itemName = specPatch.getItem().getItemName();
-        this.content = specPatch.getContent();
-    }
-
     @Builder
-    public ItemSpec(Long specId, String itemName, String content) {
+    public ItemSpec(Long specId, String name, String content) {
         this.specId   = specId;
-        this.itemName = itemName;
+        this.name = name;
         this.content  = content;
     }
 
-    public ItemSpec(String itemName, String content, Item item) {
-        this.itemName = itemName;
+    public ItemSpec(String name, String content, Item item) {
+        this.name = name;
         this.content = content;
         this.item = item;
+    }
+
+    // specPatchDto Builder
+    public void specPatchDto(ItemSpec specPatch) {
+        this.name = specPatch.getItem().getItemName();
+        this.content = specPatch.getContent();
     }
     /*
    - spec 작성시 해당 item과 itemId를 가져와 연동하여 작성해야 되는지?

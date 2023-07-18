@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.image.entity.ItemImage;
+import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.enums.ItemStatus;
@@ -43,7 +44,7 @@ public class Item {
     private String itemName;
     @Column(nullable = false)
     @Setter
-    private Integer itemCount;
+    private Integer defaultCount;
     @Lob
     @Setter
     private String description;
@@ -97,46 +98,29 @@ public class Item {
     @OneToMany(fetch = LAZY,cascade = ALL,mappedBy = "item")
     private List<PickedItem> pickedItem;
 
-    public Item(String itemName, int itemCount, String description, Integer itemPrice, Integer deliveryPrice, Category category, List<ItemSpec> specList, List<ItemOption> optionList) {
-        this.itemName = itemName;
-        this.itemCount = itemCount;
-        this.description = description;
-        this.itemStatus = ItemStatus.ON_STACK;
-        this.itemPrice = Price.builder().value(itemPrice).build();
-        this.deliveryPrice = Price.builder().value(deliveryPrice).build();
-        this.category = category;
-        this.specList = specList;
-        this.optionList = optionList;
-    }
-
     public Item(Long itemId) {
         this.itemId = itemId;
     }
 
-
-    @Builder
-    public Item(Long itemId, String itemName, int itemCount, String description,
-                Price itemPrice, Price deliveryPrice, Category category) {
-        this.itemId = itemId;
-        this.itemName = itemName;
-        this.itemCount = itemCount;
-        this.description = description;
-        this.itemPrice = itemPrice;
-        this.deliveryPrice = deliveryPrice;
-        this.category = category;
-    }
-
     @Builder(builderMethodName = "post")
     public Item(ItemPostDto post) {
-        this.itemName = post.getItemName();
-        this.itemCount = post.getItemCount();
+        this.itemName = post.getName();
+        this.defaultCount = post.getDefaultCount();
         this.description = post.getDescription();
         this.itemStatus = ItemStatus.ON_STACK;
         this.itemPrice = Price.builder().value(post.getItemPrice()).build();
         this.deliveryPrice = Price.builder().value(post.getDeliveryPrice()).build();
         this.category = post.getCategory();
-        this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getItemName(),spec.getContent(),this)).collect(Collectors.toList()) : null;
-        this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(),option.getItemCount(),this)).collect(Collectors.toList()) : null;
+        this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getName(),spec.getContent(),this)).collect(Collectors.toList()) : null;
+        this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(),option.getItemCount(),option.getAdditionalPrice(),this)).collect(Collectors.toList()) : null;
+    }
+    public Item(ItemPatchDto patch) {
+        this.itemName = patch.getName();
+        this.defaultCount = patch.getDefaultCount();
+        this.description = patch.getDescription();
+        this.itemPrice = Price.builder().value(patch.getItemPrice()).build();
+        this.deliveryPrice = Price.builder().value(patch.getDeliveryPrice()).build();
+        this.category = patch.getCategory();
     }
 
     public void addSpec(ItemSpec itemSpec) {
@@ -193,6 +177,13 @@ public class Item {
         this.itemPrice = itemPrice;
         this.deliveryPrice = deliveryPrice;
     }
-
+    
+    public int getTotalCount(){
+        if(this.optionList.isEmpty()){
+            return defaultCount;
+        }
+        int totalOptionCount = optionList.stream().mapToInt(option -> option.getItemCount()).sum();
+        return defaultCount + totalOptionCount;
+    }
 }
 
