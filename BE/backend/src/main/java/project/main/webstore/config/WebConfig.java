@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public MappingJackson2HttpMessageConverter octetStreamJsonConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setSupportedMediaTypes(Arrays.asList(new MediaType("application", "octet-stream")));
+        converter.setSupportedMediaTypes(Arrays.asList(new MediaType("application","json"),new MediaType("application", "octet-stream")));
         return converter;
     }
 }
