@@ -1,10 +1,10 @@
 package project.main.webstore.security;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.main.webstore.domain.users.entity.User;
@@ -66,9 +66,10 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(path = "/tmp/login",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/tmp/login")
     @ApiResponse(responseCode = "200",description = "이 것은 임시 다른것과 모든것이 동일하지만 URL이 /api/login 으로 입력하셔야합니다.")
-    public ResponseEntity<ResponseDto<LoginResponseDto>> tmpLogin(@RequestBody LoginDto login, HttpServletResponse response) throws IOException {
+    public ResponseEntity<ResponseDto<LoginResponseDto>> tmpLogin(@Parameter(example = "admin001@gmail.com") @RequestParam String username,@Parameter(example = "admin111")@RequestParam String password, HttpServletResponse response) throws IOException {
+        LoginDto login = new LoginDto(username, password);
         User user = userService.tmpLogin(login);
         LoginResponseDto loginResponseDto = new LoginResponseDto(user);
         UserInfoDto userInfo = new UserInfoDto(user);
