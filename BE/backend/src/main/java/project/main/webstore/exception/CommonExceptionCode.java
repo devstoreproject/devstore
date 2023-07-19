@@ -26,9 +26,8 @@ public enum CommonExceptionCode implements ExceptionCode {
     ORDER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND,"주문한 아이템 정보가 존재하지 않습니다."),
     SPEC_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 스펙이 존재하지 않습니다."),
     OPTION_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 옵션이 존재하지 않습니다."),
-    SHIPPING_INFO_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 배송정보가 존재하지 않습니다.")
-
-    ;
+    SHIPPING_INFO_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 배송정보가 존재하지 않습니다."),
+    COVERT_ERROR(HttpStatus.BAD_REQUEST, "변환 실패 요청을 확인하시오");
 
     private final HttpStatus httpStatus;
     private final String message;
