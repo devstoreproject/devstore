@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.domain.order.entity.Orders;
-import project.main.webstore.domain.users.dto.ShippingInfoPostDto;
 import project.main.webstore.valueObject.Address;
 
 import javax.persistence.*;
@@ -22,7 +21,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class ShippingInfo {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name ="SHIPPING_INFO", updatable = false)
+    @Column(name = "SHIPPING_INFO", updatable = false)
     private Long infoId;
     @Setter
     @Column(insertable = false, updatable = false)
@@ -49,13 +48,15 @@ public class ShippingInfo {
     @Embedded
     private Address address;
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @Setter
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL) // 배송지 여러개 등록 가능
     @JoinColumn(name = "USER_ID")
     private User user;
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "ORDER_ID")
     private Orders order;
+
 
     @Builder
     public ShippingInfo(Long infoId, String recipient, String email, String mobileNumber, String homeNumber,
@@ -71,14 +72,6 @@ public class ShippingInfo {
         this.address = address;
     }
 
-
-
-    public void setUser(User user) {
-        this.user = user;
-        if (user.getInfo() != this) {
-            user.setInfo(this);
-        }
-    }
 
     public void setOrder(Orders order) {
         this.order = order;

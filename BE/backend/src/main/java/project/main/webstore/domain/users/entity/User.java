@@ -55,9 +55,10 @@ public class User extends Auditable implements Principal {
     @OneToMany(mappedBy = "user")
     private List<PickedItem> pickedItemList;
 
-    // shipping Info 추가
-    @OneToOne(mappedBy = "user")
-    private ShippingInfo Info;
+    //TODO: shippingInfo 추가
+    @Setter
+    @OneToMany(mappedBy = "user")
+    private List<ShippingInfo> infoList;
 
     @Override
     public String getName() {
@@ -80,6 +81,14 @@ public class User extends Auditable implements Principal {
     public User(Long id) {
         this.id = id;
     }
+
+//    public void addInfo(ShippingInfo info) {
+//        this.infoList.add(info);
+//        info.setUser(this);
+//        if(info.getUser() != this) {
+//            info.setUser(this);
+//        }
+//    }
 
     protected User(Long id, String nickName, String password, String email, UserRole userRole, UserStatus userStatus) {
         this.id = id;
