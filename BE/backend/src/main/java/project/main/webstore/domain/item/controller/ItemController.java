@@ -1,10 +1,17 @@
 package project.main.webstore.domain.item.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.Explode;
+import io.swagger.v3.oas.annotations.enums.ParameterStyle;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,7 +52,8 @@ public class ItemController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(responseCode = "201", description = "상품 등록 성공")
     public ResponseEntity<ResponseDto<ItemIdResponseDto>> createItem(@RequestPart ItemPostDto post,
-                                     @RequestPart(required = false) List<MultipartFile> imageList,
+                                                                     @Parameter(description = "Image files", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                                                                             array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))),style = ParameterStyle.FORM,explode = Explode.TRUE)@RequestPart(required = false) List<MultipartFile> imageList,
                                      @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
 
@@ -113,7 +121,7 @@ public class ItemController {
     //TODO : 코드 이상함
     @GetMapping("/search/itemName")
     @ApiResponse(responseCode = "200", description = "아이템 별 상품 조회 (페이징)")
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> searchItem(@RequestParam String itemName, Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> searchItem(@RequestParam String itemName,@PageableDefault(sort = "itemId")  Pageable pageable) {
         Page<Item> result = itemService.searchItem(itemName, pageable);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
@@ -124,7 +132,7 @@ public class ItemController {
     // 아이템 카테고리별 조회
     @GetMapping("search/category")
     @ApiResponse(responseCode = "200", description = "상품 카테고리별 조회 페이징")
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByCategory(@RequestParam Category category, Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByCategory(@RequestParam Category category,@PageableDefault(sort = "itemId")  Pageable pageable) {
         Page<Item> result = itemService.findItemByCategory(category, pageable);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
@@ -135,7 +143,7 @@ public class ItemController {
     //전체 조회 (페이징)
     @GetMapping
     @ApiResponse(responseCode = "200", description = "전체 상품 조회 페이징")
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByHighPrice(Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByHighPrice(@PageableDefault(sort = "itemId") Pageable pageable) {
         Page<Item> result = itemService.findItemPage(pageable);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
