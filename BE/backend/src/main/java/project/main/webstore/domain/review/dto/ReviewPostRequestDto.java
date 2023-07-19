@@ -3,14 +3,16 @@ package project.main.webstore.domain.review.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.main.webstore.domain.image.dto.ImageSortDto;
 
 import java.util.List;
 
 @Schema(description = "리뷰 Post 요청")
 @Getter
+@NoArgsConstructor
 public class ReviewPostRequestDto {
-    @Schema(description = "사용자 식별자")
+    @Schema(description = "사용자 식별자",example = "1")
     private Long userId;
     @Schema(description = "리뷰 본문", example = "상품이 친절하고 사장님이 좋아요")
     private String comment;
