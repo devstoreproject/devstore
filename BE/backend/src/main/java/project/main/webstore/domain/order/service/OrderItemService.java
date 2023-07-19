@@ -27,7 +27,7 @@ public class OrderItemService {
 
     public OrderItem writeOrderItem(OrderItem orderItem, Long orderId) {
         Orders findOrder = orderService.findVerifiedOrder(orderId);
-        orderItem.setItem(findOrder.getItem());
+        orderItem.setOrder(findOrder);
         findOrder.getOrderItems().add(orderItem);
 
         return orderItemRepository.save(orderItem);
@@ -42,8 +42,8 @@ public class OrderItemService {
     }
 
     public OrderItem findVerifiedOrderItem(Long orderFormId) {
-        Optional<OrderItem> findByOrderITemId = orderItemRepository.findByOrderItemId(orderFormId);
-        OrderItem foundOrderItem = findByOrderITemId.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ORDER_ITEM_NOT_FOUND));
+        Optional<OrderItem> findByOrderItemId = orderItemRepository.findByOrderItemId(orderFormId);
+        OrderItem foundOrderItem = findByOrderItemId.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ORDER_ITEM_NOT_FOUND));
 
         return foundOrderItem;
     }

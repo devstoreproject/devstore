@@ -3,6 +3,7 @@ package project.main.webstore.domain.order.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import project.main.webstore.domain.order.entity.OrderItem;
 
 @Getter
 @Setter
@@ -19,4 +20,11 @@ public class OrderItemResponseDto {
         this.itemCount = itemCount;
         this.itemPrice = itemPrice;
     }
+
+//    public OrderItemResponseDto(OrderItem orderItem) {
+//            this.itemId = orderItem.getItem().getItemId();
+//            this.itemName = orderItem.getItem().getItemName();
+//            this.itemCount = orderItem.getItemCount();
+//            this.itemPrice = orderItem.getItem().getItemPrice().getValue();
+//        }
 }

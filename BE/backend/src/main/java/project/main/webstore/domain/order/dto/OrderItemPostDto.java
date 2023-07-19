@@ -16,8 +16,9 @@ public class OrderItemPostDto extends OrderItem{
     private Long itemId;
     @NotNull
     private int itemCount;
-    private Item item;
 
+//    private Item item;
+//
 //    private List<Item> items;
 //
 //    @Getter

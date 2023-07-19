@@ -21,12 +21,13 @@ public class OrderItemMapper {
                 .build();
     }
 
-    public OrderItemResponseDto orderItemToResponse(Orders orderItems) {
+
+    public OrderItemResponseDto orderItemToOrderItem(OrderItem orderItem) {
         return OrderItemResponseDto.builder()
-                .itemId(orderItems.getItem().getItemId())
-                .itemName(orderItems.getItem().getItemName())
-                .itemCount(orderItems.getItem().getItemCount())
-                .itemPrice(orderItems.getItem().getItemPrice().getValue())
+                .itemId(orderItem.getItem().getItemId())
+                .itemName(orderItem.getItem().getItemName())
+                .itemCount(orderItem.getItem().getItemCount())
+                .itemPrice(orderItem.getItem().getItemPrice().getValue())
                 .build();
     }
 
@@ -43,11 +44,7 @@ public class OrderItemMapper {
         }).collect(Collectors.toList());
     }
 
-    public List<OrderItemResponseDto> orderItemListToOrderItemResponse(List<Orders> orderList) {
-        return orderList.stream().map(orders -> orderItemToResponse(orders)).collect(Collectors.toList());
-    }
-
-    public OrderItemIdResponseDto toOrderItemIdResponse(OrderItem orderItem) {
-        return new OrderItemIdResponseDto(orderItem.getItem().getItemId(),orderItem.getOrder().getOrderId(),orderItem.getOrderItemId());
+    public List<OrderItemResponseDto> orderItemListToOrderItemResponse(List<OrderItem> orderItemList) {
+        return orderItemList.stream().map(orders -> orderItemToOrderItem(orders)).collect(Collectors.toList());
     }
 }

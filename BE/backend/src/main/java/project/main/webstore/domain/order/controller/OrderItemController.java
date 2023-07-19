@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import project.main.webstore.domain.order.dto.OrderItemPostDto;
 import project.main.webstore.domain.order.dto.OrderItemResponseDto;
+import project.main.webstore.domain.order.dto.OrderResponseDto;
 import project.main.webstore.domain.order.entity.OrderItem;
 import project.main.webstore.domain.order.mapper.OrderItemMapper;
 import project.main.webstore.domain.order.service.OrderItemService;
@@ -25,45 +26,46 @@ public class OrderItemController {
     public OrderItemService orderItemService;
     public OrderItemMapper orderItemMapper;
 
-    @PostMapping("/{order-id}/orderItem")
-    public ResponseEntity postOrderItem(@PathVariable @Positive Long orderId,
-                                        @RequestBody @Valid OrderItemPostDto postDto) {
+    @PostMapping("/{order-id}/orderItems")
+    public ResponseEntity<ResponseDto<OrderItemResponseDto>> postOrderItem(@PathVariable @Positive Long orderId,
+                                                                       @RequestBody @Valid OrderItemPostDto postDto) {
         OrderItem orderItem = orderItemMapper.orderItemPostDtoToOrderItem(postDto);
         OrderItem writeOrderItem = orderItemService.writeOrderItem(orderItem, orderId);
-        OrderItemResponseDto response = orderItemMapper.orderItemToResponse(writeOrderItem.getOrder());
+        OrderItemResponseDto response = orderItemMapper.orderItemToOrderItem(writeOrderItem);
 
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<OrderItemResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
 
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/{order-id}/orderItem/{orderItem-id}")
-    public ResponseEntity postOrderItem(@PathVariable("order-id") @Positive Long orderId,
-                                        @PathVariable("orderItem-id") @Positive Long orderItemId,
+    // 단일
+    @GetMapping("/{order-id}/orderItems/{order-item-id}")
+    public ResponseEntity<ResponseDto<OrderItemResponseDto>> postOrderItem(@PathVariable("order-id") @Positive Long orderId,
+                                        @PathVariable("order-item-id") @Positive Long orderItemId,
                                         @RequestBody @Valid OrderItemPostDto postDto) {
         OrderItem orderItem = orderItemService.getOrderItem(orderItemId);
-        OrderItemResponseDto response = orderItemMapper.orderItemToResponse(orderItem.getOrder());
+        OrderItemResponseDto response = orderItemMapper.orderItemToOrderItem(orderItem);
 
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<OrderItemResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
 
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/{order-id}/orderItem")
-    public ResponseEntity getOrderItemList(@PathVariable("orderItem-id") @Positive Long orderItemId,
-                                           @RequestBody @Valid OrderItemPostDto postDto) {
+    // 리스트
+    @GetMapping("/{order-id}/orderItems")
+    public ResponseEntity<ResponseDto<List<OrderItemResponseDto>>> getOrderItemList(@PathVariable("order-item-id") @Positive Long orderItemId) {
         List<OrderItem> orderItemList = orderItemService.getOrderItems(orderItemId);
         List<OrderItemResponseDto> response = orderItemMapper.orderItemListToResponse(orderItemList);
 
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<List<OrderItemResponseDto>>builder().data(response).customCode(ResponseCode.CREATED).build();
 
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 
 
-    @DeleteMapping("{user-id}/orderItem/{orderItem-id}")
+    @DeleteMapping("{user-id}/orderItem/{order-item-id}")
     public ResponseEntity deleteOrderItem(@PathVariable("user-id") @Positive Long userId,
-                                          @PathVariable("orderItem-id") @Positive Long orderItemId) {
+                                          @PathVariable("order-item-id") @Positive Long orderItemId) {
         orderItemService.deleteOrderItem(orderItemId, userId);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
