@@ -1,18 +1,16 @@
 package project.main.webstore.domain.order.service;
 
+import com.querydsl.core.types.Order;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.item.entity.Item;
-import project.main.webstore.domain.item.repository.ItemRepository;
-import project.main.webstore.domain.item.service.ItemService;
 import project.main.webstore.domain.order.entity.OrderItem;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.repository.OrderRepository;
 import project.main.webstore.domain.users.entity.User;
-import project.main.webstore.domain.users.repository.UserRepository;
 import project.main.webstore.domain.users.service.UserService;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.exception.CommonExceptionCode;
@@ -54,13 +52,13 @@ public class OrderService {
         return findVerifiedOrder(orderId);
     }
 
-//    public List<Orders> getOrders(Long orderId) {
-//        return orderRepository.findByAllOrderId(orderId);
-//    }
+    public List<Orders> getOrders(Long orderId) {
+        return orderRepository.findAllByOrderId(orderId);
+    }
 
-    public void cancelOrder(String orderNumber, Long userId) {
+    public void cancelOrder(Long orderId, Long userId) {
         User findUser = userService.getUser(userId);
-        Orders findOrder = findByOrderNumber(orderNumber);
+        Orders findOrder = findVerifiedOrder(orderId);
 
         if (findOrder.getOrdersStatus() == OrdersStatus.ORDER_COMPLETE) {
             findOrder.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
@@ -86,8 +84,8 @@ public class OrderService {
     }
 
     public Orders findVerifiedOrder(long orderId) {
-        Optional<Orders> findByOrderId = orderRepository.findById(orderId);
-        return findByOrderId.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ORDER_NOT_FOUND));
+        Optional<Orders> findOrderId = orderRepository.findByOrderId(orderId);
+        return findOrderId.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ORDER_NOT_FOUND));
     }
 
     // 주문번호 조회
@@ -116,6 +114,7 @@ public class OrderService {
     }
 
     // 주문 상태 변경..
+    // 주문 정보
 
 }
 

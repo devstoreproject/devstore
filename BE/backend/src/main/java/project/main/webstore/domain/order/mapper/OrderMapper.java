@@ -59,7 +59,7 @@ public class OrderMapper {
             OrderItemResponseDto orderItemResponseDto = OrderItemResponseDto.builder()
                     .itemId(orderItem.getItem().getItemId())
                     .itemName(orderItem.getItem().getItemName())
-                    .itemCount(orderItem.getItem().getItemCount())
+                    .itemCount(orderItem.getItemCount())
                     .itemPrice(orderItem.getItem().getItemPrice().getValue())
                     .build();
             return orderItemResponseDto;
@@ -79,7 +79,7 @@ public class OrderMapper {
                 .createdAt(orders.getCreatedAt())
                 .modifiedAt(orders.getModifiedAt())
                 .orderItemList(orderItemResponseDtoList)
-                .totalPrice(orders.getItem().getTotalPrice())
+                .totalPrice(orders.getTotalPrice())
                 .build();
 
         return orderResponseDto;

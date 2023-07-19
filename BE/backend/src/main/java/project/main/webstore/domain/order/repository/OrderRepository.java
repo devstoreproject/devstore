@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Orders, Long> {
-
-    List<Orders> findByUser(User user);
+//    @Query("SELECT u FROM Users  u WHERE u.id = :id")
+//    List<Orders> findByUserId(@Param("userId") Long userId);
     Optional<Orders> findByOrderId(Long orderId);
     Optional<Orders> findByOrderNumber(String orderNumber);
     @Query("SELECT o FROM Orders o WHERE o.orderId = :orderId")
     List<Orders> findAllByOrderId(@Param("orderId") Long orderId);
+
 //    List<Orders> findByUserAndOrderItems_Item_IdAndOrdersStatus(User user, Long itemId, OrdersStatus ordersStatus);
 
 }

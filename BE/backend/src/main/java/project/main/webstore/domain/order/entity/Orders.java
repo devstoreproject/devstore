@@ -29,7 +29,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class Orders extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter
+    @Column(updatable = false)
     private Long orderId;
     @Setter
     @Column(insertable = false, updatable = false)
@@ -58,6 +58,7 @@ public class Orders extends Auditable {
     @Setter
     @Column(insertable = false, updatable = false)
     private String message; // 배송요청사항
+    @Setter
     @Embedded
     private Address address;
 
@@ -86,10 +87,6 @@ public class Orders extends Auditable {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "ITEM_ID")
-    private Item item;
-
 
     // 연관관계 매핑
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -102,7 +99,7 @@ public class Orders extends Auditable {
     // item Method
     @Builder
     public Orders(String recipient, String email, String mobileNumber, String homeNumber,
-                  String zipCode, String addressSimple, String addressDetail, String message, OrdersStatus ordersStatus) {
+                  String zipCode, String addressSimple, String addressDetail, String message) {
         this.recipient = recipient;
         this.email = email;
         this.mobileNumber = mobileNumber;
@@ -111,7 +108,7 @@ public class Orders extends Auditable {
         this.addressSimple = addressSimple;
         this.addressDetail = addressDetail;
         this.message = message;
-        this.ordersStatus = ordersStatus;
+        this.ordersStatus = OrdersStatus.ORDER_COMPLETE;
     }
 
     @Builder
@@ -132,18 +129,20 @@ public class Orders extends Auditable {
         this.user = user;
     }
 
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
-//    public void setInfo(ShippingInfo info) {
-//        this.info = info;
+//    public void setItem(Item item) {
+//        this.item = item;
 //    }
 
-    public void Item(Item item){
-        this.item = item;
-    }
+//    public void setInfo(ShippingInfo info) {
+//        this.
+//    }
 
+//    public void Item(Item item){
+//        this.item = item;
+//    }
+
+
+    // orderItem Method
     public List<OrderItem> getOrderItems() {
         return orderItems;
     }
@@ -173,13 +172,15 @@ public class Orders extends Auditable {
         }
     }
 
+
     // Price Method
     public int getTotalPrice() {
         int totalPrice = 0;
 
         for (OrderItem orderItem: orderItems) {
-            totalPrice += (orderItem.getItemPrice() * orderItem.getItemCount());
+            totalPrice += (orderItem.getItem().getItemPrice().getValue() * orderItem.getItemCount());
         }
         return totalPrice;
     }
+
 }

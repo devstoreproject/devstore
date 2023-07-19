@@ -47,8 +47,8 @@ public class OrderController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @PatchMapping("{user-id}/edit/{order-id}")
-    public ResponseEntity patchOrder(@PathVariable("user-id") @Positive Long userId,
+    @PatchMapping("/{user-id}/edit/{order-id}")
+    public ResponseEntity<ResponseDto<OrderResponseDto>> patchOrder(@PathVariable("user-id") @Positive Long userId,
                                     @PathVariable("order-id") @Positive Long orderId,
                                     @RequestBody @Valid OrderPatchDto patchDto,
                                     @AuthenticationPrincipal Object principal) {
@@ -58,29 +58,29 @@ public class OrderController {
         Orders updateOrder = orderService.editOrder(order,userId);
         OrderResponseDto response = orderMapper.orderToOrderResponseDto(updateOrder);
 
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @GetMapping("/{order-id}")
-    public ResponseEntity getOrder(
+    public ResponseEntity<ResponseDto<OrderResponseDto>> getOrder(
                                    @PathVariable("order-id") @Positive Long orderId) {
         Orders order = orderService.getOrder(orderId);
         OrderResponseDto response = orderMapper.orderToOrderResponseDto(order);
 
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{user-id}/cancel/{order-Number}") // -> order취소..
+    @DeleteMapping("/{user-id}/cancel/{order-id}") // -> order취소..
     public ResponseEntity deleteOrder(@PathVariable("user-id") @Positive Long userId,
-                                       @PathVariable("order-number") @Positive String orderNumber,
+                                       @PathVariable("order-idr") @Positive Long orderId,
                                       @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validUserSame(principal, userId);
 
-        orderService.cancelOrder(orderNumber,userId);
+        orderService.cancelOrder(userId, orderId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

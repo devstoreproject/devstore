@@ -10,7 +10,6 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 
-//TODO: 사용 여부 고려
 @Getter
 public class OrderPostDto { // 주문한 아이템 정보 PostDto
     @NotEmpty
@@ -44,15 +43,17 @@ public class OrderPostDto { // 주문한 아이템 정보 PostDto
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$", message = "특수문자 제외 20자 이내로 작성하세요")
     @Size(min = 0, max = 20)
     private String message;
-
-//    private Long orderFormId;
+    @NotNull
     private List<OrderItemPostDto> orderItems;
+    @NotNull
+    private String orderStatus;
+
 
 
     @Builder
     public OrderPostDto(String recipient, String email, String mobileNumber, String homeNumber, String zipCode,
                         String addressSimple, String addressDetail, String message,
-                        Long orderFormId, List<OrderItemPostDto> orderItems) {
+                        Long orderFormId, List<OrderItemPostDto> orderItems, String orderStatus) {
         this.recipient = recipient;
         this.email = email;
         this.mobileNumber = mobileNumber;
