@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -89,7 +90,7 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "리뷰 전체 조회")
     @GetMapping("/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewAllPage(Pageable pageable, @RequestParam Long userId, @AuthenticationPrincipal Object principal) {
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewAllPage(@PageableDefault(sort = "id")Pageable pageable, @RequestParam Long userId, @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validUserSame(principal, userId);
         CheckLoginUser.validAdmin(principal);
         Page<Review> reviewPage = getService.getReviewPage(pageable);
@@ -104,7 +105,7 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "해당 아이템에 존재하는 리뷰 전체 출력")
     @GetMapping("/items/{itemId}/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(Pageable pageable, @PathVariable Long itemId) {
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(@PageableDefault(sort = "id")Pageable pageable, @PathVariable Long itemId) {
         Page<Review> reviewPage = getService.getReviewPageByItemId(pageable, itemId);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
@@ -117,7 +118,7 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "특정 회원이 작성한 리뷰 전체 조회")
     @GetMapping("/user/{userId}/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewListByUserId(Pageable pageable, @PathVariable Long userId) {
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewListByUserId(@PageableDefault(sort = "id")Pageable pageable, @PathVariable Long userId) {
         Page<Review> reviewPage = getService.getReviewPageByUserId(pageable, userId);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()

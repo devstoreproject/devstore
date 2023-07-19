@@ -26,6 +26,6 @@ public class QuestionDto {
         this.comment = question.getComment();
         this.qnaStatus = question.getQnaStatus();
         this.userId = question.getUser().getId();
-        this.answer = new AnswerDto(question.getAnswer());
+        this.answer = getAnswer() != null ? new AnswerDto(question.getAnswer()):null;
     }
 }

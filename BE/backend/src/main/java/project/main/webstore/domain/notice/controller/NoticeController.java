@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -92,7 +93,7 @@ public class NoticeController {
 
     @GetMapping()
     @ApiResponse(responseCode = "200",description = "공지 전체 조회")
-    public ResponseEntity<ResponseDto<Page<NoticeGetSimpleResponseDto>>> getNoticeAll(Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<NoticeGetSimpleResponseDto>>> getNoticeAll(@PageableDefault(sort = "id") Pageable pageable) {
         Page<Notice> responseEntity = getService.getSimpleNotice(pageable);
         Page<NoticeGetSimpleResponseDto> responsePage = noticeMapper.toGetSimplePageResponse(responseEntity);
         var responseDto = ResponseDto.<Page<NoticeGetSimpleResponseDto>>builder()

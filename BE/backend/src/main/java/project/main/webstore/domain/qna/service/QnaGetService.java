@@ -27,13 +27,13 @@ public class QnaGetService {
     }
 
     //관리자를 위한 질문 조회
-    public Question findQuestion(Long userId, Long questionId) {
+    public Question findQuestion(Long questionId) {
         return questionRepository.findById(questionId)
                 .orElseThrow(() -> new BusinessLogicException(QnaExceptionCode.QUESTION_NOT_FOUND));
     }
 
     //관리자를 위한 미 답변 질문 리스트 체크 메서드
-    public Page<Question> findQuestionByStatus(Long userId, Pageable pageable) {
+    public Page<Question> findQuestionByStatus(Pageable pageable) {
         return questionRepository.findByStatus(pageable);
     }
 }
