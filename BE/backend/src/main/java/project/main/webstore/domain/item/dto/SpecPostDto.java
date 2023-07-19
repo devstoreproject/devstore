@@ -1,5 +1,6 @@
 package project.main.webstore.domain.item.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,14 +10,15 @@ import javax.validation.constraints.Size;
 
 @Getter
 public class SpecPostDto {
+    @Schema(description = "상품 식별자",example = "1")
     private Long itemId;
     @NotNull
+    @Schema(description = "스펙 이름",example = "스펙 이름")
     private String itemName;
-    @NotNull
-    private int itemCount;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z\\d`~!@#$%^&*()-_=+\\s]*$")
     @Size(min = 0, max = 100)
+    @Schema(description = "스펙 이름",example = "스펙 본문")
     private String content;
 
     @Builder

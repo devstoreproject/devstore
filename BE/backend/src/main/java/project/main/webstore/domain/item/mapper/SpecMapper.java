@@ -21,20 +21,20 @@ public class SpecMapper {
     public ItemSpec specPatchDtoToSpec(SpecPatchDto specpatchDto) {
         return ItemSpec.builder()
                 .content(specpatchDto.getContent())
-                .itemName(specpatchDto.getItemName())
+                .name(specpatchDto.getName())
                 .build();
     }
 
     public ItemSpec specToSpecResponse(ItemSpec itemSpec) {
         return ItemSpec.builder()
                 .specId(itemSpec.getSpecId())
-                .itemName(itemSpec.getItemName())
+                .name(itemSpec.getName())
                 .content(itemSpec.getContent())
                 .build();
     }
 
     public SpecGetResponseDto toGetResponse(ItemSpec spec) {
-        return new SpecGetResponseDto(spec.getSpecId(),spec.getItem().getItemId(),spec.getItemName(),spec.getContent());
+        return new SpecGetResponseDto(spec.getSpecId(),spec.getItem().getItemId(),spec.getName(),spec.getContent());
     }
 
     public List<SpecGetResponseDto> toGetResponseList(List<ItemSpec> result) {
