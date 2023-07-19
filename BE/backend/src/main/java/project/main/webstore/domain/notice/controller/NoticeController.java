@@ -1,8 +1,18 @@
 package project.main.webstore.domain.notice.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.Explode;
+import io.swagger.v3.oas.annotations.enums.ParameterStyle;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,8 +30,9 @@ import project.main.webstore.utils.UriCreator;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/notice")
+@RequestMapping("/api/notices")
 @RequiredArgsConstructor
 public class NoticeController {
     private final String UPLOAD_DIR = "notice";
@@ -30,16 +41,20 @@ public class NoticeController {
     private final NoticeMapper noticeMapper;
     private final ImageMapper imageMapper;
 
-    @PostMapping
-    public ResponseEntity postNotice(@RequestPart(required = false) List<MultipartFile> imageList,
-                                     @RequestPart NoticePostRequestDto postDto) {
-        Notice requsetNotice = noticeMapper.toEntity(postDto);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+                 produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponse(responseCode = "201",description = "공지 등록 성공")
+    public ResponseEntity<ResponseDto<NoticeIdResponseDto>> postNotice(@RequestPart NoticePostRequestDto post,
+                                                                       @Parameter(description = "Image files", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                                                                               array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))),style = ParameterStyle.FORM,explode = Explode.TRUE) @RequestPart(required = false) List<MultipartFile> imageList) {
+        Notice requsetNotice = noticeMapper.toEntity(post);
         Notice responseNotice;
         if (imageList != null) {
-            List<ImageInfoDto> infoList = imageMapper.toLocalDtoList(imageList, postDto.getInfoList(), UPLOAD_DIR);
-            responseNotice = service.postNotice(requsetNotice, infoList, postDto.getUserId());
+            List<ImageInfoDto> infoList = imageMapper.toLocalDtoList(imageList, post.getInfoList(), UPLOAD_DIR);
+            log.info("### infoList = {}", infoList.get(0));
+            responseNotice = service.postNotice(requsetNotice, infoList, post.getUserId());
         } else {
-            responseNotice = service.postNotice(requsetNotice, postDto.getUserId());
+            responseNotice = service.postNotice(requsetNotice, post.getUserId());
         }
         NoticeIdResponseDto response = noticeMapper.toResponseDto(responseNotice);
         URI uri = UriCreator.createUri(UPLOAD_DIR, responseNotice.getId());
@@ -49,8 +64,11 @@ public class NoticeController {
         return ResponseEntity.created(uri).body(responseDto);
     }
 
-    @PatchMapping("/{noticeId}")
-    public ResponseEntity patchNotice(@PathVariable Long noticeId,
+    @PatchMapping(path = "/{noticeId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponse(responseCode = "200", description = "공지 수정")
+    public ResponseEntity<ResponseDto<NoticeIdResponseDto>> patchNotice(@PathVariable Long noticeId,
                                       @RequestPart(required = false) List<MultipartFile> imageList,
                                       @RequestPart NoticePatchRequestDto patchDto) {
         Notice notice = noticeMapper.toEntity(patchDto, noticeId);
@@ -66,14 +84,16 @@ public class NoticeController {
     }
 
     @DeleteMapping("/{noticeId}")
+    @ApiResponse(responseCode = "204",description = "공지 삭제 완료")
     public ResponseEntity deleteNotice(@PathVariable Long noticeId) {
         service.deleteNotice(noticeId);
         var responseDto = ResponseDto.builder().data(null).customCode(ResponseCode.OK).build();
-        return ResponseEntity.ok().body(responseDto);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("")
-    public ResponseEntity getNoticeAll(Pageable pageable) {
+    @GetMapping()
+    @ApiResponse(responseCode = "200",description = "공지 전체 조회")
+    public ResponseEntity<ResponseDto<Page<NoticeGetSimpleResponseDto>>> getNoticeAll(@PageableDefault(sort = "id") Pageable pageable) {
         Page<Notice> responseEntity = getService.getSimpleNotice(pageable);
         Page<NoticeGetSimpleResponseDto> responsePage = noticeMapper.toGetSimplePageResponse(responseEntity);
         var responseDto = ResponseDto.<Page<NoticeGetSimpleResponseDto>>builder()
@@ -84,7 +104,8 @@ public class NoticeController {
     }
 
     @GetMapping("/{noticeId}")
-    public ResponseEntity getNotice(@PathVariable Long noticeId) {
+    @ApiResponse(responseCode = "200",description = "공지사항 단건 조회")
+    public ResponseEntity<ResponseDto<NoticeGetResponseDto>> getNotice(@PathVariable Long noticeId) {
         Notice responseEntity = getService.getNotice(noticeId);
         NoticeGetResponseDto response = noticeMapper.toGetRseponseGetDto(responseEntity);
         var responseDto = ResponseDto.<NoticeGetResponseDto>builder()
