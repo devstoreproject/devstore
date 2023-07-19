@@ -68,7 +68,7 @@ public class AuthController {
 
     @GetMapping(path = "/tmp/login")
     @ApiResponse(responseCode = "200",description = "이 것은 임시 다른것과 모든것이 동일하지만 URL이 /api/login 으로 입력하셔야합니다.")
-    public ResponseEntity<ResponseDto<LoginResponseDto>> tmpLogin(@Parameter(example = "admin001@gmail.com") @RequestParam String username,@Parameter(example = "admin111")@RequestParam String password, HttpServletResponse response) throws IOException {
+    public ResponseEntity<ResponseDto<LoginResponseDto>> tmpLogin(@Parameter(example = "admin002@gmail.com") @RequestParam String username,@Parameter(example = "admin111!!")@RequestParam String password, HttpServletResponse response) throws IOException {
         LoginDto login = new LoginDto(username, password);
         User user = userService.tmpLogin(login);
         LoginResponseDto loginResponseDto = new LoginResponseDto(user);
