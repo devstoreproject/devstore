@@ -1,5 +1,11 @@
 package project.main.webstore.domain.review.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.Explode;
+import io.swagger.v3.oas.annotations.enums.ParameterStyle;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +55,9 @@ public class ReviewController {
     @ApiResponse(responseCode = "201", description = "리뷰 등록 성공")
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> postReview(@PathVariable Long itemId,
                                                                        @RequestPart ReviewPostRequestDto post,
-                                                                       @RequestPart(required = false) List<MultipartFile> imageList) {
+                                                                       @Parameter(description = "Image files", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                                                                               array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))),style = ParameterStyle.FORM,explode = Explode.TRUE)
+                                                                           @RequestPart(required = false) List<MultipartFile> imageList) {
         Review review = reviewMapper.toEntity(post);
 
         Review savedReview;
