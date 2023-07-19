@@ -39,15 +39,15 @@ public class ItemService {
 
     // 기존 등록된 item 검증 후 등록
     public Item postItem(Item item) {
-        Item findItem = validItem(item.getItemId());
+        validItemExist(item);
 
-        return itemRepository.save(findItem);
+        return itemRepository.save(item);
     }
-    public Item postItem(Item item, List<ImageInfoDto> imageInfoList) {
-        Optional<Item> optionalItem = itemRepository.findByItemName(item.getItemName());
-        if(optionalItem.isPresent()) throw new BusinessLogicException(CommonExceptionCode.ITEM_EXIST);
 
-        //이미지를 저장하고 이미지 info를 저장한다.
+    public Item postItem(Item item, List<ImageInfoDto> imageInfoList) {
+        validItemExist(item);
+        imageUtils.imageValid(imageInfoList);
+
         List<Image> images = fileUploader.uploadImage(imageInfoList);
         List<ItemImage> imageList = images.stream().map(image -> new ItemImage(image, item)).collect(Collectors.toList());
         item.setItemImageList(imageList);
@@ -55,25 +55,26 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    //TODO: findItem -?
     public Item patchItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item) {
         Item findItem = validItem(item.getItemId());
 
         Optional.ofNullable(item.getCategory()).ifPresent(findItem::setCategory);
         Optional.ofNullable(item.getItemName()).ifPresent(findItem::setItemName);
-        Optional.ofNullable(item.getItemCount()).ifPresent(findItem::setItemCount);
+        Optional.ofNullable(item.getDefaultCount()).ifPresent(findItem::setDefaultCount);
         Optional.ofNullable(item.getDescription()).ifPresent(findItem::setDescription);
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);
 
-        List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
-
-        if (imageList.isEmpty() == false) {
-            imageList.stream().map(image -> new ItemImage(image, item)).forEach(findItem::addItemImage);
+        if(imageInfoDtoList != null){
+            imageUtils.imageValid(imageInfoDtoList);
+            List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
+            if (imageList.isEmpty() == false) {
+                imageList.stream().map(image -> new ItemImage(image, item)).forEach(findItem::addItemImage);
+            }
         }
-
-        return itemRepository.save(findItem);
+        return findItem;
     }
+
     public void deleteItem(Long itemId) {
         Item findItem = validItem(itemId);
 
@@ -91,37 +92,33 @@ public class ItemService {
                 .orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND));
 
     }
-
     // 아이템 검색
+
     public Page<Item> searchItem(String itemName, Pageable pageable) {
         if(itemName == null) {
-            itemName = "";
+            return itemRepository.findAll(pageable);
         }
-        Pageable pageRequest = PageRequest.of(pageable.getPageNumber(),pageable.getPageSize(), Sort.by("itemId"));
 
-        return itemRepository.findByItemNameContainingIgnoreCase(itemName, pageRequest);
+        return itemRepository.findByItemNameContainingIgnoreCase(itemName, pageable);
     }
 
-
     // 아이템 최신순 정렬
+
     private Page<Item> findItemByPageRequest(Pageable pageable) {
         Pageable pageRequest = PageRequest.of(pageable.getPageNumber(),pageable.getPageSize(),Sort.by("itemId").descending());
 
         return itemRepository.findAll(pageRequest);
     }
-
     // 카테고리 조회
+
     public Page<Item> findItemByCategory(Category category, Pageable pageable) {
-        Pageable pageRequest = PageRequest.of(pageable.getPageNumber(),pageable.getPageSize(),Sort.by("itemId").descending());
-
-        return itemRepository.findItemByCategory(category, pageRequest);
+        return itemRepository.findItemByCategory(category, pageable);
     }
-
     // 높은 가격순 정렬
+
     public Page<Item> findItemPage(Pageable pageable) {
         return itemRepository.findAll(pageable);
     }
-
     public PickedItemDto pickItem(Long itemId, Long userId) {
         Item find = validItem(itemId);
         User findUser = userValidService.validUser(userId);
@@ -149,11 +146,10 @@ public class ItemService {
         return result;
     }
 
-    // favorite item
-
-//    public Item createFavorite(Long itemId) {
-//    }
-//
-//    public Item cancleFavorite(Long itemId) {
-//    }
+    private void validItemExist(Item item) {
+        Optional<Item> findItem = itemRepository.findByItemId(item.getItemId());
+        if(findItem.isPresent()){
+            throw new BusinessLogicException(CommonExceptionCode.ITEM_EXIST);
+        }
+    }
 }
