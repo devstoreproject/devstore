@@ -17,8 +17,8 @@ export default function Tab() {
   };
 
   return (
-    <div className="pt-12 w-3/4">
-      <div className="flex items-center border-box border-2 text-slate-500 rounded-lg">
+    <div className="w-3/4 pt-12">
+      <div className="flex items-center border-2 rounded-lg border-box text-slate-500">
         <p
           className={`text-center w-1/3 border-slate-300 underline ${
             tab === 0 ? 'underline-offset-8' : ''
