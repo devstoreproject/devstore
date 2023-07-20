@@ -1,5 +1,5 @@
 import { RxHamburgerMenu } from 'react-icons/rx';
-import { type adminNavProps } from './AdminNav';
+import type { adminNavProps } from './AdminNav';
 
 export default function AdminNavHeader({ setFold, fold }: adminNavProps) {
   const btnHandler = () => {
