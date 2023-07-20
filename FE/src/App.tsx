@@ -74,7 +74,7 @@ function App() {
           <Route path="complete" element={<PurComplete />} />
           <Route path="detail" element={<PurComDetail />} />
         </Route>
-        <Route path="order" element={<Order />} />
+        <Route path="/order" element={<Order />} />
         <Route path="/purchasement" element={<Purchasement />} />
       </Routes>
     </BrowserRouter>

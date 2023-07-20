@@ -29,7 +29,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "react-scripts start",
     "build": "craco build",
     "buildcss": "postcss src/index.css -o build/tailwind.css",
     "test": "craco test",
