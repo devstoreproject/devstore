@@ -1,5 +1,6 @@
 package project.main.webstore.domain.users.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -114,6 +115,14 @@ public class UserController {
         service.deleteUser(userId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/valid-nick")
+    @ApiResponse(responseCode = "200",description = "닉네임 중복 검사")
+    public ResponseEntity<ResponseDto<Boolean>> validNickName(@Parameter(description = "닉네임",example = "김성자의 신성한성자생활")@RequestParam String nickName){
+        boolean result = service.checkNickName(nickName);
+        ResponseDto<Boolean> responseDto = ResponseDto.<Boolean>builder().data(result).customCode(ResponseCode.OK).build();
+        return ResponseEntity.ok(responseDto);
     }
 
 }

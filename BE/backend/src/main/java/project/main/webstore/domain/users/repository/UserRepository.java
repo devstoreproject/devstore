@@ -14,4 +14,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("select u from User u")
     Page<User> findUserPage(Pageable pageable);
+
+    Optional<User> findByNickName(String nicName);
 }

@@ -92,6 +92,14 @@ public class UserService {
         return findUser;
     }
 
+    public boolean checkNickName(String nick){
+        Optional<User> find = userRepository.findByNickName(nick);
+        if(find.isPresent()){
+            throw new BusinessLogicException(UserExceptionCode.USER_EXIST);
+        }
+        return true;
+    }
+
 
     /*
      * 회원이 존재 하면 예외 발생
