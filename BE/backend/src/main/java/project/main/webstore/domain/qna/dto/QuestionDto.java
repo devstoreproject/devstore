@@ -9,8 +9,6 @@ import project.main.webstore.domain.qna.enums.QnaStatus;
 public class QuestionDto {
     @Schema(description = "질문글 식별자")
     private Long questionId;
-    @Schema(description = "비밀글 여부")
-    private boolean isSecret;
     @Schema(description = "질문 본문")
     private String comment;
     @Schema(description = "질문 상태", allowableValues = {"REGISTER","ANSWER_COMPLETE"})
@@ -22,7 +20,6 @@ public class QuestionDto {
 
     public QuestionDto(Question question) {
         this.questionId = question.getId();
-        this.isSecret = question.isSecret();
         this.comment = question.getComment();
         this.qnaStatus = question.getQnaStatus();
         this.userId = question.getUser().getId();

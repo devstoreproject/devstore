@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.image.entity.ItemImage;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
@@ -30,7 +31,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = "itemId")})
 @NoArgsConstructor(access = PROTECTED)
-public class Item {
+public class Item extends Auditable {
     @Setter
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
     List<ItemImage> itemImageList = new ArrayList<>();
@@ -186,4 +187,6 @@ public class Item {
         return defaultCount + totalOptionCount;
     }
 }
+
+//TODO :할인율 추가
 

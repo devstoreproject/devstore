@@ -60,7 +60,6 @@ public class QnaController {
     }
 
     @GetMapping("/admin")
-    @Tag(name = "관리자 API")
     @ApiResponse(responseCode = "200", description = "관리자가 Qna 조회(질문 게시 상태인 것들)")
     public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByStatus(@RequestParam Long userId, @PageableDefault(sort = "id") Pageable pageable, @AuthenticationPrincipal Object principal) {
 //        CheckLoginUser.validAdmin(principal);
@@ -94,14 +93,14 @@ public class QnaController {
         return ResponseEntity.ok().header("Location", location.toString()).body(responseDto);
     }
 
-    @DeleteMapping("/qna/{questionId}")
+    @DeleteMapping("/{questionId}")
     @ApiResponse(responseCode = "204", description = "질문 삭제")
     public ResponseEntity deleteQuestion(@PathVariable Long questionId, Long userId) {
         service.deleteQuestion(questionId, userId);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/qna/{questionId}/answer")
+    @PostMapping("/{questionId}/answer")
     @ApiResponse(responseCode = "201", description = "답변 등록")
     public ResponseEntity<ResponseDto<AnswerDto>> postAnswer(@PathVariable Long questionId, @RequestBody AnswerPostRequestDto postDto) {
         Answer request = mapper.toEntity(postDto, questionId);
@@ -112,7 +111,7 @@ public class QnaController {
         return ResponseEntity.created(location).body(responseDto);
     }
 
-    @DeleteMapping("/qna/{questionId}/answer/{answerId}")
+    @DeleteMapping("/{questionId}/answer/{answerId}")
     @ApiResponse(responseCode = "204", description = "답변 삭제")
     public ResponseEntity deleteAnswer(@PathVariable Long answerId, @RequestParam Long userId) {
         service.deleteAnswer(userId, answerId);

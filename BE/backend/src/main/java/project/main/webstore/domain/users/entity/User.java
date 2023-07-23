@@ -34,6 +34,7 @@ public class User extends Auditable implements Principal {
     @Column(updatable = false)
     private Long id;
     private String nickName;
+    private String userName;
     private String profileImage;
     private String password;
     private String email;
@@ -97,6 +98,7 @@ public class User extends Auditable implements Principal {
         this.providerId = ProviderId.JWT;
         this.userRole = UserRole.CLIENT;
         this.userStatus = UserStatus.TMP;
+        this.userName = post.getUserName();
     }
     @Builder(builderMethodName = "patchBuilder")
     public User(UserPatchRequestDto patch) {

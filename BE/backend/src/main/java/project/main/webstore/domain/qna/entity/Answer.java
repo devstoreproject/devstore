@@ -22,7 +22,6 @@ public class Answer extends Auditable {
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
     private Long id;
-    private boolean isSecret;
 
     @Enumerated(STRING)
     private QnaStatus qnaStatus;
@@ -44,8 +43,7 @@ public class Answer extends Auditable {
         question.setAnswer(this);
     }
 
-    public Answer(boolean isSecret, String comment, Long questionId, Long userId) {
-        this.isSecret = isSecret;
+    public Answer(String comment, Long questionId, Long userId) {
         this.qnaStatus = QnaStatus.ANSWER_COMPLETE;
         this.comment = comment;
         this.question = new Question(questionId);

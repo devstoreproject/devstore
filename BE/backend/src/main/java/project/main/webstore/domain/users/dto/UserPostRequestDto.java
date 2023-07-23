@@ -35,5 +35,7 @@ public class UserPostRequestDto {
     private String addressSimple;
     @Schema(description = "주소 정보",example = "서울특별시 동작구 문래동 김순아파트")
     private String addressDetail;
+    @Schema(description = "사용자 이름",example = "김복자")
+    private String userName;
 
 }
