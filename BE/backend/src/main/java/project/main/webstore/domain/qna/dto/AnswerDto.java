@@ -10,8 +10,6 @@ import project.main.webstore.domain.qna.enums.QnaStatus;
 public class AnswerDto {
     @Schema(description = "공지 답변 식별자")
     private Long answerId;
-    @Schema(description = "비밀글 여부")
-    private boolean isSecret;
     @Schema(description = "공지사항 상태값")
     private QnaStatus qnaStatus;
     @Schema(description = "답변 본문")
@@ -24,7 +22,6 @@ public class AnswerDto {
     public AnswerDto(Answer answer) {
         this.questionId = answer.getQuestion().getId();
         this.answerId = answer.getId();
-        this.isSecret = answer.isSecret();
         this.qnaStatus = answer.getQnaStatus();
         this.comment = answer.getComment();
         this.userId = answer.getUser().getId();

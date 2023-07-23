@@ -188,3 +188,5 @@ public class Item extends Auditable {
     }
 }
 
+//TODO :할인율 추가
+
