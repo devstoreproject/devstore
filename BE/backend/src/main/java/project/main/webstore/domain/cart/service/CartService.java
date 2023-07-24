@@ -11,6 +11,8 @@ import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.service.OptionService;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.service.UserValidService;
+import project.main.webstore.exception.BusinessLogicException;
+import project.main.webstore.exception.CommonExceptionCode;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,16 +30,19 @@ public class CartService {
         User findUser = userValidService.validUser(userId);
 
         List<Long> optionIdList = itemList.stream().map(LocalCartDto::getOptionId).collect(Collectors.toList());
-
         List<ItemOption> optionList = optionService.getOptions(optionIdList);
 
         if (findUser.getCart() == null) {
             findUser.setCart(new Cart(findUser));
         }
+
         Cart cart = findUser.getCart();
         List<CartItem> findCartItem = cart.getCartItemList();
 
         for(int i = 0 ; i < optionList.size(); i++){
+            //검증
+            validItemCount(optionList.get(i),itemList.get(i).getCount());
+
             CartItem cartItem = new CartItem(optionList.get(i), cart, itemList.get(i).getCount());
             findCartItem.add(cartItem);
         }
@@ -65,7 +70,10 @@ public class CartService {
 
         for (LocalCartDto localCartDto : patch) {
             for (CartItem cartItem : cart.getCartItemList()) {
-                if (localCartDto.getOptionId() == cartItem.getOption().getOptionId()) {
+                if (localCartDto.getOptionId().equals(cartItem.getOption().getOptionId())) {
+
+                    validItemCount(cartItem.getOption(),localCartDto.getCount());
+
                     cartItem.setItemCount(localCartDto.getCount());
                     break;
                 }
@@ -83,4 +91,9 @@ public class CartService {
         return cart;
     }
 
+    public void validItemCount(ItemOption itemOption, int orderAmount){
+        if (itemOption.getItemCount() < orderAmount) {
+            throw new BusinessLogicException(CommonExceptionCode.ITEM_NOT_ENOUGH);
+        }
+    }
 }

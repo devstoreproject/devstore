@@ -59,5 +59,4 @@ public class Cart extends Auditable {
     public Integer getDeliveryPrice(){
         return cartItemList.stream().mapToInt(cartItem -> cartItem.getOption().getItem().getDeliveryPrice().getValue()).max().orElse(0);
     }
-
 }
