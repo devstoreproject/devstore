@@ -54,4 +54,10 @@ public class ItemOption {
         this.itemCount = itemCount;
         this.additionalPrice = additionalPrice;
     }
+
+    public ItemOption(int additionalPrice, Integer itemCount, Item item) {
+        this.additionalPrice = additionalPrice;
+        this.itemCount = itemCount;
+        this.item = item;
+    }
 }

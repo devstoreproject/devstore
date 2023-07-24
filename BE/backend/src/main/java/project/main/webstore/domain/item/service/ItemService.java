@@ -60,8 +60,9 @@ public class ItemService {
 
         Optional.ofNullable(item.getCategory()).ifPresent(findItem::setCategory);
         Optional.ofNullable(item.getItemName()).ifPresent(findItem::setItemName);
-        Optional.ofNullable(item.getDefaultCount()).ifPresent(findItem::setDefaultCount);
+        Optional.ofNullable(item.getDiscountRate()).ifPresent(findItem::setDiscountRate);
         Optional.ofNullable(item.getDescription()).ifPresent(findItem::setDescription);
+        Optional.ofNullable(item.getDefaultItem()).ifPresent(findItem::setDefaultItem);
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);
 
