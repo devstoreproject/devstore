@@ -2,7 +2,8 @@ package project.main.webstore.domain.cart.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.main.webstore.domain.item.entity.Item;
+import lombok.Setter;
+import project.main.webstore.domain.item.entity.ItemOption;
 
 import javax.persistence.*;
 
@@ -20,13 +21,36 @@ public class CartItem {
     private Long id;
 
     // 연관관계 매핑 //
+
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "ITEM_ID")
-    private Item item;
+    @JoinColumn(name = "OPTION_ID")
+    private ItemOption option;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "CART_ID")
     private Cart cart;
+    @Setter
+    private Integer itemCount;
 
+    public CartItem(ItemOption option, Cart cart, Integer itemCount) {
+        this.option = option;
+        this.cart = cart;
+        this.itemCount = itemCount;
+    }
 
+    public int getDiscountedPrice() {
+        double itemPrice = this.option.getItem().getItemPrice().getValue() + this.option.getAdditionalPrice();
+        int itemCount = this.itemCount;
+        double discountRate = this.option.getItem().getDiscountRate();
+
+        double totalPrice = (itemPrice * itemCount) * (100 - discountRate) / 100;
+
+        long discountPrice = Math.round(totalPrice);
+
+        return (int) discountPrice;
+    }
+
+    public int getTotalPrice() {
+        return this.itemCount * (this.option.getItem().getItemPrice().getValue() + this.option.getAdditionalPrice());
+    }
 }
