@@ -43,9 +43,9 @@ public class Item extends Auditable {
     @Column(nullable = false)
     @Setter
     private String itemName;
-    @Column(nullable = false)
-    @Setter
-    private Integer defaultCount;
+//    @Column(nullable = false)
+//    @Setter
+//    private Integer defaultCount;
     @Lob
     @Setter
     private String description;
