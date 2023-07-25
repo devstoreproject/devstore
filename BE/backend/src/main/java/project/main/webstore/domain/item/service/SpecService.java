@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemSpec;
 import project.main.webstore.domain.item.repository.SpecRepository;
+import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.exception.CommonExceptionCode;
 
@@ -59,6 +60,6 @@ public class SpecService {
 
     public ItemSpec findVerifiedSpec(Long specId) {
         Optional<ItemSpec> optionalItemSpec = specRepository.findById(specId);
-        return optionalItemSpec.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.SPEC_NOT_FOUND));
+        return optionalItemSpec.orElseThrow(() -> new BusinessLogicException(OrderExceptionCode.SPEC_NOT_FOUND));
     }
 }
