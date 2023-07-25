@@ -11,19 +11,12 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Getter
-public class OrderItemPostDto extends OrderItem{
+public class OrderItemPostDto {
     @NotNull
     private Long itemId;
     @NotNull
     private int itemCount;
 
-//    private Item item;
-//
-//    private List<Item> items;
-//
-//    @Getter
-//    public static class Item {
-//        private Long itemId;
-//        private int itemCount;
-//    }
+    //TODO: option별 정보..............
+
 }

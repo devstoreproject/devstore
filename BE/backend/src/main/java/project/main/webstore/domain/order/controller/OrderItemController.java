@@ -1,5 +1,7 @@
 package project.main.webstore.domain.order.controller;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+@Tag(name = "주문 아이템 API", description = "주문 아이템 관련 API")
 @RestController
 @RequestMapping("/api/orders")
 @Validated
@@ -26,6 +29,7 @@ public class OrderItemController {
     public OrderItemService orderItemService;
     public OrderItemMapper orderItemMapper;
 
+    @ApiResponse(responseCode = "200", description = "주문 아이템 정보 등록")
     @PostMapping("/{order-id}/orderItems")
     public ResponseEntity<ResponseDto<OrderItemResponseDto>> postOrderItem(@PathVariable @Positive Long orderId,
                                                                        @RequestBody @Valid OrderItemPostDto postDto) {
@@ -38,7 +42,7 @@ public class OrderItemController {
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 
-    // 단일
+    @ApiResponse(responseCode = "200", description = "주문 아이템 단일 조회")
     @GetMapping("/{order-id}/orderItems/{order-item-id}")
     public ResponseEntity<ResponseDto<OrderItemResponseDto>> postOrderItem(@PathVariable("order-id") @Positive Long orderId,
                                         @PathVariable("order-item-id") @Positive Long orderItemId,
@@ -51,7 +55,7 @@ public class OrderItemController {
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 
-    // 리스트
+    @ApiResponse(responseCode = "200", description = "주문 아이템 목록 전체 조회 ")
     @GetMapping("/{order-id}/orderItems")
     public ResponseEntity<ResponseDto<List<OrderItemResponseDto>>> getOrderItemList(@PathVariable("order-item-id") @Positive Long orderItemId) {
         List<OrderItem> orderItemList = orderItemService.getOrderItems(orderItemId);
@@ -62,7 +66,7 @@ public class OrderItemController {
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 
-
+    @ApiResponse(responseCode = "204", description = "주문한 아이템 삭제")
     @DeleteMapping("{user-id}/orderItem/{order-item-id}")
     public ResponseEntity deleteOrderItem(@PathVariable("user-id") @Positive Long userId,
                                           @PathVariable("order-item-id") @Positive Long orderItemId) {

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.order.entity.OrderItem;
 import project.main.webstore.domain.order.entity.Orders;
+import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.domain.order.repository.OrderItemRepository;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.repository.UserRepository;
@@ -43,7 +44,7 @@ public class OrderItemService {
 
     public OrderItem findVerifiedOrderItem(Long orderFormId) {
         Optional<OrderItem> findByOrderItemId = orderItemRepository.findByOrderItemId(orderFormId);
-        OrderItem foundOrderItem = findByOrderItemId.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ORDER_ITEM_NOT_FOUND));
+        OrderItem foundOrderItem = findByOrderItemId.orElseThrow(() -> new BusinessLogicException(OrderExceptionCode.ORDER_ITEM_NOT_FOUND));
 
         return foundOrderItem;
     }
