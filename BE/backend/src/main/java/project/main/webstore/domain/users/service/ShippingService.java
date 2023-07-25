@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.repository.ShippingRepository;
@@ -56,6 +57,6 @@ public class ShippingService {
     }
     private ShippingInfo findVerifiedInfo(Long infoId) {
         Optional<ShippingInfo> findByInfoId = shippingRepository.findByInfoId(infoId);
-        return findByInfoId.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.SHIPPING_INFO_NOT_FOUND));
+        return findByInfoId.orElseThrow(() -> new BusinessLogicException(OrderExceptionCode.SHIPPING_INFO_NOT_FOUND));
     }
 }
