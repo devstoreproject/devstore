@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.item.repository.ItemRepository;
+import project.main.webstore.domain.order.dto.OrderLocalDto;
 import project.main.webstore.domain.order.entity.OrderItem;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.enums.OrdersStatus;
@@ -75,7 +77,7 @@ public class OrderService {
         } else if (findOrder.getOrdersStatus() == OrdersStatus.ORDER_CANCEL) {
             throw new BusinessLogicException(CommonExceptionCode.ORDER_ALREADY_CANCEL);
         } else {
-            throw new BusinessLogicException(CommonExceptionCode.ORDER_CANCEL_FAIL);
+            throw new BusinessLogicException(OrderExceptionCode.ORDER_CANCEL_FAIL);
         }
 
         findOrder.setUser(findUser);
@@ -85,7 +87,7 @@ public class OrderService {
 
     public Orders findVerifiedOrder(long orderId) {
         Optional<Orders> findOrderId = orderRepository.findByOrderId(orderId);
-        return findOrderId.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ORDER_NOT_FOUND));
+        return findOrderId.orElseThrow(() -> new BusinessLogicException(OrderExceptionCode.ORDER_NOT_FOUND));
     }
 
     // 주문번호 조회

@@ -1,9 +1,6 @@
 package project.main.webstore.domain.order.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -13,7 +10,9 @@ import java.util.List;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderPatchDto { // 주문이 들어간 다음에는 수정 불기 -> formpatch만 가능
     @NotEmpty
     @Pattern(regexp = "^[a-zA-Z가-힣]*$")

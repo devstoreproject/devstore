@@ -16,6 +16,7 @@ import project.main.webstore.valueObject.Address;
 import project.main.webstore.valueObject.Price;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,27 +35,6 @@ public class Orders extends Auditable {
     @Setter
     @Column(insertable = false, updatable = false)
     private String orderNumber;
-    @Setter
-    @Column(insertable = false, updatable = false)
-    private String recipient; // 배송받는사람
-    @Setter
-    @Column(insertable = false, updatable = false)
-    private String email; // 이메일
-    @Setter
-    @Column(insertable = false, updatable = false)
-    private String zipCode;
-    @Setter
-    @Column(insertable = false, updatable = false)
-    private String addressSimple;
-    @Setter
-    @Column(insertable = false, updatable = false)
-    private String addressDetail;
-    @Setter
-    @Column(insertable = false, updatable = false)
-    private String mobileNumber; // 핸드폰번호
-    @Setter
-    @Column(insertable = false, updatable = false)
-    private String homeNumber; // 유선번호
     @Setter
     @Column(insertable = false, updatable = false)
     private String message; // 배송요청사항
@@ -87,6 +67,8 @@ public class Orders extends Auditable {
     @JoinColumn(name = "USER_ID")
     private User user;
 
+    @OneToOne
+    private ShippingInfo info;
 
     // 연관관계 매핑
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -97,33 +79,7 @@ public class Orders extends Auditable {
     private Payment payment;
 
     // item Method
-    @Builder
-    public Orders(String recipient, String email, String mobileNumber, String homeNumber,
-                  String zipCode, String addressSimple, String addressDetail, String message) {
-        this.recipient = recipient;
-        this.email = email;
-        this.mobileNumber = mobileNumber;
-        this.homeNumber = homeNumber;
-        this.zipCode = zipCode;
-        this.addressSimple = addressSimple;
-        this.addressDetail = addressDetail;
-        this.message = message;
-        this.ordersStatus = OrdersStatus.ORDER_COMPLETE;
-    }
 
-    @Builder
-    public static Orders toEntity(OrderPostDto orderPostDto) {
-        return Orders.builder()
-                .recipient(orderPostDto.getRecipient())
-                .email(orderPostDto.getEmail())
-                .mobileNumber(orderPostDto.getMobileNumber())
-                .homeNumber(orderPostDto.getHomeNumber())
-                .zipCode(orderPostDto.getZipCode())
-                .addressSimple(orderPostDto.getAddressSimple())
-                .addressDetail(orderPostDto.getAddressDetail())
-                .message(orderPostDto.getMessage())
-                .build();
-    }
 
     public void setUser(User user) {
         this.user = user;
@@ -183,4 +139,8 @@ public class Orders extends Auditable {
         return totalPrice;
     }
 
+    public Orders(String message, OrdersStatus ordersStatus) {
+        this.message = message;
+        this.ordersStatus = ordersStatus.ORDER_COMPLETE;
+    }
 }

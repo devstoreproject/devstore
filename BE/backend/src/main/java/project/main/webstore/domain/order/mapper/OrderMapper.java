@@ -1,10 +1,12 @@
 package project.main.webstore.domain.order.mapper;
 
+import io.lettuce.core.BitFieldArgs;
 import org.springframework.stereotype.Component;
 import project.main.webstore.domain.order.dto.*;
 import project.main.webstore.domain.order.entity.OrderItem;
 import project.main.webstore.domain.order.entity.Orders;
 
+import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,25 +19,8 @@ public class OrderMapper {
         this.orderItemMapper = orderItemMapper;
     }
 
-    public Orders orderPostDtoToOrder(OrderPostDto postDto) {
-        if (postDto == null) return null;
-        Orders order = new Orders();
-        List<OrderItem> orderItems = new ArrayList<>();
-        for (OrderItemPostDto orderItemPostDto: postDto.getOrderItems()) {
-            OrderItem orderItem = orderItemMapper.orderItemPostDtoToOrderItem(orderItemPostDto);
-            orderItems.add(orderItem);
-        }
-        order.setOrderItems(orderItems);
-        order.setRecipient(postDto.getRecipient());
-        order.setEmail(postDto.getEmail());
-        order.setMobileNumber(postDto.getMobileNumber());
-        order.setHomeNumber(postDto.getHomeNumber());
-        order.setZipCode(postDto.getZipCode());
-        order.setAddressSimple(postDto.getAddressSimple());
-        order.setAddressDetail(postDto.getAddressDetail());
-        order.setMessage(postDto.getMessage());
-
-        return order;
+    public OrderLocalDto orderPostDtoToOrder(OrderPostDto postDto) {
+        return new OrderLocalDto(postDto);
     }
 
     public Orders orderPatchDtoToOrder(OrderPatchDto patchDto) {
