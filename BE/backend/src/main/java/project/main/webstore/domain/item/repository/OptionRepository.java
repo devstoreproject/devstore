@@ -10,4 +10,7 @@ import java.util.List;
 public interface OptionRepository extends JpaRepository<ItemOption, Long> {
     @Query("SELECT i FROM ItemOption i WHERE i.item.itemId = :itemId")
     List<ItemOption> findAllByItemId(@Param("itemId") Long itemId);
+
+    @Query("SELECT i FROM ItemOption i WHERE i.optionId in :optionIdList")
+    List<ItemOption> findInId(@Param("optionIdList")List<Long> optionIdList);
 }

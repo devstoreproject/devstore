@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
+import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.item.entity.PickedItem;
 import project.main.webstore.domain.users.dto.UserPatchRequestDto;
 import project.main.webstore.domain.users.dto.UserPostRequestDto;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -55,6 +57,9 @@ public class User extends Auditable implements Principal {
 
     @OneToMany(mappedBy = "user")
     private List<PickedItem> pickedItemList;
+    @OneToOne(fetch = LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "CART_ID")
+    private Cart cart;
 
     @Override
     public String getName() {

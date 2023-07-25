@@ -24,9 +24,7 @@ public class ItemPostDto {
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$")
     @Schema(description = "상품 이름",example = "맥북")
     private String name;
-    @NotNull
-    @Schema(description = "옵션이 없는 기본상품 수량",example = "10")
-    private int defaultCount;
+    private int discountRate;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z\\d`~!@#$%^&*()-_=+\\s]*$")
     @Schema(description = "상품 설명",defaultValue = "상품에 대한 상세 설명")
