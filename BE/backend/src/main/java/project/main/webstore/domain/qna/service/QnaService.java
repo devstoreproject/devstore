@@ -34,7 +34,6 @@ public class QnaService {
 
         Optional.ofNullable(request.getQnaStatus()).ifPresent(find::setQnaStatus);
         Optional.ofNullable(request.getComment()).ifPresent(find::setComment);
-        find.setSecret(request.isSecret());
 
         return find;
     }

@@ -55,3 +55,6 @@ public class Notice extends Auditable {
         this.content = content;
     }
 }
+
+//TODO : 카테고리 추가 필요 : 운영 업데이트 이벤트 , 필터링 기능 추가 필요
+//TODO : 전체 전달 시 이미지 추가 제공 , 카테고리 날짜 추가 필요

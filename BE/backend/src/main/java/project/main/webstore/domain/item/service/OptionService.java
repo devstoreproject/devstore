@@ -51,7 +51,9 @@ public class OptionService {
     public ItemOption getOption(Long optionId) {
         return findVerifiedOption(optionId);
     }
-
+    public List<ItemOption> getOptions(List<Long> optionId){
+        return optionRepository.findInId(optionId);
+    }
     public List<ItemOption> getOptions(Long itemId) {
         return optionRepository.findAllByItemId(itemId);
     }

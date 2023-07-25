@@ -17,15 +17,15 @@ public class QnaMapper {
     }
 
     public Question toEntity(QuestionPostRequestDto postDto, Long itemId) {
-        return new Question(postDto.isSecret(), postDto.getComment(), postDto.getUserId(),itemId);
+        return new Question(postDto.getComment(), postDto.getUserId(),itemId);
     }
 
     public Question toEntity(QuestionPatchDto patchDto, Long questionId, Long itemId) {
-        return new Question(questionId,patchDto.isSecret(), patchDto.getComment(), patchDto.getUserId(), itemId);
+        return new Question(questionId, patchDto.getComment(), patchDto.getUserId(), itemId);
     }
 
     public Answer toEntity(AnswerPostRequestDto postDto, Long questionId) {
-        return new Answer(postDto.isSecret(), postDto.getComment(), questionId, postDto.getUserId());
+        return new Answer(postDto.getComment(), questionId, postDto.getUserId());
     }
 
     public AnswerDto toResponseDto(Answer answer) {

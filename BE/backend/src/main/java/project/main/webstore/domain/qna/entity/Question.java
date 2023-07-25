@@ -27,9 +27,6 @@ public class Question extends Auditable {
     @Setter(NONE)
     @Column(updatable = false)
     private Long id;
-//    @ElementCollection(fetch = EAGER)  이미지 여부 체크할 필요 있음
-//    List<String> imagePathList = new ArrayList<>();
-    private boolean isSecret;
 
     @Lob
     private String comment;
@@ -48,16 +45,14 @@ public class Question extends Auditable {
     @JoinColumn(name = "ITEM_ID")
     private Item item;
 
-    public Question(boolean isSecret, String comment, Long userId,Long itemId) {
+    public Question(String comment, Long userId,Long itemId) {
         this.item = new Item(itemId);
-        this.isSecret = isSecret;
         this.comment = comment;
         this.user = new User(userId);
     }
 
-    public Question(Long id, boolean isSecret, String comment, Long userId, Long itemId) {
+    public Question(Long id, String comment, Long userId, Long itemId) {
         this.id = id;
-        this.isSecret = isSecret;
         this.comment = comment;
         this.user = new User(id);
         this.item = new Item(id);

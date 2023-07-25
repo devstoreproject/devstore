@@ -14,7 +14,9 @@ import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.repository.UserRepository;
+import project.main.webstore.email.event.UserRegistrationApplicationEvent;
 import project.main.webstore.exception.BusinessLogicException;
+import project.main.webstore.redis.RedisUtils;
 import project.main.webstore.security.dto.LoginDto;
 import project.main.webstore.utils.FileUploader;
 
@@ -28,17 +30,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher publisher;
     private final FileUploader fileUploader;
+    private final RedisUtils redisUtils;
 
     public User postUser(User user, ImageInfoDto imageInfo) {
         //TODO : admin을 직접 입명하는 것 필요 즉 admin이 직접 admin의 권한을 부여하는 것이 필요하다. 구상은 admin이 계정 중 직접 admin을 부여하는 것을 고려 중
         verifyExistsEmail(user.getEmail());
         setEncryptedPassword(user);
         saveProfileImageIfHas(user, imageInfo);
-        User savedUser = userRepository.save(user);
+        publisher.publishEvent(new UserRegistrationApplicationEvent(this,user));
+        return userRepository.save(user);
 
-        //이벤트 발급필요
-
-        return savedUser;
     }
 
     public User oAuth2CreateOrGet(User user) {
@@ -69,7 +70,7 @@ public class UserService {
     }
 
     public User getUser(Long userId) {
-        return validUserExist(userId);
+        return validUser(userId);
     }
 
     public Page<User> getUserPage(Pageable pageable) {
@@ -78,7 +79,7 @@ public class UserService {
     }
 
     public User patchUser(User user, ImageInfoDto imageInfo) {
-        User findUser = validUserExist(user.getId());
+        User findUser = validUser(user.getId());
         if (findUser.getProviderId() != ProviderId.JWT) { //소셜 로그인 검증
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_JWT);
         }
@@ -92,7 +93,22 @@ public class UserService {
         return findUser;
     }
 
+    public boolean checkNickName(String nick){
+        Optional<User> find = userRepository.findByNickName(nick);
+        if(find.isPresent()){
+            throw new BusinessLogicException(UserExceptionCode.USER_EXIST);
+        }
+        return true;
+    }
 
+    public User authMail(String key){
+        Object byKey = redisUtils.findByKey(key);
+        String email = Optional.ofNullable((String) redisUtils.findByKey(key)).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_MAIL_TIME_OUT));
+
+        User user = validUserByEmail(email);
+        user.setUserStatus(UserStatus.ACTIVE);
+        return user;
+    }
     /*
      * 회원이 존재 하면 예외 발생
      * */
@@ -112,9 +128,13 @@ public class UserService {
      * 회원이 없으명 예외 발생
      * */
     // 내부 동작 메서드 //
-    private User validUserExist(Long UserId) {
+    private User validUser(Long UserId) {
         return userRepository.findById(UserId).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
     }
+    private User validUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
+    }
+
 
     private boolean isProvider(User user, User findUser) {
         return findUser.getProviderId().equals(user.getProviderId());
