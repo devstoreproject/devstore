@@ -65,7 +65,7 @@ public class ItemService {
         Optional.ofNullable(item.getDefaultItem()).ifPresent(findItem::setDefaultItem);
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);
-
+        Optional.ofNullable(item.getMileageRate()).ifPresent(findItem::setMileageRate);
         if(imageInfoDtoList != null){
             imageUtils.imageValid(imageInfoDtoList);
             List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);

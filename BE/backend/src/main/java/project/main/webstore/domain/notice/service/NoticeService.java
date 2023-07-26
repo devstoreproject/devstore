@@ -55,7 +55,7 @@ public class NoticeService {
 
         Optional.ofNullable(notice.getContent()).ifPresent(findNotice::setContent);
         Optional.ofNullable(notice.getTitle()).ifPresent(findNotice::setTitle);
-
+        Optional.ofNullable(notice.getNoticeCategory()).ifPresent(findNotice::setNoticeCategory);
         if(imageInfoList != null){
             imageUtils.imageValid(imageInfoList);
             List<Image> imageList = imageUtils.patchImage(imageInfoList,findNotice.getNoticeImageList(),deleteIdList);

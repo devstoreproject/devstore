@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.image.entity.NoticeImage;
+import project.main.webstore.domain.notice.enums.NoticeCategory;
 import project.main.webstore.domain.users.entity.User;
 
 import javax.persistence.*;
@@ -34,6 +35,11 @@ public class Notice extends Auditable {
     @Lob
     @Setter
     private String content;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private NoticeCategory noticeCategory;
+    //OPERATING("운영"),UPDATE("업데이트"),EVENT("이벤트")
     @Setter
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "USER_ID")
