@@ -29,20 +29,16 @@ public class NoticeService {
 
     //사진 없을 떄
     public Notice postNotice(Notice notice,Long userId){
-        //TODO: user 검증 여부 체크
         User user = userValidService.validUser(userId);
         notice.setUser(user);
-        //user 찾기
         return repository.save(notice);
     }
 
     //사진 있을 때
     public Notice postNotice(Notice notice, List<ImageInfoDto> imageInfoList, Long userId){
-        //이미지 파일 검증
         imageUtils.imageValid(imageInfoList);
         User user = userValidService.validUser(userId);
         notice.setUser(user);
-        //이미지 저장 로직
         List<Image> imageList = fileUploader.uploadImage(imageInfoList);
         List<NoticeImage> collect = imageList.stream().map(image -> new NoticeImage(image, notice)).collect(Collectors.toList());
         notice.setNoticeImageList(collect);
