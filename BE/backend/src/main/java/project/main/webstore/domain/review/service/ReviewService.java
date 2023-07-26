@@ -14,6 +14,7 @@ import project.main.webstore.domain.like.entity.Like;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.repository.ReviewRepository;
 import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.exception.CommonExceptionCode;
@@ -35,25 +36,24 @@ public class ReviewService {
     private final ItemService itemService;
     private final UserValidService userValidService;
     public Review addLikeReview(Long reviewId, Long itemId, Long userId) {
-        //TODO: item, user 검증 먼저 진행할 필요 존재
+        User findUser = userValidService.validUser(userId);
         Review findReview = reviewValidService.validReview(reviewId);
         if(findReview.getItem().getItemId() != itemId){
             throw new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND);
         }
-        Like like = new Like(findReview);
+        Like like = new Like(findUser,findReview);
         findReview.addLike(like);
 
         return findReview;
     }
 
     public Review postReview(Review review, Long userId, Long itemId) {
-        //TODO : User 검증 및 item 검증 필요
-        //TODO: User, Iteme Review와 매핑이 필요하다.
         User user = userValidService.validUser(userId);
         Item item = itemService.validItem(itemId);
+        review.setUser(user);
+        review.setItem(item);
         Review savedReview = reviewRepository.save(review);
-        savedReview.setUser(user);
-        savedReview.setItem(item);
+
 
         return savedReview;
     }
@@ -67,14 +67,25 @@ public class ReviewService {
 
         User user = userValidService.validUser(userId);
         Item item = itemService.validItem(itemId);
+        review.setUser(user);
+        review.setItem(item);
         Review savedReview = reviewRepository.save(review);
-        savedReview.setUser(user);
-        savedReview.setItem(item);
         return savedReview;
     }
 
     public Review patchReview(List<ImageInfoDto> imageInfoList, List<Long> deleteIdList, Review review, Long userId, Long itemId, Long reviewId) {
         Review findReview = reviewValidService.validReview(reviewId);
+
+        //사용자 검증
+        if(!findReview.getUser().getId().equals(userId)){
+            throw new BusinessLogicException(UserExceptionCode.USER_NOT_SAME);
+        }
+        //아이템 검증
+        if(!findReview.getItem().getItemId().equals(itemId)){
+            //TODO: ItemExcpetion 미구현 -> 작업 진행 이후 변경 예정
+            throw new BusinessLogicException(UserExceptionCode.USER_NOT_SAME);
+        }
+
         //기본적인 정보 존재한다면 변경
         Optional.ofNullable(review.getRating()).ifPresent((findReview::setRating));
         Optional.ofNullable(review.getComment()).ifPresent((findReview::setComment));

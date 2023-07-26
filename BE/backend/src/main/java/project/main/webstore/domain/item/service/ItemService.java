@@ -79,7 +79,6 @@ public class ItemService {
     public void deleteItem(Long itemId) {
         Item findItem = validItem(itemId);
 
-        // TODO:
         List<ItemImage> itemImageList = findItem.getItemImageList();
         List<String> deletePatchList = itemImageList.stream().map(ItemImage::getImagePath).collect(Collectors.toList());
 
