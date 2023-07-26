@@ -24,7 +24,6 @@ public class ImageMapper {
     }
     public List<ImageInfoDto> toLocalDtoList(List<MultipartFile>fileList,List<ImageSortDto> imageSortDto,String uploadDir){
         List<ImageInfoDto> result = new ArrayList<>();
-        //TODO: 예외처리 하나 있으면 좋아보인다. mapping Exception 이런것들
         int j = 0;
         for(int i = 0 ; i < imageSortDto.size(); i++){
             ImageInfoDto infoDto;

@@ -118,7 +118,6 @@ public class ItemController {
         var responseDto = ResponseDto.<ItemResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
-    //TODO : 코드 이상함
     @GetMapping("/search/itemName")
     @ApiResponse(responseCode = "200", description = "아이템 별 상품 조회 (페이징)")
     public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> searchItem(@RequestParam String itemName,@PageableDefault(sort = "itemId")  Pageable pageable) {

@@ -36,7 +36,6 @@ public class ItemPostDto {
     @NotNull
     @Schema(description = "기본이 되는 상품 수량",example = "10")
     private Integer defaultCount;
-
     @NotNull
     @Schema(description = "배달비",example = "3000")
     private Integer deliveryPrice;
@@ -48,5 +47,3 @@ public class ItemPostDto {
     private List<ImageSortDto> infoList;
 
 }
-
-//TODO : 기본 값 수량을 넣어줘야한다.
