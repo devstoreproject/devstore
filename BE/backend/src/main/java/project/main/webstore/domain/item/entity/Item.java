@@ -116,8 +116,8 @@ public class Item extends Auditable {
         this.deliveryPrice = Price.builder().value(post.getDeliveryPrice()).build();
         this.defaultItem = new ItemOption(0, post.getDefaultCount(), this);
         this.category = post.getCategory();
-        this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getName(), spec.getContent(), this)).collect(Collectors.toList()) : null;
-        this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(), option.getItemCount(), option.getAdditionalPrice(), this)).collect(Collectors.toList()) : null;
+        this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getName(), spec.getContent(), this)).collect(Collectors.toList()) : new ArrayList<>();
+        this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(), option.getItemCount(), option.getAdditionalPrice(), this)).collect(Collectors.toList()) : new ArrayList<>();
     }
 
     public Item(ItemPatchDto patch) {
@@ -162,7 +162,6 @@ public class Item extends Auditable {
         }
     }
 
-    // Item builder
     public void item(Long itemId) {
         this.itemId = itemId;
     }
@@ -179,19 +178,11 @@ public class Item extends Auditable {
         return this.optionList.stream().mapToInt(ItemOption::getItemCount).sum();
     }
 
-    // Price Method
     public void addPrice(Price itemPrice, Price deliveryPrice) {
         this.itemPrice = itemPrice;
         this.deliveryPrice = deliveryPrice;
     }
 
-    //    public int getTotalCount(){
-//        if(this.optionList.isEmpty()){
-//            return defaultCount;
-//        }
-//        int totalOptionCount = optionList.stream().mapToInt(option -> option.getItemCount()).sum();
-//        return defaultCount + totalOptionCount;
-//    }
     public int getTotalCount() {
         if (this.optionList.isEmpty()) {
             return 0;
