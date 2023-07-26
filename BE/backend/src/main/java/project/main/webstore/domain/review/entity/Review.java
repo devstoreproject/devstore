@@ -29,6 +29,9 @@ public class Review extends Auditable {
     private String comment;
     @Setter
     private Integer rating;
+    @Setter
+    private boolean best;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Setter

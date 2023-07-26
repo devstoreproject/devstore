@@ -109,6 +109,17 @@ public class ReviewService {
         reviewRepository.deleteById(reviewId);
     }
 
+    public List<Review> bestReviewByAdmin(List<Long> reviewIdList){
+        List<Review> reviewList = reviewValidService.validReviewList(reviewIdList);
+        reviewList.forEach(review -> review.setBest(true));
+        return reviewList;
+    }
+    public List<Review> deleteBestReview(List<Long> reviewIdList){
+        List<Review> reviewList = reviewValidService.validReviewList(reviewIdList);
+        reviewList.forEach(review -> review.setBest(false));
+
+        return reviewList.stream().filter(review->review.isBest()).collect(Collectors.toList());
+    }
     private void deleteImage(List<String> deletePath) {
         for (String path : deletePath) {
             fileUploader.deleteS3Image(path);

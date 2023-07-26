@@ -25,7 +25,6 @@ public class ReviewGetService {
         return findReview;
     }
 
-
     public Page<Review> getReviewPage(Pageable pageable) {
         Page<Review> reviewPage = reviewRepository.findAllPage(pageable);
         return reviewPage;
@@ -49,5 +48,12 @@ public class ReviewGetService {
             answer.add(allList.get(i));
         }
         return answer;
+    }
+
+    public List<Review> getBestReviewByAdmin(){
+        List<Review> reviewList = reviewRepository.findByAdminBest();
+        if(reviewList == null)
+            return new ArrayList<>();
+        return reviewList;
     }
 }
