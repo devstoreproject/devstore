@@ -35,7 +35,7 @@ public class Notice extends Auditable {
     @Lob
     @Setter
     private String content;
-
+    private long viewCount;
     @Setter
     @Enumerated(EnumType.STRING)
     private NoticeCategory noticeCategory;
@@ -59,5 +59,8 @@ public class Notice extends Auditable {
     public Notice(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+    public void addViewCount(){
+        this.viewCount++;
     }
 }

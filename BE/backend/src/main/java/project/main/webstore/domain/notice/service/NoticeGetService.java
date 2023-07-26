@@ -19,7 +19,9 @@ public class NoticeGetService {
 
     //단순하게 조회하는 것
     public Notice getNotice(Long noticeId) {
-        return repository.findNotice(noticeId).orElseThrow(()-> new BusinessLogicException(NoticeException.NOTICE_NOT_FOUND));
+        Notice notice = repository.findNotice(noticeId).orElseThrow(() -> new BusinessLogicException(NoticeException.NOTICE_NOT_FOUND));
+        notice.addViewCount();
+        return notice;
     }
 
     //공지사항 전체 리스트 조회

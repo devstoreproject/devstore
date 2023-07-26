@@ -18,12 +18,15 @@ public class NoticeGetResponseDto {
     private String content;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
+    private long viewCount;
+
     public NoticeGetResponseDto(Notice notice) {
         this.noticeId = notice.getId();
         this.title = notice.getTitle();
         this.content = notice.getContent();
         this.createAt = notice.getCreatedAt();
         this.modifiedAt = notice.getModifiedAt();
+        this.viewCount = notice.getViewCount();
         this.imageList = notice.getNoticeImageList() != null ? notice.getNoticeImageList().stream().map(ImageDto::new).collect(Collectors.toList()) : null;
     }
 }

@@ -90,9 +90,12 @@ public class ItemService {
         itemRepository.delete(findItem);
     }
     public Item validItem(Long itemId) {
-        return itemRepository
+        Item item = itemRepository
                 .findByItemId(itemId)
                 .orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND));
+
+        item.addViewCount();
+        return item;
 
     }
     // 아이템 검색
@@ -138,7 +141,7 @@ public class ItemService {
         List<PickedItem> pickedItemList = userPickedItem;
         List<PickedItem> itemPickedItem = find.getPickedItem();
 
-        boolean flag = pickedItemList.stream().map(pickedItem -> pickedItem.getItem().getItemId()).anyMatch(id -> id == itemId);
+        boolean flag = pickedItemList.stream().map(pickedItem -> pickedItem.getItem().getItemId()).anyMatch(id -> id.equals(itemId));
         PickedItemDto result = new PickedItemDto(userId, itemId);
         //찜취소
         if(flag){

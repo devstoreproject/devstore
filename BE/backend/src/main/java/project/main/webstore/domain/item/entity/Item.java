@@ -51,7 +51,7 @@ public class Item extends Auditable {
     @Setter
     private String description;
 
-    //상세 정보
+    private long viewCount;
 
     @Enumerated(STRING)
     private ItemStatus itemStatus = ItemStatus.ON_STACK;
@@ -79,6 +79,7 @@ public class Item extends Auditable {
     @Setter
     private Category category;
 
+
     // 연관관계 매핑 //
     @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = ALL)
     private List<ItemSpec> specList = new ArrayList<>();
@@ -95,7 +96,7 @@ public class Item extends Auditable {
     private List<Question> questionList = new ArrayList<>();
     //PickedItem 연관관계 매핑
     @OneToMany(fetch = LAZY, cascade = ALL, mappedBy = "item")
-    private List<PickedItem> pickedItem;
+    private List<PickedItem> pickedItem = new ArrayList<>();
 
     @OneToOne(cascade = ALL)
     @Setter
@@ -192,6 +193,10 @@ public class Item extends Auditable {
 
     public ItemImage getDefaultImage() {
         return itemImageList.stream().filter(Image::isRepresentative).findFirst().get();
+    }
+
+    public void addViewCount(){
+        this.viewCount++;
     }
 }
 
