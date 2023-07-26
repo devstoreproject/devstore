@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
 
@@ -35,6 +36,8 @@ public class ItemResponseDto {
     private List<SpecResponseDto> specList;
     @Schema(description = "상품의 옵션들 정보")
     private List<OptionResponseDto> optionList;
+    @Schema(description = "상품 사진 정보")
+    private List<ImageDto> imageList;
 
     @Builder(builderMethodName = "response")
     public ItemResponseDto(Item item) {
@@ -48,5 +51,6 @@ public class ItemResponseDto {
         this.specList = item.getSpecList() != null ? item.getSpecList().stream().map(SpecResponseDto::new).collect(Collectors.toList()) : null;
         this.optionList = item.getOptionList() != null ? item.getOptionList().stream().map(OptionResponseDto::new).collect(Collectors.toList()) : null;
         this.totalCount = item.getTotalCount();
+        this.imageList = item.getItemImageList() != null? item.getItemImageList().stream().map(ImageDto::new).collect(Collectors.toList()) : null;
     }
 }

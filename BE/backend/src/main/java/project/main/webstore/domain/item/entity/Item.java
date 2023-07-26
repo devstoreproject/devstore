@@ -73,7 +73,8 @@ public class Item extends Auditable {
     private Price deliveryPrice;
     @Setter
     private Integer discountRate;
-
+    @Setter
+    private Integer mileageRate;
     @Enumerated(STRING)
     @Setter
     private Category category;
@@ -107,12 +108,13 @@ public class Item extends Auditable {
     @Builder(builderMethodName = "post")
     public Item(ItemPostDto post) {
         this.itemName = post.getName();
+        this.mileageRate = post.getMileageRate();
         this.description = post.getDescription();
         this.itemStatus = ItemStatus.ON_STACK;
         this.discountRate = post.getDiscountRate();
         this.itemPrice = Price.builder().value(post.getItemPrice()).build();
         this.deliveryPrice = Price.builder().value(post.getDeliveryPrice()).build();
-        this.defaultItem = new ItemOption(0, post.getItemPrice(), this);
+        this.defaultItem = new ItemOption(0, post.getDefaultCount(), this);
         this.category = post.getCategory();
         this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getName(), spec.getContent(), this)).collect(Collectors.toList()) : null;
         this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(), option.getItemCount(), option.getAdditionalPrice(), this)).collect(Collectors.toList()) : null;
@@ -120,6 +122,7 @@ public class Item extends Auditable {
 
     public Item(ItemPatchDto patch) {
         this.itemName = patch.getName();
+        this.mileageRate = patch.getMileageRate();
         this.description = patch.getDescription();
         this.discountRate = patch.getDiscountRate();
         this.defaultItem = new ItemOption(0, patch.getDefaultCount(), this);

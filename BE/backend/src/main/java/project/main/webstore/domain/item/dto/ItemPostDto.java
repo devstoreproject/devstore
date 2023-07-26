@@ -25,6 +25,7 @@ public class ItemPostDto {
     @Schema(description = "상품 이름",example = "맥북")
     private String name;
     private int discountRate;
+    private int mileageRate;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z\\d`~!@#$%^&*()-_=+\\s]*$")
     @Schema(description = "상품 설명",defaultValue = "상품에 대한 상세 설명")
@@ -32,6 +33,10 @@ public class ItemPostDto {
     @NotNull
     @Schema(description = "기본이 되는 상품 가격",example = "10000000")
     private Integer itemPrice;
+    @NotNull
+    @Schema(description = "기본이 되는 상품 수량",example = "10")
+    private Integer defaultCount;
+
     @NotNull
     @Schema(description = "배달비",example = "3000")
     private Integer deliveryPrice;
@@ -43,3 +48,5 @@ public class ItemPostDto {
     private List<ImageSortDto> infoList;
 
 }
+
+//TODO : 기본 값 수량을 넣어줘야한다.
