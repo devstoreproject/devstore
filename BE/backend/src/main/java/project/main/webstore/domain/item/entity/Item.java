@@ -106,7 +106,6 @@ public class Item extends Auditable {
         this.itemId = itemId;
     }
 
-    @Builder(builderMethodName = "post")
     public Item(ItemPostDto post) {
         this.itemName = post.getName();
         this.mileageRate = post.getMileageRate();
@@ -197,6 +196,29 @@ public class Item extends Auditable {
 
     public void addViewCount(){
         this.viewCount++;
+    }
+
+    @Builder(builderMethodName = "stub")
+    public Item(List<ItemImage> itemImageList, Long itemId, String itemName, String description, Price itemPrice, Price deliveryPrice, Integer discountRate, Integer mileageRate, Category category, List<ItemSpec> specList, List<ItemOption> optionList, List<CartItem> cartItemList, List<OrderItem> orderItemList, List<Review> reviewList, List<Question> questionList, List<PickedItem> pickedItem, ItemOption defaultItem) {
+        this.itemImageList = itemImageList;
+        this.itemId = itemId;
+        this.itemName = itemName;
+        this.description = description;
+        this.viewCount = 0;
+        this.itemStatus = ItemStatus.ON_STACK;
+        this.itemPrice = itemPrice;
+        this.deliveryPrice = deliveryPrice;
+        this.discountRate = discountRate;
+        this.mileageRate = mileageRate;
+        this.category = category;
+        this.specList = specList;
+        this.optionList = optionList;
+        this.cartItemList = cartItemList;
+        this.orderItemList = orderItemList;
+        this.reviewList = reviewList;
+        this.questionList = questionList;
+        this.pickedItem = pickedItem;
+        this.defaultItem = defaultItem;
     }
 }
 

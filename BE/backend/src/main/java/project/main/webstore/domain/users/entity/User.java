@@ -24,6 +24,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static project.main.webstore.domain.users.enums.ProviderId.JWT;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -49,7 +50,7 @@ public class User extends Auditable implements Principal {
     @Enumerated(STRING)
     private Grade grade = Grade.NORMAL;
     @Enumerated(STRING)
-    private ProviderId providerId = ProviderId.JWT;
+    private ProviderId providerId = JWT;
     @Enumerated(STRING)
     private UserRole userRole = UserRole.CLIENT;
     @Enumerated(STRING)
@@ -92,6 +93,25 @@ public class User extends Auditable implements Principal {
         this.userStatus = userStatus;
     }
 
+    @Builder(builderMethodName = "stubBuilder")
+    public User(Long id, String nickName, String userName, String profileImage, String password, String email, int mileage, Address address, List<PickedItem> pickedItemList, Cart cart) {
+        this.id = id;
+        this.nickName = nickName;
+        this.userName = userName;
+        this.profileImage = profileImage;
+        this.password = password;
+        this.email = email;
+        this.lastConnectedDate = LocalDateTime.now();
+        this.mileage = mileage;
+        this.address = address;
+        this.grade = Grade.NORMAL;
+        this.providerId = JWT;
+        this.userRole = UserRole.CLIENT;
+        this.userStatus = UserStatus.ACTIVE;
+        this.pickedItemList = pickedItemList;
+        this.cart = cart;
+    }
+
     @Builder(builderMethodName = "jwtBuilder")
     public User(UserPostRequestDto post) {
         this.nickName = post.getNickname();
@@ -100,7 +120,7 @@ public class User extends Auditable implements Principal {
         this.lastConnectedDate = LocalDateTime.now();
         this.address = new Address(post.getZipCode(),post.getAddressSimple(),post.getAddressDetail(), post.getPhone());
         this.grade = Grade.NORMAL;
-        this.providerId = ProviderId.JWT;
+        this.providerId = JWT;
         this.userRole = UserRole.CLIENT;
         this.userStatus = UserStatus.TMP;
         this.userName = post.getUserName();
@@ -112,8 +132,10 @@ public class User extends Auditable implements Principal {
         this.lastConnectedDate = LocalDateTime.now();
         this.address = new Address(patch.getZipCode(),patch.getAddressSimple(),patch.getAddressDetail(), patch.getPhone());
         this.grade = Grade.NORMAL;
-        this.providerId = ProviderId.JWT;
+        this.providerId = JWT;
         this.userRole = UserRole.CLIENT;
         this.userStatus = UserStatus.TMP;
     }
+
+
 }
