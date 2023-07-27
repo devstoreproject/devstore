@@ -38,7 +38,12 @@ public class TransMessageUtils {
     public LoginDto transClass(HttpServletRequest request) throws IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        return new LoginDto(username,password);
-//        return objectMapper.readValue(request.getInputStream(), LoginDto.class);
+
+        //파라미터 방식
+        if(username != null && password != null)
+            return new LoginDto(username,password);
+
+        //바디 방식
+        return objectMapper.readValue(request.getInputStream(), LoginDto.class);
     }
 }
