@@ -2,6 +2,7 @@ package project.main.webstore.domain.qna.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.qna.enums.QnaStatus;
 import project.main.webstore.domain.users.entity.User;
@@ -33,6 +34,7 @@ public class Answer extends Auditable {
     @OneToOne(fetch = EAGER, mappedBy = "answer")
     private Question question;
 
+    @Setter
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "USER_ID")
     private User user;

@@ -16,8 +16,8 @@ public enum UserExceptionCode implements ExceptionCode {
     USER_INFO_MISMATCH(HttpStatus.CONFLICT, "회원 정보가 일치하지 않습니다."),
     USER_NOT_LOGIN(HttpStatus.UNAUTHORIZED, "회원이 접근할 수 없습니다."),
     NOT_ADMIN(HttpStatus.UNAUTHORIZED, "관리자가 아닙니다."),
-    USER_MAIL_TIME_OUT(HttpStatus.CONFLICT,"메일 인증 기간 만료")
-    ;
+    USER_MAIL_TIME_OUT(HttpStatus.CONFLICT,"메일 인증 기간 만료"),
+    USER_NOT_SAME(HttpStatus.BAD_REQUEST, "회원 불일치");
     private final HttpStatus httpStatus;
 
     private final String message;

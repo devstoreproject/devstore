@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.image.entity.NoticeImage;
+import project.main.webstore.domain.notice.enums.NoticeCategory;
 import project.main.webstore.domain.users.entity.User;
 
 import javax.persistence.*;
@@ -34,6 +35,11 @@ public class Notice extends Auditable {
     @Lob
     @Setter
     private String content;
+    private long viewCount;
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private NoticeCategory noticeCategory;
+    //OPERATING("운영"),UPDATE("업데이트"),EVENT("이벤트")
     @Setter
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "USER_ID")
@@ -54,7 +60,7 @@ public class Notice extends Auditable {
         this.title = title;
         this.content = content;
     }
+    public void addViewCount(){
+        this.viewCount++;
+    }
 }
-
-//TODO : 카테고리 추가 필요 : 운영 업데이트 이벤트 , 필터링 기능 추가 필요
-//TODO : 전체 전달 시 이미지 추가 제공 , 카테고리 날짜 추가 필요

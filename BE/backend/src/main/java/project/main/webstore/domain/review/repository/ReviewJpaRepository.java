@@ -45,4 +45,11 @@ public interface ReviewJpaRepository extends JpaRepository<Review,Long>,ReviewRe
     @Override
     @Query("select r from Review r")
     Page<Review> findAllPage(Pageable pageable);
+
+    @Query("select r from Review r where r.id in :reviewIdList")
+    List<Review> findByIdList(@Param("reviewIdList")List<Long> reviewIdList);
+
+    @Query("select r from Review r where r.best = true")
+    List<Review> findByAdminBest();
+
 }

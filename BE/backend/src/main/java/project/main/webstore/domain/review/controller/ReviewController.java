@@ -20,10 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
 import project.main.webstore.domain.item.entity.Item;
-import project.main.webstore.domain.review.dto.ReviewGetResponseDto;
-import project.main.webstore.domain.review.dto.ReviewIdResponseDto;
-import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
-import project.main.webstore.domain.review.dto.ReviewUpdateRequestDto;
+import project.main.webstore.domain.review.dto.*;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.mapper.ReviewMapper;
 import project.main.webstore.domain.review.service.ReviewGetService;
@@ -192,6 +189,46 @@ public class ReviewController {
         List<Review> result = getService.getBestReview(itemId, count);
         List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
 
+        var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
+                .data(response)
+                .customCode(ResponseCode.OK)
+                .build();
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/reviews/best")
+    @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
+    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getAdminPickBestReview(@RequestParam Long userId, @AuthenticationPrincipal Object principal){
+        CheckLoginUser.validUserSame(principal,userId);
+
+        List<Review> result = getService.getBestReviewByAdmin();
+        List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
+        var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
+                .data(response)
+                .customCode(ResponseCode.OK)
+                .build();
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/reviews/best")
+    @ApiResponse(responseCode = "201", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
+    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> pickBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post, @AuthenticationPrincipal Object principal){
+        CheckLoginUser.validUserSame(principal,userId);
+
+        List<Review> result = service.bestReviewByAdmin(post.getReviewIdList());
+        List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
+        var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
+                .data(response)
+                .customCode(ResponseCode.OK)
+                .build();
+        return ResponseEntity.ok(responseDto);
+    }
+    @DeleteMapping("/reviews/best")
+    @ApiResponse(responseCode = "201", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
+    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> delteBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post, @AuthenticationPrincipal Object principal){
+        CheckLoginUser.validUserSame(principal,userId);
+        List<Review> result = service.deleteBestReview(post.getReviewIdList());
+        List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
         var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
                 .data(response)
                 .customCode(ResponseCode.OK)

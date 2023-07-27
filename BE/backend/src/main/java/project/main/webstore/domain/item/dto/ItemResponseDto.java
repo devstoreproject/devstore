@@ -5,9 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,10 +33,14 @@ public class ItemResponseDto {
     private int totalCount;
     @Schema(description = "옵션이 없는 상품 전체 수량")
     private int defaultCount;
+    @Schema(description = "옵션이 없는 상품 전체 수량")
+    private long viewCount;
     @Schema(description = "상품의 스펙들 정보")
     private List<SpecResponseDto> specList;
     @Schema(description = "상품의 옵션들 정보")
     private List<OptionResponseDto> optionList;
+    @Schema(description = "상품 사진 정보")
+    private List<ImageDto> imageList;
 
     @Builder(builderMethodName = "response")
     public ItemResponseDto(Item item) {
@@ -45,8 +51,10 @@ public class ItemResponseDto {
         this.itemPrice = item.getItemPrice().getValue();
         this.deliveryPrice = item.getDeliveryPrice().getValue();
         this.defaultCount = item.getTotalCount();
-        this.specList = item.getSpecList() != null ? item.getSpecList().stream().map(SpecResponseDto::new).collect(Collectors.toList()) : null;
-        this.optionList = item.getOptionList() != null ? item.getOptionList().stream().map(OptionResponseDto::new).collect(Collectors.toList()) : null;
+        this.viewCount = item.getViewCount();
+        this.specList = item.getSpecList() != null ? item.getSpecList().stream().map(SpecResponseDto::new).collect(Collectors.toList()) : new ArrayList<>();
+        this.optionList = item.getOptionList() != null ? item.getOptionList().stream().map(OptionResponseDto::new).collect(Collectors.toList()) : new ArrayList<>();
         this.totalCount = item.getTotalCount();
+        this.imageList = item.getItemImageList() != null? item.getItemImageList().stream().map(ImageDto::new).collect(Collectors.toList()) : new ArrayList<>();
     }
 }

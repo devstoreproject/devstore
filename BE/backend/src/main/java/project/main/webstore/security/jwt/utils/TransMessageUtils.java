@@ -36,6 +36,14 @@ public class TransMessageUtils {
         return cookie;
     }
     public LoginDto transClass(HttpServletRequest request) throws IOException {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+        //파라미터 방식
+        if(username != null && password != null)
+            return new LoginDto(username,password);
+
+        //바디 방식
         return objectMapper.readValue(request.getInputStream(), LoginDto.class);
     }
 }
