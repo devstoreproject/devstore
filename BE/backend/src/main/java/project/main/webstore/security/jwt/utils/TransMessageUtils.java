@@ -36,6 +36,9 @@ public class TransMessageUtils {
         return cookie;
     }
     public LoginDto transClass(HttpServletRequest request) throws IOException {
-        return objectMapper.readValue(request.getInputStream(), LoginDto.class);
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        return new LoginDto(username,password);
+//        return objectMapper.readValue(request.getInputStream(), LoginDto.class);
     }
 }
