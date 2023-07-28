@@ -77,7 +77,7 @@ class ReviewServiceTest {
     @Test
     @DisplayName("리뷰 작성 : 성공, 사진 파일 2개장 존재, ")
     void postReviewAndImageTest() throws IOException {
-        List<ImageInfoDto> imageInfoList = imageStub.createImageInfoList(1, true);
+        List<ImageInfoDto> imageInfoList = imageStub.createImageInfo(1, true);
 
         Review postReview = reviewStub.createReview(userId, itemId, reviewId);
         List<ReviewImage> reviewImage = imageStub.createReviewImage(postReview);

@@ -31,10 +31,13 @@ public class ImageUtils {
 
     public List<Image> patchImage(List<ImageInfoDto> infoList, List<? extends Image> imageList, List<Long> deleteIdList) {
         if (infoList.isEmpty() == false) {
+            imageValid(infoList);
             List<ImageInfoDto> addImageList = infoList.stream().filter(info -> info.getId() == null).collect(Collectors.toList());
             List<ImageInfoDto> savedImageList = infoList.stream().filter(info -> info.getId() != null).collect(Collectors.toList());
 
             changeRepresentativeAndOrder(savedImageList, imageList);
+
+            //로직 수정 이후 검증 추가 필요
 
             if (deleteIdList != null) {
                 //사진 삭제하는 경우
@@ -66,7 +69,7 @@ public class ImageUtils {
         for (int i = 0; i < requestInfoList.size(); i++) {
             ImageInfoDto requestInfo = requestInfoList.get(i);
 
-            Optional<? extends Image> first = imageList.stream().filter(image -> image.getId() == requestInfo.getId()).findFirst();
+            Optional<? extends Image> first = imageList.stream().filter(image -> image.getId().equals(requestInfo.getId())).findFirst();
 
             Image image = first.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.IMAGE_NOT_FOUND));
 
