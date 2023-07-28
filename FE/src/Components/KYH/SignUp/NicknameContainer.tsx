@@ -1,4 +1,12 @@
-export default function NicknameContainer() {
+interface NicknameContainerProps {
+  nickname: string;
+  setNickname: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function NicknameContainer({
+  nickname,
+  setNickname,
+}: NicknameContainerProps) {
   return (
     <div className="flex mt-2">
       <div className="flex flex-col w-4/6">
@@ -7,6 +15,10 @@ export default function NicknameContainer() {
           type="text"
           className="h-10 pl-2 border border-black"
           placeholder="닉네임을 입력하세요"
+          value={nickname}
+          onChange={(e) => {
+            setNickname(e.target.value);
+          }}
         ></input>
         <span className="mt-1 ml-2 text-xs font-bold text-red-500">
           중복된 닉네임 입니다.
