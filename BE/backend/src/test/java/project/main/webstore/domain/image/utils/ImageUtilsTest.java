@@ -21,7 +21,7 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ImageUtilsTest {
-    private final ImageStub stub= new ImageStub();
+    private final ImageStub stub = new ImageStub();
     @InjectMocks
     private ImageUtils imageUtils;
     @Mock
@@ -29,7 +29,7 @@ class ImageUtilsTest {
 
     @Test
     @DisplayName("이미지 검증 오류 : 대표 사진 미설정 or 대표 사진 여러개 설정")
-    void imageValid_representative_no_have() throws Exception{
+    void imageValid_representative_no_have() throws Exception {
         // given
         List<ImageInfoDto> imageListNoHaveRepresentative = stub.createImageInfoNoRepresentative(1);
         List<ImageInfoDto> imageInfoManyRepresentative = stub.createImageInfoManyRepresentative(1);
@@ -49,12 +49,9 @@ class ImageUtilsTest {
                 .hasMessage("대표 이미지가 한개 있어야합니다.");
     }
 
-
-
-
     @Test
     @DisplayName("이미지 검증 오류 : 사진 순서 중복")
-    void imageValid_order_conflict() throws Exception{
+    void imageValid_order_conflict() throws Exception {
         // given
         List<ImageInfoDto> imageInfo = stub.createImageInfo(0, true);
         // when
@@ -66,13 +63,9 @@ class ImageUtilsTest {
                 .hasMessage("이미지 순서는 중복될 수 없습니다.");
     }
 
-
-
-
-
     @Test
     @DisplayName("이미지 수정 검증 : 성공")
-    void patchImage_no_imageInfo() throws Exception{
+    void patchImage_no_imageInfo() throws Exception {
         // given
         List<ImageInfoDto> imageInfo = stub.createImageInfoPatch();//Id 1, 2 존재 나머지 하나는 신규
 
@@ -85,10 +78,9 @@ class ImageUtilsTest {
         // when
         List<Image> result = imageUtils.patchImage(imageInfo, savedImage, deleteIdList);
         // then
-        Assertions.assertThat(result.stream().map(Image::getId).collect(Collectors.toList())).contains(2L,3L);
+        Assertions.assertThat(result.stream().map(Image::getId).collect(Collectors.toList())).contains(2L, 3L);
         Assertions.assertThat(result.stream().filter(Image::isRepresentative).map(Image::getId).collect(Collectors.toList())).contains(2L);
     }
-
 
 
 }
