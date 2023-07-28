@@ -32,6 +32,7 @@ import BasicLayout from 'Pages/LSM/BasicLayout';
 import Purchasement from 'Pages/CYW/Purchasement';
 import OrderedList from 'Pages/CYW/OrderedList';
 import ReviewManagement from 'Pages/CYW/ReviewManagement';
+import Sales from 'Components/KYH/admin/Sales/Sales';
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
           <Route path="productlist/edit" element={<ProductEdit />} />
           <Route path="reviewmanagement" element={<ReviewManagement />} />
           <Route path="orderedlist" element={<OrderedList />} />
+          <Route path="sales" element={<Sales />} />
         </Route>
         <Route path="/cart" element={<Cart />} />
         <Route path="/checklist" element={<CheckList />} />

@@ -8,7 +8,7 @@ export default function AdminMain() {
     <div className="flex flex-col mr-10">
       <div className="flex">
         <SalesChart />
-        <div className="flex flex-col w-1/2 ml-6">
+        <div className="flex flex-col ml-6">
           <OrderStatus />
           <InquiryList />
         </div>

@@ -3,7 +3,7 @@ import SalesChartHeader from './SalesChartHeader';
 
 export default function SalesChart() {
   return (
-    <div className="w-1/2 py-4 pl-6 bg-white rounded-lg shadow-signBox">
+    <div className="px-6 py-4 bg-white rounded-lg w-152 shadow-signBox">
       <SalesChartHeader />
       <Chart />
     </div>
