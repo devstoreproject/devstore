@@ -8,10 +8,10 @@ import { MdOutlineReviews } from 'react-icons/md';
 import { BsFillQuestionCircleFill } from 'react-icons/bs';
 
 interface HomeNavigateProp {
-  fold: boolean;
+  isFold: boolean;
 }
 
-export default function MenuNav({ fold }: HomeNavigateProp) {
+export default function MenuNav({ isFold }: HomeNavigateProp) {
   return (
     <ul>
       {menuList.map((menu) => (
@@ -25,7 +25,7 @@ export default function MenuNav({ fold }: HomeNavigateProp) {
             }
           >
             <div className="mx-4 text-xl">{menu.icon}</div>
-            <p className={`truncate ${fold ? 'hidden' : ''}`}>{menu.text}</p>
+            <p className={`truncate ${isFold ? 'hidden' : ''}`}>{menu.text}</p>
           </NavLink>
         </li>
       ))}
@@ -47,7 +47,7 @@ const menuList = [
   },
   { to: '/admin/eventvanner', text: '이벤트 배너', icon: <BiSolidStar /> },
   { to: '/admin/any2', text: '공지사항', icon: <AiOutlineSound /> },
-  { to: '/admin/any3', text: '매출', icon: <FaChartLine /> },
+  { to: '/admin/sales', text: '매출', icon: <FaChartLine /> },
   { to: '/admin/reviewmanagement', text: '리뷰', icon: <MdOutlineReviews /> },
   {
     to: '/admin/productinquiry',
