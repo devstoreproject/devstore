@@ -63,12 +63,21 @@ public class SecurityConfig {
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("*"));   // 스크립트 기반 Http 통신 허용 설정
+//        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PATCH", "DELETE", "OPTIONS"));
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();   // 구현체
+//        source.registerCorsConfiguration("/**", configuration);     //모든 URL에 정책 적용
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));   // 스크립트 기반 Http 통신 허용 설정
-        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE","OPTIONAL","OPTION"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Location", "Refresh","authorization"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();   // 구현체
-        source.registerCorsConfiguration("/**", configuration);     //모든 URL에 정책 적용
         return source;
     }
 
@@ -90,4 +99,6 @@ public class SecurityConfig {
                     .addFilterAfter(jwtVerificationFilter,JwtAuthenticationFilter.class);
         }
     }
+
+
 }
