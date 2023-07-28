@@ -4,7 +4,7 @@ import noticeList from 'Dummy/Notice';
 export default function NavTop() {
   const linkTo = [
     {
-      to: '/login',
+      to: '/signin',
       text: '로그인',
     },
     {
@@ -18,10 +18,10 @@ export default function NavTop() {
   ];
 
   return (
-    <nav className="h-9 flex items-center justify-between px-5 text-subtitle-gray border-b-tab-gray border-b bg-light-gray text-sm">
+    <nav className="flex items-center justify-between px-5 text-sm border-b h-9 text-subtitle-gray border-b-tab-gray bg-light-gray">
       <article className="flex items-center">
         <h3 className="text-base">Notice</h3>
-        <ul className="h-5 overflow-hidden ml-3">
+        <ul className="h-5 ml-3 overflow-hidden">
           {noticeList.map((notice) => (
             <li className="text-sm" key={notice.key}>
               {notice.text}
