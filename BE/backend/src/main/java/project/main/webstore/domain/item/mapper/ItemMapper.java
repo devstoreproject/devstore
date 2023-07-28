@@ -15,7 +15,7 @@ public class ItemMapper {
         if (itemPostDto == null) {
             return null;
         }
-        return Item.post().post(itemPostDto).build();
+        return new Item(itemPostDto);
     }
 
     public Item itemPatchDtoToItem(ItemPatchDto itemPatchDto) {

@@ -11,7 +11,7 @@ import project.main.webstore.domain.users.entity.User;
 @Component
 public class UserMapper {
     public User toEntity(UserPostRequestDto post) {
-        return User.jwtBuilder().post(post).build();
+        return new User(post);
     }
 
     public User toEntity(UserPatchRequestDto patch) {
