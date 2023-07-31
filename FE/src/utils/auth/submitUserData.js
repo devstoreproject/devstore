@@ -1,9 +1,8 @@
 import api from 'api';
 import { useNavigate } from 'react-router-dom';
 
-const navigate = useNavigate();
-
 export const submitUserData = (userData) => {
+  const navigate = useNavigate();
   const formData = new FormData();
   const blob = new Blob([JSON.stringify(userData)], {
     type: 'application/json',
