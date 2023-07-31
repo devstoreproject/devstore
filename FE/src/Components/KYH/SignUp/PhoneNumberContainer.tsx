@@ -1,4 +1,4 @@
-import { phoneRegEx } from 'utils/validation/signUpRegEx';
+import { validatePhone } from 'utils/authValidate';
 
 interface PhoneNumberContainerProps {
   phone: string;
@@ -15,12 +15,7 @@ export default function PhoneNumberContainer({
 }: PhoneNumberContainerProps) {
   const PhoneNumberInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(e.target.value);
-
-    if (phoneRegEx.test(e.target.value)) {
-      setIsPhoneCheck(true);
-    } else {
-      setIsPhoneCheck(false);
-    }
+    setIsPhoneCheck(validatePhone(e.target.value));
   };
   return (
     <div className="flex mt-2">

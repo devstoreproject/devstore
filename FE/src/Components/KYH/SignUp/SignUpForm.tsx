@@ -33,7 +33,7 @@ export default function SignUpForm() {
     };
 
     if (!isEmailCheck) return;
-    if (password !== passwordCheck || !isPasswordCheck) return;
+    if (!isPasswordCheck || password !== passwordCheck) return;
     if (userName.length === 0) return;
     if (!isPhoneCheck) return;
 
