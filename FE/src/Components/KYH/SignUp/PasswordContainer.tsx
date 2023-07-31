@@ -1,21 +1,21 @@
-import { validatePassword } from 'utils/authValidate';
+import { validatePassword } from 'utils/auth/authValidate';
 
 interface passwordContainerProps {
   password: string;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
-  isPasswordCheck: boolean;
-  setIsPasswordCheck: React.Dispatch<React.SetStateAction<boolean>>;
+  isPasswordValid: boolean;
+  setIsPasswordValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function PasswordContainer({
   password,
   setPassword,
-  isPasswordCheck,
-  setIsPasswordCheck,
+  isPasswordValid,
+  setIsPasswordValid,
 }: passwordContainerProps) {
   const passwordInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    setIsPasswordCheck(validatePassword(e.target.value));
+    setIsPasswordValid(validatePassword(e.target.value));
   };
 
   return (
@@ -29,7 +29,7 @@ export default function PasswordContainer({
           value={password}
           onChange={passwordInputHandler}
         ></input>
-        {isPasswordCheck ? null : (
+        {isPasswordValid ? null : (
           <span className="mt-1 ml-2 text-xs font-bold text-red-500">
             영어, 숫자가 포함된 8~16글자이어야 합니다
           </span>

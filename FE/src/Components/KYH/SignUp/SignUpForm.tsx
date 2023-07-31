@@ -1,26 +1,26 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from 'api';
 
 import EmailContainer from './EmailContainer';
 import NicknameContainer from './NicknameContainer';
 import PasswordCheckContainer from './PasswordCheckContainer';
 import PasswordContainer from './PasswordContainer';
-import PhoneNumberContainer from './PhoneNumberContainer';
+import PhoneContainer from './PhoneContainer';
 import UserNameContainer from './UserNameContainer';
+import { submitUserData } from 'utils/auth/submitUserData';
 
 export default function SignUpForm() {
   const [email, setEmail] = useState('');
-  const [isEmailCheck, setIsEmailCheck] = useState(false);
   const [password, setPassword] = useState('');
-  const [isPasswordCheck, setIsPasswordCheck] = useState(false);
   const [passwordCheck, setPasswordCheck] = useState('');
   const [userName, setUserName] = useState('');
   const [nickname, setNickname] = useState('');
   const [phone, setPhone] = useState('');
-  const [isPhoneCheck, setIsPhoneCheck] = useState(false);
 
-  const navigate = useNavigate();
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [isUserNameValid, setIsUserNameValid] = useState(false);
+  const [isNicknameValid, setIsNicknameValid] = useState(false);
+  const [isPhoneValid, setIsPhoneValid] = useState(false);
 
   const submitHandler = (e: React.FormEvent): void => {
     e.preventDefault();
@@ -32,26 +32,17 @@ export default function SignUpForm() {
       phone,
     };
 
-    if (!isEmailCheck) return;
-    if (!isPasswordCheck || password !== passwordCheck) return;
-    if (userName.length === 0) return;
-    if (!isPhoneCheck) return;
+    if (
+      !isEmailValid ||
+      !isPasswordValid ||
+      password !== passwordCheck ||
+      !isUserNameValid ||
+      !isNicknameValid ||
+      !isPhoneValid
+    )
+      return;
 
-    const formData = new FormData();
-    const blob = new Blob([JSON.stringify(userInfo)], {
-      type: 'application/json',
-    });
-
-    formData.append('post', blob);
-
-    api
-      .post('/api/users', formData)
-      .then(() => {
-        navigate('/signin');
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    submitUserData(userInfo);
   };
   return (
     <form
@@ -62,27 +53,37 @@ export default function SignUpForm() {
       <EmailContainer
         email={email}
         setEmail={setEmail}
-        isEmailCheck={isEmailCheck}
-        setIsEmailCheck={setIsEmailCheck}
+        isEmailValid={isEmailValid}
+        setIsEmailValid={setIsEmailValid}
       />
       <PasswordContainer
         password={password}
         setPassword={setPassword}
-        isPasswordCheck={isPasswordCheck}
-        setIsPasswordCheck={setIsPasswordCheck}
+        isPasswordValid={isPasswordValid}
+        setIsPasswordValid={setIsPasswordValid}
       />
       <PasswordCheckContainer
         password={password}
         passwordCheck={passwordCheck}
         setPasswordCheck={setPasswordCheck}
       />
-      <UserNameContainer userName={userName} setUserName={setUserName} />
-      <NicknameContainer nickname={nickname} setNickname={setNickname} />
-      <PhoneNumberContainer
+      <UserNameContainer
+        userName={userName}
+        setUserName={setUserName}
+        isUserNameValid={isUserNameValid}
+        setIsUserNameValid={setIsUserNameValid}
+      />
+      <NicknameContainer
+        nickname={nickname}
+        setNickname={setNickname}
+        isNicknameValid={isNicknameValid}
+        setIsNicknameValid={setIsNicknameValid}
+      />
+      <PhoneContainer
         phone={phone}
         setPhone={setPhone}
-        isPhoneCheck={isPhoneCheck}
-        setIsPhoneCheck={setIsPhoneCheck}
+        isPhoneValid={isPhoneValid}
+        setIsPhoneValid={setIsPhoneValid}
       />
       <button
         className="mt-10 w-full text-white bg-black h-11 rounded-xl shadow-btn active:shadow-none active:ml-0.5 active:mt-4.5 duration-100"

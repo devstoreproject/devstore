@@ -1,21 +1,21 @@
-import { validatePhone } from 'utils/authValidate';
+import { validatePhone } from 'utils/auth/authValidate';
 
 interface PhoneNumberContainerProps {
   phone: string;
   setPhone: React.Dispatch<React.SetStateAction<string>>;
-  isPhoneCheck: boolean;
-  setIsPhoneCheck: React.Dispatch<React.SetStateAction<boolean>>;
+  isPhoneValid: boolean;
+  setIsPhoneValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function PhoneNumberContainer({
   phone,
   setPhone,
-  isPhoneCheck,
-  setIsPhoneCheck,
+  isPhoneValid,
+  setIsPhoneValid,
 }: PhoneNumberContainerProps) {
   const PhoneNumberInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(e.target.value);
-    setIsPhoneCheck(validatePhone(e.target.value));
+    setIsPhoneValid(validatePhone(e.target.value));
   };
   return (
     <div className="flex mt-2">
@@ -28,7 +28,7 @@ export default function PhoneNumberContainer({
           value={phone}
           onChange={PhoneNumberInputHandler}
         ></input>
-        {isPhoneCheck ? null : (
+        {isPhoneValid ? null : (
           <span className="mt-1 ml-2 text-xs font-bold text-red-500">
             올바른 번호를 입력해주세요
           </span>

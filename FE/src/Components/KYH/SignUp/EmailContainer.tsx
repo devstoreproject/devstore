@@ -1,21 +1,21 @@
-import { validateEmail } from 'utils/authValidate';
+import { validateEmail } from 'utils/auth/authValidate';
 
 interface EmailContainerProps {
   email: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
-  isEmailCheck: boolean;
-  setIsEmailCheck: React.Dispatch<React.SetStateAction<boolean>>;
+  isEmailValid: boolean;
+  setIsEmailValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function EmailContainer({
   email,
   setEmail,
-  isEmailCheck,
-  setIsEmailCheck,
+  isEmailValid,
+  setIsEmailValid,
 }: EmailContainerProps) {
   const EmailInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    setIsEmailCheck(validateEmail(e.target.value));
+    setIsEmailValid(validateEmail(e.target.value));
   };
 
   return (
@@ -29,7 +29,7 @@ export default function EmailContainer({
           onChange={EmailInputHandler}
           value={email}
         ></input>
-        {isEmailCheck ? null : (
+        {isEmailValid ? null : (
           <span className="mt-1 ml-2 text-xs font-bold text-red-500">
             올바른 형식의 이메일을 입력해주세요
           </span>

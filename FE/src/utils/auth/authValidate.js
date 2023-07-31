@@ -23,3 +23,19 @@ export const validatePhone = (phone) => {
     return false;
   }
 };
+
+export const validateUserName = (userName) => {
+  if (userName.length > 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export const validateNickname = (nickname) => {
+  if (nickname.length > 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
