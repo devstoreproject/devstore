@@ -1,4 +1,4 @@
-import { passwordRegEx } from 'utils/validation/signUpRegEx';
+import { validatePassword } from 'utils/authValidate';
 
 interface passwordContainerProps {
   password: string;
@@ -15,12 +15,7 @@ export default function PasswordContainer({
 }: passwordContainerProps) {
   const passwordInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-
-    if (passwordRegEx.test(e.target.value)) {
-      setIsPasswordCheck(true);
-    } else {
-      setIsPasswordCheck(false);
-    }
+    setIsPasswordCheck(validatePassword(e.target.value));
   };
 
   return (

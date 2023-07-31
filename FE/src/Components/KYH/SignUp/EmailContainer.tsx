@@ -1,4 +1,4 @@
-import { emailRegEx } from 'utils/validation/signUpRegEx';
+import { validateEmail } from 'utils/authValidate';
 
 interface EmailContainerProps {
   email: string;
@@ -15,12 +15,7 @@ export default function EmailContainer({
 }: EmailContainerProps) {
   const EmailInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-
-    if (emailRegEx.test(e.target.value)) {
-      setIsEmailCheck(true);
-    } else {
-      setIsEmailCheck(false);
-    }
+    setIsEmailCheck(validateEmail(e.target.value));
   };
 
   return (
