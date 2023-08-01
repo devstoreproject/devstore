@@ -1,6 +1,7 @@
 package project.main.webstore.domain.notice.dto;
 
 import lombok.Getter;
+import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.notice.entity.Notice;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ public class NoticeGetSimpleResponseDto {
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
     private long viewCount;
+    private ImageDto image;
     public NoticeGetSimpleResponseDto(Notice notice) {
         this.noticeId = notice.getId();
         this.title = notice.getTitle();
@@ -20,6 +22,7 @@ public class NoticeGetSimpleResponseDto {
         this.createAt = notice.getCreatedAt();
         this.modifiedAt = notice.getModifiedAt();
         this.viewCount = notice.getViewCount();
+        this.image = notice.getNoticeImage() != null ? new ImageDto(notice.getNoticeImage()):null;
     }
 
 }

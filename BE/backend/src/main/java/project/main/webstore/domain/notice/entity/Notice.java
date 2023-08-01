@@ -10,8 +10,6 @@ import project.main.webstore.domain.notice.enums.NoticeCategory;
 import project.main.webstore.domain.users.entity.User;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -22,14 +20,13 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
 public class Notice extends Auditable {
+    @Setter
+    @OneToOne(mappedBy = "notice", cascade = CascadeType.ALL)
+    NoticeImage noticeImage;
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(updatable = false)
     private Long id;
-
-    @Setter
-    @OneToMany(mappedBy = "notice",cascade = CascadeType.ALL,orphanRemoval = true)
-    List<NoticeImage> noticeImageList = new ArrayList<>();
     @Setter
     private String title;
     @Lob
@@ -51,16 +48,17 @@ public class Notice extends Auditable {
         this.content = content;
     }
 
-    public void addReviewImage(NoticeImage image){
-        this.noticeImageList.add(image);
-        image.setNotice(this);
-    }
-
     public Notice(String title, String content) {
         this.title = title;
         this.content = content;
     }
-    public void addViewCount(){
+
+    public void addReviewImage(NoticeImage image) {
+        this.noticeImage = image;
+        image.setNotice(this);
+    }
+
+    public void addViewCount() {
         this.viewCount++;
     }
 }

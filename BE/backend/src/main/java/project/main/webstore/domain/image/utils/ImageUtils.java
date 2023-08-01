@@ -65,7 +65,9 @@ public class ImageUtils {
             fileUploader.deleteS3Image(path);
         }
     }
-
+    public void deleteImage(Image image){
+        fileUploader.deleteS3Image(image.getImagePath());
+    }
     private void patchDeleteImage(List<? extends Image> imageList, List<Long> deleteIdList) {
         List<? extends Image> deleteImage = findImageById(deleteIdList, imageList);
         List<String> deleteImagePath = deleteImage.stream().map(Image::getImagePath).collect(Collectors.toList());

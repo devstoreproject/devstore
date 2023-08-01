@@ -13,9 +13,7 @@ import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.utils.FileUploader;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,43 +33,42 @@ public class NoticeService {
     }
 
     //사진 있을 때
-    public Notice postNotice(Notice notice, List<ImageInfoDto> imageInfoList, Long userId){
-        imageUtils.imageValid(imageInfoList);
+    public Notice postNotice(Notice notice, ImageInfoDto imageInfo, Long userId){
         User user = userValidService.validUser(userId);
+
         notice.setUser(user);
-        List<Image> imageList = fileUploader.uploadImage(imageInfoList);
-        List<NoticeImage> collect = imageList.stream().map(image -> new NoticeImage(image, notice)).collect(Collectors.toList());
-        notice.setNoticeImageList(collect);
+
+        Image image = fileUploader.uploadImage(imageInfo);
+        NoticeImage noticeImage = new NoticeImage(image, notice);
+
+        notice.addReviewImage(noticeImage);
 
         return repository.save(notice);
     }
 
-    public Notice patchNotice(List<ImageInfoDto> imageInfoList, List<Long> deleteIdList, Notice notice,Long userId){
+    public Notice patchNotice(ImageInfoDto imageInfo, Notice notice){
         Notice findNotice = noticeGetService.getNotice(notice.getId());
 
         Optional.ofNullable(notice.getContent()).ifPresent(findNotice::setContent);
         Optional.ofNullable(notice.getTitle()).ifPresent(findNotice::setTitle);
         Optional.ofNullable(notice.getNoticeCategory()).ifPresent(findNotice::setNoticeCategory);
-        if(imageInfoList != null){
-            imageUtils.imageValid(imageInfoList);
-            List<Image> imageList = imageUtils.patchImage(imageInfoList,findNotice.getNoticeImageList(),deleteIdList);
-            if (imageList.isEmpty() == false) {
-                imageList.stream().map(image -> new NoticeImage(image, notice)).forEach(findNotice::addReviewImage);
-            }
+
+        if(imageInfo != null){
+            Image image = imageUtils.patchImage(imageInfo, notice.getNoticeImage());
+            NoticeImage noticeImage = new NoticeImage(image, findNotice);
+            findNotice.addReviewImage(noticeImage);
         }
+
         return findNotice;
     }
 
     public void deleteNotice(Long noticeId){
         Notice notice = noticeGetService.getNotice(noticeId);
 
-        List<NoticeImage> noticeImageList = notice.getNoticeImageList();
-        List<String> deletePathList = noticeImageList.stream().map(NoticeImage::getImagePath).collect(Collectors.toList());
-
-        imageUtils.deleteImage(deletePathList);
+        if (notice.getNoticeImage() != null) {
+            imageUtils.deleteImage(notice.getNoticeImage());
+        }
 
         repository.delete(notice);
     }
-
-
 }

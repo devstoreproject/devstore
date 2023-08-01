@@ -28,7 +28,6 @@ import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.UriCreator;
 
 import java.net.URI;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -46,13 +45,13 @@ public class NoticeController {
     @ApiResponse(responseCode = "201",description = "공지 등록 성공")
     public ResponseEntity<ResponseDto<NoticeIdResponseDto>> postNotice(@RequestPart NoticePostRequestDto post,
                                                                        @Parameter(description = "Image files", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                                                                               array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))),style = ParameterStyle.FORM,explode = Explode.TRUE) @RequestPart(required = false) List<MultipartFile> imageList) {
+                                                                               array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))),style = ParameterStyle.FORM,explode = Explode.TRUE)
+                                                                       @RequestPart(required = false) MultipartFile image) {
         Notice requsetNotice = noticeMapper.toEntity(post);
         Notice responseNotice;
-        if (imageList != null) {
-            List<ImageInfoDto> infoList = imageMapper.toLocalDtoList(imageList, post.getInfoList(), UPLOAD_DIR);
-            log.info("### infoList = {}", infoList.get(0));
-            responseNotice = service.postNotice(requsetNotice, infoList, post.getUserId());
+        if (image != null) {
+            ImageInfoDto info = imageMapper.toLocalDto(image, UPLOAD_DIR);
+            responseNotice = service.postNotice(requsetNotice, info, post.getUserId());
         } else {
             responseNotice = service.postNotice(requsetNotice, post.getUserId());
         }
@@ -69,12 +68,12 @@ public class NoticeController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(responseCode = "200", description = "공지 수정")
     public ResponseEntity<ResponseDto<NoticeIdResponseDto>> patchNotice(@PathVariable Long noticeId,
-                                      @RequestPart(required = false) List<MultipartFile> imageList,
-                                      @RequestPart NoticePatchRequestDto patchDto) {
-        Notice notice = noticeMapper.toEntity(patchDto, noticeId);
-        List<ImageInfoDto> infoList = imageMapper.toLocalDtoList(imageList, patchDto.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
+                                      @RequestPart(required = false) MultipartFile image,
+                                      @RequestPart NoticePatchRequestDto patch) {
+        Notice notice = noticeMapper.toEntity(patch, noticeId);
+        ImageInfoDto info = imageMapper.toLocalDto(image, UPLOAD_DIR);
 
-        Notice responseNotice = service.patchNotice(infoList, patchDto.getDeleteImageId(), notice, patchDto.getUserId());
+        Notice responseNotice = service.patchNotice(info, notice);
 
         NoticeIdResponseDto response = noticeMapper.toResponseDto(responseNotice);
         URI uri = UriCreator.createUri(UPLOAD_DIR, responseNotice.getId());
@@ -87,7 +86,6 @@ public class NoticeController {
     @ApiResponse(responseCode = "204",description = "공지 삭제 완료")
     public ResponseEntity deleteNotice(@PathVariable Long noticeId) {
         service.deleteNotice(noticeId);
-        var responseDto = ResponseDto.builder().data(null).customCode(ResponseCode.OK).build();
         return ResponseEntity.noContent().build();
     }
 
