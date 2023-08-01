@@ -4,8 +4,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
-import project.main.webstore.domain.image.entity.ReviewImage;
-import project.main.webstore.domain.review.entity.Review;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +20,12 @@ public class ImageStub {
     private MockMultipartFile mockMultipartFile2;
     private List<MultipartFile> fileList = new ArrayList<>();
 
-    public ImageStub(){
-            fileList = new ArrayList<>();
-            mockMultipartFile = new MockMultipartFile(fileName, fileName.concat(".").concat(ext), ext, content);
-            mockMultipartFile2 = new MockMultipartFile(fileName, fileName.concat(".").concat(ext), ext, content);
-            fileList.add(mockMultipartFile);
-            fileList.add(mockMultipartFile2);
+    public ImageStub() {
+        fileList = new ArrayList<>();
+        mockMultipartFile = new MockMultipartFile(fileName, fileName.concat(".").concat(ext), ext, content);
+        mockMultipartFile2 = new MockMultipartFile(fileName, fileName.concat(".").concat(ext), ext, content);
+        fileList.add(mockMultipartFile);
+        fileList.add(mockMultipartFile2);
 
     }
 
@@ -47,6 +45,7 @@ public class ImageStub {
         }
         return list;
     }
+
     public List<Image> createImageListPatch() {
         List<Image> list = new ArrayList<>();
         for (int i = 1; i <= 2; i++) {
@@ -55,18 +54,14 @@ public class ImageStub {
         }
         return list;
     }
+
     public List<Image> createImageListPatchResult() {
         return List.of(
-                createImage(2L,1,true),
-                createImage(3L,3,false)
+                createImage(2L, 1, true),
+                createImage(3L, 3, false)
         );
     }
 
-    public List<ReviewImage> createReviewImage(Review review) {
-        List<ReviewImage> reviewImageList = createImageList(2).stream().map(image -> new ReviewImage(image, review)).collect(Collectors.toList());
-        review.setReviewImageList(reviewImageList);
-        return reviewImageList;
-    }
 
     public ImageInfoDto createImageInfoDto(int order, boolean target) {
         return ImageInfoDto.dtoBuilder()
@@ -76,7 +71,8 @@ public class ImageStub {
                 .multipartFile(mockMultipartFile)
                 .build();
     }
-    public ImageInfoDto createImageInfoPath(Long id,int order, boolean target) {
+
+    public ImageInfoDto createImageInfoPath(Long id, int order, boolean target) {
         return ImageInfoDto.dtoBuilder()
                 .uploadDir("review")
                 .representative(target)
@@ -93,6 +89,7 @@ public class ImageStub {
 
         ).collect(Collectors.toList());
     }
+
     public List<ImageInfoDto> createImageInfoNoRepresentative(int order) {
         return Stream.of(
                 createImageInfoDto(0, false),
@@ -100,6 +97,7 @@ public class ImageStub {
 
         ).collect(Collectors.toList());
     }
+
     public List<ImageInfoDto> createImageInfoManyRepresentative(int order) {
         return Stream.of(
                 createImageInfoDto(0, true),
@@ -111,9 +109,9 @@ public class ImageStub {
 
     public List<ImageInfoDto> createImageInfoPatch() {
         return List.of(
-                createImageInfoPath(1L,2,false),
-                createImageInfoPath(2L,1,true),
-                createImageInfoPath(null,3,false)
+                createImageInfoPath(1L, 2, false),
+                createImageInfoPath(2L, 1, true),
+                createImageInfoPath(null, 3, false)
         );
     }
 }

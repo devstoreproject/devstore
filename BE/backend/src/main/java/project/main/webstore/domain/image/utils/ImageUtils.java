@@ -49,6 +49,17 @@ public class ImageUtils {
         return new ArrayList<>();
     }
 
+    public Image patchImage(ImageInfoDto info, Image image) {
+        if (info != null) {
+            if (image != null) {
+                String imagePath = image.getImagePath();
+                fileUploader.deleteS3Image(imagePath);
+            }
+            return fileUploader.uploadImage(info);
+        }
+        return null;
+    }
+
     public void deleteImage(List<String> deletePath) {
         for (String path : deletePath) {
             fileUploader.deleteS3Image(path);

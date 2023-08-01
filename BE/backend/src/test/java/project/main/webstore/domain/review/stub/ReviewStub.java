@@ -9,7 +9,6 @@ import project.main.webstore.domain.image.dto.ImageSortPatchInfo;
 import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.review.dto.ReviewGetResponseDto;
-import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
 import project.main.webstore.domain.review.dto.ReviewUpdateRequestDto;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.users.entity.User;
@@ -27,7 +26,7 @@ public class ReviewStub {
                 .item(new Item(itemId))
                 .id(reviewId)
                 .comment("comment는 짧고 간결하게 사용해주시면 감사하겠습니다." + reviewId)
-                .reviewImageList(new ArrayList<>())
+                .reviewImage(null)
                 .rating(10)
                 .stubBuild();
     }
@@ -37,17 +36,17 @@ public class ReviewStub {
                 .item(new Item(1L))
                 .id(1L)
                 .comment("기본 본문입니다.")
-                .reviewImageList(new ArrayList<>())
+                .reviewImage(null)
                 .rating(5)
                 .stubBuild();
     }
-    public Review createReview(Long userId, Long itemId, Long reviewId, List<ReviewImage> reviewImageList) {
+    public Review createReview(Long userId, Long itemId, Long reviewId, ReviewImage image) {
         return Review.stubBuilder()
                 .user(new User(userId))
                 .item(new Item(itemId))
                 .id(reviewId)
                 .comment("comment는 짧고 간결하게 사용해주시면 감사하겠습니다." + reviewId)
-                .reviewImageList(reviewImageList)
+                .reviewImage(image)
                 .rating(10)
                 .stubBuild();
     }
@@ -71,14 +70,6 @@ public class ReviewStub {
 
     public Page<ReviewGetResponseDto> reviewGetResponseDtoPage(int page, int size) {
         return createPageReview(page, size).map(ReviewGetResponseDto::new);
-    }
-
-    public ReviewPostRequestDto reviewPostRequestDtoNoImage(Long userId) {
-        return ReviewPostRequestDto.stubBuilder().userId(userId).infoList(null).comment("사진이 없는 리뷰").rating(10).stubBuild();
-    }
-
-    public ReviewPostRequestDto reviewPostRequestDto(Long userId,boolean target) {
-        return ReviewPostRequestDto.stubBuilder().userId(userId).infoList(imageSortListDto(target)).comment("사진이 없는 리뷰").rating(10).stubBuild();
     }
 
     public ReviewUpdateRequestDto reviewUpdateRequestDto(Long userId,boolean target) {

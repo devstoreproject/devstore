@@ -7,15 +7,11 @@ import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.review.entity.Review;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Schema(description = "리뷰 단건 조회")
 @Getter
 public class ReviewGetResponseDto {
-    @Schema(description = "이미지 경로, 썸네일 경로, 대표 이미지, 이미지 순서가 포함된 정보", implementation = ImageDto.class)
-    List<ImageDto> imageList;
+
     @Schema(description = "리뷰 식별자")
     private Long reviewId;
     @Schema(description = "사용자 식별자")
@@ -28,7 +24,8 @@ public class ReviewGetResponseDto {
     private String comment;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-
+    @Schema(description = "이미지 경로, 썸네일 경로, 대표 이미지, 이미지 순서가 포함된 정보")
+    ImageDto image;
     @Builder(builderMethodName = "dtoBuilder", buildMethodName = "dtoBuild")
     public ReviewGetResponseDto(Review review) {
         this.reviewId = review.getId();
@@ -38,7 +35,7 @@ public class ReviewGetResponseDto {
         this.createdAt = review.getCreatedAt();
         this.modifiedAt = review.getModifiedAt();
         this.userName = review.getUser().getUserName();
-        this.imageList = review.getReviewImageList() != null ? review.getReviewImageList().stream().map(ImageDto::new).collect(Collectors.toList()) : new ArrayList<>();
+        this.image = review.getReviewImage() != null ? new ImageDto(review.getReviewImage()):null;
     }
 }
 
