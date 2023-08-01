@@ -224,7 +224,7 @@ public class ReviewController {
         return ResponseEntity.ok(responseDto);
     }
     @DeleteMapping("/reviews/best")
-    @ApiResponse(responseCode = "201", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
+    @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
     public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> delteBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post, @AuthenticationPrincipal Object principal){
         CheckLoginUser.validUserSame(principal,userId);
         List<Review> result = service.deleteBestReview(post.getReviewIdList());

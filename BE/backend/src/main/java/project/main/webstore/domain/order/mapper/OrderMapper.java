@@ -1,17 +1,10 @@
 package project.main.webstore.domain.order.mapper;
 
-import com.querydsl.core.types.Order;
-import org.aspectj.weaver.ast.Or;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import project.main.webstore.domain.cart.entity.CartItem;
-import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.order.dto.*;
 import project.main.webstore.domain.order.entity.OrderItem;
 import project.main.webstore.domain.order.entity.Orders;
-import project.main.webstore.domain.order.repository.OrderItemRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,9 +83,9 @@ public class OrderMapper {
             orderResponseDto.setEmail(orders.getUser().getEmail());
             orderResponseDto.setMobileNumber(orders.getMobileNumber());
             orderResponseDto.setHomeNumber(orders.getHomeNumber());
-            orderResponseDto.setZipCode(orders.getUser().getAddress().getZipCode());
-            orderResponseDto.setAddressSimple(orders.getUser().getAddress().getAddressSimple());
-            orderResponseDto.setAddressDetail(orders.getUser().getAddress().getAddressDetail());
+//            orderResponseDto.setZipCode(orders.getUser().getPhone().getZipCode());
+//            orderResponseDto.setAddressSimple(orders.getUser().getAddress().getAddressSimple());
+//            orderResponseDto.setAddressDetail(orders.getUser().getAddress().getAddressDetail());
             orderResponseDto.setMessage(orders.getMessage());
             orderResponseDto.setTotalPrice(orders.getTotalPrice().getValue());
             return orderResponseDto;

@@ -90,8 +90,6 @@ public class ReviewService {
         Optional.ofNullable(review.getRating()).ifPresent((findReview::setRating));
         Optional.ofNullable(review.getComment()).ifPresent((findReview::setComment));
 
-
-
         if(imageInfoList != null){
             imageUtils.imageValid(imageInfoList);
             List<Image> imageList = imageUtils.patchImage(imageInfoList, findReview.getReviewImageList(), deleteIdList);

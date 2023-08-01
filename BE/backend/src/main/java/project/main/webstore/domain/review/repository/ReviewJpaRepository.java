@@ -21,7 +21,7 @@ public interface ReviewJpaRepository extends JpaRepository<Review,Long>,ReviewRe
     @Query("select r from Review r where r.user.id = :userId")
     List<Review> findByUserId(@Param("userId") Long userId);
     @Override
-    @Query("select r from Review r where r.item.id = :itemId and r.id = :reviewId")
+    @Query("select r from Review r where r.item.itemId = :itemId and r.id = :reviewId")
     Optional<Review> findByItemId(@Param("itemId") Long itemId, @Param("reviewId") Long reviewId);
     @Override
     @Query("select r from Review r where r.user.id = :itemId")
@@ -36,10 +36,10 @@ public interface ReviewJpaRepository extends JpaRepository<Review,Long>,ReviewRe
     Slice<Review> findByUserIdSlice(Pageable pageable, @Param("userId") Long userId);   //무한 스크롤
 
     @Override
-    @Query("select r from Review r where r.item.id =:itemId")
+    @Query("select r from Review r where r.item.itemId =:itemId")
     Page<Review> findByItemIdPage(Pageable pageable, @Param("itemId") Long itemId);
     @Override
-    @Query("select r from Review r where r.item.id =:itemId")
+    @Query("select r from Review r where r.item.itemId =:itemId")
     Slice<Review> findByItemIdSlice(Pageable pageable, @Param("itemId") Long itemId);
 
     @Override
