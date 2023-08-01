@@ -75,7 +75,7 @@ class ReviewServiceTest {
 
     }
     @Test
-    @DisplayName("리뷰 작성 : 성공, 사진 파일 2개장 존재, ")
+    @DisplayName("리뷰 작성 : 성공, 사진 파일 2개장 존재")
     void postReviewAndImageTest() throws IOException {
         List<ImageInfoDto> imageInfoList = imageStub.createImageInfo(1, true);
 
@@ -90,21 +90,37 @@ class ReviewServiceTest {
         Review result = reviewService.postReview(imageInfoList, postReview, userId, itemId);
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
-            softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
+            softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(itemId);
             softAssertions.assertThat(result.getReviewImageList()).as("저장된 이미지의 정보 일치 여부 체크").isEqualTo(excepted.getReviewImageList());
         });
     }
 
     @Test
     @DisplayName("리뷰 수정 사진 제외 수정 : 성공")
-    void updateReviewNoImageTest(){
+    void update_review_NoImageTest(){
+        Review review = reviewStub.createReview();
+        Review updateReview = reviewStub.createReview(userId, itemId, reviewId);
 
+        given(reviewValidService.validReview(reviewId)).willReturn(review);
+
+        Review result = reviewService.patchReview(null, null, updateReview, userId, itemId, reviewId);
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
+            softAssertions.assertThat(result.getComment()).as("수정된 질문 본문입니다.").isEqualTo(updateReview.getComment());
+        });
     }
 
     @Test
     @DisplayName("리뷰 수정 [단순하게 일부 사진만 삭제] : 성공")
     void updateReviewTest() {
-
+//        Review review = reviewStub.createReview();
+//        Review updateReview = reviewStub.createReview(userId, itemId, reviewId);
+//
+//        List<ImageInfoDto> imageInfoPatch = imageStub.createImageInfo(1,true);
+//        List<Long> deleteIdList = List.of(1L);
+//
+//        reviewService.patchReview(imageInfoPatch,deleteIdList,review,userId,itemId,reviewId);
     }
 
     @Test

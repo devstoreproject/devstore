@@ -31,6 +31,16 @@ public class ReviewStub {
                 .rating(10)
                 .stubBuild();
     }
+    public Review createReview() {
+        return Review.stubBuilder()
+                .user(new User(1L))
+                .item(new Item(1L))
+                .id(1L)
+                .comment("기본 본문입니다.")
+                .reviewImageList(new ArrayList<>())
+                .rating(5)
+                .stubBuild();
+    }
     public Review createReview(Long userId, Long itemId, Long reviewId, List<ReviewImage> reviewImageList) {
         return Review.stubBuilder()
                 .user(new User(userId))
