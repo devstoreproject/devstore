@@ -3,7 +3,6 @@ package project.main.webstore.domain.users.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import project.main.webstore.domain.users.entity.User;
-import project.main.webstore.valueObject.Address;
 
 @Getter
 @AllArgsConstructor
@@ -13,7 +12,7 @@ public class UserGetResponseDto {
     private String password;
     private String nickname;
     private String profileImage;
-    private Address address;
+    private String phone;
 
     public UserGetResponseDto(User user) {
         this.userId = user.getId();
@@ -21,6 +20,6 @@ public class UserGetResponseDto {
         this.password = user.getPassword();
         this.nickname = user.getNickName();
         this.profileImage = user.getProfileImage();
-        this.address = user.getAddress();
+        this.phone = user.getPhone();
     }
 }
