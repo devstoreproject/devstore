@@ -1,4 +1,4 @@
-import { type Nickname } from 'model/auth';
+import type { Nickname } from 'model/auth';
 
 export default function NicknameContainer({
   nickname,

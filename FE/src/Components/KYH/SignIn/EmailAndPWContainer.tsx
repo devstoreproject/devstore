@@ -1,4 +1,4 @@
-import { type Email, type password } from 'model/auth';
+import type { Email, password } from 'model/auth';
 
 type emailAndPassword = Email & password;
 

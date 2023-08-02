@@ -1,4 +1,4 @@
-import { type passwordConfirm } from 'model/auth';
+import type { passwordConfirm } from 'model/auth';
 
 export default function PasswordConfirmContainer({
   password,
