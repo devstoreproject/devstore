@@ -1,21 +1,12 @@
-import { validatePhone } from 'utils/auth/authValidate';
-
-interface PhoneNumberContainerProps {
-  phone: string;
-  setPhone: React.Dispatch<React.SetStateAction<string>>;
-  isPhoneValid: boolean;
-  setIsPhoneValid: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { type Phone } from 'model/auth';
 
 export default function PhoneNumberContainer({
   phone,
   setPhone,
   isPhoneValid,
-  setIsPhoneValid,
-}: PhoneNumberContainerProps) {
+}: Phone) {
   const PhoneNumberInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(e.target.value);
-    setIsPhoneValid(validatePhone(e.target.value));
   };
   return (
     <div className="flex mt-2">

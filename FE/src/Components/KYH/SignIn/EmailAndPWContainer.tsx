@@ -1,40 +1,47 @@
-interface EmailAndPWContainerProps {
-  email: string;
-  password: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
-}
+import { type Email, type password } from 'model/auth';
+
+type emailAndPassword = Email & password;
 
 export default function EmailAndPWContainer({
   email,
   setEmail,
   password,
   setPassword,
-}: EmailAndPWContainerProps) {
+  isEmailValid,
+  isPasswordValid,
+}: emailAndPassword) {
+  const EmailInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const PasswordInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
   return (
     <div className="mt-4">
       <input
-        type="email"
+        type="text"
         className="w-full h-10 border border-black"
-        onChange={(e) => {
-          setEmail(e.target.value);
-        }}
+        onChange={EmailInputHandler}
         value={email}
       />
-      <span className="mt-1 ml-2 text-xs font-bold text-red-500">
-        올바른 형식의 이메일을 입력해주세요
-      </span>
+      {isEmailValid ? null : (
+        <span className="mt-1 ml-2 text-xs font-bold text-red-500">
+          올바른 형식의 이메일을 입력해주세요
+        </span>
+      )}
       <input
         type="password"
         className="w-full h-10 mt-2 border border-black"
-        onChange={(e) => {
-          setPassword(e.target.value);
-        }}
+        onChange={PasswordInputHandler}
         value={password}
       />
-      <span className="mt-1 ml-2 text-xs font-bold text-red-500">
-        비밀번호가 일치하지 않습니다
-      </span>
+      {isPasswordValid ? null : (
+        <span className="mt-1 ml-2 text-xs font-bold text-red-500">
+          영어, 숫자가 포함된 8~16글자이어야 합니다
+        </span>
+      )}
     </div>
   );
 }

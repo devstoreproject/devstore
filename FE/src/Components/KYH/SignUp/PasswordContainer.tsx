@@ -1,21 +1,12 @@
-import { validatePassword } from 'utils/auth/authValidate';
-
-interface passwordContainerProps {
-  password: string;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
-  isPasswordValid: boolean;
-  setIsPasswordValid: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { type password } from 'model/auth';
 
 export default function PasswordContainer({
   password,
   setPassword,
   isPasswordValid,
-  setIsPasswordValid,
-}: passwordContainerProps) {
+}: password) {
   const passwordInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    setIsPasswordValid(validatePassword(e.target.value));
   };
 
   return (
