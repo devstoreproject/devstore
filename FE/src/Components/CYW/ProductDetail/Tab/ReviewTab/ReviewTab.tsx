@@ -1,15 +1,15 @@
 import ReviewElement from './ReviewElement';
-import ReviewPagination from '../../SharedComponent/Pagination';
+import PaginationContainer from './PaginationContainer';
 
 export default function ReviewTab({ tab }: { tab: number }) {
   return tab === 1 ? (
-    <div className="rounded-lg bg-slate-100">
-      <p className="py-4 pl-10">상품 리뷰</p>
+    <div className="bg-slate-100 rounded-lg">
+      <p className="border-b-2 py-4 pl-8">상품 리뷰</p>
       <ReviewElement />
       <ReviewElement />
       <ReviewElement />
       <ReviewElement />
-      <ReviewPagination />
+      <PaginationContainer />
     </div>
   ) : null;
 }

@@ -1,6 +1,6 @@
 export default function UserInfo() {
   return (
-    <div className="flex flex-col items-center pb-2 mr-4 w-10">
+    <div className="flex flex-col items-center mr-4 w-10">
       <img
         src="https://i.ytimg.com/vi/d9pypaFzaCA/maxresdefault.jpg"
         className="object-cover w-8 h-8 rounded-full"
