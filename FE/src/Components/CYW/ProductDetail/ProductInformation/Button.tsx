@@ -1,9 +1,23 @@
-import { FiHeart } from 'react-icons/fi';
+import { useState } from 'react';
+import { VscHeart, VscHeartFilled } from 'react-icons/vsc';
 
 export default function Button() {
+  const [heart, setHeart] = useState(false);
+  const heartSize = 27;
+
   return (
     <div className="flex pt-5 items-center justify-end">
-      <FiHeart size={24} />
+      <button
+        onClick={() => {
+          setHeart(!heart);
+        }}
+      >
+        {heart ? (
+          <VscHeartFilled size={heartSize} />
+        ) : (
+          <VscHeart size={heartSize} />
+        )}
+      </button>
       <button className="border-box outline rounded-full py-3 w-48 mr-4 ml-4">
         장바구니 추가
       </button>
