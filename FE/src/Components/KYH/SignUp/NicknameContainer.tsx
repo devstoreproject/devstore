@@ -1,21 +1,12 @@
-import { validateNickname } from 'utils/auth/authValidate';
-
-interface NicknameContainerProps {
-  nickname: string;
-  setNickname: React.Dispatch<React.SetStateAction<string>>;
-  isNicknameValid: boolean;
-  setIsNicknameValid: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { type Nickname } from 'model/auth';
 
 export default function NicknameContainer({
   nickname,
   setNickname,
   isNicknameValid,
-  setIsNicknameValid,
-}: NicknameContainerProps) {
+}: Nickname) {
   const NicknameInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
-    setIsNicknameValid(validateNickname(e.target.value));
   };
   return (
     <div className="flex mt-2">

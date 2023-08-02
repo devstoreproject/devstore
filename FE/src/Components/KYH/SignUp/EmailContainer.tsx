@@ -1,21 +1,12 @@
-import { validateEmail } from 'utils/auth/authValidate';
-
-interface EmailContainerProps {
-  email: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-  isEmailValid: boolean;
-  setIsEmailValid: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { type Email } from 'model/auth';
 
 export default function EmailContainer({
   email,
   setEmail,
   isEmailValid,
-  setIsEmailValid,
-}: EmailContainerProps) {
+}: Email) {
   const EmailInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    setIsEmailValid(validateEmail(e.target.value));
   };
 
   return (

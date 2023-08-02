@@ -1,21 +1,12 @@
-import { validateUserName } from 'utils/auth/authValidate';
-
-interface UserNameContainerProps {
-  userName: string;
-  setUserName: React.Dispatch<React.SetStateAction<string>>;
-  isUserNameValid: boolean;
-  setIsUserNameValid: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { type UserName } from 'model/auth';
 
 export default function UserNameContainer({
   userName,
   setUserName,
   isUserNameValid,
-  setIsUserNameValid,
-}: UserNameContainerProps) {
+}: UserName) {
   const UserNameInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(e.target.value);
-    setIsUserNameValid(validateUserName(e.target.value));
   };
   return (
     <div className="flex mt-2">
