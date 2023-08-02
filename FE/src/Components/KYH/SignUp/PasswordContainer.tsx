@@ -1,4 +1,4 @@
-import { type password } from 'model/auth';
+import type { password } from 'model/auth';
 
 export default function PasswordContainer({
   password,

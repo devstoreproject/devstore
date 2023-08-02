@@ -1,4 +1,4 @@
-import { type Phone } from 'model/auth';
+import type { Phone } from 'model/auth';
 
 export default function PhoneNumberContainer({
   phone,

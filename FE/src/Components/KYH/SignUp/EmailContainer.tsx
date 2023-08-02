@@ -1,4 +1,4 @@
-import { type Email } from 'model/auth';
+import type { Email } from 'model/auth';
 
 export default function EmailContainer({
   email,

@@ -1,4 +1,4 @@
-import { type UserName } from 'model/auth';
+import type { UserName } from 'model/auth';
 
 export default function UserNameContainer({
   userName,
