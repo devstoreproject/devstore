@@ -1,9 +1,11 @@
-export default function ProductName() {
+interface ProductNameProps {
+  name: string;
+}
+
+export default function ProductName({ name }: ProductNameProps) {
   return (
     <div>
-      <h2 className="font-bold">
-        알파스캔 AOC Q32V3S QHD IPS 75 시력보호 무결점
-      </h2>
+      <h2 className="font-bold">{name}</h2>
     </div>
   );
 }

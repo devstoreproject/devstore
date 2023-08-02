@@ -5,11 +5,16 @@ import {
 import SlideImgItem from './SlideImgItem';
 
 export default function SlideImg() {
+  const btnSize = 20;
   return (
     <div className="flex justify-center items-center pt-4">
-      <MdOutlineKeyboardArrowLeft />
+      <button>
+        <MdOutlineKeyboardArrowLeft size={btnSize} />
+      </button>
       <SlideImgItem />
-      <MdOutlineKeyboardArrowRight />
+      <button>
+        <MdOutlineKeyboardArrowRight size={btnSize} />
+      </button>
     </div>
   );
 }

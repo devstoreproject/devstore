@@ -2,8 +2,13 @@ import ProductTab from './ProductTab/ProductTab';
 import ReviewTab from './ReviewTab/ReviewTab';
 import { useState } from 'react';
 import InquiryTab from './InquiryTab/InquiryTab';
+import type { ProductType } from 'Pages/CYW/ProductDetail';
 
-export default function Tab() {
+interface ProductTypeProps {
+  product: ProductType;
+}
+
+export default function Tab({ product }: ProductTypeProps) {
   const [tab, setTab] = useState<number>(0);
 
   const handleClick = (event: React.MouseEvent<HTMLParagraphElement>) => {
@@ -20,8 +25,8 @@ export default function Tab() {
     <div className="w-3/4 pt-12">
       <div className="flex items-center border-2 rounded-lg border-box text-slate-500">
         <p
-          className={`text-center w-1/3 border-slate-300 underline ${
-            tab === 0 ? 'underline-offset-8' : ''
+          className={`text-center w-1/3 border-slate-300  ${
+            tab === 0 ? 'underline underline-offset-8' : ''
           }`}
           onClick={handleClick}
         >
@@ -29,7 +34,7 @@ export default function Tab() {
         </p>
         <p
           className={`text-center w-1/3 border-x border-x-slate-300 my-4 ${
-            tab === 1 ? 'underline-offset-8' : ''
+            tab === 1 ? 'underline underline-offset-8' : ''
           }`}
           onClick={handleClick}
         >
@@ -37,7 +42,7 @@ export default function Tab() {
         </p>
         <p
           className={`text-center w-1/3 ${
-            tab === 2 ? 'underline-offset-8' : ''
+            tab === 2 ? 'underline underline-offset-8' : ''
           }`}
           onClick={handleClick}
         >
@@ -45,7 +50,7 @@ export default function Tab() {
         </p>
       </div>
       <div>
-        <ProductTab tab={tab} />
+        <ProductTab tab={tab} description={product.description} />
         <ReviewTab tab={tab} />
         <InquiryTab tab={tab} />
       </div>
