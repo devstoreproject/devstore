@@ -1,4 +1,4 @@
-export default function AllReviewTitle() {
+export default function BestReviewTitle() {
   return (
     <div className="flex w-full">
       <span className="flex items-center justify-center text-gray-600 bg-white border-b border-r rounded-tl-lg border-b-gray-400 border-r-gray-400 w-16 py-4"></span>
@@ -12,7 +12,7 @@ export default function AllReviewTitle() {
         평점
       </span>
       <span className="flex items-center justify-center text-gray-600 bg-slate-100 border-b border-r rounded-tr-lg border-b-gray-400 border-r-gray-400 w-32 py-4">
-        등록하기
+        해제하기
       </span>
     </div>
   );
