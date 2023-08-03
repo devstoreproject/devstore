@@ -63,12 +63,21 @@ public class User extends Auditable implements Principal {
 
     //TODO: shippingInfo 추가
     @Setter
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<ShippingInfo> infoList;
 
     @Override
     public String getName() {
         return getEmail();
+    }
+
+    public ShippingInfo getShippingInfo(Long infoId){
+        for (ShippingInfo info: infoList) {
+            if(info.getInfoId() == infoId){
+                return info;
+            }
+        }
+        return null;
     }
 
     public User(String nickName, String profileImage, String password, String email, int mileage, Address address, Grade grade, ProviderId providerId, UserRole userRole) {
