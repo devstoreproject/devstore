@@ -13,7 +13,6 @@ import project.main.webstore.domain.users.enums.Grade;
 import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.domain.users.enums.UserStatus;
-import project.main.webstore.valueObject.Address;
 
 import javax.persistence.*;
 import java.security.Principal;
@@ -44,8 +43,7 @@ public class User extends Auditable implements Principal {
     private LocalDateTime lastConnectedDate;
     private int mileage;
 
-    @Embedded
-    private Address address;
+    private String phone;
 
     @Enumerated(STRING)
     private Grade grade = Grade.NORMAL;
@@ -67,14 +65,14 @@ public class User extends Auditable implements Principal {
         return getEmail();
     }
 
-    public User(String nickName, String profileImage, String password, String email, int mileage, Address address, Grade grade, ProviderId providerId, UserRole userRole) {
+    public User(String nickName, String profileImage, String password, String email, int mileage, String phone, Grade grade, ProviderId providerId, UserRole userRole) {
         this.nickName = nickName;
         this.profileImage = profileImage;
         this.password = password;
         this.email = email;
         this.lastConnectedDate = LocalDateTime.now();
         this.mileage = mileage;
-        this.address = address;
+        this.phone = phone;
         this.grade = grade;
         this.providerId = providerId;
         this.userRole = userRole;
@@ -94,7 +92,7 @@ public class User extends Auditable implements Principal {
     }
 
     @Builder(builderMethodName = "stubBuilder")
-    public User(Long id, String nickName, String userName, String profileImage, String password, String email, int mileage, Address address, List<PickedItem> pickedItemList, Cart cart) {
+    public User(Long id, String nickName, String userName, String profileImage, String password, String email, int mileage, String phone, List<PickedItem> pickedItemList, Cart cart) {
         this.id = id;
         this.nickName = nickName;
         this.userName = userName;
@@ -103,7 +101,7 @@ public class User extends Auditable implements Principal {
         this.email = email;
         this.lastConnectedDate = LocalDateTime.now();
         this.mileage = mileage;
-        this.address = address;
+        this.phone = phone;
         this.grade = Grade.NORMAL;
         this.providerId = JWT;
         this.userRole = UserRole.CLIENT;
@@ -118,7 +116,7 @@ public class User extends Auditable implements Principal {
         this.password = post.getPassword();
         this.email = post.getEmail();
         this.lastConnectedDate = LocalDateTime.now();
-        this.address = new Address(post.getZipCode(),post.getAddressSimple(),post.getAddressDetail(), post.getPhone());
+        this.phone = post.getPhone();
         this.grade = Grade.NORMAL;
         this.providerId = JWT;
         this.userRole = UserRole.CLIENT;
@@ -130,7 +128,7 @@ public class User extends Auditable implements Principal {
         this.nickName = patch.getNickname();
         this.password = patch.getPassword();
         this.lastConnectedDate = LocalDateTime.now();
-        this.address = new Address(patch.getZipCode(),patch.getAddressSimple(),patch.getAddressDetail(), patch.getPhone());
+        this.phone = patch.getPhone();
         this.grade = Grade.NORMAL;
         this.providerId = JWT;
         this.userRole = UserRole.CLIENT;

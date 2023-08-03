@@ -8,14 +8,14 @@ import project.main.webstore.domain.notice.entity.Notice;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
 @DiscriminatorValue("NOTICE")
 @NoArgsConstructor
 public class NoticeImage extends Image {
     @Setter
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "NOTICE_ID")
     private Notice notice;
 

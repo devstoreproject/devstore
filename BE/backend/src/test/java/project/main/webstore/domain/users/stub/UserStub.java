@@ -2,7 +2,6 @@ package project.main.webstore.domain.users.stub;
 
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.users.entity.User;
-import project.main.webstore.valueObject.Address;
 
 import java.util.ArrayList;
 
@@ -12,7 +11,7 @@ public class UserStub {
                 .cart(new Cart())
                 .userName("김복자")
                 .mileage(0)
-                .address(new Address("540204","서울시 어디동 어디구 어쩌구","314동 502호","010-123-1234"))
+                .phone("010-1231-1234")
                 .email("admin@gmail.com")
                 .pickedItemList(new ArrayList<>())
                 .nickName("김순자")

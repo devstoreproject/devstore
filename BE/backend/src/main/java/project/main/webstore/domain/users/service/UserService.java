@@ -85,7 +85,7 @@ public class UserService {
         }
         Optional.ofNullable(user.getUserStatus()).ifPresent(findUser::setUserStatus);
         Optional.ofNullable(user.getGrade()).ifPresent(findUser::setGrade);
-        Optional.ofNullable(user.getAddress()).ifPresent(findUser::setAddress);
+        Optional.ofNullable(user.getPhone()).ifPresent(findUser::setPhone);
         Optional.ofNullable(user.getNickName()).ifPresent(findUser::setNickName);
 
         saveProfileImageIfHas(user, imageInfo);

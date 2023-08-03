@@ -22,12 +22,6 @@ public class UserPatchRequestDto {
             message = "휴대폰 번호는 010으로 시작하는 11자리 숫자와 '-'로 구성되어야 합니다.")
     @Schema(description = "전화번호")
     private String phone;
-    @Schema(description = "우편주소",example = "540740")
-    private String zipCode;
-    @Schema(description = "간단 주소 정보",example = "간단한 주소정보")
-    private String addressSimple;
-    @Schema(description = "주소 정보",example = "서울특별시 동작구 문래동 김순아파트")
-    private String addressDetail;
     @Schema(description = "이미지 정보")
     private ImageSortDto imageInfo;
 }

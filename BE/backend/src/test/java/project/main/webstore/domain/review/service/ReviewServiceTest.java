@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
+import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.image.utils.ImageUtils;
 import project.main.webstore.domain.item.service.ItemService;
@@ -23,11 +24,9 @@ import project.main.webstore.stub.ImageStub;
 import project.main.webstore.utils.FileUploader;
 
 import java.io.IOException;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
@@ -75,36 +74,48 @@ class ReviewServiceTest {
 
     }
     @Test
-    @DisplayName("리뷰 작성 : 성공, 사진 파일 2개장 존재, ")
+    @DisplayName("리뷰 작성 : 성공, 사진 파일 존재")
     void postReviewAndImageTest() throws IOException {
-        List<ImageInfoDto> imageInfoList = imageStub.createImageInfo(1, true);
-
+        ImageInfoDto imageInfo = imageStub.createImageInfoPath(null, 0, true);
         Review postReview = reviewStub.createReview(userId, itemId, reviewId);
-        List<ReviewImage> reviewImage = imageStub.createReviewImage(postReview);
-
-        Review excepted = reviewStub.createReview(userId, itemId, reviewId,reviewImage);
+        Image image = imageStub.createImage(1L, 0, true);
+        Review excepted = reviewStub.createReview(userId, itemId, reviewId,new ReviewImage(image,postReview));
         given(reviewRepository.save(ArgumentMatchers.any(Review.class))).willReturn(excepted);
-        given(fileUploader.uploadImage(ArgumentMatchers.anyList())).willReturn(imageStub.createImageList(2));
-        willDoNothing().given(imageUtils).imageValid(imageInfoList);
+        given(fileUploader.uploadImage(ArgumentMatchers.any(ImageInfoDto.class))).willReturn(imageStub.createImage(1L,0,true));
 
-        Review result = reviewService.postReview(imageInfoList, postReview, userId, itemId);
+        Review result = reviewService.postReview(imageInfo, postReview, userId, itemId);
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
-            softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
-            softAssertions.assertThat(result.getReviewImageList()).as("저장된 이미지의 정보 일치 여부 체크").isEqualTo(excepted.getReviewImageList());
+            softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(itemId);
         });
     }
 
     @Test
     @DisplayName("리뷰 수정 사진 제외 수정 : 성공")
-    void updateReviewNoImageTest(){
+    void update_review_NoImageTest(){
+        Review review = reviewStub.createReview();
+        Review updateReview = reviewStub.createReview(userId, itemId, reviewId);
 
+        given(reviewValidService.validReview(reviewId)).willReturn(review);
+
+        Review result = reviewService.patchReview(null, updateReview, userId, itemId, reviewId);
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
+            softAssertions.assertThat(result.getComment()).as("수정된 질문 본문입니다.").isEqualTo(updateReview.getComment());
+        });
     }
 
     @Test
     @DisplayName("리뷰 수정 [단순하게 일부 사진만 삭제] : 성공")
     void updateReviewTest() {
-
+//        Review review = reviewStub.createReview();
+//        Review updateReview = reviewStub.createReview(userId, itemId, reviewId);
+//
+//        List<ImageInfoDto> imageInfoPatch = imageStub.createImageInfo(1,true);
+//        List<Long> deleteIdList = List.of(1L);
+//
+//        reviewService.patchReview(imageInfoPatch,deleteIdList,review,userId,itemId,reviewId);
     }
 
     @Test

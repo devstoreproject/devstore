@@ -19,20 +19,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
-import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.review.dto.*;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.mapper.ReviewMapper;
 import project.main.webstore.domain.review.service.ReviewGetService;
 import project.main.webstore.domain.review.service.ReviewService;
-import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 @Tag(name = "리뷰 API", description = "리뷰 관련 API")
@@ -53,20 +50,18 @@ public class ReviewController {
     @ApiResponse(responseCode = "201", description = "리뷰 등록 성공")
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> postReview(@PathVariable Long itemId,
                                                                        @RequestPart ReviewPostRequestDto post,
-                                                                       @Parameter(description = "Image files", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                                                                       @Parameter(description = "Image file", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
                                                                                array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))),style = ParameterStyle.FORM,explode = Explode.TRUE)
-                                                                           @RequestPart(required = false) List<MultipartFile> imageList) {
+                                                                           @RequestPart(required = false) MultipartFile image) {
         Review review = reviewMapper.toEntity(post);
 
         Review savedReview;
-        if (imageList == null) {
+        if (image == null) {
             savedReview = service.postReview(review, post.getUserId(), itemId);
         } else {
-            List<ImageInfoDto> imageInfoDtoList = imageMapper.toLocalDtoList(imageList, post.getInfoList(), UPLOAD_DIR);
-            savedReview = service.postReview(imageInfoDtoList, review, post.getUserId(), itemId);
+            ImageInfoDto imageInfo = imageMapper.toLocalDto(image, UPLOAD_DIR);
+            savedReview = service.postReview(imageInfo, review, post.getUserId(), itemId);
         }
-        savedReview.setItem(new Item(1L));
-        savedReview.setUser(new User(1L));
         ReviewIdResponseDto response = reviewMapper.toDto(savedReview);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
         URI uri = UriCreator.createUri("/item", "/review", itemId, responseDto.getData().getReviewId());
@@ -146,16 +141,16 @@ public class ReviewController {
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> patchReview(@PathVariable Long itemId,
                                                                         @PathVariable Long reviewId,
                                                                         @RequestPart(required = false) ReviewUpdateRequestDto patch,
-                                                                        @RequestPart(required = false) List<MultipartFile> imageList,
+                                                                        @RequestPart(required = false) MultipartFile image,
                                                                         @AuthenticationPrincipal Object principal
     ) {
         CheckLoginUser.validUserSame(principal, patch.getUserId());
         Review review = reviewMapper.toEntity(patch, reviewId);
-        List<ImageInfoDto> imageInfoList = new ArrayList<>();
+        ImageInfoDto imageInfo = null;
         if (patch.getImageSortAndRepresentativeInfo()!= null) {
-            imageInfoList = imageMapper.toLocalDtoList(imageList, patch.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
+            imageInfo = imageMapper.toLocalDto(image, UPLOAD_DIR);
         }
-        Review patchReview = service.patchReview(imageInfoList, patch.getDeleteImageId(), review, patch.getUserId(), itemId, reviewId);
+        Review patchReview = service.patchReview(imageInfo, review, patch.getUserId(), itemId, reviewId);
         ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(patchReview);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
 
@@ -224,7 +219,7 @@ public class ReviewController {
         return ResponseEntity.ok(responseDto);
     }
     @DeleteMapping("/reviews/best")
-    @ApiResponse(responseCode = "201", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
+    @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
     public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> delteBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post, @AuthenticationPrincipal Object principal){
         CheckLoginUser.validUserSame(principal,userId);
         List<Review> result = service.deleteBestReview(post.getReviewIdList());
