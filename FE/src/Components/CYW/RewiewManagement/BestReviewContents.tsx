@@ -1,4 +1,4 @@
-export default function AllReviewContents() {
+export default function BestReviewConte1nts() {
   return (
     <div className="flex w-full">
       <span className="flex items-center justify-center text-gray-700 border-b border-r h-1/4 border-b-gray-400 border-r-gray-400 w-16 py-9 px-4 bg-slate-100">
@@ -16,7 +16,7 @@ export default function AllReviewContents() {
       </span>
       <span className="flex items-center justify-center text-gray-700 border-b border-r h-1/4 border-b-gray-400 border-r-gray-400 w-32 py-9 bg-white">
         <button className="bg-slate-200 border-gray-400 border px-4 py-2 rounded-md">
-          등록
+          해제
         </button>
       </span>
     </div>

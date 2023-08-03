@@ -20,5 +20,3 @@ export default function OrderedList() {
     </div>
   );
 }
-
-// "flex flex-col w-full bg-light-gray"
