@@ -44,7 +44,7 @@ public class OrderController {
 
         var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
 
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     @ApiResponse(responseCode = "200", description = "주문서 수정")
@@ -59,7 +59,7 @@ public class OrderController {
         Orders updateOrder = orderService.editOrder(order, userId);
         OrderResponseDto response = orderMapper.orderToOrderResponseDto(updateOrder);
 
-        var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
@@ -71,7 +71,7 @@ public class OrderController {
         Orders order = orderService.getOrder(orderId, userId);
         OrderResponseDto response = orderMapper.orderToOrderResponseDto(order);
 
-        var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }

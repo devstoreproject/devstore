@@ -13,11 +13,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class OrderMapper {
-    private final OrderItemMapper orderItemMapper;
 
-    public OrderMapper(OrderItemMapper orderItemMapper) {
-        this.orderItemMapper = orderItemMapper;
-    }
+//    private final OrderItemMapper orderItemMapper;
+//
+//    public OrderMapper(OrderItemMapper orderItemMapper) {
+//        this.orderItemMapper = orderItemMapper;
+//    }
 
     public OrderLocalDto orderPostDtoToOrder(OrderPostDto postDto) {
         return new OrderLocalDto(postDto);
