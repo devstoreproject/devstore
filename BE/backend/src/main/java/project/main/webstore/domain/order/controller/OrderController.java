@@ -1,77 +1,92 @@
 package project.main.webstore.domain.order.controller;
 
 
-import com.querydsl.core.types.Order;
-import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import project.main.webstore.domain.order.dto.*;
-import project.main.webstore.domain.order.entity.OrderItem;
+import project.main.webstore.domain.order.dto.OrderLocalDto;
+import project.main.webstore.domain.order.dto.OrderPatchDto;
+import project.main.webstore.domain.order.dto.OrderPostDto;
+import project.main.webstore.domain.order.dto.OrderResponseDto;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.mapper.OrderMapper;
 import project.main.webstore.domain.order.service.OrderService;
+import project.main.webstore.dto.ResponseDto;
+import project.main.webstore.enums.ResponseCode;
+import project.main.webstore.utils.CheckLoginUser;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.ArrayList;
-import java.util.List;
 
+@Tag(name = "주문 API", description = "주문 관련 API")
 @RestController
 @RequestMapping("/api/orders")
 @Validated
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
-    private final OrderMapper  orderMapper;
+    private final OrderMapper orderMapper;
 
-    @PostMapping("/form")
-    public ResponseEntity createOrderForm(@Valid @RequestBody OrderFormPostDto orderFormPostDto) {
-        Orders order = orderMapper.orderFormPostDtoToOrderForm(orderFormPostDto);
-//        Orders createOrderForm = orderService.writeOrderForm(order.getOrderId(), order);
-        Orders               orderForm            = orderService.writeOrderForm(order);
-        OrderFormResponseDto orderFormResponseDto = orderMapper.orderFormToOrderResponseDto(orderForm);
+    @ApiResponse(responseCode = "200", description = "주문서 작성, 주문한 아이템 정보 등록")
+    @PostMapping("/{user-id}")
+    public ResponseEntity<ResponseDto<OrderResponseDto>> postOrder(@PathVariable("user-id") @Positive Long userId,
+                                                                   @RequestBody @Valid OrderPostDto post,
+                                                                   @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
+        OrderLocalDto localOrder = orderMapper.orderPostDtoToOrder(post);
+        Orders createOrder = orderService.createOrder(localOrder, userId);
+        OrderResponseDto response = orderMapper.orderToOrderResponseDto(createOrder);
 
-        return new ResponseEntity<>(orderFormResponseDto, HttpStatus.CREATED);
+        var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
+
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/orders/editform")
-    public ResponseEntity editOrderForm(@RequestBody @Valid OrderFormPatchDto orderFormPatchDto) {
-        Orders order = orderMapper.orderFormPatchDtoToOrderForm(orderFormPatchDto);
-        order.setOrderId(order.getOrderId());
-        Orders patchOrderForm = orderService.editOrderForm(order);
+    @ApiResponse(responseCode = "200", description = "주문서 수정")
+    @PatchMapping("/{user-id}/edit/{order-id}")
+    public ResponseEntity<ResponseDto<OrderResponseDto>> patchOrder(@PathVariable("user-id") @Positive Long userId,
+                                                                    @PathVariable("order-id") @Positive Long orderId,
+                                                                    @RequestBody @Valid OrderPatchDto patchDto,
+                                                                    @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
 
-        return new ResponseEntity<>(orderMapper.orderFormToOrderResponseDto(patchOrderForm), HttpStatus.OK);
+        OrderLocalDto order = orderMapper.orderPatchDtoToOrder(patchDto, orderId);
+        Orders updateOrder = orderService.editOrder(order, userId);
+        OrderResponseDto response = orderMapper.orderToOrderResponseDto(updateOrder);
+
+        var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/{order-id}")
-    public ResponseEntity<OrderDummyResponse> getOrder (@PathVariable("order-id") @Positive Long orderId) {
+    @ApiResponse(responseCode = "200", description = "주문정보 가져오기")
+    @GetMapping("{user-id}/{order-id}")
+    public ResponseEntity<ResponseDto<OrderResponseDto>> getOrder(@PathVariable("user-id") @Positive Long userId,
+                                                                  @PathVariable("order-id") @Positive Long orderId) {
+        Orders order = orderService.getOrder(orderId, userId);
+        OrderResponseDto response = orderMapper.orderToOrderResponseDto(order);
 
-        Orders findOrder = orderService.getOrder(orderId);
+        var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
-        List<Orders> orderItemList = new ArrayList<>();
-        orderItemList.add(new Orders(1, "MacBook", 1500000));
-        orderItemList.add(new Orders(1, "MagicMouse", 100000));
-        orderItemList.add(new Orders(1, "MagicKeyboard", 100000));
-
-        OrderDummyResponse orderResponse = orderMapper.orderDummyToDummyResponse(findOrder, orderItemList);
-
-        return new ResponseEntity<>(orderResponse, HttpStatus.OK);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    // Get List 필요 확인
+    @ApiResponse(responseCode = "204", description = "주문 취소")
+    @DeleteMapping("/{user-id}/cancel/{order-id}") // -> order취소..
+    public ResponseEntity deleteOrder(@PathVariable("user-id") @Positive Long userId,
+                                      @PathVariable("order-idr") @Positive Long orderId,
+                                      @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
 
-//    @PostMapping("/order/{order-id}")
-//    public ResponseEntity createOrder(@PathVariable("order-id") Long orderId,
-//                                      @Valid @RequestBody OrderPostDto orderPostDto) {
-//        Orders order = orderMapper.orderPostDtoToOrder(orderPostDto);
-//        Orders createOrder = orderService.createOrder(order);
-//        OrderResponseDto orderResponseDto = orderMapper.orderToOrderResponseDto(createOrder);
-//        return new ResponseEntity<>(orderResponseDto, HttpStatus.CREATED);
-//    }
+        orderService.cancelOrder(userId, orderId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
 }
 
 

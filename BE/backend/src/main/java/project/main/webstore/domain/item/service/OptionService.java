@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.repository.OptionRepository;
+import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.exception.CommonExceptionCode;
 
@@ -58,6 +59,6 @@ public class OptionService {
     }
     private ItemOption findVerifiedOption (Long optionId) {
         Optional<ItemOption> optionalItemOption = optionRepository.findById(optionId);
-        return optionalItemOption.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.OPTION_NOT_FOUND));
+        return optionalItemOption.orElseThrow(() -> new BusinessLogicException(OrderExceptionCode.OPTION_NOT_FOUND));
     }
 }

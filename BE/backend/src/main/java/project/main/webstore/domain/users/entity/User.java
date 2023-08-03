@@ -65,6 +65,15 @@ public class User extends Auditable implements Principal {
         return getEmail();
     }
 
+    public ShippingInfo getShippingInfo(Long infoId){
+        for (ShippingInfo info: shippingInfoList) {
+            if(info.getInfoId().equals(infoId)){
+                return info;
+            }
+        }
+        return null;
+    }
+
     public User(String nickName, String profileImage, String password, String email, int mileage, String phone, Grade grade, ProviderId providerId, UserRole userRole) {
         this.nickName = nickName;
         this.profileImage = profileImage;
