@@ -14,6 +14,7 @@ import java.util.List;
 public class OrderItemPostDto {
     @NotNull
     private Long itemId;
+    private Long optionId;  //null 가능
     @NotNull
     private int itemCount;
 
