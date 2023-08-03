@@ -1,21 +1,22 @@
 package project.main.webstore.domain.order.service;
 
-import com.querydsl.core.types.Order;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.main.webstore.domain.item.entity.Item;
-import project.main.webstore.domain.item.repository.ItemRepository;
+import project.main.webstore.domain.cart.entity.Cart;
+import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
-import project.main.webstore.domain.order.entity.OrderItem;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.enums.OrdersStatus;
+import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.domain.order.repository.OrderRepository;
+import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
-import project.main.webstore.domain.users.service.UserService;
+import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
-import project.main.webstore.exception.CommonExceptionCode;
 
 import java.util.Calendar;
 import java.util.List;
@@ -27,62 +28,68 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final UserService userService;
+    private final UserValidService userService;
 
-    // 현재 user, item domain 연결
-    // 주문서 폼 작성, 해당 정보 저장
-    // 주문번호 포함 order 생성
-    public Orders writeOrder(Orders order, Long userId) {
-        User findUser = userService.getUser(userId);
+    public Orders createOrder(OrderLocalDto post, Long userId) {
+        User user = userService.validUser(userId);
         String orderNumber = CreateOrderNumber();
-        order.setUser(findUser);
-        order.setOrderNumber(orderNumber);
+        Cart cart = user.getCart();
+        ShippingInfo shippingInfo = user.getShippingInfo(post.getShippingId());
+
+        //item 에서 수량 제거하는 로직 추가
+        //전체 아이템에서 선택한 아이템 수만큼 수량 제거...
+        Orders order = new Orders(orderNumber, post.getMessage(), cart, user, shippingInfo, null, null);
 
         return orderRepository.save(order);
     }
 
-    // 주문 양식만 수정
-    public Orders editOrder(Orders order, Long userId) {
-        User user = userService.getUser(userId);
+    // 주문 양식만 수정 요청 사항만 수정이 가능하다.
+    public Orders editOrder(OrderLocalDto order, Long userId) {
+        User user = userService.validUserAllInfo(userId);
         Orders patchOrder = findVerifiedOrder(order.getOrderId());
-        patchOrder.setUser(user);
+
+        Optional.ofNullable(order.getMessage()).ifPresent(patchOrder::setMessage);
 
         return orderRepository.save(patchOrder);
     }
 
-    public Orders getOrder(long orderId) {
-        return findVerifiedOrder(orderId);
+    public Orders getOrder(Long orderId, Long userId) {
+        //TODO: 본인 체크 필수 혹은 관리자
+        User user = userService.validUser(userId);
+        Orders order = findVerifiedOrder(orderId);
+        order.setUser(user);
+
+        return order;
     }
 
-    public List<Orders> getOrders(Long orderId) {
-        return orderRepository.findAllByOrderId(orderId);
+    public Page<Orders> getOrders(Long orderId, Pageable pageable) {
+        return orderRepository.findAllByOrderId(orderId, pageable);
     }
 
+    //주문 취소
     public void cancelOrder(Long orderId, Long userId) {
-        User findUser = userService.getUser(userId);
-        Orders findOrder = findVerifiedOrder(orderId);
+        User user = userService.validUserAllInfo(userId);
+        Orders order = findVerifiedOrder(orderId);
 
-        if (findOrder.getOrdersStatus() == OrdersStatus.ORDER_COMPLETE) {
-            findOrder.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
+        if (order.getOrdersStatus() == OrdersStatus.ORDER_COMPLETE) {
+            order.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
 
-            List<OrderItem> orderItems = findOrder.getOrderItems();
+            //수량 변경 필수
+            Cart cart = order.getCart();
+            List<CartItem> optionList = cart.getCartItemList();
 
-            for (OrderItem orderItem: orderItems) {
-                Item item = orderItem.getItem();
-                int orderedCount = orderItem.getItemCount();
-                int currentCount = orderItem.getItemCount();
-                int totalCount = orderedCount + currentCount;
-                item.setItemCount(totalCount);
+            for (CartItem cartItem: optionList) {
+                int itemCount = cartItem.getItemCount();
+                int itemCountRemain = cartItem.getOption().getItemCount();
+
+                cartItem.getOption().setItemCount(itemCount + itemCountRemain);
             }
-        } else if (findOrder.getOrdersStatus() == OrdersStatus.ORDER_CANCEL) {
-            throw new BusinessLogicException(CommonExceptionCode.ORDER_ALREADY_CANCEL);
+        } else if (order.getOrdersStatus() == OrdersStatus.ORDER_CANCEL) {
+            throw new BusinessLogicException(OrderExceptionCode.ORDER_ALREADY_CANCEL);
         } else {
             throw new BusinessLogicException(OrderExceptionCode.ORDER_CANCEL_FAIL);
         }
 
-        findOrder.setUser(findUser);
-
-        orderRepository.save(findOrder);
     }
 
     public Orders findVerifiedOrder(long orderId) {
@@ -93,11 +100,11 @@ public class OrderService {
     // 주문번호 조회
     private Orders findByOrderNumber(String orderNumber) {
         Optional<Orders> findByOrderNum = orderRepository.findByOrderNumber(orderNumber);
-        return findByOrderNum.orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ORDER_NOT_FOUND));
+        return findByOrderNum.orElseThrow(() -> new BusinessLogicException(OrderExceptionCode.ORDER_NOT_FOUND));
     }
 
     // 주문번호 생성
-    public String CreateOrderNumber() {
+    private String CreateOrderNumber() {
         Calendar cal = Calendar.getInstance();
 
         int y = cal.get(Calendar.YEAR);
@@ -116,7 +123,39 @@ public class OrderService {
     }
 
     // 주문 상태 변경..
-    // 주문 정보
+    // 배송전 변경 가능
+    public void UpdateOrderStatus(String orderNumber, OrdersStatus ordersStatus) {
+        Orders order = findByOrderNumber(orderNumber);
+        if (checkStatus(order)) {
+            order.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
+            System.out.println("주문이 취소됐습니다.");
+        } else if (checkStatus(order)) {
+            order.setOrdersStatus(OrdersStatus.PAYMENT_PROGRESS);
+            System.out.println("결제 진행중입니다.");
+        } else if (checkStatus(order)) {
+            order.setOrdersStatus(OrdersStatus.PAYMENT_COMPLETE);
+            System.out.println("결제가 완료됐습니다.");
+        } else if (checkStatus(order)) {
+            order.setOrdersStatus(OrdersStatus.PAYMENT_CANCEL);
+            System.out.println("결제가 취소됐습니다.");
+        } else if (checkStatus(order)) {
+            order.setOrdersStatus(OrdersStatus.DELIVERY_PROGRESS);
+            System.out.println("배송중 입니다.");
+        } else if (checkStatus(order)) {
+            order.setOrdersStatus(OrdersStatus.DELIVERY_COMPLETE);
+            System.out.println("배송이 완료됐습니다.");
+        } else if (checkStatus(order)) {
+            order.setOrdersStatus(OrdersStatus.REFUND_PROGRESS);
+            System.out.println("환불 진행중입니다.");
+        } else {
+            order.setOrdersStatus(OrdersStatus.REFUND_COMPLETE);
+            System.out.println("환불 완료됐습니다.");
+        }
+    }
 
+    // 주문 정보
+    private boolean checkStatus(Orders order) {
+        return order.getOrdersStatus().getIndex() >= OrdersStatus.ORDER_COMPLETE.getIndex();
+    }
 }
 
