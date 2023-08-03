@@ -29,9 +29,11 @@ import PurComDetail from 'Pages/KHJ/PurComDetail';
 import Order from 'Pages/KHJ/Order';
 import AdminMain from 'Components/KYH/admin/AdminMain/AdminMain';
 import BasicLayout from 'Pages/LSM/BasicLayout';
-import Purchasement from 'Pages/CYW/Purchasement';
+import ProductDetail from 'Pages/CYW/ProductDetail';
 import OrderedList from 'Pages/CYW/OrderedList';
 import ReviewManagement from 'Pages/CYW/ReviewManagement';
+import Search from 'Pages/CYW/Search';
+import SearchCategory from 'Pages/CYW/SearchCategory';
 import Sales from 'Components/KYH/admin/Sales/Sales';
 
 function App() {
@@ -40,6 +42,9 @@ function App() {
       <Routes>
         <Route element={<BasicLayout />}>
           <Route path="/" element={<Main />} />
+          <Route path="searchcategory" element={<SearchCategory />} />
+          <Route path="search" element={<Search />} />
+          <Route path="productdetail" element={<ProductDetail />} />
         </Route>
 
         <Route path="/signup" element={<SignUp />} />
@@ -76,8 +81,7 @@ function App() {
           <Route path="complete" element={<PurComplete />} />
           <Route path="detail" element={<PurComDetail />} />
         </Route>
-        <Route path="/order" element={<Order />} />
-        <Route path="/purchasement" element={<Purchasement />} />
+        <Route path="order" element={<Order />} />
       </Routes>
     </BrowserRouter>
   );
