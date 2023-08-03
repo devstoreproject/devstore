@@ -24,18 +24,7 @@ public class ShippingInfo {
     @Setter
     @Column(updatable = false)
     private String recipient; // 배송받는사람
-//    @Setter
-//    @Column(updatable = false)
-//    private String email; // 이메일
-//    @Setter
-//    @Column(updatable = false)
-//    private String zipCode;
-//    @Setter
-//    @Column(updatable = false)
-//    private String addressSimple;
-//    @Setter
-//    @Column(updatable = false)
-//    private String addressDetail;
+
     @Embedded
     private Address address;
 
