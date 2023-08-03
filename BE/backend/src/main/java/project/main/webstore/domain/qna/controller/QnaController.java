@@ -71,9 +71,9 @@ public class QnaController {
 
     @PostMapping("/items/{itemId}")
     @ApiResponse(responseCode = "201", description = "질문 등록")
-    public ResponseEntity<ResponseDto<QuestionDto>> postQuestion(@PathVariable Long itemId, @RequestBody QuestionPostRequestDto postDto) {
+    public ResponseEntity<ResponseDto<QuestionDto>> postQuestion(@PathVariable Long itemId, @RequestBody QuestionPostRequestDto postDto,@AuthenticationPrincipal Object principal) {
         Question request = mapper.toEntity(postDto, itemId);
-        Question result = service.postQuestion(request);
+        Question result = service.postQuestion(request,postDto.getUserId(),itemId);
         QuestionDto response = mapper.toResponseDto(result);
         var responseDto = ResponseDto.<QuestionDto>builder().data(response).customCode(ResponseCode.OK).build();
         URI location = UriCreator.createUri("/qna/{questionId}", response.getQuestionId());
@@ -86,7 +86,7 @@ public class QnaController {
                                                                   @PathVariable Long itemId,
                                                                   @RequestBody QuestionPatchDto patchDto) {
         Question request = mapper.toEntity(patchDto, questionId, itemId);
-        Question result = service.patchQuestion(request);
+        Question result = service.patchQuestion(request,patchDto.getUserId());
         QuestionDto response = mapper.toResponseDto(result);
         var responseDto = ResponseDto.<QuestionDto>builder().data(response).customCode(ResponseCode.OK).build();
         URI location = UriCreator.createUri("/qna/{questionId}", response.getQuestionId());
@@ -104,7 +104,7 @@ public class QnaController {
     @ApiResponse(responseCode = "201", description = "답변 등록")
     public ResponseEntity<ResponseDto<AnswerDto>> postAnswer(@PathVariable Long questionId, @RequestBody AnswerPostRequestDto postDto) {
         Answer request = mapper.toEntity(postDto, questionId);
-        Answer result = service.postAnswer(request);
+        Answer result = service.postAnswer(request,postDto.getUserId());
         AnswerDto response = mapper.toResponseDto(result);
         var responseDto = ResponseDto.<AnswerDto>builder().data(response).customCode(ResponseCode.CREATED).build();
         URI location = UriCreator.createUri("/qna/{questionId}", response.getQuestionId());
@@ -114,7 +114,7 @@ public class QnaController {
     @DeleteMapping("/{questionId}/answer/{answerId}")
     @ApiResponse(responseCode = "204", description = "답변 삭제")
     public ResponseEntity deleteAnswer(@PathVariable Long answerId, @RequestParam Long userId) {
-        service.deleteAnswer(userId, answerId);
+        service.deleteAnswer(answerId);
         return ResponseEntity.noContent().build();
     }
 }

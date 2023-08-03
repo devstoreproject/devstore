@@ -29,4 +29,5 @@ public class NoticeMapper {
     public NoticeGetResponseDto toGetRseponseGetDto(Notice notice) {
         return new NoticeGetResponseDto(notice);
     }
+
 }

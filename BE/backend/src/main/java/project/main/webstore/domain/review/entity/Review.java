@@ -29,6 +29,9 @@ public class Review extends Auditable {
     private String comment;
     @Setter
     private Integer rating;
+    @Setter
+    private boolean best;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Setter
@@ -39,36 +42,21 @@ public class Review extends Auditable {
     private Item item;
 
     @Setter
-    @OneToMany(mappedBy = "review",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<ReviewImage> reviewImageList = new ArrayList<>();
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL)
+    private ReviewImage reviewImage;
     //삭제 시 주의할 점 ! 일단 무조건적인 삭제가 아니라 무조건 S3에서 삭제한 후 발동해야된다.
 
     //좋아요 count
-    @OneToMany(mappedBy = "review",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likeList = new ArrayList<>();
 
-    public void addReviewImage(ReviewImage reviewImage){
-        this.reviewImageList.add(reviewImage);
-        reviewImage.setReview(this);
-    }
-
-    // #### 편의 메서드 #### //
-    public void addUserAndItem(User user, Item item){
-        this.user = user;
-        this.item = item;
-    }
-
-    public void addLike(Like like) {
-        this.likeList.add(like);
-        like.setReview(this);
-    }
     //리뷰 생성할 때
-    public Review(String comment, int rating, List<ReviewImage> reviewImageList, User user, Item item) {
+    public Review(String comment, int rating, ReviewImage reviewImage, User user, Item item) {
         this.comment = comment;
         this.rating = rating;
         this.user = user;
         this.item = item;
-        this.reviewImageList = reviewImageList;
+        this.reviewImage = reviewImage;
     }
 
     //리뷰 요청 받을 때
@@ -90,13 +78,29 @@ public class Review extends Auditable {
         this.rating = rating;
     }
 
-    @Builder(builderMethodName = "stubBuilder",buildMethodName = "stubBuild")
-    public Review(Long id, String comment, Integer rating, User user, Item item, List<ReviewImage> reviewImageList) {
+    @Builder(builderMethodName = "stubBuilder", buildMethodName = "stubBuild")
+    public Review(Long id, String comment, Integer rating, User user, Item item, ReviewImage reviewImage) {
         this.id = id;
         this.comment = comment;
         this.rating = rating;
         this.user = user;
         this.item = item;
-        this.reviewImageList = reviewImageList;
+        this.reviewImage = reviewImage;
+    }
+
+    public void addReviewImage(ReviewImage reviewImage) {
+        this.reviewImage = reviewImage;
+        reviewImage.setReview(this);
+    }
+
+    // #### 편의 메서드 #### //
+    public void addUserAndItem(User user, Item item) {
+        this.user = user;
+        this.item = item;
+    }
+
+    public void addLike(Like like) {
+        this.likeList.add(like);
+        like.setReview(this);
     }
 }

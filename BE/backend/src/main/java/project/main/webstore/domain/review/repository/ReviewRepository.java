@@ -37,4 +37,6 @@ public interface ReviewRepository {
 
     void deleteById(Long id);
 
+    List<Review> findByIdList(List<Long> reviewIdList);
+    List<Review> findByAdminBest();
 }

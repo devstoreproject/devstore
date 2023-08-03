@@ -1,19 +1,32 @@
 package project.main.webstore.domain.review.service;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import project.main.webstore.domain.image.dto.ImageInfoDto;
+import project.main.webstore.domain.image.entity.Image;
+import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.image.utils.ImageUtils;
+import project.main.webstore.domain.item.service.ItemService;
+import project.main.webstore.domain.item.stub.ItemStub;
+import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.repository.ReviewRepository;
 import project.main.webstore.domain.review.stub.ReviewStub;
 import project.main.webstore.domain.users.service.UserValidService;
+import project.main.webstore.domain.users.stub.UserStub;
 import project.main.webstore.stub.ImageStub;
 import project.main.webstore.utils.FileUploader;
 
 import java.io.IOException;
+
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
@@ -28,89 +41,81 @@ class ReviewServiceTest {
     private ReviewValidService reviewValidService;
     @Mock
     private FileUploader fileUploader;
+    @Mock
+    private ItemService itemService;
     private ReviewStub reviewStub = new ReviewStub();
     private ImageStub imageStub = new ImageStub();
-
+    private UserStub userStub = new UserStub();
+    private ItemStub itemStub = new ItemStub();
     @Mock
     private ImageUtils imageUtils;
     @Mock
     private UserValidService userValidService;
     @Test
+    @WithAnonymousUser
     @DisplayName("리뷰 작성 : 성공, 이미지 파일 없음")
     void postReviewTest() {
-//        //given
-//
-//        Review findReview = reviewStub.createReview(userId, itemId, reviewId);
-//        //TODO : user, item 서비스 코드 생성 시 해당 검증 추가 필요
-//        given(reviewRepository.save(ArgumentMatchers.any(Review.class))).willReturn(findReview);
-//
-//        //when
-//        Review result = reviewService.postReview(findReview, userId, itemId);
-//        //then
-//
-//        SoftAssertions.assertSoftly(softAssertions -> {
-//                softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
-//                softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
-//        });
+        //given
+
+        Review findReview = reviewStub.createReview(userId, itemId, reviewId);
+        findReview.setUser(userStub.createUser(userId));
+        //TODO : user, item 서비스 코드 생성 시 해당 검증 추가 필요
+        given(reviewRepository.save(ArgumentMatchers.any(Review.class))).willReturn(findReview);
+        given(userValidService.validUser(anyLong())).willReturn(userStub.createUser(userId));
+        given(itemService.validItem(anyLong())).willReturn(itemStub.createItem(itemId));
+        //when
+        Review result = reviewService.postReview(findReview, userId, itemId);
+        //then
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
+                softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
+        });
 
     }
     @Test
-    @DisplayName("리뷰 작성 : 성공, 사진 파일 2개장 존재, ")
+    @DisplayName("리뷰 작성 : 성공, 사진 파일 존재")
     void postReviewAndImageTest() throws IOException {
-//        List<ImageInfoDto> imageInfoList = imageStub.createImageInfoList(1, true);
-//
-//        Review postReview = reviewStub.createReview(userId, itemId, reviewId);
-//        List<ReviewImage> reviewImage = imageStub.createReviewImage(postReview);
-//
-//        Review excepted = reviewStub.createReview(userId, itemId, reviewId,reviewImage);
-//        given(reviewRepository.save(ArgumentMatchers.any(Review.class))).willReturn(excepted);
-//        given(fileUploader.uploadImage(ArgumentMatchers.anyList())).willReturn(imageStub.createImageList(2));
-//        willDoNothing().given(imageUtils).imageValid(imageInfoList);
-//
-//        Review result = reviewService.postReview(imageInfoList, postReview, userId, itemId);
-//        SoftAssertions.assertSoftly(softAssertions -> {
-//            softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
-//            softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
-//            softAssertions.assertThat(result.getReviewImageList()).as("저장된 이미지의 정보 일치 여부 체크").isEqualTo(excepted.getReviewImageList());
-//        });
+        ImageInfoDto imageInfo = imageStub.createImageInfoPath(null, 0, true);
+        Review postReview = reviewStub.createReview(userId, itemId, reviewId);
+        Image image = imageStub.createImage(1L, 0, true);
+        Review excepted = reviewStub.createReview(userId, itemId, reviewId,new ReviewImage(image,postReview));
+        given(reviewRepository.save(ArgumentMatchers.any(Review.class))).willReturn(excepted);
+        given(fileUploader.uploadImage(ArgumentMatchers.any(ImageInfoDto.class))).willReturn(imageStub.createImage(1L,0,true));
+
+        Review result = reviewService.postReview(imageInfo, postReview, userId, itemId);
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
+            softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(itemId);
+        });
     }
 
-    @Test
-    @DisplayName("리뷰 작성 : 예외 발생, 대표 사진 미설정")
-    void postReviewExceptionValidTest() throws IOException {
-//        List<ImageInfoDto> imageInfoList = imageStub.createImageInfoList(1, false);
-//        Review postReview = reviewStub.createReview(userId, itemId, reviewId);
-//        Throwable exception = catchThrowable(() -> reviewService.postReview(imageInfoList,postReview, userId, itemId));
-//
-//        Assertions.assertThat(exception).as("1개의 대표사진을 필수로 설정해야 됩니다.")
-//                .isInstanceOf(BusinessLogicException.class)
-//                .hasMessage("대표 이미지가 한개 있어야합니다.");
-//
-
-    }
-    @Test
-    @DisplayName("리뷰 작성 : 예외 발생, 사진의 정렬 순서 중복 발생 예외")
-    void postReviewExceptionValidTest2() throws IOException {
-//        List<ImageInfoDto> imageInfoList = imageStub.createImageInfoList(0, true);
-//        Review postReview = reviewStub.createReview(userId, itemId, reviewId);
-//        Throwable exception = catchThrowable(() -> reviewService.postReview(imageInfoList,postReview, userId, itemId));
-//
-//        Assertions.assertThat(exception).as("사진 정렬 순서는 중복될 수 없습니다.")
-//                .isInstanceOf(BusinessLogicException.class)
-//                .hasMessage("이미지 순서는 중복될 수 없습니다.");
-//
-
-    }
     @Test
     @DisplayName("리뷰 수정 사진 제외 수정 : 성공")
-    void updateReviewNoImageTest(){
+    void update_review_NoImageTest(){
+        Review review = reviewStub.createReview();
+        Review updateReview = reviewStub.createReview(userId, itemId, reviewId);
 
+        given(reviewValidService.validReview(reviewId)).willReturn(review);
+
+        Review result = reviewService.patchReview(null, updateReview, userId, itemId, reviewId);
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
+            softAssertions.assertThat(result.getComment()).as("수정된 질문 본문입니다.").isEqualTo(updateReview.getComment());
+        });
     }
 
     @Test
     @DisplayName("리뷰 수정 [단순하게 일부 사진만 삭제] : 성공")
     void updateReviewTest() {
-
+//        Review review = reviewStub.createReview();
+//        Review updateReview = reviewStub.createReview(userId, itemId, reviewId);
+//
+//        List<ImageInfoDto> imageInfoPatch = imageStub.createImageInfo(1,true);
+//        List<Long> deleteIdList = List.of(1L);
+//
+//        reviewService.patchReview(imageInfoPatch,deleteIdList,review,userId,itemId,reviewId);
     }
 
     @Test

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.coupon.enums.CouponStatus;
+import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.payment.entity.Payment;
 import project.main.webstore.valueObject.Duration;
@@ -63,4 +64,7 @@ public class Coupon extends Auditable {
     @Setter
     @ManyToOne(fetch = LAZY)
     private Orders order;
+
+    @OneToMany
+    List<Item> itemList = new ArrayList<>();
 }
