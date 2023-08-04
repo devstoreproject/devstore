@@ -4,9 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.cart.entity.CartItem;
-import project.main.webstore.domain.order.entity.OrderItem;
 
 @Getter
 @Setter
@@ -31,11 +29,4 @@ public class OrderItemResponseDto { // 주문할 아이템 정보 결과
         this.discountRate = item.getOption().getItem().getDiscountRate();
         this.discountPrice = item.getDiscountedPrice();
     }
-
-//    public OrderItemResponseDto(OrderItem orderItem) {
-//            this.itemId = orderItem.getItem().getItemId();
-//            this.itemName = orderItem.getItem().getItemName();
-//            this.itemCount = orderItem.getItemCount();
-//            this.itemPrice = orderItem.getItem().getItemPrice().getValue();
-//        }
 }
