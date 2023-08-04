@@ -12,7 +12,6 @@ import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.enums.ItemStatus;
-import project.main.webstore.domain.order.entity.OrderItem;
 import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.valueObject.Price;
@@ -88,8 +87,6 @@ public class Item extends Auditable {
 
     @OneToMany(cascade = ALL)
     private List<CartItem> cartItemList = new ArrayList<>();
-    @OneToMany(mappedBy = "item", cascade = ALL)
-    private List<OrderItem> orderItemList = new ArrayList<>();
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
     private List<Review> reviewList = new ArrayList<>();
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
