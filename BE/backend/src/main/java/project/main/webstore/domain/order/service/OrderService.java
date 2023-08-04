@@ -1,5 +1,6 @@
 package project.main.webstore.domain.order.service;
 
+import com.querydsl.core.types.Order;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,7 @@ public class OrderService {
 
     public Orders createOrder(OrderLocalDto post, Long userId) {
         User user = userService.validUser(userId);
-        String orderNumber = CreateOrderNumber();
+        String orderNumber = createOrderNumber();
         Cart cart = user.getCart();
         ShippingInfo shippingInfo = user.getShippingInfo(post.getShippingId());
 
@@ -53,6 +54,7 @@ public class OrderService {
         return orderRepository.save(patchOrder);
     }
 
+    //orderNum 조회 고려..
     public Orders getOrder(Long orderId, Long userId) {
         //TODO: 본인 체크 필수 혹은 관리자
         User user = userService.validUser(userId);
@@ -62,9 +64,9 @@ public class OrderService {
         return order;
     }
 
-    public Page<Orders> getOrders(Long orderId, Pageable pageable) {
-        return orderRepository.findAllByOrderId(orderId, pageable);
-    }
+//    public Page<Orders> getOrders(String createData, Pageable pageable) {
+//        return orderRepository.findByOrderIdAndCreateOrderDateAndOrderStatus(createData, pageable);
+//    }
 
     //주문 취소
     public void cancelOrder(Long orderId, Long userId) {
@@ -104,7 +106,7 @@ public class OrderService {
     }
 
     // 주문번호 생성
-    private String CreateOrderNumber() {
+    private String createOrderNumber() {
         Calendar cal = Calendar.getInstance();
 
         int y = cal.get(Calendar.YEAR);
@@ -153,7 +155,7 @@ public class OrderService {
         }
     }
 
-    // 주문 정보
+    // 주문 정보 검증
     private boolean checkStatus(Orders order) {
         return order.getOrdersStatus().getIndex() >= OrdersStatus.ORDER_COMPLETE.getIndex();
     }
