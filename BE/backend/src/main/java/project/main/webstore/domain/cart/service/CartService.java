@@ -93,7 +93,7 @@ public class CartService {
 
     public void validItemCount(ItemOption itemOption, int orderAmount){
         if (itemOption.getItemCount() < orderAmount) {
-            throw new BusinessLogicException(CommonExceptionCode.ITEM_NOT_ENOUGH);
+            throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_ENOUGH);
         }
     }
 }
