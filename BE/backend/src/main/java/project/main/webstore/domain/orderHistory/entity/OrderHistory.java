@@ -68,7 +68,4 @@ public class OrderHistory extends Auditable {
         }
     }
 
-    //TODO: OrderItem 추가
-    @OneToMany(mappedBy = "orderHistory")
-    private List<OrderItem> orderItems;
 }
