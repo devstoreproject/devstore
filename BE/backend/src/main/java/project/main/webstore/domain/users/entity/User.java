@@ -17,6 +17,7 @@ import project.main.webstore.domain.users.enums.UserStatus;
 import javax.persistence.*;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
@@ -55,7 +56,9 @@ public class User extends Auditable implements Principal {
     private UserStatus userStatus = UserStatus.TMP;
 
     @OneToMany(mappedBy = "user")
-    private List<PickedItem> pickedItemList;
+    private List<PickedItem> pickedItemList = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<ShippingInfo> shippingInfoList = new ArrayList<>();
     @OneToOne(fetch = LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "CART_ID")
     private Cart cart;
