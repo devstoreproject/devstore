@@ -1,12 +1,11 @@
 package project.main.webstore.domain.users.mapper;
 
 import org.springframework.stereotype.Component;
-//import project.main.webstore.domain.order.dto.OrderFormResponseDto;
-//import project.main.webstore.domain.order.entity.OrderForm;
 import project.main.webstore.domain.users.dto.ShippingInfoPatchDto;
 import project.main.webstore.domain.users.dto.ShippingInfoPostDto;
 import project.main.webstore.domain.users.dto.ShippingInfoResponseDto;
 import project.main.webstore.domain.users.entity.ShippingInfo;
+import project.main.webstore.valueObject.Address;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,29 +20,19 @@ public class ShippingMapper {
     public ShippingInfo infoPostToInfo(ShippingInfoPostDto infoPostDto) {
         return ShippingInfo.builder()
                 .recipient(infoPostDto.getRecipient())
-                .email(infoPostDto.getEmail())
-                .mobileNumber(infoPostDto.getMobileNumber())
-                .homeNumber(infoPostDto.getHomeNumber())
-                .zipCode(infoPostDto.getZipCode())
-                .addressSimple(infoPostDto.getAddressSimple())
-                .addressDetail(infoPostDto.getAddressDetail())
+                .address(new Address(infoPostDto.getZipCode(),infoPostDto.getAddressSimple(),infoPostDto.getAddressDetail(),infoPostDto.getMobileNumber()))
                 .build();
     }
 
     public ShippingInfo infoPatchToInfo(ShippingInfoPatchDto infoPatchDto) {
         return ShippingInfo.builder()
                 .recipient(infoPatchDto.getRecipient())
-                .email(infoPatchDto.getEmail())
-                .mobileNumber(infoPatchDto.getMobileNumber())
-                .homeNumber(infoPatchDto.getHomeNumber())
-                .zipCode(infoPatchDto.getZipCode())
-                .addressSimple(infoPatchDto.getAddressSimple())
-                .addressDetail(infoPatchDto.getAddressDetail())
+                .address(new Address(infoPatchDto.getZipCode(),infoPatchDto.getAddressSimple(),infoPatchDto.getAddressDetail(),infoPatchDto.getMobileNumber()))
                 .build();
     }
 
     public ShippingInfoResponseDto infoToInfoResponseDto(ShippingInfo info) {
-        return ShippingInfoResponseDto.responseDto().build();
+        return ShippingInfoResponseDto.responseDto().info(info).build();
 
     }
 

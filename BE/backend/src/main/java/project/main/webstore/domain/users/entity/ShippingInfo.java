@@ -25,6 +25,7 @@ public class ShippingInfo {
     @Column(updatable = false)
     private String recipient; // 배송받는사람
 
+    @Setter
     @Embedded
     private Address address;
 
