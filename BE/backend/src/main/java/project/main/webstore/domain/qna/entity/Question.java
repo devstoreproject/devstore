@@ -38,7 +38,7 @@ public class Question extends Auditable {
     private User user;
 
     @OneToOne(fetch = EAGER,cascade = CascadeType.ALL)
-    @JoinColumn(name = "QUESTION_ID")
+    @JoinColumn(name = "ANSWER_ID")
     private Answer answer;
 
     @ManyToOne(fetch = LAZY)
