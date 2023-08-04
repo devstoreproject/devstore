@@ -4,11 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.main.webstore.domain.image.dto.ImageSortDto;
 import project.main.webstore.domain.notice.enums.NoticeCategory;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -24,8 +22,6 @@ public class NoticePostRequestDto {
     private String content;
     @Schema(example = "EVENT",allowableValues = {"OPERATING","UPDATE","EVENT"})
     private NoticeCategory category;
-    @Schema(description = "이미지 대표값, 순서 정보")
-    private List<ImageSortDto> infoList;
 
 
 }
