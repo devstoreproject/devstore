@@ -1,4 +1,4 @@
-package project.main.webstore.domain.log.filter;
+package project.main.webstore.log.filter;
 
 import lombok.extern.slf4j.Slf4j;
 
