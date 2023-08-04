@@ -14,8 +14,11 @@ import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.domain.order.repository.OrderRepository;
+import project.main.webstore.domain.orderHistory.enums.OrderStatus;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.domain.users.enums.UserRole;
+import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
 
@@ -72,8 +75,12 @@ public class OrderService {
     public void cancelOrder(Long orderId, Long userId) {
         User user = userService.validUserAllInfo(userId);
         Orders order = findVerifiedOrder(orderId);
-
-        if (order.getOrdersStatus() == OrdersStatus.ORDER_COMPLETE) {
+        //order 주문자 여부 체크 -> 실 주문자 or  관리자
+        if(!user.getId().equals(order.getUser().getId()) || user.getUserRole() != UserRole.ADMIN){
+            throw new BusinessLogicException(UserExceptionCode.USER_NOT_ACCESS);
+        }
+        //변경할 수 있는 상태라면
+        if (checkStatus(order)) {
             order.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
 
             //수량 변경 필수
@@ -91,7 +98,6 @@ public class OrderService {
         } else {
             throw new BusinessLogicException(OrderExceptionCode.ORDER_CANCEL_FAIL);
         }
-
     }
 
     public Orders findVerifiedOrder(long orderId) {
@@ -122,37 +128,6 @@ public class OrderService {
         }
 
         return builder.toString();
-    }
-
-    // 주문 상태 변경..
-    // 배송전 변경 가능
-    public void UpdateOrderStatus(String orderNumber, OrdersStatus ordersStatus) {
-        Orders order = findByOrderNumber(orderNumber);
-        if (checkStatus(order)) {
-            order.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
-            System.out.println("주문이 취소됐습니다.");
-        } else if (checkStatus(order)) {
-            order.setOrdersStatus(OrdersStatus.PAYMENT_PROGRESS);
-            System.out.println("결제 진행중입니다.");
-        } else if (checkStatus(order)) {
-            order.setOrdersStatus(OrdersStatus.PAYMENT_COMPLETE);
-            System.out.println("결제가 완료됐습니다.");
-        } else if (checkStatus(order)) {
-            order.setOrdersStatus(OrdersStatus.PAYMENT_CANCEL);
-            System.out.println("결제가 취소됐습니다.");
-        } else if (checkStatus(order)) {
-            order.setOrdersStatus(OrdersStatus.DELIVERY_PROGRESS);
-            System.out.println("배송중 입니다.");
-        } else if (checkStatus(order)) {
-            order.setOrdersStatus(OrdersStatus.DELIVERY_COMPLETE);
-            System.out.println("배송이 완료됐습니다.");
-        } else if (checkStatus(order)) {
-            order.setOrdersStatus(OrdersStatus.REFUND_PROGRESS);
-            System.out.println("환불 진행중입니다.");
-        } else {
-            order.setOrdersStatus(OrdersStatus.REFUND_COMPLETE);
-            System.out.println("환불 완료됐습니다.");
-        }
     }
 
     // 주문 정보 검증

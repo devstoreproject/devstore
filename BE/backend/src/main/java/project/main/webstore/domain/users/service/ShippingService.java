@@ -21,27 +21,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ShippingService {
     private final ShippingRepository shippingRepository;
-    private final UserService userService;
-    private final UserRepository userRepository;
+    private final UserValidService userValidService;
 
     public ShippingInfo writeInfo(ShippingInfo info, Long userId) {
-        User findUser = userService.getUser(userId);
+        User findUser = userValidService.validUser(userId);
         info.setUser(findUser);
         return shippingRepository.save(info);
     }
 
     public ShippingInfo editInfo(ShippingInfo info, Long userId) {
-        User findUser = userService.getUser(userId);
+        User findUser = userValidService.validUser(userId);
         ShippingInfo findInfo = findVerifiedInfo(info.getInfoId());
 
         Optional.ofNullable(info.getRecipient()).ifPresent(findInfo::setRecipient);
-        Optional.ofNullable(info.getMobileNumber()).ifPresent(findInfo::setMobileNumber);
-        Optional.ofNullable(info.getHomeNumber()).ifPresent(findInfo::setHomeNumber);
-        Optional.ofNullable(info.getZipCode()).ifPresent(findInfo::setZipCode);
-        Optional.ofNullable(info.getAddressSimple()).ifPresent(findInfo::setAddressSimple);
-        Optional.ofNullable(info.getAddressDetail()).ifPresent(findInfo::setAddressDetail);
+        Optional.ofNullable(info.getAddress()).ifPresent(findInfo::setAddress);
 
         findInfo.setUser(findUser);
+
         return findInfo;
     }
 
@@ -50,7 +46,7 @@ public class ShippingService {
     }
 
     public void deleteInfo(Long infoId, Long userId) {
-        User findUser = userService.getUser(userId);
+        User findUser = userValidService.validUser(userId);
         ShippingInfo findInfo = findVerifiedInfo(infoId);
         findInfo.setUser(findUser);
         shippingRepository.delete(findInfo);

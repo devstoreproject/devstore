@@ -19,5 +19,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByNickName(String nicName);
 
     @EntityGraph
-    Optional<User> findByIdAllInfo(Long userId);
+    Optional<User> findAllInfoById(Long userId);
 }

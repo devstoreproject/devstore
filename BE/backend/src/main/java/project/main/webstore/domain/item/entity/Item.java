@@ -196,8 +196,7 @@ public class Item extends Auditable {
     }
 
     @Builder(builderMethodName = "stub")
-    public Item(List<ItemImage> itemImageList, Long itemId, String itemName, String description, Price itemPrice, Price deliveryPrice, Integer discountRate, Integer mileageRate, Category category, List<ItemSpec> specList, List<ItemOption> optionList, List<CartItem> cartItemList, List<OrderItem> orderItemList, List<Review> reviewList, List<Question> questionList, List<PickedItem> pickedItem, ItemOption defaultItem) {
-        this.itemImageList = itemImageList;
+    public Item(List<ItemImage> itemImageList, Long itemId, String itemName, String description, Price itemPrice, Price deliveryPrice, Integer discountRate, Integer mileageRate, Category category, List<ItemSpec> specList, List<ItemOption> optionList, List<CartItem> cartItemList, List<Review> reviewList, List<Question> questionList, List<PickedItem> pickedItem, ItemOption defaultItem) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.description = description;
@@ -211,7 +210,6 @@ public class Item extends Auditable {
         this.specList = specList;
         this.optionList = optionList;
         this.cartItemList = cartItemList;
-        this.orderItemList = orderItemList;
         this.reviewList = reviewList;
         this.questionList = questionList;
         this.pickedItem = pickedItem;

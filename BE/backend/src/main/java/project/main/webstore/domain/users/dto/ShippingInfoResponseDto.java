@@ -12,9 +12,7 @@ import project.main.webstore.domain.users.entity.ShippingInfo;
 public class ShippingInfoResponseDto {
     private Long infoId;
     private String recipient;
-    private String email;
     private String mobileNumber;
-    private String homeNumber;
     private String zipCode;
     private String addressSimple;
     private String addressDetail;
@@ -24,11 +22,9 @@ public class ShippingInfoResponseDto {
     public ShippingInfoResponseDto(ShippingInfo info) {
         this.infoId = info.getInfoId();
         this.recipient = info.getRecipient();
-        this.email = info.getEmail();
-        this.mobileNumber = info.getMobileNumber();
-        this.homeNumber = info.getHomeNumber();
-        this.zipCode = info.getZipCode();
-        this.addressSimple = info.getAddressSimple();
-        this.addressDetail = info.getAddressDetail();
+        this.mobileNumber = info.getAddress().getPhone();
+        this.zipCode = info.getAddress().getZipCode();
+        this.addressSimple = info.getAddress().getAddressSimple();
+        this.addressDetail = info.getAddress().getAddressDetail();
     }
 }

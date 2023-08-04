@@ -21,6 +21,5 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
     Optional<Orders> findByOrderNumber(String orderNumber);
     @Query("SELECT o FROM Orders o WHERE o.orderId = :orderId")
     Page<Orders> findAllByOrderId(@Param("orderId") Long orderId, Pageable pageable);
-    Page<Orders> findByOrderIdAndCreateOrderDateAndOrderStatus(LocalDateTime createDate, Pageable pageable);
 }
 
