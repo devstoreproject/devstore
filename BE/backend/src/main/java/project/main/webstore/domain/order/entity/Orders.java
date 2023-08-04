@@ -3,25 +3,17 @@ package project.main.webstore.domain.order.entity;
 import lombok.*;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.Cart;
-import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.coupon.entity.Coupon;
-import project.main.webstore.domain.item.entity.Item;
-import project.main.webstore.domain.order.dto.OrderPostDto;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.payment.entity.Payment;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
-import project.main.webstore.valueObject.Address;
-import project.main.webstore.valueObject.Price;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
-import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @Entity
@@ -60,6 +52,7 @@ public class Orders extends Auditable {
 //    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<OrderItem> orderItems = new ArrayList<>();
     @OneToMany(mappedBy = "order")
+    @Builder.Default
     private List<Coupon> coupons = new ArrayList<>();
     @OneToOne(mappedBy = "order")
     private Payment payment;

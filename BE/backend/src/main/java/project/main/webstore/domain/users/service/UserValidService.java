@@ -20,6 +20,6 @@ public class UserValidService {
     }
 
     public User validUserAllInfo(Long userId){
-        return repository.findByIdAllInfo(userId).orElseThrow(()-> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
+        return repository.findAllInfoById(userId).orElseThrow(()-> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
     }
 }
