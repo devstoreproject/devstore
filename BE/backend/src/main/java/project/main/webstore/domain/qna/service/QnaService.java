@@ -50,9 +50,12 @@ public class QnaService {
     }
 
     public Answer postAnswer(Answer answer,Long userId){
-
         User user = userValidService.validUser(userId);
         Question find = validQuestion(answer.getQuestion().getId());
+
+        if(find.getAnswer() !=null){
+            throw new BusinessLogicException(QnaExceptionCode.ANSWER_ALREADY_EXIST);
+        }
 
         find.setQnaStatus(QnaStatus.ANSWER_COMPLETE);
         answer.addQuestion(find);
