@@ -34,6 +34,12 @@ import BasicLayout from 'Pages/LSM/BasicLayout';
 import Return from 'Pages/KHJ/Return';
 import Exchange from 'Pages/KHJ/Exchange';
 import Cancel from 'Pages/KHJ/Cancel';
+import ProductDetail from 'Pages/CYW/ProductDetail';
+import OrderedList from 'Pages/CYW/OrderedList';
+import ReviewManagement from 'Pages/CYW/ReviewManagement';
+import Search from 'Pages/CYW/Search';
+import SearchCategory from 'Pages/CYW/SearchCategory';
+import Sales from 'Components/KYH/admin/Sales/Sales';
 
 function App() {
   return (
@@ -41,6 +47,9 @@ function App() {
       <Routes>
         <Route element={<BasicLayout />}>
           <Route path="/" element={<Main />} />
+          <Route path="searchcategory" element={<SearchCategory />} />
+          <Route path="search" element={<Search />} />
+          <Route path="productdetail" element={<ProductDetail />} />
         </Route>
 
         <Route path="/signup" element={<SignUp />} />
@@ -67,6 +76,9 @@ function App() {
           <Route path="productinquiry" element={<ProductInquiry />} />
           <Route path="productlist/post" element={<ProductPost />} />
           <Route path="productlist/edit" element={<ProductEdit />} />
+          <Route path="reviewmanagement" element={<ReviewManagement />} />
+          <Route path="orderedlist" element={<OrderedList />} />
+          <Route path="sales" element={<Sales />} />
         </Route>
         <Route path="/cart" element={<Cart />} />
         <Route path="/checklist" element={<CheckList />} />

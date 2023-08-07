@@ -8,10 +8,10 @@ import { MdOutlineReviews } from 'react-icons/md';
 import { BsFillQuestionCircleFill } from 'react-icons/bs';
 
 interface HomeNavigateProp {
-  fold: boolean;
+  isFold: boolean;
 }
 
-export default function MenuNav({ fold }: HomeNavigateProp) {
+export default function MenuNav({ isFold }: HomeNavigateProp) {
   return (
     <ul>
       {menuList.map((menu) => (
@@ -25,7 +25,7 @@ export default function MenuNav({ fold }: HomeNavigateProp) {
             }
           >
             <div className="mx-4 text-xl">{menu.icon}</div>
-            <p className={`truncate ${fold ? 'hidden' : ''}`}>{menu.text}</p>
+            <p className={`truncate ${isFold ? 'hidden' : ''}`}>{menu.text}</p>
           </NavLink>
         </li>
       ))}
@@ -39,7 +39,7 @@ const menuList = [
     text: '판매 상품 리스트',
     icon: <RiFileListFill />,
   },
-  { to: '/admin/any1', text: '주문 전 상품 내역', icon: <FaBox /> },
+  { to: '/admin/orderedlist', text: '주문 된 상품 내역', icon: <FaBox /> },
   {
     to: '/admin/returnorexchange',
     text: '반품 교환 신청 확인',
@@ -47,8 +47,8 @@ const menuList = [
   },
   { to: '/admin/eventvanner', text: '이벤트 배너', icon: <BiSolidStar /> },
   { to: '/admin/any2', text: '공지사항', icon: <AiOutlineSound /> },
-  { to: '/admin/any3', text: '매출', icon: <FaChartLine /> },
-  { to: '/admin/any4', text: '리뷰', icon: <MdOutlineReviews /> },
+  { to: '/admin/sales', text: '매출', icon: <FaChartLine /> },
+  { to: '/admin/reviewmanagement', text: '리뷰', icon: <MdOutlineReviews /> },
   {
     to: '/admin/productinquiry',
     text: '상품 문의',

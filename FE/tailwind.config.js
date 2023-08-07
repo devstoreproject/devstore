@@ -1,6 +1,6 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+
   theme: {
     screens: {
       sm: { min: '320px', max: '768px' },
@@ -49,10 +49,14 @@ module.exports = {
         120: '30rem',
         128: '32rem',
         136: '34rem',
+        144: '36rem',
+        152: '38rem',
+        160: '40rem',
         175: '43.75rem',
         200: '50rem',
         250: '62.5rem',
         300: '75rem',
+        358: '89.5rem',
         365: '91.25rem',
         1460: '1460px',
       },
@@ -69,6 +73,10 @@ module.exports = {
         128: '32rem',
         136: '34rem',
         150: '37.5rem',
+        175: '43.75rem',
+        200: '50rem',
+        250: '62.5rem',
+        300: '75rem',
       },
       boxShadow: {
         signBox: '0px 3px 8px rgba(0, 0, 0, 0.24)',

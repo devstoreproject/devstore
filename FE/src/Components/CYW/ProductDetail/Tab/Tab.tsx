@@ -1,0 +1,59 @@
+import ProductTab from './ProductTab/ProductTab';
+import ReviewTab from './ReviewTab/ReviewTab';
+import { useState } from 'react';
+import InquiryTab from './InquiryTab/InquiryTab';
+import type { ProductType } from 'Pages/CYW/ProductDetail';
+
+interface ProductTypeProps {
+  product: ProductType;
+}
+
+export default function Tab({ product }: ProductTypeProps) {
+  const [tab, setTab] = useState<number>(0);
+
+  const handleClick = (event: React.MouseEvent<HTMLParagraphElement>) => {
+    if (event.currentTarget.textContent === '상품 상세') {
+      setTab(0);
+    } else if (event.currentTarget.textContent === '상품 리뷰') {
+      setTab(1);
+    } else if (event.currentTarget.textContent === '상품 문의') {
+      setTab(2);
+    }
+  };
+
+  return (
+    <div className="w-3/4 pt-12">
+      <div className="flex items-center border-2 rounded-lg border-box text-slate-500">
+        <p
+          className={`text-center w-1/3 border-slate-300  ${
+            tab === 0 ? 'underline underline-offset-8' : ''
+          }`}
+          onClick={handleClick}
+        >
+          상품 상세
+        </p>
+        <p
+          className={`text-center w-1/3 border-x border-x-slate-300 my-4 ${
+            tab === 1 ? 'underline underline-offset-8' : ''
+          }`}
+          onClick={handleClick}
+        >
+          상품 리뷰
+        </p>
+        <p
+          className={`text-center w-1/3 ${
+            tab === 2 ? 'underline underline-offset-8' : ''
+          }`}
+          onClick={handleClick}
+        >
+          상품 문의
+        </p>
+      </div>
+      <div>
+        <ProductTab tab={tab} description={product.description} />
+        <ReviewTab tab={tab} />
+        <InquiryTab tab={tab} />
+      </div>
+    </div>
+  );
+}

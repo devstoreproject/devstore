@@ -1,4 +1,14 @@
-export default function PasswordContainer() {
+import type { password } from 'model/auth';
+
+export default function PasswordContainer({
+  password,
+  setPassword,
+  isPasswordValid,
+}: password) {
+  const passwordInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
   return (
     <div className="flex mt-2">
       <div className="flex flex-col w-full mr-2">
@@ -7,10 +17,14 @@ export default function PasswordContainer() {
           type="password"
           className="h-10 pl-2 border border-black"
           placeholder="비밀번호를 입력하세요"
+          value={password}
+          onChange={passwordInputHandler}
         ></input>
-        <span className="mt-1 ml-2 text-xs font-bold text-red-500">
-          영어, 숫자, 특수문자가 포함된 9~16글자이어야 합니다
-        </span>
+        {isPasswordValid ? null : (
+          <span className="mt-1 ml-2 text-xs font-bold text-red-500">
+            영어, 숫자가 포함된 8~16글자이어야 합니다
+          </span>
+        )}
       </div>
     </div>
   );
