@@ -18,8 +18,8 @@ export default function NavTop() {
   ];
 
   return (
-    <nav className="h-9 flex items-center justify-between px-5 text-subtitle-gray border-b-tab-gray border-b bg-light-gray text-sm">
-      <article className="flex items-center">
+    <nav className="h-9 flex items-center justify-between sm:justify-end px-5 text-subtitle-gray border-b-tab-gray border-b bg-light-gray text-sm">
+      <article className="flex items-center sm:hidden">
         <h3 className="text-base">Notice</h3>
         <ul className="h-5 overflow-hidden ml-3">
           {noticeList.map((notice) => (

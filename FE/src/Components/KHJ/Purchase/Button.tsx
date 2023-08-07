@@ -25,8 +25,8 @@ export default function Button() {
         <button
           className={
             link.text !== '리뷰작성'
-              ? 'h-14 w-32 rounded-full border border-gray-300'
-              : 'h-14 w-32 rounded-full bg-light-black text-white'
+              ? 'h-14 w-44 rounded-full border border-gray-300'
+              : 'h-14 w-44 rounded-full bg-light-black text-white'
           }
           key={link.to}
         >

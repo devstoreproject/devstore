@@ -7,7 +7,7 @@ export default function Cart(): React.ReactElement {
   return (
     <>
       <Header />
-      <PageHistory />
+      <PageHistory pageName="장바구니" pageHistory="장바구니" />
       <main className="mb-20">
         <CartMain />
       </main>

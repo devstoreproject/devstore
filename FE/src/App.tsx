@@ -23,12 +23,17 @@ import ProductPost from 'Pages/LSM/Product/ProductPost';
 import ProductEdit from 'Pages/LSM/Product/ProductEdit';
 import Cart from 'Pages/KHJ/Cart';
 import CheckList from 'Pages/KHJ/CheckList';
+import PurchaseMain from 'Pages/KHJ/PurchaseMain';
 import Purchase from 'Pages/KHJ/Purchase';
 import PurComplete from 'Pages/KHJ/PurComplete';
 import PurComDetail from 'Pages/KHJ/PurComDetail';
+import OrderMain from 'Pages/KHJ/OrderMain';
 import Order from 'Pages/KHJ/Order';
 import AdminMain from 'Components/KYH/admin/AdminMain/AdminMain';
 import BasicLayout from 'Pages/LSM/BasicLayout';
+import Return from 'Pages/KHJ/Return';
+import Exchange from 'Pages/KHJ/Exchange';
+import Cancel from 'Pages/KHJ/Cancel';
 
 function App() {
   return (
@@ -65,11 +70,17 @@ function App() {
         </Route>
         <Route path="/cart" element={<Cart />} />
         <Route path="/checklist" element={<CheckList />} />
-        <Route path="/purchase" element={<Purchase />}>
+        <Route path="/purchase" element={<PurchaseMain />}>
+          <Route path="" element={<Purchase />} />
           <Route path="complete" element={<PurComplete />} />
           <Route path="detail" element={<PurComDetail />} />
         </Route>
-        <Route path="order" element={<Order />} />
+        <Route path="/order" element={<OrderMain />}>
+          <Route path="" element={<Order />} />
+          <Route path="return" element={<Return />} />
+          <Route path="exchange" element={<Exchange />} />
+          <Route path="cancel" element={<Cancel />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

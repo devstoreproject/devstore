@@ -4,7 +4,7 @@ import PageHistory from 'Components/KHJ/Common/PageHistory';
 export default function CheckList() {
   return (
     <main>
-      <PageHistory />
+      <PageHistory pageName="찜목록" pageHistory="찜목록" />
       <CheckListMain />
     </main>
   );

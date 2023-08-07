@@ -1,7 +1,12 @@
 import { Link } from 'react-router-dom';
 import { BsFillPersonFill } from 'react-icons/bs';
+import { RxHamburgerMenu } from 'react-icons/rx';
+import type { NavFold } from '../Type/NavType';
 
-export default function GlobalNav() {
+export default function GlobalNav({
+  navOpen,
+  setNavOpen,
+}: NavFold): React.ReactElement {
   const linkTo = {
     category: [
       {
@@ -30,9 +35,20 @@ export default function GlobalNav() {
   };
   const category = linkTo.category;
   const service = linkTo.service;
-
   return (
-    <nav className="box-border fixed top-0 left-0 hidden h-full px-5 pt-24 bg-white w-80 opacity-80">
+    <nav
+      className={`box-border fixed top-0 z-20 h-full px-5 pt-24 bg-white w-80 transition-transform opacity-90 ${
+        navOpen ? 'translate-x-0 sm:w-full' : '-translate-x-80'
+      }`}
+    >
+      <button
+        className="absolute top-12 right-5"
+        onClick={() => {
+          setNavOpen(false);
+        }}
+      >
+        <RxHamburgerMenu size={24} />
+      </button>
       <div className="box-border bg-neon-green rounded-xl">
         <Link to="/login" className="flex px-5 py-5">
           <BsFillPersonFill size={24} />

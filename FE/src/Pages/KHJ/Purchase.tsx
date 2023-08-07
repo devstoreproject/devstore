@@ -8,7 +8,7 @@ import TotalPrice from 'Components/KHJ/Purchase/TotalPrice';
 export default function Purchase() {
   return (
     <main>
-      <PageHistory />
+      <PageHistory pageName="결제진행" pageHistory="결제진행" />
       <PurchaseList />
       <Delivery />
       <Discount />
