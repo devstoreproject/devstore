@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StreamUtils;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.redis.RedisUtils;
 import project.main.webstore.security.dto.LoginDto;
@@ -20,6 +21,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,8 +35,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        log.info("request Body = {}", request.getInputStream().toString());
+        log.info("request Body = {}", StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8));
+
         LoginDto loginDto = transMessageUtils.transClass(request);
+        log.info("request Body  = {}", loginDto);
+        log.info("request Body Password = {}", loginDto.getPassword());
+        log.info("request Body Username = {}", loginDto.getUsername());
 
         var authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
 
