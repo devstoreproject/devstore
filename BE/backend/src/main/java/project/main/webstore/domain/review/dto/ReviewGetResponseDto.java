@@ -34,8 +34,9 @@ public class ReviewGetResponseDto {
         this.comment = review.getComment();
         this.createdAt = review.getCreatedAt();
         this.modifiedAt = review.getModifiedAt();
-        this.userName = review.getUser().getUserName();
+        this.userName = review.getUser().getNickName();
         this.image = review.getReviewImage() != null ? new ImageDto(review.getReviewImage()):null;
     }
 }
+//닉네임
 
