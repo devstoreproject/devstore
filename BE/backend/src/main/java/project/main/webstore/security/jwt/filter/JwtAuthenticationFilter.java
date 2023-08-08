@@ -33,8 +33,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        log.info("request Body = {}", request.getInputStream().toString());
+
         LoginDto loginDto = transMessageUtils.transClass(request);
+        log.info("request Body Password = {}", loginDto.getPassword());
+        log.info("request Body Username = {}", loginDto.getUsername());
 
         var authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
 

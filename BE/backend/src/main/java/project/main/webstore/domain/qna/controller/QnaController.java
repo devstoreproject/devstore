@@ -1,5 +1,6 @@
 package project.main.webstore.domain.qna.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class QnaController {
 
     @GetMapping("/{questionId}")
     @ApiResponse(responseCode = "200", description = "QnA 단건 조회")
-    public ResponseEntity<ResponseDto<QuestionDto>> getQna(Long userId, @PathVariable Long questionId, @AuthenticationPrincipal Object principal) {
+    public ResponseEntity<ResponseDto<QuestionDto>> getQna(Long userId, @PathVariable Long questionId, @Parameter(required = false,hidden = true) @AuthenticationPrincipal Object principal) {
 //        CheckLoginUser.validAdmin(principal);
         Question result = getService.findQuestion(questionId);
         QuestionDto response = mapper.toResponseDto(result);
