@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +33,14 @@ public class AuthController {
     private final JwtTokenizer tokenizer;
     private final TransMessageUtils transUtils;
     private final UserService userService;
-    @GetMapping("/auth/refresh")
+    @PostMapping("/auth/refresh")
     @ApiResponse(responseCode = "200",description = "엑세스 시간 만료 시 사용되는 API\n Cookie 에 있는 리프레쉬 토큰을 통해 재발급")
-    public ResponseEntity getAccessToken(@CookieValue("refreshToken") String refresh, HttpServletResponse response) {
-        if (refresh == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header("Location", "/api/login").body(ErrorResponse.of(HttpStatus.UNAUTHORIZED));
+    public ResponseEntity getAccessToken(@CookieValue("refreshToken") String refresh,@RequestHeader("Refresh")String refreshHeader, HttpServletResponse response) {
+        if (refresh == null && refreshHeader == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header("Location", "/api/login").body(ErrorResponse.of(HttpStatus.UNAUTHORIZED));
         }
-        UserInfoDto userInfo = (UserInfoDto) redisUtils.findByKey(refresh);
+        String token = refreshHeader != null ? refreshHeader : refresh;
+        UserInfoDto userInfo = (UserInfoDto) redisUtils.findByKey(token);
         if (userInfo == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header("Location", "/api/login").body(ErrorResponse.of(HttpStatus.UNAUTHORIZED));
         }
@@ -49,13 +51,15 @@ public class AuthController {
         String refreshToken = tokenizer.delegateRefreshToken(userInfo);
         Cookie cookie = transUtils.createCookie(refreshToken);
         response.addCookie(cookie);
-
-
-        return ResponseEntity.noContent().header("Authorization", accessToken).build();
-
+        HttpHeaders header = new HttpHeaders();
+        header.add("Authorization",accessToken);
+        header.add("Refresh",refreshToken);
+        if(refresh != null)     //토큰 쿠키로 받을 수 있을 때
+            return ResponseEntity.noContent().header("Authorization", accessToken).build();
+        return ResponseEntity.noContent().headers(header).build();
     }
 
-    @DeleteMapping("/log-out")
+    @PostMapping("/log-out")
     @ApiResponse(responseCode = "204",description = "로그 아웃 시 서버에 저장된 리프레쉬 토큰 정보 삭제")
     public ResponseEntity logout(@CookieValue("refreshToken") String refresh) {
         Object byKey = redisUtils.findByKey(refresh);
@@ -66,7 +70,7 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(path = "/tmp/login")
+    @PostMapping(path = "/tmp/login")
     @ApiResponse(responseCode = "200",description = "이 것은 임시 다른것과 모든것이 동일하지만 URL이 /api/login 으로 입력하셔야합니다.")
     public ResponseEntity<ResponseDto<LoginResponseDto>> tmpLogin(@Parameter(example = "admin002@gmail.com") @RequestParam String username,@Parameter(example = "admin111!!")@RequestParam String password, HttpServletResponse response) throws IOException {
         LoginDto login = new LoginDto(username, password);
