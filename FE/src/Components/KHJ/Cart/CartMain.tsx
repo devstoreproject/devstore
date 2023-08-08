@@ -1,11 +1,16 @@
 import CartItem from './CartItem';
+import cart from 'Dummy/Cart';
 
 export default function CartMain() {
   return (
     <section className="mx-5">
       <input type="checkbox" className="w-5 h-5 ml-8 mb-4"></input>
       <div className="rounded-xl bg-gray-100 border-gray-300 border p-8">
-        <CartItem />
+        <ul>
+          {cart.map((item) => (
+            <CartItem item={item} key={item.key} />
+          ))}
+        </ul>
       </div>
       <div className="flex justify-between items-center mt-6">
         <div className="flex">

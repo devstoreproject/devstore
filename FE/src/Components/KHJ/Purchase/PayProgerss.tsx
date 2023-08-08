@@ -28,7 +28,7 @@ export default function TotalPrice() {
     // },
   ];
   return (
-    <section className="mx-5 pb-7 border-b border-gray-300 mb-16">
+    <section className="mx-5 flex justify-between pb-7 border-b border-gray-300 mb-16">
       <div className="flex justify-between flex-wrap">
         <h2 className="w-14 mt-7">결제</h2>
         <p className="flex items-center h-6 whitespace-nowrap mt-7">
@@ -48,6 +48,15 @@ export default function TotalPrice() {
             <strong className="text-2xl">398,000</strong>
           </p>
         </div>
+      </div>
+      <div className="mt-auto text-right">
+        <p>
+          <input type="radio" className="mr-2" />
+          주문 내역을 확인하고 결제가 진행되는 것에 동의합니다.
+        </p>
+        <button className="mt-3 w-60 h-14 bg-light-black rounded-full text-xl text-white">
+          결제하기
+        </button>
       </div>
     </section>
   );

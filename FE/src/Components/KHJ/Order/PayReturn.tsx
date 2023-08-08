@@ -1,6 +1,6 @@
 import { AiFillCreditCard } from 'react-icons/ai';
 
-export default function TotalPrice() {
+export default function PayReturn() {
   const cost = [
     {
       info: '주문금액',
@@ -15,12 +15,8 @@ export default function TotalPrice() {
       cost: '0',
     },
     {
-      info: '적립금 사용',
-      cost: '-700',
-    },
-    {
-      info: '적립금',
-      cost: '1,400',
+      info: '적립금 반환',
+      cost: '700',
     },
     // {
     //   info: '최종결제금액',
@@ -28,9 +24,9 @@ export default function TotalPrice() {
     // },
   ];
   return (
-    <section className="mx-5 pb-7 border-b border-gray-300 mb-16">
+    <section className="mx-5 pb-7 border-b border-gray-300">
       <div className="flex justify-between flex-wrap">
-        <h2 className="w-14 mt-7">결제</h2>
+        <h2 className="w-14 mt-7 whitespace-nowrap">예상 환불금액</h2>
         <p className="flex items-center h-6 whitespace-nowrap mt-7">
           <AiFillCreditCard /> 카드 결제 (1234-1234-****-****) 일시불
         </p>
@@ -42,9 +38,9 @@ export default function TotalPrice() {
             </p>
           ))}
         </div>
-        <div className="flex justify-end w-full mt-3 border-t border-gray-300">
+        <div className="flex justify-end w-full mt-3">
           <p className="mt-3 flex justify-between w-80">
-            <span>최종결제금액</span>
+            <span>최종환불금액</span>
             <strong className="text-2xl">398,000</strong>
           </p>
         </div>
