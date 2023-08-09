@@ -1,6 +1,7 @@
 package project.main.webstore.domain.users.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -161,4 +162,15 @@ public class UserService {
 
         return byEmail.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_LOGIN));
     }
+
+    public User getTmpPassword(User user) {
+        Optional<User> findUser = userRepository.findByEmailAndAndNameAndPhone(user.getEmail(), user.getName(), user.getPhone());
+        User savedUser = findUser.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
+        String tmpPassword = RandomStringUtils.randomAlphanumeric(8);
+        String encodedPassword = passwordEncoder.encode(tmpPassword);
+        savedUser.setPassword(encodedPassword);
+        return savedUser;
+    }
+
+
 }

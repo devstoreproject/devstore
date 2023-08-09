@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
-import project.main.webstore.domain.users.dto.UserGetResponseDto;
-import project.main.webstore.domain.users.dto.UserIdResponseDto;
-import project.main.webstore.domain.users.dto.UserPatchRequestDto;
-import project.main.webstore.domain.users.dto.UserPostRequestDto;
+import project.main.webstore.domain.users.dto.*;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.mapper.UserMapper;
 import project.main.webstore.domain.users.service.UserService;
@@ -134,5 +131,13 @@ public class UserController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PostMapping("/password")
+    public ResponseEntity<ResponseDto<UserGetPasswordResponseDto>> changePassword(@RequestBody UserGetPasswordRequestDto get){
+        User request = userMapper.toEntity(get);
+        User result = service.getTmpPassword(request);
+        UserGetPasswordResponseDto response = userMapper.toGetPasswordResponse(result);
+        var responseDto = ResponseDto.<UserGetPasswordResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
+        return ResponseEntity.ok(responseDto);
+    }
 
 }
