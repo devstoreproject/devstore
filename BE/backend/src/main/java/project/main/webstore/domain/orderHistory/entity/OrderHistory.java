@@ -3,19 +3,13 @@ package project.main.webstore.domain.orderHistory.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import project.main.webstore.audit.Auditable;
-import project.main.webstore.domain.cart.entity.Cart;
-import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.orderHistory.enums.OrderStatus;
-import project.main.webstore.domain.payment.entity.Payment;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.valueObject.Address;
-import project.main.webstore.valueObject.Price;
 
 import javax.persistence.*;
-import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
@@ -47,7 +41,7 @@ public class OrderHistory extends Auditable {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    private Item item;
+//    private Item item;
 
     //    @Embedded
 //    @AttributeOverrides(
