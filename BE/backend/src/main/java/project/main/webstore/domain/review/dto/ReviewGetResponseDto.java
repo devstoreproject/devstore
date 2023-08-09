@@ -1,5 +1,6 @@
 package project.main.webstore.domain.review.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +23,9 @@ public class ReviewGetResponseDto {
     private Long itemId;
     @Schema(description = "리뷰 본문")
     private String comment;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
     @Schema(description = "이미지 경로, 썸네일 경로, 대표 이미지, 이미지 순서가 포함된 정보")
     ImageDto image;

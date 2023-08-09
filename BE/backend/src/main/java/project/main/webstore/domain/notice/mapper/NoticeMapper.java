@@ -8,11 +8,11 @@ import project.main.webstore.domain.notice.entity.Notice;
 @Component
 public class NoticeMapper {
     public Notice toEntity(NoticePostRequestDto dto) {
-        return new Notice(dto.getTitle(),dto.getContent());
+        return new Notice(dto.getTitle(),dto.getContent(),dto.getCategory());
     }
 
     public Notice toEntity(NoticePatchRequestDto dto) {
-        return new Notice(dto.getTitle(),dto.getContent());
+        return new Notice(dto.getTitle(),dto.getContent(),dto.getCategory());
     }
     public Notice toEntity(NoticePatchRequestDto dto, Long noticeId){
         return new Notice(noticeId, dto.getTitle(),dto.getContent());

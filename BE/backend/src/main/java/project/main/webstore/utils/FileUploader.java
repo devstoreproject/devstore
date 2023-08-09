@@ -2,9 +2,7 @@ package project.main.webstore.utils;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
@@ -79,19 +77,20 @@ public class FileUploader {
     
 
     public String saveImage(MultipartFile uploadFile, String fileName, String bucketName) {
-        ObjectMetadata metadata = createMetadata(uploadFile);
-        try {
-            amazonS3Client.putObject(
-                    new PutObjectRequest(
-                            bucketName, fileName, uploadFile.getInputStream(), metadata
-                    ).withCannedAcl(CannedAccessControlList.PublicRead)
-            );
-        } catch (IOException e) {
-            log.error("#### S3 Upload IOException", e.getMessage());
-            e.printStackTrace();
-        }
+//        ObjectMetadata metadata = createMetadata(uploadFile);
+//        try {
+//            amazonS3Client.putObject(
+//                    new PutObjectRequest(
+//                            bucketName, fileName, uploadFile.getInputStream(), metadata
+//                    ).withCannedAcl(CannedAccessControlList.PublicRead)
+//            );
+//        } catch (IOException e) {
+//            log.error("#### S3 Upload IOException", e.getMessage());
+//            e.printStackTrace();
+//        }
 
-        return amazonS3Client.getUrl(bucketName, fileName).toString();
+//        return amazonS3Client.getUrl(bucketName, fileName).toString();
+        return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz7rUlbKGMcXKcNkWGw6CnN_CRBz1hYjrsKXFVio9s26u7nQEILnX8EGV8e5UEIdGdsI0&usqp=CAU";
     }
 
     private ObjectMetadata createMetadata(MultipartFile multipartFile) {
@@ -112,8 +111,8 @@ public class FileUploader {
         String object_key = getImageKey(imagePath);
         String thum_key = object_key.replace("origin", "resized");
         try {
-            amazonS3Client.deleteObject(bucketOrigin, object_key);
-            amazonS3Client.deleteObject(bucketResizing, thum_key);
+//            amazonS3Client.deleteObject(bucketOrigin, object_key);
+//            amazonS3Client.deleteObject(bucketResizing, thum_key);
         } catch (AmazonServiceException e) {
             log.error("#### S3 Delete AmazonServiceException", e.getMessage());
         }
