@@ -2,10 +2,7 @@ package project.main.webstore.domain.users.mapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import project.main.webstore.domain.users.dto.UserGetResponseDto;
-import project.main.webstore.domain.users.dto.UserIdResponseDto;
-import project.main.webstore.domain.users.dto.UserPatchRequestDto;
-import project.main.webstore.domain.users.dto.UserPostRequestDto;
+import project.main.webstore.domain.users.dto.*;
 import project.main.webstore.domain.users.entity.User;
 
 @Component
@@ -26,5 +23,13 @@ public class UserMapper {
 
     public Page<UserGetResponseDto> toGetDtoResponse(Page<User> userPage) {
         return userPage.map(UserGetResponseDto::new);
+    }
+
+    public User toEntity(UserGetPasswordRequestDto dto) {
+        return new User(dto);
+    }
+
+    public UserGetPasswordResponseDto toGetPasswordResponse(User user) {
+        return new UserGetPasswordResponseDto(user.getPassword());
     }
 }

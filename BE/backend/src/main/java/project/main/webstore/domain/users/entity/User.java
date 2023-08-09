@@ -7,6 +7,7 @@ import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.item.entity.PickedItem;
+import project.main.webstore.domain.users.dto.UserGetPasswordRequestDto;
 import project.main.webstore.domain.users.dto.UserPatchRequestDto;
 import project.main.webstore.domain.users.dto.UserPostRequestDto;
 import project.main.webstore.domain.users.enums.Grade;
@@ -146,6 +147,10 @@ public class User extends Auditable implements Principal {
         this.userRole = UserRole.CLIENT;
         this.userStatus = UserStatus.TMP;
     }
-
+    public User(UserGetPasswordRequestDto dto){
+        this.email = dto.getEmail();
+        this.userName = dto.getName();
+        this.phone = dto.getPhone();
+    }
 
 }

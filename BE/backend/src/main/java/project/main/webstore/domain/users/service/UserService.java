@@ -1,6 +1,7 @@
 package project.main.webstore.domain.users.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.repository.UserRepository;
+import project.main.webstore.email.enums.CheckCondition;
 import project.main.webstore.email.event.UserRegistrationApplicationEvent;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.redis.RedisUtils;
@@ -37,7 +39,7 @@ public class UserService {
         verifyExistsEmail(user.getEmail());
         setEncryptedPassword(user);
         saveProfileImageIfHas(user, imageInfo);
-        publisher.publishEvent(new UserRegistrationApplicationEvent(this,user));
+        publisher.publishEvent(new UserRegistrationApplicationEvent(this,user, CheckCondition.JOIN));
         return userRepository.save(user);
 
     }
@@ -160,5 +162,25 @@ public class UserService {
         Optional<User> byEmail = userRepository.findByEmail(loginDto.getUsername());
 
         return byEmail.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_LOGIN));
+    }
+
+    public User getTmpPassword(User user) {
+        Optional<User> findUser = userRepository.findByEmailAndAndNameAndPhone(user.getEmail(), user.getName(), user.getPhone());
+        User savedUser = findUser.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
+        String tmpPassword = RandomStringUtils.randomAlphanumeric(8);
+        String encodedPassword = passwordEncoder.encode(tmpPassword);
+        savedUser.setPassword(encodedPassword);
+        return savedUser;
+    }
+
+    public void transActive(String username, String password) {
+        User user = validUserByEmail(username);
+        String encode = passwordEncoder.encode(password);
+        if(!user.getPassword().equals(encode)){
+            throw new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND);
+        }
+        publisher.publishEvent(new UserRegistrationApplicationEvent(this,user,CheckCondition.ACTIVE));
+
+
     }
 }
