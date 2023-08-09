@@ -12,9 +12,9 @@ public enum NoticeCategory {
 
     private final String description;
 
-    public NoticeCategory of(String category){
+    public static NoticeCategory of(String str){
         for (NoticeCategory value : NoticeCategory.values()) {
-            if(value.equals(category)){
+            if(value.name().equals(str)){
                 return value;
             }
         }
