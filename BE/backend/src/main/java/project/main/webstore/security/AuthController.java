@@ -87,6 +87,15 @@ public class AuthController {
 
         ResponseDto<LoginResponseDto> build = ResponseDto.<LoginResponseDto>builder().data(loginResponseDto).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(build);
-
     }
+
+    @PostMapping("/auth/active")
+    //휴면계정 해제 시 로직 어떻게 만들어지는지 확인할 필요성 존재
+    @ApiResponse(responseCode = "204",description = "성공 시 204와 함께 email 전송")
+    public ResponseEntity transActiveUserStatus(@RequestBody LoginDto login){
+        userService.transActive(login.getUsername(),login.getPassword());
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

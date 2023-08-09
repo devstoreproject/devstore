@@ -15,6 +15,7 @@ import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.repository.UserRepository;
+import project.main.webstore.email.enums.CheckCondition;
 import project.main.webstore.email.event.UserRegistrationApplicationEvent;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.redis.RedisUtils;
@@ -38,7 +39,7 @@ public class UserService {
         verifyExistsEmail(user.getEmail());
         setEncryptedPassword(user);
         saveProfileImageIfHas(user, imageInfo);
-        publisher.publishEvent(new UserRegistrationApplicationEvent(this,user));
+        publisher.publishEvent(new UserRegistrationApplicationEvent(this,user, CheckCondition.JOIN));
         return userRepository.save(user);
 
     }
@@ -172,5 +173,14 @@ public class UserService {
         return savedUser;
     }
 
+    public void transActive(String username, String password) {
+        User user = validUserByEmail(username);
+        String encode = passwordEncoder.encode(password);
+        if(!user.getPassword().equals(encode)){
+            throw new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND);
+        }
+        publisher.publishEvent(new UserRegistrationApplicationEvent(this,user,CheckCondition.ACTIVE));
 
+
+    }
 }

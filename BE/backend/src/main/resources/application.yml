@@ -64,11 +64,12 @@ mail:
     starttls:
       enable: true
   subject:
-    member:
+    user:
       registration: 가입 환영한다 얼간이들아
+      active: 휴면계정 해제
   template:
     name:
-      member:
+      user:
         join: email-registration-member
 
 jwt:
