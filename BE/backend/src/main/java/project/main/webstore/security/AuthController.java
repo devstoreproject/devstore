@@ -61,7 +61,7 @@ public class AuthController {
 
     @PostMapping("/log-out")
     @ApiResponse(responseCode = "204",description = "로그 아웃 시 서버에 저장된 리프레쉬 토큰 정보 삭제")
-    public ResponseEntity logout(@CookieValue("refreshToken") String refresh,@RequestHeader("Refresh")String token) {
+    public ResponseEntity logout(@CookieValue(value = "refreshToken",required = false) String refresh,@RequestHeader(value = "Refresh",required = false)String token) {
         if (refresh != null && redisUtils.findByKey(refresh) != null) {
             redisUtils.delete(refresh);
         }else if(token != null && redisUtils.findByKey(token) != null){
