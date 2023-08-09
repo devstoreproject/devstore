@@ -1,5 +1,6 @@
 package project.main.webstore.domain.notice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.notice.entity.Notice;
@@ -12,7 +13,9 @@ public class NoticeGetSimpleResponseDto {
     private Long noticeId;
     private String title;
     private String content;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
     private LocalDateTime createAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
     private long viewCount;
     private ImageDto image;
