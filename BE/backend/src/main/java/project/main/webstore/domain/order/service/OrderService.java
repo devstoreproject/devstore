@@ -36,14 +36,12 @@ public class OrderService {
 
     public Orders createOrder(OrderLocalDto post, Long userId) {
         User user = userService.validUser(userId);
-        String orderNumber = createOrderNumber();
-        Cart cart = user.getCart();
         ShippingInfo shippingInfo = user.getShippingInfo(post.getShippingId());
+        Cart cart = user.getCart();
 
         //item 에서 수량 제거하는 로직 추가
         //전체 아이템에서 선택한 아이템 수만큼 수량 제거...
-        Orders order = new Orders(orderNumber, post.getMessage(), cart, user, shippingInfo, null, null);
-
+        Orders order = new Orders(post.getMessage(), cart, user, shippingInfo, new ArrayList<>(), null);
         return orderRepository.save(order);
     }
 
@@ -67,9 +65,11 @@ public class OrderService {
         return order;
     }
 
-//    public Page<Orders> getOrders(String createData, Pageable pageable) {
-//        return orderRepository.findByOrderIdAndCreateOrderDateAndOrderStatus(createData, pageable);
-//    }
+    public Page<Orders> getOrders(Pageable pageable) {
+        Page<Orders> orderPage = orderRepository.findAll(pageable);
+
+        return orderPage;
+    }
 
     //주문 취소
     public void cancelOrder(Long orderId, Long userId) {
@@ -100,7 +100,7 @@ public class OrderService {
         }
     }
 
-    public Orders findVerifiedOrder(long orderId) {
+    public Orders findVerifiedOrder(Long orderId) {
         Optional<Orders> findOrderId = orderRepository.findByOrderId(orderId);
         return findOrderId.orElseThrow(() -> new BusinessLogicException(OrderExceptionCode.ORDER_NOT_FOUND));
     }
@@ -109,25 +109,6 @@ public class OrderService {
     private Orders findByOrderNumber(String orderNumber) {
         Optional<Orders> findByOrderNum = orderRepository.findByOrderNumber(orderNumber);
         return findByOrderNum.orElseThrow(() -> new BusinessLogicException(OrderExceptionCode.ORDER_NOT_FOUND));
-    }
-
-    // 주문번호 생성
-    private String createOrderNumber() {
-        Calendar cal = Calendar.getInstance();
-
-        int y = cal.get(Calendar.YEAR);
-        int m = cal.get(Calendar.MONTH) + 1;
-        int d = cal.get(Calendar.DATE);
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(y).append(m).append(d);
-
-        for (int i = 0; i < 10; i++) {
-            int random = (int) (Math.random() * 10);
-            builder.append(random);
-        }
-
-        return builder.toString();
     }
 
     // 주문 정보 검증

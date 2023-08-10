@@ -6,12 +6,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import project.main.webstore.domain.item.dto.ItemResponseDto;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
 import project.main.webstore.domain.order.dto.OrderPatchDto;
 import project.main.webstore.domain.order.dto.OrderPostDto;
@@ -80,17 +82,16 @@ public class OrderController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    // Get List -> 날짜별 페이징처리
-//    @GetMapping("/search/{order")
-//    @ApiResponse(responseCode = "200", description = "전체 주문정보 가져오기 페이지")
-//    public ResponseEntity<ResponseDto<Page<OrderResponseDto>>> getOrders(@RequestParam String createDate,Pageable pageable) {
-//        Page<Orders> ordersPage = orderService.getOrders(createDate,pageable);
-//        Page<OrderResponseDto> response = orderMapper.orderToOrderResponsePage(ordersPage);
-//
-//        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
-//
-//        return ResponseEntity.ok(responseDto);
-//    }
+    @ApiResponse(responseCode = "200", description = "전체 주문정보 가져오기 페이지")
+    @GetMapping
+    public ResponseEntity<ResponseDto<Page<OrderResponseDto>>> getOrders(@PageableDefault(sort = "orderId", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Orders> ordersPage = orderService.getOrders(pageable);
+        Page<OrderResponseDto> response = orderMapper.orderToOrderResponsePage(ordersPage);
+
+        var responseDto = ResponseDto.<Page<OrderResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
 
     @ApiResponse(responseCode = "204", description = "주문 취소")
     @DeleteMapping("/{user-id}/cancel/{order-id}") // -> order취소..
