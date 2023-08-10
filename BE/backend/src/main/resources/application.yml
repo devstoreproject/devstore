@@ -23,6 +23,16 @@ spring:
   redis:
     host: ${REDIS_URL}
     port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_ID}
+            client-secret: ${GOOGLE_SECRET}
+            scope:
+              - email
+              - profile
 logging:
   level:
     org.hibernate.sql: info

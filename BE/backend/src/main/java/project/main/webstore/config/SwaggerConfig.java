@@ -106,7 +106,7 @@ public class SwaggerConfig {
     public GroupedOpenApi totalApi() {
         return commonApi()
                 .pathsToMatch("/api/**")
-                .group("F1")
+                .group("F0")
                 .displayName("TOTAL")
                 .build();
     }

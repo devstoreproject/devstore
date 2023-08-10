@@ -45,9 +45,7 @@ public class UserService {
     }
 
     public User oAuth2CreateOrGet(User user) {
-
         Optional<User> findUser = userRepository.findByEmail(user.getEmail());
-
         if (findUser.isPresent()) {
             User savedUser = findUser.get();
             switch (savedUser.getUserStatus()) {
@@ -165,7 +163,7 @@ public class UserService {
     }
 
     public User getTmpPassword(User user) {
-        Optional<User> findUser = userRepository.findByEmailAndAndNameAndPhone(user.getEmail(), user.getName(), user.getPhone());
+        Optional<User> findUser = userRepository.findByEmailAndAndUserNameAndPhone(user.getEmail(), user.getName(), user.getPhone());
         User savedUser = findUser.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
         String tmpPassword = RandomStringUtils.randomAlphanumeric(8);
         String encodedPassword = passwordEncoder.encode(tmpPassword);

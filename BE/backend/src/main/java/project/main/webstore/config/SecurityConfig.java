@@ -1,6 +1,5 @@
 package project.main.webstore.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,8 +7,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -22,6 +19,7 @@ import project.main.webstore.security.jwt.handler.FailAuthenticationHandler;
 import project.main.webstore.security.jwt.handler.SuccessAuthenticationHandler;
 import project.main.webstore.security.jwt.utils.JwtTokenizer;
 import project.main.webstore.security.jwt.utils.TransMessageUtils;
+import project.main.webstore.security.oauth2.handler.OAuth2UserSuccessHandler;
 
 import java.util.Arrays;
 
@@ -31,9 +29,10 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenizer jwtTokenizer;
-    private final ObjectMapper objectMapper;
     private final RedisUtils redisUtils;
     private final TransMessageUtils transMessageUtils;
+    private final OAuth2UserSuccessHandler oAuth2UserSuccessHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
@@ -47,6 +46,8 @@ public class SecurityConfig {
                 .httpBasic().disable()   //전송마다 사용자 이름과 비밀번호 헤더에 같이 전달
                 .apply(new CustomFilterConfigurer());
         http
+                .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2UserSuccessHandler));
+        http
                 .exceptionHandling()
                 .authenticationEntryPoint(new UserAuthEntryPoint());
         http
@@ -56,19 +57,9 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList("*"));   // 스크립트 기반 Http 통신 허용 설정
-//        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PATCH", "DELETE", "OPTIONS"));
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();   // 구현체
-//        source.registerCorsConfiguration("/**", configuration);     //모든 URL에 정책 적용
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE","OPTIONAL","OPTION"));

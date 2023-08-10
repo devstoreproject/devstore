@@ -20,7 +20,7 @@ public enum CommonExceptionCode implements ExceptionCode {
     NOT_HAVE_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED,"리프레시토큰이 없습니다."),
     ITEM_EXIST(HttpStatus.CONFLICT,"중복된 아이템입니다."),
     ITEM_NOT_FOUND(HttpStatus.NOT_FOUND,"아이템이 존재하지 않습니다."),
-    COVERT_ERROR(HttpStatus.BAD_REQUEST, "변환 실패 요청을 확인하시오");
+    COVERT_ERROR(HttpStatus.BAD_REQUEST, "변환 실패 요청을 확인하시오"), PROVIDER_NOT_FOUND(HttpStatus.BAD_REQUEST,"알 수없는 소셜로그인입니다." );
 
     private final HttpStatus httpStatus;
     private final String message;
