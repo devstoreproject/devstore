@@ -6,11 +6,14 @@ import NameContainer from './NameContainer';
 import NicknameContainer from './NicknameContainer';
 import PasswordEditContainer from './PasswordEditContainer';
 import PhoneNumberContainer from './PhoneNumberContainer';
+import useFetchProfile from 'hooks/mypage/useFetchProfile';
 
 export default function UserInfo() {
+  const profile = useFetchProfile();
+  console.log(profile);
   return (
     <div className="flex flex-col">
-      <NicknameContainer />
+      <NicknameContainer nickname={profile.nickname} />
       <EmailContainer />
       <PasswordEditContainer />
       <NameContainer />
@@ -18,7 +21,7 @@ export default function UserInfo() {
       <LandlinePhoneNumberContainer />
       <AddressContainer />
       <DeliveryOptionsContainer />
-      <button className="self-center w-20 h-10 mt-4 text-white bg-black rounded-2xl">
+      <button className="w-20 h-10 mt-4 text-white bg-black ml-60 rounded-2xl">
         수정
       </button>
     </div>
