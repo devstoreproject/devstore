@@ -144,13 +144,14 @@ public class ReviewController {
                                                                         @RequestPart(required = false) MultipartFile image,
                                                                         @AuthenticationPrincipal Object principal
     ) {
-        CheckLoginUser.validUserSame(principal, patch.getUserId());
+//        CheckLoginUser.validUserSame(principal, patch.getUserId());
         Review review = reviewMapper.toEntity(patch, reviewId);
         ImageInfoDto imageInfo = null;
-        if (patch.getImageSortAndRepresentativeInfo()!= null) {
+        if (image != null) {
             imageInfo = imageMapper.toLocalDto(image, UPLOAD_DIR);
         }
         Review patchReview = service.patchReview(imageInfo, review, patch.getUserId(), itemId, reviewId);
+
         ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(patchReview);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
 

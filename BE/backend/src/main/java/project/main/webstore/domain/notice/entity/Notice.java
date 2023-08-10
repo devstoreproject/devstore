@@ -48,9 +48,10 @@ public class Notice extends Auditable {
         this.content = content;
     }
 
-    public Notice(String title, String content) {
+    public Notice(String title, String content,NoticeCategory category) {
         this.title = title;
         this.content = content;
+        this.noticeCategory = category;
     }
 
     public void addReviewImage(NoticeImage image) {

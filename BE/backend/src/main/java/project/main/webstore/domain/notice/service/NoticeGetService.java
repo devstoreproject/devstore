@@ -26,10 +26,10 @@ public class NoticeGetService {
 
     //공지사항 전체 리스트 조회
     public Page<Notice> getSimpleNotice(Pageable pageable,String category) {
-        if (category == null) {
-            return repository.findNoticePage(pageable);
-        }
-        NoticeCategory noticeCategory = NoticeCategory.valueOf(category);
+            if (category == null) {
+                return repository.findNoticePage(pageable);
+            }
+        NoticeCategory noticeCategory =NoticeCategory.of(category);
         return repository.findNoticePageByCategory(pageable,noticeCategory);
     }
 }

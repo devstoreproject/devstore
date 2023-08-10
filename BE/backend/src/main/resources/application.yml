@@ -7,7 +7,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL55Dialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         highlight_sql: true
@@ -64,14 +64,15 @@ mail:
     starttls:
       enable: true
   subject:
-    member:
+    user:
       registration: 가입 환영한다 얼간이들아
+      active: 휴면계정 해제
   template:
     name:
-      member:
+      user:
         join: email-registration-member
 
 jwt:
   key: ${JWT_SECRET_KEY}
-  access-token-expiration-minutes: 30
+  access-token-expiration-minutes: 120
   refresh-token-expiration-minutes: 420

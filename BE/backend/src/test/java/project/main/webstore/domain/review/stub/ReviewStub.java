@@ -72,8 +72,8 @@ public class ReviewStub {
         return createPageReview(page, size).map(ReviewGetResponseDto::new);
     }
 
-    public ReviewUpdateRequestDto reviewUpdateRequestDto(Long userId,boolean target) {
-        return new ReviewUpdateRequestDto(userId, "이것은 수정입니다.", 5, List.of(1L), imageSortListDto(target));
+    public ReviewUpdateRequestDto reviewUpdateRequestDto(Long userId) {
+        return new ReviewUpdateRequestDto(userId, "이것은 수정입니다.", 5);
     }
 
     //이미지단 이동
