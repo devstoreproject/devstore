@@ -7,9 +7,8 @@ export default function TableContents() {
         알파스캔 AOC Q32V3S QHD IPS 75 시력보호 무결점 SRGB 100% 전문가용 모니터
       </p>
       <span className="w-16 text-center">150</span>
-      <span className="w-12 text-center">50</span>
-      <span className="w-12 text-center">100</span>
-      <span className="w-24 text-center">100,000,000</span>
+      <span className="w-20 text-center">50</span>
+      <span className="w-16 text-center">100</span>
     </li>
   );
 }
