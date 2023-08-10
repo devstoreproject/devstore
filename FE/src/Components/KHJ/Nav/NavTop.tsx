@@ -1,7 +1,11 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import noticeList from 'Dummy/Notice';
+import fetchLogOut from 'utils/auth/fetchLogOut';
 
 export default function NavTop() {
+  const authorization = localStorage.getItem('authorization');
+  const navigate = useNavigate();
+
   const linkTo = [
     {
       to: '/signin',
@@ -18,7 +22,7 @@ export default function NavTop() {
   ];
 
   return (
-    <nav className="h-9 flex items-center justify-between sm:justify-end px-5 text-subtitle-gray border-b-tab-gray border-b bg-light-gray text-sm">
+    <nav className="flex items-center justify-between px-5 text-sm border-b h-9 sm:justify-end text-subtitle-gray border-b-tab-gray bg-light-gray">
       <article className="flex items-center sm:hidden">
         <h3 className="text-base">Notice</h3>
         <ul className="h-5 ml-3 overflow-hidden">
@@ -30,7 +34,18 @@ export default function NavTop() {
         </ul>
       </article>
       <ul className="flex">
-        {linkTo.map((link) => (
+        <li className="ml-6">
+          {authorization === null ? null : (
+            <button
+              onClick={() => {
+                fetchLogOut(navigate);
+              }}
+            >
+              로그아웃
+            </button>
+          )}
+        </li>
+        {(authorization === null ? linkTo : [linkTo[2]]).map((link) => (
           <li className="ml-6" key={link.to}>
             <Link to={link.to}>{link.text}</Link>
           </li>
