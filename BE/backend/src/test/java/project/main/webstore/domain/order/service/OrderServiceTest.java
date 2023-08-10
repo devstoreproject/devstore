@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
 import project.main.webstore.domain.order.entity.Orders;
+import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.repository.OrderRepository;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
@@ -41,7 +42,7 @@ class OrderServiceTest {
 
         OrderLocalDto post = new OrderLocalDto("안녕", 1L, 1L, 1L, 1L);
 
-        Orders order = new Orders(createOrderNumber(), post.getMessage(), cart, user, info, null, null);
+        Orders order = new Orders(post.getMessage(), cart, user, info, OrdersStatus.ORDER_COMPLETE, null);
 
         //when
         //mocking

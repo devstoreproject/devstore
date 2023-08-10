@@ -11,6 +11,7 @@ import project.main.webstore.domain.users.entity.User;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
@@ -48,14 +49,27 @@ public class Orders extends Auditable {
     @OneToOne
     private ShippingInfo info;
 
-    // 연관관계 매핑
-//    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<OrderItem> orderItems = new ArrayList<>();
     @OneToMany(mappedBy = "order")
     @Builder.Default
     private List<Coupon> coupons = new ArrayList<>();
     @OneToOne(mappedBy = "order")
     private Payment payment;
+
+    public Orders(String message, Cart cart, User user, ShippingInfo shippingInfo, OrdersStatus ordersStatus, Object payment) {
+        this.message = message;
+        this.ordersStatus = ordersStatus.ORDER_COMPLETE;
+    }
+
+    public Orders(String message, Cart cart, User user, ShippingInfo info, List<Coupon> coupons, Payment payment) {
+        this.orderNumber = createOrderNumber();
+        this.message = message;
+        this.ordersStatus = OrdersStatus.ORDER_COMPLETE;
+        this.cart = cart;
+        this.user = user;
+        this.info = info;
+        this.coupons = coupons;
+        this.payment = payment;
+    }
 
     public void setUser(User user) {
         this.user = user;
@@ -84,31 +98,35 @@ public class Orders extends Auditable {
         }
     }
 
-
     // Price Method
     public int getTotalPrice() {
         return this.cart.getOriginalTotalPrice();
     }
 
-    public int getDiscountPrice(){
+    public int getDiscountPrice() {
         return this.cart.getDiscountedTotalPrice();
     }
-    public int getDeliveryPrice(){
+
+    public int getDeliveryPrice() {
         return this.cart.getDeliveryPrice();
     }
-    public Orders(String message, OrdersStatus ordersStatus) {
-        this.message = message;
-        this.ordersStatus = ordersStatus.ORDER_COMPLETE;
-    }
 
-    public Orders(String orderNumber, String message, Cart cart, User user, ShippingInfo info, List<Coupon> coupons, Payment payment) {
-        this.orderNumber = orderNumber;
-        this.message = message;
-        this.ordersStatus = OrdersStatus.ORDER_COMPLETE;
-        this.cart = cart;
-        this.user = user;
-        this.info = info;
-        this.coupons = coupons;
-        this.payment = payment;
+    //TODO: orderNumber -> entity method
+    public String createOrderNumber() {
+        Calendar cal = Calendar.getInstance();
+
+        int y = cal.get(Calendar.YEAR);
+        int m = cal.get(Calendar.MONTH) + 1;
+        int d = cal.get(Calendar.DATE);
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(y).append(m).append(d);
+
+        for (int i = 0; i < 10; i++) {
+            int random = (int) (Math.random() * 10);
+            builder.append(random);
+        }
+
+        return builder.toString();
     }
 }
