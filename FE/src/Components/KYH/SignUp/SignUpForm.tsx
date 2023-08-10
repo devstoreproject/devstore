@@ -54,10 +54,10 @@ export default function SignUpForm() {
   };
   return (
     <form
-      className="relative flex flex-col p-5 mt-40 bg-white rounded-xl w-96 shadow-signBox h-200"
+      className="relative flex flex-col p-5 mt-40 bg-white rounded-xl w-96 shadow-signBox h-175"
       onSubmit={submitHandler}
     >
-      <span className="text-xl font-bold text-center">회원가입</span>
+      <span className="mt-4 text-xl font-bold text-center">회원가입</span>
       <EmailContainer
         email={email}
         setEmail={setEmail}

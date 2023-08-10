@@ -20,9 +20,7 @@ export default function NicknameContainer({
           onChange={NicknameInputHandler}
         ></input>
         {isNicknameValid ? null : (
-          <span className="mt-1 ml-2 text-xs font-bold text-red-500">
-            중복된 닉네임 입니다.
-          </span>
+          <span className="mt-1 ml-2 text-xs font-bold text-red-500">한글</span>
         )}
       </div>
       <button className="h-10 px-6 mt-6 ml-3 text-sm bg-gray-300 rounded-xl shadow-btn active:shadow-none active:ml-3.5 active:mt-6.5 duration-100">

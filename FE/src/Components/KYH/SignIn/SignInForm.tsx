@@ -34,15 +34,15 @@ export default function SignInForm() {
     if (!ValidateEmail(email, setIsEmailValid)) return;
     if (!ValidatePassword(password, setIsPasswordValid)) return;
 
-    fetchSignIn(userInfo, navigate, setIsSignInSuccess);
+    fetchSignIn({ userInfo, navigate, setIsSignInSuccess });
   };
 
   return (
     <form
-      className="flex flex-col items-center p-5 mt-40 bg-white rounded-xl w-80 h-120 shadow-signBox"
+      className="flex flex-col items-center p-5 mt-40 bg-white rounded-xl w-80 h-136 shadow-signBox"
       onSubmit={submitHandler}
     >
-      <span className="mt-2 text-2xl font-bold">DEV SHOP</span>
+      <span className="mt-4 text-2xl font-bold">DEV SHOP</span>
       <EmailAndPWContainer
         email={email}
         setEmail={setEmail}
@@ -62,7 +62,7 @@ export default function SignInForm() {
         </span>
       )}
       <button
-        className="mt-2 w-full text-white bg-black h-11 rounded-xl shadow-btn active:shadow-none active:ml-0.5 active:mt-4.5 duration-100"
+        className="mt-8 w-full text-white bg-black h-11 rounded-xl shadow-btn active:shadow-none active:ml-0.5 active:mt-4.5 duration-100"
         type="submit"
       >
         로그인

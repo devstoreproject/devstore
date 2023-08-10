@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BsFillPersonFill } from 'react-icons/bs';
 import { BiSearch, BiBell, BiSolidCartAlt } from 'react-icons/bi';
 import { RxHamburgerMenu } from 'react-icons/rx';
@@ -13,10 +13,11 @@ export default function NavBottom({
   searchOpen,
   setSearchOpen,
 }: NavFoldingType): React.ReactElement {
+  const navigate = useNavigate();
   const sizeAll: number = 22;
   const linkTo = [
     {
-      to: '/mypage/userinfo',
+      to: '/mypage',
       icon: <BsFillPersonFill size={sizeAll} />,
     },
     {
@@ -30,7 +31,7 @@ export default function NavBottom({
   ];
 
   return (
-    <nav className="relative flex items-center justify-center sm:justify-between bg-white h-14">
+    <nav className="relative flex items-center justify-center bg-white sm:justify-between h-14">
       <button
         className={`absolute left-5 top-2/4 -translate-y-2/4 sm:relative sm:top-auto sm:translate-y-0 ${
           navOpen ? 'hidden' : ''
@@ -42,7 +43,13 @@ export default function NavBottom({
         <RxHamburgerMenu size={24} />
       </button>
       <h1 className="text-xl font-bold whitespace-nowrap text-light-black">
-        DEV SHOP
+        <button
+          onClick={() => {
+            navigate('/');
+          }}
+        >
+          DEV SHOP
+        </button>
       </h1>
       <ul className="absolute flex top-2/4 right-5 -translate-y-2/4 sm:relative sm:translate-y-0 sm:top-auto sm:right-5">
         <li

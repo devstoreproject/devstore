@@ -1,27 +1,32 @@
 import api from 'api';
 
-interface userInfo {
+interface UserInfo {
   username: string;
   password: string;
 }
 
-const fetchSignIn = (
-  userInfo: userInfo,
-  navigate: (to: string) => void,
-  setFn: React.Dispatch<React.SetStateAction<boolean>>
-) => {
+interface FetchSignIn {
+  userInfo: UserInfo;
+  navigate: (to: string) => void;
+  setIsSignInSuccess: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const fetchSignIn = ({
+  userInfo,
+  navigate,
+  setIsSignInSuccess,
+}: FetchSignIn) => {
   api
-    .post('/api/login', {
-      userInfo,
-    })
+    .post('/api/login', userInfo)
     .then((res) => {
       localStorage.setItem('authorization', res.headers.authorization);
       localStorage.setItem('refresh', res.headers.refresh);
+      localStorage.setItem('userId', res.data.data.userId);
       navigate('/');
     })
     .catch((err) => {
       console.log(err);
-      setFn(false);
+      setIsSignInSuccess(false);
     });
 };
 

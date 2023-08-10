@@ -1,4 +1,8 @@
-export default function NicknameContainer() {
+interface nickname {
+  nickname: string;
+}
+
+export default function NicknameContainer({ nickname }: nickname) {
   return (
     <div className="flex items-center mb-4">
       <span className="w-32 text-gray-500">닉네임</span>
