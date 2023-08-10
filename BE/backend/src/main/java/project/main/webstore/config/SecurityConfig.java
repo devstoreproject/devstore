@@ -46,7 +46,8 @@ public class SecurityConfig {
                 .httpBasic().disable()   //전송마다 사용자 이름과 비밀번호 헤더에 같이 전달
                 .apply(new CustomFilterConfigurer());
         http
-                .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2UserSuccessHandler));
+                .oauth2Login(oauth2 -> oauth2.loginPage("/api/oauth2/authorization/custom").successHandler(oAuth2UserSuccessHandler).authorizationEndpoint(endpoint -> endpoint.baseUri("/api/oauth2/authorization")));
+
         http
                 .exceptionHandling()
                 .authenticationEntryPoint(new UserAuthEntryPoint());
