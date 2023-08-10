@@ -116,7 +116,7 @@ public class UserController {
 
     @GetMapping("/valid-nick")
     @ApiResponse(responseCode = "200",description = "닉네임 중복 검사")
-    public ResponseEntity<ResponseDto<Boolean>> validNickName(@Parameter(description = "닉네임",example = "김성자의 신성한성자생활")@RequestParam("nickName") String nickName){
+    public ResponseEntity<ResponseDto<Boolean>> validNickName(@Parameter(description = "닉네임",example = "김성자의생활")@RequestParam("nickName") String nickName){
         boolean result = service.checkNickName(nickName);
         ResponseDto<Boolean> responseDto = ResponseDto.<Boolean>builder().data(result).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
@@ -132,6 +132,7 @@ public class UserController {
     }
 
     @PostMapping("/password")
+    @ApiResponse(responseCode = "200",description = "새로 발급된는 임시 비밀번호가 들어있다.")
     public ResponseEntity<ResponseDto<UserGetPasswordResponseDto>> changePassword(@RequestBody UserGetPasswordRequestDto get){
         User request = userMapper.toEntity(get);
         User result = service.getTmpPassword(request);

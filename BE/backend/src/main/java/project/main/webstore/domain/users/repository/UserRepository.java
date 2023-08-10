@@ -21,5 +21,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @EntityGraph
     Optional<User> findAllInfoById(Long userId);
 
-    Optional<User> findByEmailAndAndNameAndPhone(String email,String name, String phone);
+    Optional<User> findByEmailAndAndUserNameAndPhone(String email, String userName, String phone);
 }
