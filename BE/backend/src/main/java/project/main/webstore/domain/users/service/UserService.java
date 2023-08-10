@@ -52,6 +52,8 @@ public class UserService {
                 case ACTIVE:
                 case SLEEP:
                     if (isProvider(user, savedUser)) {
+                        //변경사항 확인후 저장
+                        changeInfoToOAuthUser(user,savedUser);
                         return savedUser;
                     } else {
                         throw new BusinessLogicException(UserExceptionCode.USER_JWT_EXIST);
@@ -60,9 +62,11 @@ public class UserService {
                     changeInfoToOAuthUser(user, savedUser); //값이 변경된다.
                     return savedUser;
             }
+        }else if(findUser.isEmpty()){
+            setEncryptedPassword(user);
+            return userRepository.save(user);
         }
-        setEncryptedPassword(user);
-        return userRepository.save(user);
+        return findUser.get();
     }
 
     public void deleteUser(Long userId) {
@@ -165,6 +169,9 @@ public class UserService {
     public User getTmpPassword(User user) {
         Optional<User> findUser = userRepository.findByEmailAndAndUserNameAndPhone(user.getEmail(), user.getName(), user.getPhone());
         User savedUser = findUser.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
+        if(!savedUser.getProviderId().equals(ProviderId.JWT)){
+            throw new BusinessLogicException(UserExceptionCode.USER_NOT_JWT);
+        }
         String tmpPassword = RandomStringUtils.randomAlphanumeric(8);
         String encodedPassword = passwordEncoder.encode(tmpPassword);
         savedUser.setPassword(encodedPassword);
