@@ -18,7 +18,7 @@ public class OrderHistoryMapper {
         return historyList.stream().map(history -> historyToHistoryResponseDto(history)).collect(Collectors.toList());
     }
 
-    public Page<OrderHistoryResponseDto> orderToHistoryDtoPage(Page<OrderHistory> historyPage) {
+    public Page<OrderHistoryResponseDto> historyToHistoryDtoPage(Page<OrderHistory> historyPage) {
         return historyPage.map(OrderHistoryResponseDto::new);
     }
 }
