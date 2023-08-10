@@ -4,3 +4,5 @@ export const emailRegEx =
 export const passwordRegEx = /^(?=.*[a-zA-Z])(?=.*\d).{8,16}$/;
 
 export const phoneRegEx = /^\d{11}$/;
+
+export const nicknameRegEx = /^[a-zA-Z0-9가-힣]{1,8}$/;

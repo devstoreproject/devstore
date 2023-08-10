@@ -1,4 +1,9 @@
-import { emailRegEx, passwordRegEx, phoneRegEx } from './signUpRegEx';
+import {
+  emailRegEx,
+  nicknameRegEx,
+  passwordRegEx,
+  phoneRegEx,
+} from './signUpRegEx';
 
 export const ValidateEmail = (
   email: string,
@@ -56,7 +61,7 @@ export const ValidateNickname = (
   nickname: string,
   setFn: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  if (nickname.length > 0) {
+  if (nicknameRegEx.test(nickname)) {
     setFn(true);
     return true;
   } else {
