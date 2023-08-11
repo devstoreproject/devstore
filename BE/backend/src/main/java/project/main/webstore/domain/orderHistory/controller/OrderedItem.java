@@ -22,7 +22,7 @@ public class OrderedItem {
     private int price;
     private int discountedPrice;
     private int discountRate;
-    private int count;
+    private int itemCount;
     private String itemDetails;
     private String optionDetails;
     @OneToOne
@@ -36,7 +36,7 @@ public class OrderedItem {
         this.optionDetails = cartItem.getOption().getOptionDetail();
         this.itemDetails = cartItem.getOption().getItem().getDescription();
         this.option = cartItem.getOption();
-        this.count = cartItem.getItemCount();
+        this.itemCount = cartItem.getItemCount();
         this.item = cartItem.getOption().getItem();
         this.discountedPrice = cartItem.getDiscountedPrice();
     }

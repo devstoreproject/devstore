@@ -24,7 +24,7 @@ public class OrderItemResponseDto { // 주문할 아이템 정보 결과
     public OrderItemResponseDto(OrderedItem item) {
         this.itemId = item.getOption().getItem().getItemId();
         this.itemName = item.getOption().getItem().getItemName();
-        this.itemCount = item.getCount();
+        this.itemCount = item.getItemCount();
         this.itemPrice = item.getPrice();
         this.discountRate = item.getOption().getItem().getDiscountRate();
         this.discountPrice = item.getDiscountedPrice();
