@@ -4,12 +4,15 @@ import lombok.*;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.coupon.entity.Coupon;
+import project.main.webstore.domain.item.exception.ItemExceptionCode;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.enums.PaymentType;
 import project.main.webstore.domain.orderHistory.controller.OrderedItem;
+import project.main.webstore.domain.orderHistory.enums.TransCondition;
 import project.main.webstore.domain.payment.entity.Payment;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.valueObject.Address;
 
 import javax.persistence.*;
@@ -53,7 +56,7 @@ public class Orders extends Auditable {
     private Address address;
 
     //Cart에서 땡겨다가 쓸것들
-    @OneToMany
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private List<OrderedItem> orderedItemList;
 
     @ManyToOne(fetch = LAZY)
@@ -114,5 +117,26 @@ public class Orders extends Auditable {
         }
 
         return builder.toString();
+    }
+
+    public void transItemCount(TransCondition transCondition) {
+        if (transCondition.equals(TransCondition.MINUS)) {
+            this.getOrderedItemList().forEach(orderedItem -> orderedItem.getOption().setItemCount(itemCountMinus(orderedItem)));
+        } else {
+            this.getOrderedItemList().forEach(orderedItem -> orderedItem.getOption().setItemCount(itemCountPlus(orderedItem)));
+        }
+    }
+
+    private int itemCountMinus(OrderedItem orderedItem) {
+        int result = orderedItem.getOption().getItemCount() - orderedItem.getItemCount();
+        if (result < 0) {
+            throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_ENOUGH);
+        }
+        return result;
+    }
+
+    private int itemCountPlus(OrderedItem orderedItem) {
+        int result = orderedItem.getOption().getItemCount() + orderedItem.getItemCount();
+        return result;
     }
 }
