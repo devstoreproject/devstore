@@ -14,6 +14,8 @@ import project.main.webstore.domain.users.enums.Grade;
 import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.domain.users.enums.UserStatus;
+import project.main.webstore.domain.users.exception.UserExceptionCode;
+import project.main.webstore.exception.BusinessLogicException;
 
 import javax.persistence.*;
 import java.security.Principal;
@@ -75,7 +77,14 @@ public class User extends Auditable implements Principal {
                 return info;
             }
         }
-        return null;
+        throw new BusinessLogicException(UserExceptionCode.SHIPPING_INFO_NOT_FOUND);
+    }
+
+    //TODO:ValidService 구현 이후 변경 필요
+    public void validUserHasAccess(User user){
+        if (!user.getId().equals(this.id) || !user.getUserRole().equals(UserRole.ADMIN)) {
+            throw new BusinessLogicException(UserExceptionCode.USER_NOT_ACCESS);
+        }
     }
 
     public User(String nickName, String profileImage, String password, String email, int mileage, String phone, Grade grade, ProviderId providerId, UserRole userRole) {
