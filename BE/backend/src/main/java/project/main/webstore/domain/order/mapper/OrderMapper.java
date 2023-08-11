@@ -35,4 +35,8 @@ public class OrderMapper {
     public Page<OrderResponseDto> orderToOrderResponsePage(Page<Orders> orderPage) {
         return orderPage.map(OrderResponseDto::new);
     }
+
+    public OrderIdResponseDto toIdResponse(Orders order) {
+        return new OrderIdResponseDto(order.getOrderId());
+    }
 }
