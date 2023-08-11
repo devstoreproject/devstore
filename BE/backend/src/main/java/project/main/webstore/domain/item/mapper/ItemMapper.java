@@ -7,7 +7,6 @@ import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.dto.ItemResponseDto;
 import project.main.webstore.domain.item.entity.Item;
-import project.main.webstore.valueObject.Price;
 
 @Component
 public class ItemMapper {
@@ -27,9 +26,6 @@ public class ItemMapper {
     }
 
     // Price Method
-    private Price transPrice(Integer price) {
-        return Price.builder().value(price).build();
-    }
 
     // itemResponse Mapper
     public ItemResponseDto toGetResponseDto(Item item) {

@@ -14,7 +14,6 @@ import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.enums.ItemStatus;
 import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.review.entity.Review;
-import project.main.webstore.valueObject.Price;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -55,21 +54,13 @@ public class Item extends Auditable {
     @Enumerated(STRING)
     private ItemStatus itemStatus = ItemStatus.ON_STACK;
 
-    @Embedded
     @Setter
     @Column(nullable = false)
-    @AttributeOverrides(
-            @AttributeOverride(name = "value", column = @Column(name = "ITEM_PRICE"))
-    )
-    private Price itemPrice;
+    private Integer itemPrice;
 
-    @Embedded
     @Setter
     @Column(nullable = false)
-    @AttributeOverrides(
-            @AttributeOverride(name = "value", column = @Column(name = "DELIVERY_PRICE"))
-    )
-    private Price deliveryPrice;
+    private Integer deliveryPrice;
     @Setter
     private Integer discountRate;
     @Setter
@@ -109,8 +100,8 @@ public class Item extends Auditable {
         this.description = post.getDescription();
         this.itemStatus = ItemStatus.ON_STACK;
         this.discountRate = post.getDiscountRate();
-        this.itemPrice = Price.builder().value(post.getItemPrice()).build();
-        this.deliveryPrice = Price.builder().value(post.getDeliveryPrice()).build();
+        this.itemPrice = post.getItemPrice();
+        this.deliveryPrice = post.getDeliveryPrice();
         this.defaultItem = new ItemOption(0, post.getDefaultCount(), this);
         this.category = post.getCategory();
         this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getName(), spec.getContent(), this)).collect(Collectors.toList()) : new ArrayList<>();
@@ -123,8 +114,29 @@ public class Item extends Auditable {
         this.description = patch.getDescription();
         this.discountRate = patch.getDiscountRate();
         this.defaultItem = new ItemOption(0, patch.getDefaultCount(), this);
-        this.deliveryPrice = Price.builder().value(patch.getDeliveryPrice()).build();
+        this.deliveryPrice = patch.getDeliveryPrice();
         this.category = patch.getCategory();
+    }
+
+    @Builder(builderMethodName = "stub")
+    public Item(List<ItemImage> itemImageList, Long itemId, String itemName, String description, Integer itemPrice, Integer deliveryPrice, Integer discountRate, Integer mileageRate, Category category, List<ItemSpec> specList, List<ItemOption> optionList, List<CartItem> cartItemList, List<Review> reviewList, List<Question> questionList, List<PickedItem> pickedItem, ItemOption defaultItem) {
+        this.itemId = itemId;
+        this.itemName = itemName;
+        this.description = description;
+        this.viewCount = 0;
+        this.itemStatus = ItemStatus.ON_STACK;
+        this.itemPrice = itemPrice;
+        this.deliveryPrice = deliveryPrice;
+        this.discountRate = discountRate;
+        this.mileageRate = mileageRate;
+        this.category = category;
+        this.specList = specList;
+        this.optionList = optionList;
+        this.cartItemList = cartItemList;
+        this.reviewList = reviewList;
+        this.questionList = questionList;
+        this.pickedItem = pickedItem;
+        this.defaultItem = defaultItem;
     }
 
     public void addSpec(ItemSpec itemSpec) {
@@ -175,11 +187,6 @@ public class Item extends Auditable {
         return this.optionList.stream().mapToInt(ItemOption::getItemCount).sum();
     }
 
-    public void addPrice(Price itemPrice, Price deliveryPrice) {
-        this.itemPrice = itemPrice;
-        this.deliveryPrice = deliveryPrice;
-    }
-
     public int getTotalCount() {
         if (this.optionList.isEmpty()) {
             return 0;
@@ -191,29 +198,8 @@ public class Item extends Auditable {
         return itemImageList.stream().filter(Image::isRepresentative).findFirst().get();
     }
 
-    public void addViewCount(){
+    public void addViewCount() {
         this.viewCount++;
-    }
-
-    @Builder(builderMethodName = "stub")
-    public Item(List<ItemImage> itemImageList, Long itemId, String itemName, String description, Price itemPrice, Price deliveryPrice, Integer discountRate, Integer mileageRate, Category category, List<ItemSpec> specList, List<ItemOption> optionList, List<CartItem> cartItemList, List<Review> reviewList, List<Question> questionList, List<PickedItem> pickedItem, ItemOption defaultItem) {
-        this.itemId = itemId;
-        this.itemName = itemName;
-        this.description = description;
-        this.viewCount = 0;
-        this.itemStatus = ItemStatus.ON_STACK;
-        this.itemPrice = itemPrice;
-        this.deliveryPrice = deliveryPrice;
-        this.discountRate = discountRate;
-        this.mileageRate = mileageRate;
-        this.category = category;
-        this.specList = specList;
-        this.optionList = optionList;
-        this.cartItemList = cartItemList;
-        this.reviewList = reviewList;
-        this.questionList = questionList;
-        this.pickedItem = pickedItem;
-        this.defaultItem = defaultItem;
     }
 }
 
