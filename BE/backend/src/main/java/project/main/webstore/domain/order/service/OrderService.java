@@ -1,6 +1,5 @@
 package project.main.webstore.domain.order.service;
 
-import com.querydsl.core.types.Order;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -8,13 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.cart.entity.Cart;
-import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.domain.order.repository.OrderRepository;
-import project.main.webstore.domain.orderHistory.enums.OrderStatus;
+import project.main.webstore.domain.orderHistory.controller.OrderedItem;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.enums.UserRole;
@@ -22,7 +20,7 @@ import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
 
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +74,7 @@ public class OrderService {
         User user = userService.validUserAllInfo(userId);
         Orders order = findVerifiedOrder(orderId);
         //order 주문자 여부 체크 -> 실 주문자 or  관리자
-        if(!user.getId().equals(order.getUser().getId()) || user.getUserRole() != UserRole.ADMIN){
+        if (!user.getId().equals(order.getUser().getId()) || user.getUserRole() != UserRole.ADMIN) {
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_ACCESS);
         }
         //변경할 수 있는 상태라면
@@ -84,14 +82,13 @@ public class OrderService {
             order.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
 
             //수량 변경 필수
-            Cart cart = order.getCart();
-            List<CartItem> optionList = cart.getCartItemList();
+            List<OrderedItem> optionList = order.getOrderedItemList();
 
-            for (CartItem cartItem: optionList) {
-                int itemCount = cartItem.getItemCount();
-                int itemCountRemain = cartItem.getOption().getItemCount();
+            for (OrderedItem orderedItem : optionList) {
+                int itemCount = orderedItem.getCount();
+                int itemCountRemain = orderedItem.getOption().getItemCount();
 
-                cartItem.getOption().setItemCount(itemCount + itemCountRemain);
+                orderedItem.getOption().setItemCount(itemCount + itemCountRemain);
             }
         } else if (order.getOrdersStatus() == OrdersStatus.ORDER_CANCEL) {
             throw new BusinessLogicException(OrderExceptionCode.ORDER_ALREADY_CANCEL);
