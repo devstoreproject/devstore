@@ -82,24 +82,24 @@ public class UserController {
     //관리자 or 당사자만 볼 수 있음
     @GetMapping("/{userId}")
     @ApiResponse(responseCode = "200", description = "사용자 조회")
-    public ResponseEntity getUser(@PathVariable Long userId,
+    public ResponseEntity<ResponseDto<UserGetResponseDto>> getUser(@PathVariable Long userId,
                                   @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validUserSame(principal, userId);
         User result = service.getUser(userId);
         UserGetResponseDto response = userMapper.toGetDtoResponse(result);
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
+        var responseDto = ResponseDto.<UserGetResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping
     @ApiResponse(responseCode = "200", description = "사용자 정보 리스트 조회\n 관리자만 가능한 코드")
-    public ResponseEntity getUserPage(@AuthenticationPrincipal Object principal,
+    public ResponseEntity<ResponseDto<Page<UserGetResponseDto>>> getUserPage(@AuthenticationPrincipal Object principal,
                                       Pageable pageable) {
         CheckLoginUser.validAdmin(principal);
         Page<User> result = service.getUserPage(pageable);
         Page<UserGetResponseDto> response = userMapper.toGetDtoResponse(result);
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.OK).build();
+        var responseDto = ResponseDto.<Page<UserGetResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
