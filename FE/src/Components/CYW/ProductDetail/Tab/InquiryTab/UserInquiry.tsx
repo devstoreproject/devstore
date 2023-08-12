@@ -1,8 +1,17 @@
-export default function UserInquiry() {
+import type { InquiryContentType } from '../Tab';
+import { BiPlus } from 'react-icons/bi';
+export interface OwnProps {
+  inquiry: InquiryContentType;
+}
+
+export default function UserInquiry({ inquiry }: OwnProps) {
   return (
     <div className="flex pl-8">
       <p>Q.</p>
-      <p>&nbsp;문의합니다. 모니터 개이상해요.</p>
+      <p>&nbsp;{inquiry.comment}</p>
+      <button>
+        <BiPlus />
+      </button>
     </div>
   );
 }
