@@ -5,7 +5,7 @@ export default function ProductTab({
   tab: number;
   description: string;
 }) {
-  return tab === 1 ? (
+  return tab === 0 ? (
     <div className="flex justify-center">
       <div>{description}</div>
     </div>
