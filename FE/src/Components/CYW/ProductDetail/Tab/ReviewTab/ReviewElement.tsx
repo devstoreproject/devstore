@@ -1,17 +1,23 @@
 import UserInfo from './UserInfo';
-import TitleImg from '../../ProductImg/TitleImg';
 import UserReview from './UserReview';
+import type { ReviewContentType } from '../Tab';
 
-export default function ReviewElement() {
+interface OwnProps {
+  review: ReviewContentType[] | null;
+}
+
+export default function ReviewElement({ review }: OwnProps) {
   return (
-    <div className="flex items-center border-b-2 py-4 justify-between px-10">
-      <div className="flex items-center justify-center mr-2">
-        <UserInfo />
-        <div className="w-28">
-          <TitleImg />
+    <div>
+      {review?.map((reviewItem) => (
+        <div
+          key={reviewItem.reviewId}
+          className="flex items-center border-b-2 py-4 pl-8 px-10"
+        >
+          <UserInfo review={reviewItem} />
+          <UserReview review={reviewItem} />
         </div>
-      </div>
-      <UserReview />
+      ))}
     </div>
   );
 }

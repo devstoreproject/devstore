@@ -49,7 +49,7 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="searchcategory" element={<SearchCategory />} />
           <Route path="search" element={<Search />} />
-          <Route path="productdetail" element={<ProductDetail />} />
+          <Route path="searchcategory/:id" element={<ProductDetail />} />
         </Route>
 
         <Route path="/signup" element={<SignUp />} />

@@ -2,22 +2,122 @@ import ProductTab from './ProductTab/ProductTab';
 import ReviewTab from './ReviewTab/ReviewTab';
 import { useState } from 'react';
 import InquiryTab from './InquiryTab/InquiryTab';
-import type { ProductType } from 'Pages/CYW/ProductDetail';
+import type { ProductType } from '../../../../Pages/CYW/ProductDetail';
+import fetchInquiry from 'utils/productDetail/fetchInquiry';
+import fetchReview from 'utils/productDetail/fetchReview';
+import { useParams } from 'react-router-dom';
 
 interface ProductTypeProps {
   product: ProductType;
 }
 
+export type QnaStatus = 'ANSWER_COMPLETE' | 'REGISTER';
+interface Sort {
+  empty: boolean;
+  sorted: boolean;
+  unsorted: boolean;
+}
+
+export interface Pageable {
+  offset: number;
+  pageNumber: number;
+  pageSize: number;
+  paged: boolean;
+  sort: Sort;
+  unpaged: boolean;
+}
+
+interface AnswerData {
+  answerId: number | null;
+  qnaStatus: QnaStatus;
+  comment: string;
+  userId: number;
+  questionId: number;
+}
+export interface InquiryContentType {
+  answer: AnswerData;
+  comment: string;
+  qnaStatus: QnaStatus;
+  questionId: number;
+  userId: number;
+}
+export interface InquiryType {
+  content: InquiryContentType[];
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  number: number;
+  numberOfElements: number;
+  pageable: Pageable;
+  size: number;
+  sort: Sort;
+  totalElements: number;
+  totalPages: number;
+}
+
+interface ReviewImageType {
+  imageId: number;
+  imageOrder: number;
+  originalPath: null;
+  representative: boolean;
+  thumbnailPath: null;
+  title: string;
+}
+export interface ReviewContentType {
+  comment: string;
+  createdAt: string;
+  image: ReviewImageType;
+  itemId: number;
+  modifiedAt: string;
+  reviewId: number;
+  userId: number;
+  userName: string;
+}
+export interface ReviewType {
+  content: ReviewContentType[];
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  number: number;
+  numberOfElements: number;
+  pageable: {
+    offset: number;
+    pageNumber: number;
+    pageSize: number;
+    paged: boolean;
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    unpaged: boolean;
+  };
+  size: number;
+  sort: Sort;
+  totalElements: number;
+  totalPages: number;
+}
+
 export default function Tab({ product }: ProductTypeProps) {
   const [tab, setTab] = useState<number>(0);
+  const [review, setReview] = useState<ReviewContentType[] | null>(null);
+  const [inquiry, setInquiry] = useState<InquiryContentType[] | null>(null);
+  const { id } = useParams();
 
   const handleClick = (event: React.MouseEvent<HTMLParagraphElement>) => {
     if (event.currentTarget.textContent === '상품 상세') {
+      if (tab === 0) return;
       setTab(0);
-    } else if (event.currentTarget.textContent === '상품 리뷰') {
+    }
+    if (event.currentTarget.textContent === '상품 리뷰') {
+      if (tab === 1) return;
       setTab(1);
-    } else if (event.currentTarget.textContent === '상품 문의') {
+      fetchReview(id as string, setReview);
+    }
+    if (event.currentTarget.textContent === '상품 문의') {
+      if (tab === 2) return;
       setTab(2);
+      fetchInquiry(id as string, setInquiry);
     }
   };
 
@@ -51,8 +151,8 @@ export default function Tab({ product }: ProductTypeProps) {
       </div>
       <div>
         <ProductTab tab={tab} description={product.description} />
-        <ReviewTab tab={tab} />
-        <InquiryTab tab={tab} />
+        <ReviewTab tab={tab} review={review} />
+        <InquiryTab tab={tab} inquiry={inquiry} setInquiry={setInquiry} />
       </div>
     </div>
   );
