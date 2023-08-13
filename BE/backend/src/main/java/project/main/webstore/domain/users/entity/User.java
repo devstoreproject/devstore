@@ -60,7 +60,7 @@ public class User extends Auditable implements Principal {
 
     @OneToMany(mappedBy = "user")
     private List<PickedItem> pickedItemList = new ArrayList<>();
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<ShippingInfo> shippingInfoList = new ArrayList<>();
     @OneToOne(fetch = LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "CART_ID")
@@ -78,6 +78,11 @@ public class User extends Auditable implements Principal {
             }
         }
         throw new BusinessLogicException(UserExceptionCode.SHIPPING_INFO_NOT_FOUND);
+    }
+
+    public void addShipInfo(ShippingInfo shippingInfo){
+        this.shippingInfoList.add(shippingInfo);
+        shippingInfo.setUser(this);
     }
 
     //TODO:ValidService 구현 이후 변경 필요

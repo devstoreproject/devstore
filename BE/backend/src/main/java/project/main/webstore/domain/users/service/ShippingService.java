@@ -23,8 +23,8 @@ public class ShippingService {
 
     public ShippingInfo writeInfo(ShippingInfo info, Long userId) {
         User findUser = userValidService.validUser(userId);
-        info.setUser(findUser);
-        return shippingRepository.save(info);
+        findUser.addShipInfo(info);
+        return info;
     }
 
     public ShippingInfo editInfo(ShippingInfo info, Long userId) {
