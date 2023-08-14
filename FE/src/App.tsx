@@ -58,7 +58,7 @@ function App() {
         <Route path="/notice" element={<NoticeList />} />
         <Route path="/notice/post" element={<NoticePost />} />
         <Route path="/notice/edit" element={<NoticeEdit />} />
-        <Route path="/notice/detail" element={<NoticeDetail />} />
+        <Route path="/notice/:id" element={<NoticeDetail />} />
 
         <Route path="/mypage" element={<Mypage />}>
           <Route path="orderlist" element={<OrderList />} />
