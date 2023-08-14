@@ -1,10 +1,14 @@
 package project.main.webstore.stub;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -114,4 +118,16 @@ public class ImageStub {
                 createImageInfoPath(null, 3, false)
         );
     }
+
+    public ByteArrayResource getRealImage() throws IOException {
+        Resource resource = new ClassPathResource("image/testImage.png");
+
+        ByteArrayResource bytes = new ByteArrayResource(resource.getInputStream().readAllBytes()){
+            public String getFilename() {
+                return "image.png";
+            }
+        };
+        return bytes;
+    }
+
 }
