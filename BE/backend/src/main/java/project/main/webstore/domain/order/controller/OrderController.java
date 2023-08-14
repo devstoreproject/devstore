@@ -20,9 +20,11 @@ import project.main.webstore.domain.order.service.OrderService;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
+import project.main.webstore.utils.UriCreator;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.net.URI;
 import java.util.List;
 
 @Tag(name = "주문 API", description = "주문 관련 API")
@@ -31,6 +33,7 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 public class OrderController {
+    private final String ORDER_URL = "/api/orders";
     private final OrderService orderService;
     private final OrderMapper orderMapper;
 
@@ -128,11 +131,22 @@ public class OrderController {
     }
 
     @GetMapping("/items-sale")
-    public ResponseEntity getItemPrice(@AuthenticationPrincipal Object principal){
+    public ResponseEntity<ResponseDto<List<OrderItemSaleDto>>> getItemPrice(@AuthenticationPrincipal Object principal){
 //        CheckLoginUser.validAdmin(principal);
         List<OrderDBItemSaleDto> result = orderService.getItemPrice();
         List<OrderItemSaleDto> response = orderMapper.toItemSaleResponse(result);
         var responseDto = ResponseDto.<List<OrderItemSaleDto>>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
+
+    @PatchMapping("{orderId}/add-tracking-number")
+    public ResponseEntity<ResponseDto<OrderIdResponseDto>> setTrackingNumber(@PathVariable @Positive Long orderId, @RequestBody OrderTrackingInfoDto trackingInfo){
+        Orders result = orderService.setTrackingNumber(orderId, trackingInfo.getTrackingNumber(),trackingInfo.getDeliveryCompany());
+        OrderIdResponseDto response = orderMapper.toIdResponse(result);
+        var responseDto = ResponseDto.<OrderIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
+        URI uri = UriCreator.createUri(ORDER_URL + "/{orderId}", responseDto.getData().getOrderId());
+
+        return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
+    }
+    
 }

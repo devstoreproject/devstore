@@ -41,6 +41,10 @@ public class Orders extends Auditable {
     @Column
     private String message;
     private int deliveryPrice;
+    //송장 번호
+    private String trackingNumber;
+    private String deliveryCompany;
+
     @Setter
     @Builder.Default
     @Enumerated(value = EnumType.STRING)
@@ -96,6 +100,11 @@ public class Orders extends Auditable {
 
     public int getTotalOrderedDiscountedPrice() {
         return this.orderedItemList.stream().mapToInt(OrderedItem::getDiscountedPrice).sum();
+    }
+
+    public void addDelivery(String trackingNumber, String deliveryCompany){
+        this.deliveryCompany = deliveryCompany;
+        this.trackingNumber = trackingNumber;
     }
 
     //TODO: orderNumber -> entity method

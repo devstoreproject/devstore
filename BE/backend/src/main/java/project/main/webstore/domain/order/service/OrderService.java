@@ -155,5 +155,11 @@ public class OrderService {
         }
     }
 
+    public Orders setTrackingNumber(Long orderId,String trackingNumber,String company) {
+        Orders findOrder = validOrder(orderId);
+        findOrder.addDelivery(trackingNumber,company);
+        findOrder.setOrdersStatus(OrdersStatus.DELIVERY_PROGRESS);
+        return findOrder;
+    }
 }
 
