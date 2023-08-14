@@ -1,17 +1,28 @@
 import TabListItem from './TabListItem';
 
-export default function TabList() {
-  const tabList = [
-    { id: 1, title: '전체' },
-    { id: 2, title: '운영정책' },
-    { id: 3, title: '업데이트' },
-    { id: 4, title: '이벤트' },
-  ];
+interface NoticeListProp {
+  tabList: Array<{ id: number; title: string }>;
+  activeTab: number | null;
+  onTabClick: (tabId: number) => void;
+}
+
+export default function TabList({
+  tabList,
+  activeTab,
+  onTabClick,
+}: NoticeListProp) {
   return (
-    <ul className="flex">
+    <div className="flex">
       {tabList.map((tab) => (
-        <TabListItem key={tab.id} title={tab.title} />
+        <TabListItem
+          key={tab.id}
+          title={tab.title}
+          active={tab.id === activeTab}
+          onClick={() => {
+            onTabClick(tab.id);
+          }}
+        />
       ))}
-    </ul>
+    </div>
   );
 }
