@@ -58,7 +58,7 @@ public class User extends Auditable implements Principal {
     @Enumerated(STRING)
     private UserStatus userStatus = UserStatus.TMP;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<PickedItem> pickedItemList = new ArrayList<>();
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<ShippingInfo> shippingInfoList = new ArrayList<>();
