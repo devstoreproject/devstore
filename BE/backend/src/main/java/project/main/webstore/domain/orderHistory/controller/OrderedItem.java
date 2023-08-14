@@ -3,6 +3,7 @@ package project.main.webstore.domain.orderHistory.controller;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-public class OrderedItem {
+public class OrderedItem extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)

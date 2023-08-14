@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.cart.entity.Cart;
+import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
+import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.enums.OrdersStatus;
@@ -19,7 +21,8 @@ import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,7 +41,7 @@ public class OrderService {
         //장바구니 비우기
         user.setCart(null);
         //TODO : 쿠폰 구현 이후 변경 필요
-        Orders order = new Orders(post.getMessage(), cart, user, shippingInfo, new ArrayList<>(), null);
+        Orders order = new Orders(post.getMessage(), cart, user, shippingInfo);
         order.transItemCount(TransCondition.MINUS);
         return orderRepository.save(order);
     }
@@ -69,15 +72,28 @@ public class OrderService {
         return findOrder;
     }
 
-    public Page<Orders> getOrders(Pageable pageable, Long userId) {
+    public Page<Orders> getOrders(Pageable pageable, Long userId,Integer month) {
         if (userId.equals(-1L)) {
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_LOGIN);
         } else if (userId.equals(0L)) {
-            return orderRepository.findAll(pageable);
+            if(month != null){
+                LocalDateTime now = LocalDateTime.now().minusMonths(month);
+
+                orderRepository.findByMonth(pageable,now);
+            }else {
+                return orderRepository.findAll(pageable);
+            }
         } else {
-            return orderRepository.findAllByUserId(pageable, userId);
+            if(month != null){
+                LocalDateTime now = LocalDateTime.now().minusMonths(month);
+                orderRepository.findByUserIdAndMonth(pageable,userId,now);
+            }else {
+                return orderRepository.findAllByUserId(pageable, userId);
+            }
         }
+        return null;
     }
+
 
     //주문 취소
     public void cancelOrder(Long orderId, Long userId) {
@@ -96,6 +112,14 @@ public class OrderService {
         } else {
             throw new BusinessLogicException(OrderExceptionCode.ORDER_CANCEL_FAIL);
         }
+    }
+
+    public List<OrderDBMonthlyPriceDto> getMonthlyPrice(){
+        return orderRepository.monthlyPrice();
+    }
+
+    public List<OrderDBItemSaleDto> getItemPrice(){
+        return orderRepository.itemSales();
     }
 
     //검증

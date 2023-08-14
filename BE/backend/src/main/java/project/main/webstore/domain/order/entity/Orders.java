@@ -35,10 +35,10 @@ public class Orders extends Auditable {
     @Column(updatable = false)
     private Long orderId;
     @Setter
-    @Column(insertable = false, updatable = false)
+    @Column(updatable = false)
     private String orderNumber;
     @Setter
-    @Column(insertable = false, updatable = false)
+    @Column
     private String message;
     private int deliveryPrice;
     @Setter
@@ -74,7 +74,7 @@ public class Orders extends Auditable {
 
     //TODO : 작업 중인 아이 지불 정보를 알고 있어야하는가 서버가?
     @Builder
-    public Orders(String message, Cart cart, User user, ShippingInfo info, List<Coupon> coupons, Payment payment) {
+    public Orders(String message, Cart cart, User user, ShippingInfo info) {
         this.orderNumber = createOrderNumber();
         this.message = message;
         this.ordersStatus = OrdersStatus.ORDER_COMPLETE;
@@ -82,8 +82,6 @@ public class Orders extends Auditable {
         this.address = info.getAddress();
         this.orderedItemList = cart.getCartItemList().stream().map(OrderedItem::new).collect(Collectors.toList());
         this.user = user;
-        this.coupons = coupons;
-        this.payment = payment;
         this.deliveryPrice = cart.getDeliveryPrice();
     }
 

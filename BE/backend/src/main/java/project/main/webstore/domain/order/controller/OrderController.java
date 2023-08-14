@@ -23,6 +23,7 @@ import project.main.webstore.utils.CheckLoginUser;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @Tag(name = "주문 API", description = "주문 관련 API")
 @RestController
@@ -34,11 +35,10 @@ public class OrderController {
     private final OrderMapper orderMapper;
 
     @ApiResponse(responseCode = "201", description = "주문서 작성, 주문한 아이템 정보 등록")
-    @PostMapping("/users/{user-id}")
-    public ResponseEntity<ResponseDto<OrderIdResponseDto>> postOrder(@PathVariable("user-id") @Positive Long userId,
-                                                                       @RequestBody @Valid OrderPostDto post,
+    @PostMapping
+    public ResponseEntity<ResponseDto<OrderIdResponseDto>> postOrder(@RequestBody @Valid OrderPostDto post,
                                                                        @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
+        Long userId = CheckLoginUser.getContextIdx(principal);
         OrderLocalDto localOrder = orderMapper.orderPostDtoToOrder(post);
         Orders createOrder = orderService.createOrder(localOrder, userId);
         OrderIdResponseDto response = orderMapper.toIdResponse(createOrder);
@@ -93,9 +93,10 @@ public class OrderController {
 
     @ApiResponse(responseCode = "200", description = "전체 주문정보 가져오기 페이지")
     @GetMapping
-    public ResponseEntity<ResponseDto<Page<OrderResponseDto>>> getOrders(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, @AuthenticationPrincipal Object principal) {
+    public ResponseEntity<ResponseDto<Page<OrderResponseDto>>> getOrders(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,@RequestParam(value = "month",required = false) Integer month,
+                                                                         @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdAdminZero(principal);
-        Page<Orders> ordersPage = orderService.getOrders(pageable,userId);
+        Page<Orders> ordersPage = orderService.getOrders(pageable,userId,month);
         Page<OrderResponseDto> response = orderMapper.orderToOrderResponsePage(ordersPage);
 
         var responseDto = ResponseDto.<Page<OrderResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
@@ -113,20 +114,25 @@ public class OrderController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    //Item 별 주문 내역 확인
 
+    //Item 별 매출
+
+    @GetMapping("/month-sale")
+    public ResponseEntity<ResponseDto<List<OrderMonthlyPriceDto>> > getMonthlyAmount(@AuthenticationPrincipal Object principal){
+//        CheckLoginUser.validAdmin(principal);
+        List<OrderDBMonthlyPriceDto> result = orderService.getMonthlyPrice();
+        List<OrderMonthlyPriceDto> response = orderMapper.toMonthlyAmountResponse(result);
+        var responseDto = ResponseDto.<List<OrderMonthlyPriceDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/items-sale")
+    public ResponseEntity getItemPrice(@AuthenticationPrincipal Object principal){
+//        CheckLoginUser.validAdmin(principal);
+        List<OrderDBItemSaleDto> result = orderService.getItemPrice();
+        List<OrderItemSaleDto> response = orderMapper.toItemSaleResponse(result);
+        var responseDto = ResponseDto.<List<OrderItemSaleDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        return ResponseEntity.ok(responseDto);
+    }
 }
-/*
- * Order 주문 이후 주문 기록 보관소에 데이터가 저장이 되어야한다.
- * 주문완료 이후 주문 기록이 보관소에 저장되어야한다.
- * 주문 상황이 변경될 경우 history에 주문 사항에 대한 수정이 이루어져야한다.
- * 주문 수정 시 주문 내역이 전부 기록된다
- *
- * 기간별 월별 주문ㄴ 매출 알 수 있어야한다.
- * 주문 기록을 통해 매출을 알 수 있어야한다.
- * 주문 내역 기간별 을 알 수 있어야한다.
- * 조회 시 주문 정보를 조회할 수 있는 데이터가 존재해야한다.
- * 상품별 주문 내역을 알 수 있어야한다.
-//TODO:주문 완료 시 카트가 비워진다.
-//TODO:주문 시 카트에 있는 정보가 전부 이관된다. -> Cart에 있는 데이터 정보들이 전부 Order로 들어오게 된다. -> 이를 위해서는 CartItem은 살아있어야한다. -> 이를 구현하기 위해서 다양한방법이 존재한다.
- * */
-
