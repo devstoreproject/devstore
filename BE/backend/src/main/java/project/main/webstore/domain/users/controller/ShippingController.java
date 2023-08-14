@@ -47,6 +47,7 @@ public class ShippingController {
                                             @RequestBody @Valid ShippingInfoPatchDto patch) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         ShippingInfo info = mapper.infoPatchToInfo(patch);
+        info.addId(shippingInfoId);
         ShippingInfo editInfo = service.editInfo(info, userId);
         ShippingInfoResponseDto response = mapper.infoToInfoResponseDto(editInfo);
         var responseDto = ResponseDto.<ShippingInfoResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();

@@ -18,7 +18,7 @@ public enum UserExceptionCode implements ExceptionCode {
     NOT_ADMIN(HttpStatus.UNAUTHORIZED, "관리자가 아닙니다."),
     USER_MAIL_TIME_OUT(HttpStatus.CONFLICT,"메일 인증 기간 만료"),
     USER_NOT_SAME(HttpStatus.BAD_REQUEST, "회원 불일치"),
-    SHIPPING_INFO_NOT_FOUND(HttpStatus.BAD_REQUEST, "결제 정보를 찾을 수 없습니다.");
+    SHIPPING_INFO_NOT_FOUND(HttpStatus.BAD_REQUEST, "주소 정보를 찾을 수 없습니다.");
     private final HttpStatus httpStatus;
 
     private final String message;
