@@ -17,16 +17,23 @@ interface NoticeListProp {
       thumbnailPath: string;
     };
   }>;
+  adminPath: string;
 }
 
-export default function ContentsList({ tabList, datas }: NoticeListProp) {
+export default function ContentsList({
+  tabList,
+  datas,
+  adminPath,
+}: NoticeListProp) {
   return (
-    <div className="flex flex-wrap items-center w-full">
+    <div
+      className={`flex ${
+        adminPath === 'admin' ? 'flex-wrap' : 'flex-wrap'
+      }  items-center  w-full`}
+    >
       {datas?.map((data, idx) => (
         <ContentsItem
-          classnames={` ${idx % 4 === 0 ? 'ml-0' : ''} ${
-            idx % 4 === 3 ? 'mr-0' : ''
-          }`}
+          classnames="ml-0"
           key={data.noticeId}
           tabList={tabList}
           category={data.category}
@@ -37,6 +44,7 @@ export default function ContentsList({ tabList, datas }: NoticeListProp) {
           title={data.title}
           viewCount={data.viewCount}
           image={data.image}
+          adminPath={adminPath}
         />
       ))}
     </div>

@@ -46,7 +46,7 @@ const menuList = [
     icon: <IoMdCheckboxOutline />,
   },
   { to: '/admin/eventvanner', text: '이벤트 배너', icon: <BiSolidStar /> },
-  { to: '/admin/any2', text: '공지사항', icon: <AiOutlineSound /> },
+  { to: '/notice', text: '공지사항', icon: <AiOutlineSound /> },
   { to: '/admin/sales', text: '매출', icon: <FaChartLine /> },
   { to: '/admin/reviewmanagement', text: '리뷰', icon: <MdOutlineReviews /> },
   {
