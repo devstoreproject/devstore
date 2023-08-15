@@ -1,11 +1,24 @@
-export default function ImageBox() {
+import { BsImage } from 'react-icons/bs';
+
+interface DataProps {
+  datas: any;
+}
+
+export default function ImageBox({ datas }: DataProps) {
   return (
-    <div className="my-11">
-      <img
-        src="https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3540&q=80"
-        alt="notice-image"
-        className="object-cover m-auto w-250 h-120"
-      />
+    <div className="py-20 my-10 bg-white">
+      {datas.image != null ? (
+        <img
+          src={datas?.image?.originalPath}
+          alt="공지사항 이미지"
+          className="object-cover m-auto w-250 h-120"
+        />
+      ) : (
+        <div className="w-full h-40">
+          <BsImage className="w-full my-2 text-8xl text-tab-gray" />
+          <span className="text-2xl font-bold text-tab-gray">No Image</span>
+        </div>
+      )}
     </div>
   );
 }

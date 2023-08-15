@@ -6,17 +6,22 @@ export default function ImageInput() {
   const imageInputClickHandler = () => {
     imageRef.current?.click();
   };
+
+  // 이미지 추가 핸들러
+
   return (
     <div className="my-20">
       <p className="mb-6 text-subtitle-gray">대표이미지 등록</p>
-      <label htmlFor="productImage" className="text-label-gray" />
-      <input
-        type="file"
-        accept="image/*"
-        id="productImage"
-        ref={imageRef}
-        className="hidden"
-      />
+      <label htmlFor="productImage" className="text-label-gray">
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          id="productImage"
+          ref={imageRef}
+          className="hidden"
+        />
+      </label>
       <div className="flex items-center w-full mt-4">
         <button
           type="button"

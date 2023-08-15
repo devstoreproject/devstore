@@ -1,9 +1,11 @@
-export default function Title() {
+interface DataProps {
+  datas: any;
+}
+
+export default function Title({ datas }: DataProps) {
   return (
-    <h2 className="py-5 text-3xl font-semibold">
-      ‘내가 진짜 개발자다’ 이벤트
-      <br />
-      거북목 인증 시 노트북 거치대 증정
+    <h2 className="my-10 text-2xl font-semibold leading-10 w-250 line-clamp-2">
+      {datas.title}
     </h2>
   );
 }

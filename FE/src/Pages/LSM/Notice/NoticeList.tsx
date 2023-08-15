@@ -4,6 +4,7 @@ import TabList from 'Components/LSM/Notice/NoticeList/TabList';
 import ContentsList from 'Components/LSM/Notice/NoticeList/ContentsList';
 import api from 'api';
 import { useLocation } from 'react-router-dom';
+import IconButton from 'Components/LSM/Notice/NoticeList/IconButton';
 
 export default function NoticeList() {
   const tabList = [
@@ -60,7 +61,10 @@ export default function NoticeList() {
       className={`m-auto max-w-1460 ${adminPath === 'admin' ? '' : 'my-16'}`}
     >
       {adminPath === 'admin' ? (
-        <h2 className="mb-6 text-xl font-bold">공지사항</h2>
+        <div className="flex mb-6 items-cente">
+          <h2 className="text-xl font-bold">공지사항</h2>
+          <IconButton />
+        </div>
       ) : (
         <NoticeTitle />
       )}

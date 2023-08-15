@@ -1,7 +1,16 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-export default function Button() {
-  const path: string = useLocation().pathname.slice(8);
+interface NoticeProp {
+  submitData: any;
+}
+
+export default function Button({ submitData }: NoticeProp) {
+  const navigate = useNavigate();
+  const prevHandler = () => {
+    navigate('/admin/notice');
+  };
+
+  const path: string = useLocation().pathname.slice(14);
   const postButtonList = [
     { id: 1, name: '등록' },
     { id: 2, name: '취소' },
@@ -21,6 +30,7 @@ export default function Button() {
               type={btn.name === '취소' ? 'button' : 'submit'}
               key={btn.id}
               className={classnames}
+              onClick={btn.name === '취소' ? prevHandler : submitData}
             >
               {btn.name}
             </button>
@@ -33,6 +43,7 @@ export default function Button() {
               type={btn.name === '취소' ? 'button' : 'submit'}
               key={btn.id}
               className={classnames}
+              onClick={btn.name === '취소' ? prevHandler : submitData}
             >
               {btn.name}
             </button>
