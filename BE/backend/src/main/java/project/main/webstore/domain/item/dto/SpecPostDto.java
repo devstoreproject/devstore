@@ -14,7 +14,7 @@ public class SpecPostDto {
     private Long itemId;
     @NotNull
     @Schema(description = "스펙 이름",example = "스펙 이름")
-    private String itemName;
+    private String specName;
     @NotNull
     @Pattern(regexp = "^[가-힣a-zA-Z\\d`~!@#$%^&*()-_=+\\s]*$")
     @Size(min = 0, max = 100)
@@ -22,9 +22,9 @@ public class SpecPostDto {
     private String content;
 
     @Builder
-    public SpecPostDto(Long itemId, String itemName, String content) {
+    public SpecPostDto(Long itemId, String specName, String content) {
         this.itemId = itemId;
-        this.itemName = itemName;
+        this.specName = specName;
         this.content = content;
     }
 }
