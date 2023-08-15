@@ -15,6 +15,7 @@ public class OptionResponseDto {
     private String optionDetail;
     private int additionalPrice;
     private Integer itemCount;
+    private String optionName;
 
     @Builder
     public OptionResponseDto(Long itemId, Long optionId, String optionDetail, int additionalPrice, Integer itemCount) {
@@ -31,5 +32,6 @@ public class OptionResponseDto {
         this.optionDetail = option.getOptionDetail();
         this.itemCount = option.getItemCount();
         this.additionalPrice = option.getAdditionalPrice();
+        this.optionName = option.getOptionName();
     }
 }
