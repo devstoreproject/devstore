@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { BsImage } from 'react-icons/bs';
 interface ContentsListProps {
   classnames: string;
   tabList: Array<{ id: number; title: string }>;
@@ -52,13 +53,20 @@ export default function ContentsItem({
             {date}
           </span>
         </div>
-        <p className="mb-4 text-lg font-bold text-left">{title}</p>
-        <div className="w-full bg-gray">
-          <img
-            src={image?.thumbnailPath === null ? '' : image?.thumbnailPath}
-            alt="공지사항 이미지"
-            className="text-left"
-          />
+        <p className="mb-4 text-lg font-bold text-left line-clamp-2">{title}</p>
+        <div className="flex items-center justify-center bg-gray">
+          {image != null ? (
+            <img
+              src={image?.thumbnailPath}
+              alt="공지사항 이미지"
+              className="object-cover w-full h-40"
+            />
+          ) : (
+            <div className="w-full h-40">
+              <BsImage className="w-full my-2 text-8xl text-tab-gray" />
+              <span className="text-2xl font-bold text-tab-gray">No Image</span>
+            </div>
+          )}
         </div>
       </div>
     </button>

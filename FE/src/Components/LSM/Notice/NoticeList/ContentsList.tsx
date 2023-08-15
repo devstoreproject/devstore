@@ -27,7 +27,7 @@ export default function ContentsList({ tabList, datas }: NoticeListProp) {
           classnames={` ${idx % 4 === 0 ? 'ml-0' : ''} ${
             idx % 4 === 3 ? 'mr-0' : ''
           }`}
-          key={idx}
+          key={data.noticeId}
           tabList={tabList}
           category={data.category}
           noticeId={data.noticeId}
