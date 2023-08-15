@@ -16,6 +16,7 @@ interface ContentsListProps {
     originalPath: string;
     thumbnailPath: string;
   };
+  adminPath: string;
 }
 
 export default function ContentsItem({
@@ -27,7 +28,7 @@ export default function ContentsItem({
   image,
   noticeId,
 }: ContentsListProps) {
-  const classname = `flex flex-col items-center transition-all transform cursor-pointer m-7 hover:-translate-y-2 shadow-signBox hover:shadow-contentsBox rounded-xl w-80 h-80 px-5 ${classnames}`;
+  const classname = `flex flex-col items-center transition-all transform m-7 hover:-translate-y-2 shadow-signBox hover:shadow-contentsBox rounded-xl w-80 h-80 px-5 ${classnames}`;
 
   let date = modifiedAt?.slice();
   date = date?.slice(0, 10);
