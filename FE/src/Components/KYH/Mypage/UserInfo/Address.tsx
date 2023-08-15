@@ -24,40 +24,39 @@ export default function Address({
     setAddressDetail(e.target.value);
   };
   return (
-    <div className="flex mt-2">
-      <div className="flex flex-col w-full mr-2">
-        <span className="ml-2">주소</span>
-        <div className="flex items-center">
-          <input
-            type="text"
-            className="h-10 pl-2 mr-2 border border-black"
-            placeholder="우편번호"
-            defaultValue={zipCode}
-            readOnly
-          ></input>
-          <button
-            className="w-32 ml-auto h-10 px-3 mb-1 text-sm bg-gray-300 rounded-xl shadow-btn active:shadow-none active:ml-3.5 active:mt-6.5 duration-100"
-            onClick={addressBtnHandler}
-          >
-            우편번호찾기
-          </button>
-        </div>
+    <div className="flex mb-4">
+      <span className="w-32 mt-2 text-gray-500">주소</span>
+      <div className="flex flex-col">
         <input
           type="text"
-          className="h-10 pl-2 mt-4 text-sm border border-black"
+          className="h-10 pl-4 mb-4 text-sm border border-gray-300 w-96 rounded-3xl"
+          placeholder="우편번호"
+          defaultValue={zipCode}
+          readOnly
+        ></input>
+        <input
+          type="text"
+          className="h-10 pl-4 mb-4 text-sm border border-gray-300 w-96 rounded-3xl"
           placeholder="주소"
           defaultValue={address}
           readOnly
         ></input>
         <input
           type="text"
-          className="h-10 pl-2 mt-4 text-sm border border-black"
+          className="h-10 pl-4 text-sm border border-gray-300 w-96 rounded-3xl"
           placeholder="상세주소"
           onChange={addressDetailInputHandler}
           value={addressDetail}
         ></input>
-        <span className="mt-1 ml-2 text-xs font-bold text-red-500"></span>
       </div>
+      <button
+        className="h-10 px-4 ml-3 text-sm bg-gray-300 rounded-xl shadow-btn active:shadow-none active:ml-3.5 active:mt-6.5 duration-100"
+        onClick={addressBtnHandler}
+      >
+        우편번호찾기
+      </button>
+
+      <span className="mt-1 ml-2 text-xs font-bold text-red-500"></span>
     </div>
   );
 }

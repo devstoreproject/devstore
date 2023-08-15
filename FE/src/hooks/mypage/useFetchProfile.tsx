@@ -1,18 +1,12 @@
 import { useEffect, useState } from 'react';
 import api from 'api';
+import type { profile } from 'model/auth';
 
-interface profile {
-  userId: number;
-  email: string;
-  password: string;
-  nickname: string;
-  profileImage: string | null;
-}
 const useFetchProfile = () => {
   const [profile, setProfile] = useState<profile>({
     userId: 0,
     email: '',
-    password: '',
+    phone: '',
     nickname: '',
     profileImage: null,
   });

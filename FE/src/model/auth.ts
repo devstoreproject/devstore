@@ -32,3 +32,11 @@ export interface Phone {
   setPhone: React.Dispatch<React.SetStateAction<string>>;
   isPhoneValid: boolean;
 }
+
+export interface profile {
+  userId: number;
+  email: string;
+  phone: string;
+  nickname: string;
+  profileImage: string | null;
+}

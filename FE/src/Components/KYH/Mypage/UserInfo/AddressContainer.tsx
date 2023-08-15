@@ -1,27 +1,48 @@
-export default function AddressContainer() {
+import DaumPostcode from 'react-daum-postcode';
+import Address from './Address';
+import { useState } from 'react';
+
+interface addressContainerProps {
+  address: string;
+  setAddress: React.Dispatch<React.SetStateAction<string>>;
+  addressDetail: string;
+  setAddressDetail: React.Dispatch<React.SetStateAction<string>>;
+  zipCode: string;
+  setZipCode: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function AddressContainer({
+  address,
+  setAddress,
+  addressDetail,
+  setAddressDetail,
+  zipCode,
+  setZipCode,
+}: addressContainerProps) {
+  const [isOpenPost, setIsOpenPost] = useState(false);
+
+  const onCompletePost = (data: any) => {
+    setZipCode(data.zonecode);
+    setAddress(data.address);
+    setIsOpenPost(false);
+  };
   return (
-    <>
-      <div className="flex items-center mb-4">
-        <span className="w-32 text-gray-500">주소</span>
-        <input
-          type="text"
-          className="h-10 pl-4 mr-4 text-sm border border-gray-300 w-72 rounded-3xl"
-        />
-        <button className="w-20 h-10 text-sm text-white bg-black rounded-3xl">
-          주소검색
-        </button>
-      </div>
-      <div className="flex items-center mb-4">
-        <input
-          type="text"
-          className="h-10 pl-4 ml-32 mr-4 text-sm border border-gray-300 w-80 rounded-3xl"
-        />
-        <input
-          type="text"
-          className="h-10 pl-4 mr-4 text-sm border border-gray-300 w-60 rounded-3xl"
-          placeholder="상세주소를 입력해 주세요"
-        />
-      </div>
-    </>
+    <div>
+      {isOpenPost ? (
+        <div className="absolute top-0 left-0 flex flex-col w-full h-full bg-black opacity-90 rounded-xl" />
+      ) : null}
+      <Address
+        setIsOpenPost={setIsOpenPost}
+        addressDetail={addressDetail}
+        setAddressDetail={setAddressDetail}
+        address={address}
+        zipCode={zipCode}
+      />
+      {isOpenPost ? (
+        <div className="absolute top-96 w-120">
+          <DaumPostcode onComplete={onCompletePost} autoClose={false} />
+        </div>
+      ) : null}
+    </div>
   );
 }
