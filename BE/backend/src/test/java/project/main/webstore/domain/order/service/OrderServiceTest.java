@@ -4,12 +4,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
 import project.main.webstore.domain.order.entity.Orders;
-import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.repository.OrderRepository;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
@@ -42,17 +44,17 @@ class OrderServiceTest {
 
         OrderLocalDto post = new OrderLocalDto("안녕", 1L, 1L, 1L, 1L);
 
-        Orders order = new Orders(post.getMessage(), cart, user, info, OrdersStatus.ORDER_COMPLETE, null);
+        Orders order = new Orders(post.getMessage(), cart, user, info);
 
         //when
         //mocking
-        BDDMockito.given(userService.validUser(ArgumentMatchers.anyLong())).willReturn(user);
+        BDDMockito.given(userService.validUserAllInfo(ArgumentMatchers.anyLong())).willReturn(user);
         BDDMockito.given(orderRepository.save(ArgumentMatchers.any(Orders.class))).willReturn(order);
 
         Orders result = orderService.createOrder(post, 1L);
 
         //then
-        Assertions.assertThat(result.getInfoId()).isEqualTo(info.getInfoId()); //비교검증
+        Assertions.assertThat(result.getRecipient()).isEqualTo(info.getRecipient()); //비교검증
         Assertions.assertThat(result.getOrderId()).isNull();
     }
 

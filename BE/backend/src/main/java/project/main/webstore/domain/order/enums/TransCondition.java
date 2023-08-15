@@ -1,4 +1,4 @@
-package project.main.webstore.domain.orderHistory.enums;
+package project.main.webstore.domain.order.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

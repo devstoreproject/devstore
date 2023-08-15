@@ -3,20 +3,17 @@ package project.main.webstore.domain.order.entity;
 import lombok.*;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.Cart;
-import project.main.webstore.domain.coupon.entity.Coupon;
 import project.main.webstore.domain.item.exception.ItemExceptionCode;
+import project.main.webstore.domain.order.enums.OrderedItem;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.enums.PaymentType;
-import project.main.webstore.domain.orderHistory.controller.OrderedItem;
-import project.main.webstore.domain.orderHistory.enums.TransCondition;
-import project.main.webstore.domain.payment.entity.Payment;
+import project.main.webstore.domain.order.enums.TransCondition;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.valueObject.Address;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,11 +67,6 @@ public class Orders extends Auditable {
     @Embedded
     private PaymentType paymentType;
 
-    @OneToMany(mappedBy = "order")
-    @Builder.Default
-    private List<Coupon> coupons = new ArrayList<>();
-    @OneToOne(mappedBy = "order")
-    private Payment payment;
 
     //TODO : 작업 중인 아이 지불 정보를 알고 있어야하는가 서버가?
     @Builder

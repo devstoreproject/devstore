@@ -1,4 +1,4 @@
-package project.main.webstore.domain.orderHistory.controller;
+package project.main.webstore.domain.order.enums;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

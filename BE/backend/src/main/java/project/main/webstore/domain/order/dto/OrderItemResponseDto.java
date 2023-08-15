@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import project.main.webstore.domain.orderHistory.controller.OrderedItem;
+import project.main.webstore.domain.order.enums.OrderedItem;
 
 @Getter
 @Setter
