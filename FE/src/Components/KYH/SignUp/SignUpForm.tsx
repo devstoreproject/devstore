@@ -31,6 +31,7 @@ export default function SignUpForm() {
   const [isUserNameValid, setIsUserNameValid] = useState(true);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [isPhoneValid, setIsPhoneValid] = useState(true);
+  const [isNicknameDuplicate, setIsNicknameDuplicate] = useState(true);
 
   const submitHandler = (e: React.FormEvent): void => {
     e.preventDefault();
@@ -49,6 +50,7 @@ export default function SignUpForm() {
     if (!ValidateUserName(userName, setIsUserNameValid)) return;
     if (!ValidateNickname(nickname, setIsNicknameValid)) return;
     if (!ValidatePhone(phone, setIsPhoneValid)) return;
+    if (!isNicknameDuplicate) return;
 
     fetchSignUp(userInfo, navigate);
   };
@@ -82,6 +84,8 @@ export default function SignUpForm() {
         nickname={nickname}
         setNickname={setNickname}
         isNicknameValid={isNicknameValid}
+        isNicknameDuplicate={isNicknameDuplicate}
+        setIsNicknameDuplicate={setIsNicknameDuplicate}
       />
       <PhoneContainer
         phone={phone}
