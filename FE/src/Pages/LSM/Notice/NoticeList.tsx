@@ -37,7 +37,6 @@ export default function NoticeList() {
       }
 
       setDatas(res?.data.data.content);
-      console.log(res?.data.data.content);
     } catch (error) {
       console.log(error);
     }
