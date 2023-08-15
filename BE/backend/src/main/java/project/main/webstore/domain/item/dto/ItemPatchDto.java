@@ -29,7 +29,6 @@ public class ItemPatchDto {
     @Schema(description = "배달 가격",example = "3000")
     private Integer deliveryPrice;
     private int discountRate;
-    private int mileageRate;
     //이미지 삭제 로직
     @Schema(description = "삭제할 이미지의 ID 리스트")
     private List<Long> deleteImageId;

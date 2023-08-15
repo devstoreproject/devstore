@@ -45,7 +45,7 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String provider = clientRegistration.getRegistrationId().toUpperCase();
         String providerId = clientRegistration.getClientId();
 
-        User user = new User(name, profile, password, email, 0, null, Grade.NORMAL, ProviderId.of(provider), UserRole.CLIENT);
+        User user = new User(name, profile, password, email, null, Grade.NORMAL, ProviderId.of(provider), UserRole.CLIENT);
 
         userService.oAuth2CreateOrGet(user);
         UserInfoDto info = new UserInfoDto(user);
