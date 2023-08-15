@@ -1,6 +1,7 @@
 package project.main.webstore.domain.notice.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.Explode;
 import io.swagger.v3.oas.annotations.enums.ParameterStyle;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -91,7 +93,13 @@ public class NoticeController {
 
     @GetMapping()
     @ApiResponse(responseCode = "200", description = "공지 전체 조회")
-    public ResponseEntity<ResponseDto<Page<NoticeGetSimpleResponseDto>>> getNoticeAll(@PageableDefault(sort = "id") Pageable pageable, @RequestParam String category) {
+    @Parameters({
+            @Parameter(name = "page", example = "0", description = "첫 페이지가 0번지"),
+            @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
+            @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
+    })
+    public ResponseEntity<ResponseDto<Page<NoticeGetSimpleResponseDto>>> getNoticeAll(@Parameter(hidden = true)@PageableDefault(sort = "createdAt",direction = Sort.Direction.DESC) Pageable pageable,
+                                                                                      @RequestParam(required = false) String category) {
         Page<Notice> responseEntity = getService.getSimpleNotice(pageable, category);
         Page<NoticeGetSimpleResponseDto> responsePage = noticeMapper.toGetSimplePageResponse(responseEntity);
         var responseDto = ResponseDto.<Page<NoticeGetSimpleResponseDto>>builder()
