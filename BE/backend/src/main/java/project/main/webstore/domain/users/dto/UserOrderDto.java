@@ -11,13 +11,11 @@ public class UserOrderDto {
     private String nickName;
     private String profileImage;
     private String email;
-    private int mileage;
 
     public UserOrderDto(User user) {
         this.id = user.getId();
         this.nickName = user.getNickName();
         this.profileImage = user.getProfileImage();
         this.email = user.getEmail();
-        this.mileage = user.getMileage();
     }
 }

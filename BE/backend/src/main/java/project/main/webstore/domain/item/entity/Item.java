@@ -42,9 +42,6 @@ public class Item extends Auditable {
     @Column(nullable = false)
     @Setter
     private String itemName;
-    //    @Column(nullable = false)
-//    @Setter
-//    private Integer defaultCount;
     @Lob
     @Setter
     private String description;
@@ -63,8 +60,6 @@ public class Item extends Auditable {
     private Integer deliveryPrice;
     @Setter
     private Integer discountRate;
-    @Setter
-    private Integer mileageRate;
     @Enumerated(STRING)
     @Setter
     private Category category;
@@ -96,7 +91,6 @@ public class Item extends Auditable {
 
     public Item(ItemPostDto post) {
         this.itemName = post.getName();
-        this.mileageRate = post.getMileageRate();
         this.description = post.getDescription();
         this.itemStatus = ItemStatus.ON_STACK;
         this.discountRate = post.getDiscountRate();
@@ -110,7 +104,6 @@ public class Item extends Auditable {
 
     public Item(ItemPatchDto patch) {
         this.itemName = patch.getName();
-        this.mileageRate = patch.getMileageRate();
         this.description = patch.getDescription();
         this.discountRate = patch.getDiscountRate();
         this.defaultItem = new ItemOption(0, patch.getDefaultCount(), this);
@@ -119,7 +112,7 @@ public class Item extends Auditable {
     }
 
     @Builder(builderMethodName = "stub")
-    public Item(List<ItemImage> itemImageList, Long itemId, String itemName, String description, Integer itemPrice, Integer deliveryPrice, Integer discountRate, Integer mileageRate, Category category, List<ItemSpec> specList, List<ItemOption> optionList, List<CartItem> cartItemList, List<Review> reviewList, List<Question> questionList, List<PickedItem> pickedItem, ItemOption defaultItem) {
+    public Item(List<ItemImage> itemImageList, Long itemId, String itemName, String description, Integer itemPrice, Integer deliveryPrice, Integer discountRate, Category category, List<ItemSpec> specList, List<ItemOption> optionList, List<CartItem> cartItemList, List<Review> reviewList, List<Question> questionList, List<PickedItem> pickedItem, ItemOption defaultItem) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.description = description;
@@ -128,7 +121,6 @@ public class Item extends Auditable {
         this.itemPrice = itemPrice;
         this.deliveryPrice = deliveryPrice;
         this.discountRate = discountRate;
-        this.mileageRate = mileageRate;
         this.category = category;
         this.specList = specList;
         this.optionList = optionList;
@@ -137,38 +129,7 @@ public class Item extends Auditable {
         this.questionList = questionList;
         this.pickedItem = pickedItem;
         this.defaultItem = defaultItem;
-    }
-
-    public void addSpec(ItemSpec itemSpec) {
-        this.specList.add(itemSpec);
-        itemSpec.setItem(this);
-        if (itemSpec.getItem() != this) {
-            itemSpec.setItem(this);
-        }
-    }
-
-    public void addOption(ItemOption itemOption) {
-        this.optionList.add(itemOption);
-        itemOption.setItem(this);
-        if (itemOption.getItem() != this) {
-            itemOption.setItem(this);
-        }
-    }
-
-    public void addReview(Review review) {
-        this.reviewList.add(review);
-        review.setItem(this);
-        if (review.getItem() != this) {
-            review.setItem(this);
-        }
-    }
-
-    public void addQuestion(Question question) {
-        questionList.add(question);
-        question.setItem(this);
-        if (question.getItem() != this) {
-            question.setItem(this);
-        }
+        this.itemImageList = itemImageList;
     }
 
     public void item(Long itemId) {

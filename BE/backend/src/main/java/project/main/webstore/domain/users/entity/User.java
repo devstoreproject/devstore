@@ -45,7 +45,6 @@ public class User extends Auditable implements Principal {
     private String password;
     private String email;
     private LocalDateTime lastConnectedDate;
-    private int mileage;
 
     private String phone;
 
@@ -92,13 +91,12 @@ public class User extends Auditable implements Principal {
         }
     }
 
-    public User(String nickName, String profileImage, String password, String email, int mileage, String phone, Grade grade, ProviderId providerId, UserRole userRole) {
+    public User(String nickName, String profileImage, String password, String email, String phone, Grade grade, ProviderId providerId, UserRole userRole) {
         this.nickName = nickName;
         this.profileImage = profileImage;
         this.password = password;
         this.email = email;
         this.lastConnectedDate = LocalDateTime.now();
-        this.mileage = mileage;
         this.phone = phone;
         this.grade = grade;
         this.providerId = providerId;
@@ -119,7 +117,7 @@ public class User extends Auditable implements Principal {
     }
 
     @Builder(builderMethodName = "stubBuilder")
-    public User(Long id, String nickName, String userName, String profileImage, String password, String email, int mileage, String phone, List<PickedItem> pickedItemList, Cart cart) {
+    public User(Long id, String nickName, String userName, String profileImage, String password, String email, String phone, List<PickedItem> pickedItemList, Cart cart) {
         this.id = id;
         this.nickName = nickName;
         this.userName = userName;
@@ -127,7 +125,6 @@ public class User extends Auditable implements Principal {
         this.password = password;
         this.email = email;
         this.lastConnectedDate = LocalDateTime.now();
-        this.mileage = mileage;
         this.phone = phone;
         this.grade = Grade.NORMAL;
         this.providerId = JWT;
