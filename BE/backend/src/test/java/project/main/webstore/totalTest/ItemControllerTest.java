@@ -60,7 +60,7 @@ public class ItemControllerTest {
                 .name("맥북")
                 .description("이것은 맥북입니다.")
                 .specList(List.of(new ItemPostSpecDto("CPU", "짱짱강함"), new ItemPostSpecDto("CTO", "짱짱강할껄")))
-                .optionList(List.of(new OptionPostRequestDto("옵션 세부 내역", 100, 10000), new OptionPostRequestDto("옵션 세부 내역", 100, 10000)))
+                .optionList(List.of(new OptionPostRequestDto("옵션 세부 내역", 100, 10000,"옵션 이름"), new OptionPostRequestDto("옵션 세부 내역", 100, 10000,"옵션 이름")))
                 .infoList(List.of(new ImageSortDto(1,true)))
                 .build();
         String content = gson.toJson(imagePostDto);

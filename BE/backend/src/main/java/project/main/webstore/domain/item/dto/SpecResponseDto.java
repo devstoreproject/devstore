@@ -11,18 +11,18 @@ import project.main.webstore.domain.item.entity.ItemSpec;
 @NoArgsConstructor
 public class SpecResponseDto {
     private Long specId;
-    private String itemName;
+    private String specName;
     private String content;
 
     @Builder
-    public SpecResponseDto(Long specId, String itemName, String content) {
+    public SpecResponseDto(Long specId, String specName, String content) {
         this.specId = specId;
-        this.itemName = itemName;
+        this.specName = specName;
         this.content = content;
     }
     public SpecResponseDto(ItemSpec spec) {
         this.specId = spec.getSpecId();
-        this.itemName = spec.getName();
+        this.specName = spec.getName();
         this.content = spec.getContent();
     }
 

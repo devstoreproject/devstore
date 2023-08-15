@@ -39,7 +39,7 @@ public class OptionMapper {
     }
 
     public ItemOption toEntity(OptionPostRequestDto post) {
-        return new ItemOption(post.getOptionDetail(),post.getItemCount(),post.getAdditionalPrice());
+        return new ItemOption(post.getOptionDetail(),post.getItemCount(),post.getAdditionalPrice(),post.getOptionName());
     }
 
     public OptionIdResponseDto toOptionIdResponse(ItemOption result) {

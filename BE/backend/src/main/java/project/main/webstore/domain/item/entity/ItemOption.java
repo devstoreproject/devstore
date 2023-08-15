@@ -16,7 +16,6 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "ITEM_OPTION")
 @NoArgsConstructor(access = PROTECTED)
 public class ItemOption {
-
     @Id
     @Setter
     @Column(name = "ITEM_OPTION_ID", updatable = false)
@@ -24,6 +23,7 @@ public class ItemOption {
     private Long optionId;
     @Setter
     private String optionDetail;
+    private String optionName;
 
     private int additionalPrice;
     @Setter
@@ -35,24 +35,25 @@ public class ItemOption {
     private Item item;
 
     @Builder
-    public ItemOption(Long optionId, String optionDetail, Item item,Integer itemCount) {
+    public ItemOption(Long optionId, String optionDetail, Item item,Integer itemCount,String optionName) {
         this.optionId = optionId;
         this.itemCount = itemCount;
         this.optionDetail = optionDetail;
         this.item = item;
+        this.optionName = optionName;
     }
-
-    public ItemOption(String optionDetail, int itemCount,int additionalPrice, Item item) {
-        this.optionDetail = optionDetail;
+    public ItemOption(String optionDetail,Integer itemCount,int additionalPrice, Item item) {
         this.itemCount = itemCount;
+        this.optionDetail = optionDetail;
         this.additionalPrice = additionalPrice;
         this.item = item;
     }
-
-    public ItemOption(String optionDetail, int itemCount,int additionalPrice) {
+    public ItemOption(String optionDetail, int itemCount,int additionalPrice,String optionName) {
         this.optionDetail = optionDetail;
         this.itemCount = itemCount;
         this.additionalPrice = additionalPrice;
+        this.optionName = optionName;
+
     }
 
     public ItemOption(int additionalPrice, Integer itemCount, Item item) {

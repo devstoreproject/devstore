@@ -10,7 +10,6 @@ public class UserStub {
         return User.stubBuilder()
                 .cart(new Cart())
                 .userName("김복자")
-                .mileage(0)
                 .phone("010-1231-1234")
                 .email("admin@gmail.com")
                 .pickedItemList(new ArrayList<>())
