@@ -50,15 +50,13 @@ function App() {
           <Route path="searchcategory" element={<SearchCategory />} />
           <Route path="search" element={<Search />} />
           <Route path="searchcategory/:id" element={<ProductDetail />} />
+          <Route path="/notice" element={<NoticeList />} />
+          <Route path="/notice/:id" element={<NoticeDetail />} />
         </Route>
 
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/sleeperaccount" element={<SleeperAccount />} />
-        <Route path="/notice" element={<NoticeList />} />
-        <Route path="/notice/post" element={<NoticePost />} />
-        <Route path="/notice/edit" element={<NoticeEdit />} />
-        <Route path="/notice/:id" element={<NoticeDetail />} />
 
         <Route path="/mypage" element={<Mypage />}>
           <Route path="orderlist" element={<OrderList />} />
@@ -79,6 +77,9 @@ function App() {
           <Route path="reviewmanagement" element={<ReviewManagement />} />
           <Route path="orderedlist" element={<OrderedList />} />
           <Route path="sales" element={<Sales />} />
+          <Route path="notice" element={<NoticeList />} />
+          <Route path="notice/post" element={<NoticePost />} />
+          <Route path="notice/edit" element={<NoticeEdit />} />
         </Route>
         <Route path="/cart" element={<Cart />} />
         <Route path="/checklist" element={<CheckList />} />
