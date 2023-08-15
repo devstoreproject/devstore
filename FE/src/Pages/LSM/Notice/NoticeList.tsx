@@ -19,32 +19,21 @@ export default function NoticeList() {
     try {
       let res;
       if (tabId === 2) {
-        res = await api.get('/api/notices?page=0&size=1&category=OPERATING');
+        res = await api.get(
+          '/api/notices?category=OPERATING&page=0&size=20&sort=id%2Cdesc'
+        );
       } else if (tabId === 3) {
-        res = await api.get('/api/notices?page=0&size=1&category=UPDATE');
+        res = await api.get(
+          '/api/notices?category=UPDATE&page=0&size=20&sort=id%2Cdesc'
+        );
       } else if (tabId === 4) {
-        res = await api.get('/api/notices?page=0&size=1&category=EVENT');
+        res = await api.get(
+          '/api/notices?category=EVENT&page=0&size=20&sort=id%2Cdesc'
+        );
       } else {
-        const operatingRes = await api.get(
-          '/api/notices?page=0&size=1&category=OPERATING'
+        res = await api.get(
+          '/api/notices?page=0&size=10&sort=id,desc&sort=createdAt,desc'
         );
-        const updateRes = await api.get(
-          '/api/notices?page=0&size=1&category=UPDATE'
-        );
-        const eventRes = await api.get(
-          '/api/notices?page=0&size=1&category=EVENT'
-        );
-
-        const allData = [
-          ...operatingRes.data.data.content,
-          ...updateRes.data.data.content,
-          ...eventRes.data.data.content,
-        ];
-        allData.sort(
-          (a, b) =>
-            new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
-        );
-        res = { data: { data: { content: allData } } };
       }
 
       setDatas(res?.data.data.content);
