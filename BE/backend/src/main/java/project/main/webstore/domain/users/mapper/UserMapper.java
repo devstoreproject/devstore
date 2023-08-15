@@ -12,7 +12,7 @@ public class UserMapper {
     }
 
     public User toEntity(UserPatchRequestDto patch) {
-        return User.patchBuilder().patch(patch).build();
+        return new User(patch);
     }
     public UserIdResponseDto toDto(User user) {
         return new UserIdResponseDto(user.getId());
