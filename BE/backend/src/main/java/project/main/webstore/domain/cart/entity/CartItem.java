@@ -39,7 +39,7 @@ public class CartItem {
     }
 
     public int getDiscountedPrice() {
-        double itemPrice = this.option.getItem().getItemPrice().getValue() + this.option.getAdditionalPrice();
+        double itemPrice = this.option.getItem().getItemPrice() + this.option.getAdditionalPrice();
         int itemCount = this.itemCount;
         double discountRate = this.option.getItem().getDiscountRate();
 
@@ -51,6 +51,6 @@ public class CartItem {
     }
 
     public int getTotalPrice() {
-        return this.itemCount * (this.option.getItem().getItemPrice().getValue() + this.option.getAdditionalPrice());
+        return this.itemCount * (this.option.getItem().getItemPrice() + this.option.getAdditionalPrice());
     }
 }

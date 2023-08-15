@@ -2,6 +2,7 @@ package project.main.webstore.domain.item.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.main.webstore.domain.image.dto.ImageSortDto;
@@ -13,6 +14,7 @@ import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemPostDto {

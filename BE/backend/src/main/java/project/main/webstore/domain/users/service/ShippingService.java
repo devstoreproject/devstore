@@ -8,11 +8,9 @@ import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.repository.ShippingRepository;
-import project.main.webstore.domain.users.repository.UserRepository;
 import project.main.webstore.exception.BusinessLogicException;
-import project.main.webstore.exception.CommonExceptionCode;
 
-import javax.validation.constraints.Positive;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,8 +23,8 @@ public class ShippingService {
 
     public ShippingInfo writeInfo(ShippingInfo info, Long userId) {
         User findUser = userValidService.validUser(userId);
-        info.setUser(findUser);
-        return shippingRepository.save(info);
+        findUser.addShipInfo(info);
+        return info;
     }
 
     public ShippingInfo editInfo(ShippingInfo info, Long userId) {
@@ -43,6 +41,10 @@ public class ShippingService {
 
     public ShippingInfo getInfo(Long infoId) {
         return findVerifiedInfo(infoId);
+    }
+    public List<ShippingInfo> getInfoList(Long userId) {
+        User findUser = userValidService.validUser(userId);
+        return findUser.getShippingInfoList();
     }
 
     public void deleteInfo(Long infoId, Long userId) {

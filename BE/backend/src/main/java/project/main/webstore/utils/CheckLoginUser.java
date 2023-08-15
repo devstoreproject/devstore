@@ -49,5 +49,18 @@ public class CheckLoginUser {
             return ((UserInfoDto) principal).getUserId();
         }
     }
+    public static Long getContextIdAdminZero(Object principal) {
+        if (principal instanceof String) {
+            return -1L;
+        } else {
+            UserInfoDto info = (UserInfoDto) principal;
+
+            if (info.getUserRole().equals(UserRole.ADMIN)) {
+                return 0L;
+            } else {
+                return info.getUserId();
+            }
+        }
+    }
 
 }

@@ -40,5 +40,4 @@ public class ShippingMapper {
         return infoList.stream().map(shippingInfo -> new ShippingInfoResponseDto(shippingInfo)).collect(Collectors.toList());
 
     }
-
 }

@@ -3,6 +3,7 @@ package project.main.webstore.domain.users.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.main.webstore.domain.image.dto.ImageSortDto;
 
 import javax.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import javax.validation.constraints.Pattern;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserPatchRequestDto {
 
     @NotBlank

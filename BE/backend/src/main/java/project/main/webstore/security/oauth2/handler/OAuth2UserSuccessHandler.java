@@ -56,7 +56,9 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         response.setHeader("Refresh", refreshToken);
         Cookie cookie = trans.createCookie(refreshToken);
         response.addCookie(cookie);
-        getRedirectStrategy().sendRedirect(request,response,createURI().toString());
+
+        String url = createURI().toString();
+        getRedirectStrategy().sendRedirect(request,response, url);
     }
 
     private URI createURI(){
@@ -65,7 +67,7 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
                 .scheme("http")
                 .host("127.0.0.1")
                 .port("8080")
-                .path("/users/1")
+                .path("/api/users/1")
                 .build()
                 .toUri();
     }

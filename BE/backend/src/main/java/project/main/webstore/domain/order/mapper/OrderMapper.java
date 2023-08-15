@@ -35,4 +35,16 @@ public class OrderMapper {
     public Page<OrderResponseDto> orderToOrderResponsePage(Page<Orders> orderPage) {
         return orderPage.map(OrderResponseDto::new);
     }
+
+    public OrderIdResponseDto toIdResponse(Orders order) {
+        return new OrderIdResponseDto(order.getOrderId());
+    }
+
+    public List<OrderMonthlyPriceDto> toMonthlyAmountResponse(List<OrderDBMonthlyPriceDto> result) {
+        return result.stream().map(OrderMonthlyPriceDto::new).collect(Collectors.toList());
+    }
+
+    public List<OrderItemSaleDto> toItemSaleResponse(List<OrderDBItemSaleDto> result) {
+        return result.stream().map(OrderItemSaleDto::new).collect(Collectors.toList());
+    }
 }

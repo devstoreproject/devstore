@@ -3,9 +3,11 @@ package project.main.webstore.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Schema(description = "데이터 응답 틀")
+@NoArgsConstructor
 public class ResponseDto<T> {
     @Schema(description = "실제 데이터")
     private T data;

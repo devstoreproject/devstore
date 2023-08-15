@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import project.main.webstore.domain.cart.entity.CartItem;
+import project.main.webstore.domain.order.enums.OrderedItem;
 
 @Getter
 @Setter
@@ -21,11 +21,11 @@ public class OrderItemResponseDto { // 주문할 아이템 정보 결과
     private int discountRate;
 
     @Builder
-    public OrderItemResponseDto(CartItem item) {
+    public OrderItemResponseDto(OrderedItem item) {
         this.itemId = item.getOption().getItem().getItemId();
         this.itemName = item.getOption().getItem().getItemName();
         this.itemCount = item.getItemCount();
-        this.itemPrice = item.getTotalPrice();
+        this.itemPrice = item.getPrice();
         this.discountRate = item.getOption().getItem().getDiscountRate();
         this.discountPrice = item.getDiscountedPrice();
     }

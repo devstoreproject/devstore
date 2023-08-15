@@ -20,8 +20,9 @@ import java.util.List;
 public class CartController {
     private final CartService cartService;
     private final CartMapper mapper;
+
     @PostMapping("/users/{userId}")
-    public ResponseEntity<ResponseDto<CartIdResponseDto>> postCart(@RequestBody CartPostRequestDto post, @PathVariable Long userId){
+    public ResponseEntity<ResponseDto<CartIdResponseDto>> postCart(@RequestBody CartPostRequestDto post, @PathVariable Long userId) {
         List<LocalCartDto> request = mapper.toLocalList(post.getItemList());
         Cart result = cartService.postCart(request, userId);
 
@@ -33,7 +34,7 @@ public class CartController {
 
     //수량 변경
     @PatchMapping("/users/{userId}")
-    public ResponseEntity<ResponseDto<CartIdResponseDto>> patchCart(@PathVariable Long userId, @RequestBody CartPatchRequestDto patch){
+    public ResponseEntity<ResponseDto<CartIdResponseDto>> patchCart(@PathVariable Long userId, @RequestBody CartPatchRequestDto patch) {
         List<LocalCartDto> request = mapper.toLocalList(patch.getItemList());
         Cart result = cartService.patchCart(request, userId);
         CartIdResponseDto response = mapper.toResponseId(result);
@@ -44,7 +45,7 @@ public class CartController {
 
     //일부 삭제
     @PatchMapping("/users/{userId}/del")
-    public ResponseEntity<ResponseDto<CartIdResponseDto>> patchCart(@PathVariable Long userId,@RequestBody CartDeleteDto delete){
+    public ResponseEntity<ResponseDto<CartIdResponseDto>> patchCart(@PathVariable Long userId, @RequestBody CartDeleteDto delete) {
 
         Cart result = cartService.deleteCartItem(userId, delete.getDeleteIdList());
         CartIdResponseDto response = mapper.toResponseId(result);
@@ -55,7 +56,7 @@ public class CartController {
 
     //조회
     @GetMapping("/users/{userId}")
-    public ResponseEntity<ResponseDto<CartGetResponseDto>> getCart(@PathVariable Long userId){
+    public ResponseEntity<ResponseDto<CartGetResponseDto>> getCart(@PathVariable Long userId) {
         Cart result = cartService.getCart(userId);
         CartGetResponseDto response = mapper.toGetResponse(result);
         ResponseDto<CartGetResponseDto> responseDto = ResponseDto.<CartGetResponseDto>builder().data(response).customCode(ResponseCode.OK).build();

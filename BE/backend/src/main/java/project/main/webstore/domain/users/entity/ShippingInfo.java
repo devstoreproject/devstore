@@ -39,6 +39,10 @@ public class ShippingInfo {
     @JoinColumn(name = "ORDER_ID")
     private Orders order;
 
+    public void addId(Long id){
+        this.infoId = id;
+    }
+
     public ShippingInfo(Long infoId, String recipient, Address address, User user) {
         this.infoId = infoId;
         this.recipient = recipient;

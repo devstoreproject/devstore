@@ -18,60 +18,67 @@ import project.main.webstore.utils.CheckLoginUser;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/shipping")
+@RequestMapping("/api/address")
 @Validated
 @RequiredArgsConstructor
 public class ShippingController {
     private final ShippingService service;
     private final ShippingMapper mapper;
 
-    @PostMapping("/{user-id}/info")
-    public ResponseEntity createInfo(@PathVariable("user-id") @Positive Long userId,
-                                     @RequestBody @Valid ShippingInfoPostDto postDto,
+    @PostMapping
+    public ResponseEntity<ResponseDto<ShippingInfoResponseDto>> createInfo(@RequestBody @Valid ShippingInfoPostDto post,
                                      @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
-        ShippingInfo info = mapper.infoPostToInfo(postDto);
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        ShippingInfo info = mapper.infoPostToInfo(post);
         ShippingInfo writeInfo = service.writeInfo(info, userId);
         ShippingInfoResponseDto response = mapper.infoToInfoResponseDto(writeInfo);
 
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<ShippingInfoResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @PatchMapping("/{user-id}/{shipping-info-id}")
-    public ResponseEntity patchShippingInfo(@PathVariable("user-id") @Positive Long userId,
-                                            @PathVariable("shipping-info-id") @Positive Long shippingInfoId,
+    @PatchMapping("/{shipping-info-id}")
+    public ResponseEntity<ResponseDto<ShippingInfoResponseDto>> patchShippingInfo(@PathVariable("shipping-info-id") @Positive Long shippingInfoId,
                                             @AuthenticationPrincipal Object principal,
-                                            @RequestBody @Valid ShippingInfoPatchDto patchDto) {
-        CheckLoginUser.validUserSame(principal, userId);
-
-        ShippingInfo info = mapper.infoPatchToInfo(patchDto);
+                                            @RequestBody @Valid ShippingInfoPatchDto patch) {
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        ShippingInfo info = mapper.infoPatchToInfo(patch);
+        info.addId(shippingInfoId);
         ShippingInfo editInfo = service.editInfo(info, userId);
         ShippingInfoResponseDto response = mapper.infoToInfoResponseDto(editInfo);
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<ShippingInfoResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
 
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 
     @GetMapping("/{shipping-info-id}")
-    public ResponseEntity getShippingInfo(@PathVariable("shipping-info-id") @Positive Long shippingInfoId) {
+    public ResponseEntity<ResponseDto<ShippingInfoResponseDto>> getShippingInfo(@PathVariable("shipping-info-id") @Positive Long shippingInfoId) {
         ShippingInfo getInfo = service.getInfo(shippingInfoId);
         ShippingInfoResponseDto response = mapper.infoGetResponseDto(getInfo);
 
-        var responseDto = ResponseDto.builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<ShippingInfoResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
+
+        return new ResponseEntity(responseDto, HttpStatus.OK);
+    }
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResponseDto<List<ShippingInfoResponseDto>>> getAddressInfoList(@PathVariable@Positive Long userId) {
+        List<ShippingInfo> result = service.getInfoList(userId);
+        List<ShippingInfoResponseDto> response = mapper.InfoResponseDtoList(result);
+
+        var responseDto = ResponseDto.<List<ShippingInfoResponseDto>>builder().data(response).customCode(ResponseCode.CREATED).build();
 
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 
 
-    @DeleteMapping("/{user-id}/info/{shipping-info-id}")
-    public ResponseEntity deleteShippingInfo(@PathVariable("user-id") @Positive Long userId,
-                                             @PathVariable("shipping-info-id") @Positive Long shippingInfoId,
+    @DeleteMapping("/{shipping-info-id}")
+    public ResponseEntity deleteShippingInfo(@PathVariable("shipping-info-id") @Positive Long shippingInfoId,
                                              @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
+        Long userId = CheckLoginUser.getContextIdx(principal);
         service.deleteInfo(shippingInfoId, userId);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);

@@ -22,7 +22,7 @@ public class OptionDto {
         this.itemId = entity.getOption().getItem().getItemId();
         this.optionId = entity.getOption().getOptionId();
         this.count = entity.getItemCount();
-        this.defaultPrice = entity.getOption().getItem().getItemPrice().getValue();
+        this.defaultPrice = entity.getOption().getItem().getItemPrice();
         this.additionalPrice = entity.getOption().getAdditionalPrice();
         this.discountRate = entity.getOption().getItem().getDiscountRate();
         this.itemName = entity.getOption().getItem().getItemName();
