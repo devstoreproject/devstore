@@ -17,6 +17,11 @@ export default function NoticeForm() {
   const submitData = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (category === '') {
+      alert('카테고리를 선택해주세요!🤔');
+      return;
+    }
+
     const formData = new FormData();
 
     const contents = {
@@ -39,7 +44,7 @@ export default function NoticeForm() {
           },
         })
         .then((res) => {
-          navigate(`/admin/notice`);
+          navigate('/admin/notice');
         });
     } catch (error) {
       console.log(error);
