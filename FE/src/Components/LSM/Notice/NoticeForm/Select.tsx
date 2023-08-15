@@ -12,6 +12,7 @@ export default function Select({ setCategory }: NoticeProp) {
         className="px-2 py-1.5 border rounded-lg border-gray"
         defaultValue={'none'}
         onChange={(e) => setCategory(e.target.value)}
+        required={true}
       >
         <option value="none" disabled>
           카테고리 선택
