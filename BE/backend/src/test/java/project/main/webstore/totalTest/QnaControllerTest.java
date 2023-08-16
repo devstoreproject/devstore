@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
@@ -109,7 +110,7 @@ public class QnaControllerTest {
         ResponseEntity<ResponseDto> response = template.postForEntity(url, request, ResponseDto.class, 1L);
         // then
         LinkedHashMap data = (LinkedHashMap) response.getBody().getData();
-        assertThat(data.get("answerId")).isEqualTo(1);
+        assertThat(data.get("questionId")).isEqualTo(1);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
@@ -125,8 +126,9 @@ public class QnaControllerTest {
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        mvc.perform(MockMvcRequestBuilders.post("/api/qna/items/{itemId}",1L).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.data.content.questionId").value(1L));
+        mvc.perform(MockMvcRequestBuilders.get("/api/qna/items/{itemId}",1L).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.data.content[0].questionId").value(1L));
     }
 
 
