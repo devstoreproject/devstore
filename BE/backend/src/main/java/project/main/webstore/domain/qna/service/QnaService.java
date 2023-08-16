@@ -76,7 +76,7 @@ public class QnaService {
     }
     private Question validUserSame(Long userId) {
         Question find = validQuestion(userId);
-        if(find.getUser().getId().equals(userId) ){
+        if(!find.getUser().getId().equals(userId) ){
             throw new BusinessLogicException(QnaExceptionCode.USER_NOT_SAME);
         }
         return find;
@@ -90,6 +90,6 @@ public class QnaService {
     }
 
     private boolean checkUserSameOrAdmin(Long userId, Question find) {
-        return find.getUser().getId().equals(userId) || !find.getUser().getUserRole().equals(UserRole.ADMIN);
+        return !find.getUser().getId().equals(userId) || !find.getUser().getUserRole().equals(UserRole.ADMIN);
     }
 }
