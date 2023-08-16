@@ -67,7 +67,7 @@ public class UserController {
         User request = userMapper.toEntity(patch,userId);
         ImageInfoDto infoDto = null;
         if (image != null) {
-            infoDto = imageMapper.toLocalDto(image, patch.getImageInfo(), UPLOAD_DIR);
+            infoDto = imageMapper.toLocalDto(image, UPLOAD_DIR);
         }
         User result = service.patchUser(request, infoDto);
 
