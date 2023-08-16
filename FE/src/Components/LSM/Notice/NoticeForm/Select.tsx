@@ -1,12 +1,16 @@
-// import { BsChevronDown } from 'react-icons/bs';
-
 interface NoticeProp {
+  category: string;
   setCategory: any;
+  setEditCategory: any;
 }
 
-export default function Select({ setCategory }: NoticeProp) {
+export default function Select({
+  category,
+  setCategory,
+  setEditCategory,
+}: NoticeProp) {
   return (
-    <div className="relative">
+    <div className="">
       <select
         name="notice"
         className="px-2 py-1.5 border rounded-lg border-gray"
@@ -21,9 +25,6 @@ export default function Select({ setCategory }: NoticeProp) {
         <option value="UPDATE">업데이트</option>
         <option value="EVENT">이벤트</option>
       </select>
-      {/* <span className="absolute z-10 flex items-center justify-center text-gray-400 t-0 r-0">
-        <BsChevronDown />
-      </span> */}
     </div>
   );
 }
