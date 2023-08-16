@@ -13,6 +13,7 @@ public class UserGetResponseDto {
     private String nickname;
     private String profileImage;
     private String phone;
+    private String username;
 
     public UserGetResponseDto(User user) {
         this.userId = user.getId();
@@ -21,5 +22,6 @@ public class UserGetResponseDto {
         this.nickname = user.getNickName();
         this.profileImage = user.getProfileImage();
         this.phone = user.getPhone();
+        this.username = user.getUserName();
     }
 }

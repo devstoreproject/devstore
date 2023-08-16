@@ -2,10 +2,12 @@ package project.main.webstore.domain.qna.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.qna.enums.QnaStatus;
 
 @Getter
+@NoArgsConstructor
 public class QuestionDto {
     @Schema(description = "질문글 식별자")
     private Long questionId;

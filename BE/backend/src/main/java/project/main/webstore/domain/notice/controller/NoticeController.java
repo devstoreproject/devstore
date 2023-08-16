@@ -71,11 +71,14 @@ public class NoticeController {
     @ApiResponse(responseCode = "200", description = "공지 수정")
     public ResponseEntity<ResponseDto<NoticeIdResponseDto>> patchNotice(@PathVariable Long noticeId,
                                                                         @RequestPart(required = false) MultipartFile image,
-                                                                        @RequestPart NoticePatchRequestDto patch) {
+                                                                        @RequestPart(required = false) NoticePatchRequestDto patch) {
         Notice notice = noticeMapper.toEntity(patch, noticeId);
-        ImageInfoDto info = imageMapper.toLocalDto(image, UPLOAD_DIR);
+        ImageInfoDto info ;
+        if(image != null){
+            info = imageMapper.toLocalDto(image, UPLOAD_DIR);
+        }
 
-        Notice responseNotice = service.patchNotice(info, notice);
+        Notice responseNotice = service.patchNotice(null, notice);
 
         NoticeIdResponseDto response = noticeMapper.toResponseDto(responseNotice);
         URI uri = UriCreator.createUri(UPLOAD_DIR, responseNotice.getId());

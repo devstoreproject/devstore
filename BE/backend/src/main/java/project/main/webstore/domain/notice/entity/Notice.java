@@ -54,6 +54,10 @@ public class Notice extends Auditable {
         this.noticeCategory = category;
     }
 
+    public Notice(Long noticeId) {
+        this.id = noticeId;
+    }
+
     public void addReviewImage(NoticeImage image) {
         this.noticeImage = image;
         image.setNotice(this);

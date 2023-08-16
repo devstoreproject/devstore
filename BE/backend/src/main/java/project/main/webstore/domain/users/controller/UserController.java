@@ -60,20 +60,19 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(responseCode = "200", description = "사용자 정보 수정")
     public ResponseEntity<ResponseDto<UserIdResponseDto>> patchUser(@PathVariable Long userId,
-                                                                    @RequestPart UserPatchRequestDto patch,
+                                                                    @RequestPart(required = false) UserPatchRequestDto patch,
                                                                     @RequestPart(required = false) MultipartFile image,
                                                                     @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validUserSame(principal, userId);
-        User request = userMapper.toEntity(patch);
-        request.setId(userId);
+        User request = userMapper.toEntity(patch,userId);
         ImageInfoDto infoDto = null;
         if (image != null) {
-            infoDto = imageMapper.toLocalDto(image, patch.getImageInfo(), UPLOAD_DIR);
+            infoDto = imageMapper.toLocalDto(image, UPLOAD_DIR);
         }
         User result = service.patchUser(request, infoDto);
 
         UserIdResponseDto response = userMapper.toDto(result);
-        var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         URI location = UriCreator.createUri("/users/{userId}", response.getUserId());
 
         return ResponseEntity.ok().header("Location", location.toString()).body(responseDto);

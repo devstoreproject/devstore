@@ -146,6 +146,7 @@ public class User extends Auditable implements Principal {
         this.userRole = UserRole.CLIENT;
         this.userStatus = UserStatus.TMP;
         this.userName = post.getUserName();
+        this.cart = new Cart(this);
     }
     @Builder(builderMethodName = "patchBuilder")
     public User(UserPatchRequestDto patch) {

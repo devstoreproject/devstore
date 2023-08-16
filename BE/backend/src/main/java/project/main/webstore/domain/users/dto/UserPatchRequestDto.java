@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.main.webstore.domain.image.dto.ImageSortDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -24,6 +23,4 @@ public class UserPatchRequestDto {
             message = "휴대폰 번호는 010으로 시작하는 11자리 숫자와 '-'로 구성되어야 합니다.")
     @Schema(description = "전화번호")
     private String phone;
-    @Schema(description = "이미지 정보")
-    private ImageSortDto imageInfo;
 }

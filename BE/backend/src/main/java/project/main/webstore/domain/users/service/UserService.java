@@ -91,7 +91,7 @@ public class UserService {
         Optional.ofNullable(user.getGrade()).ifPresent(findUser::setGrade);
         Optional.ofNullable(user.getPhone()).ifPresent(findUser::setPhone);
         Optional.ofNullable(user.getNickName()).ifPresent(findUser::setNickName);
-
+        Optional.ofNullable(user.getPassword()).ifPresent(password -> findUser.setPassword(passwordEncoder.encode(user.getPassword())));
         saveProfileImageIfHas(user, imageInfo);
 
         return findUser;

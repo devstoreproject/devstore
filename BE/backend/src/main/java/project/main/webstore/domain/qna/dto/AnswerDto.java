@@ -2,11 +2,13 @@ package project.main.webstore.domain.qna.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.main.webstore.domain.qna.entity.Answer;
 import project.main.webstore.domain.qna.enums.QnaStatus;
 
 @Getter
 @Schema(description = "공지사항 답변 데이터")
+@NoArgsConstructor
 public class AnswerDto {
     @Schema(description = "공지 답변 식별자")
     private Long answerId;
