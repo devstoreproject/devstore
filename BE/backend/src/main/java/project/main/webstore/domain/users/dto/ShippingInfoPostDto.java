@@ -20,7 +20,7 @@ public class ShippingInfoPostDto {
     @Pattern(regexp = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$", message = "올바른 형식의 전화전호를 입력하세요")
     private String mobileNumber;
     @NotEmpty
-    @Pattern(regexp = "^\\d{3}-\\d{2}$", message = "올바른 형식의 우편번호를 입력하세요")
+    @Pattern(regexp = "^\\d{5}$", message = "올바른 형식의 우편번호를 입력하세요")
     private String zipCode;
 
     @NotNull
@@ -28,7 +28,7 @@ public class ShippingInfoPostDto {
     private String addressSimple;
 
     @NotNull
-    @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$", message = "올바른 형식의 주소를 입력하세요")
+//    @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$", message = "올바른 형식의 주소를 입력하세요")
     private String addressDetail;
 
 
