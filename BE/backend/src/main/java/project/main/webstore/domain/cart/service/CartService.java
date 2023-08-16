@@ -1,11 +1,13 @@
 package project.main.webstore.domain.cart.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.cart.dto.LocalCartDto;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.cart.entity.CartItem;
+import project.main.webstore.domain.cart.enums.CartExceptionCode;
 import project.main.webstore.domain.cart.repository.CartRepository;
 import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.exception.ItemExceptionCode;
@@ -17,6 +19,7 @@ import project.main.webstore.exception.BusinessLogicException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -67,11 +70,13 @@ public class CartService {
     public Cart patchCart(List<LocalCartDto> patch, Long userId) {
         User findUser = userValidService.validUser(userId);
         Cart cart = findUser.getCart();
-
+        if(cart == null){
+            throw new BusinessLogicException(CartExceptionCode.Cart_NOT_FOUND);
+        }
+        log.info("Cart Id = {}",cart.getId());
         for (LocalCartDto localCartDto : patch) {
             for (CartItem cartItem : cart.getCartItemList()) {
                 if (localCartDto.getOptionId().equals(cartItem.getOption().getOptionId())) {
-
                     validItemCount(cartItem.getOption(),localCartDto.getCount());
 
                     cartItem.setItemCount(localCartDto.getCount());
@@ -86,8 +91,14 @@ public class CartService {
     public Cart deleteCartItem(Long userId, List<Long> deleteIdList) {
         Cart cart = userValidService.validUser(userId).getCart();
         List<CartItem> cartItemList = cart.getCartItemList();
-        List<CartItem> collect = cartItemList.stream().filter(cartItem -> !deleteIdList.contains(cartItem.getOption().getOptionId())).collect(Collectors.toList());
-        cart.setCartItemList(collect);
+        for (Long deleteId : deleteIdList) {
+            for (CartItem cartItem : cartItemList) {
+                if(cartItem.getOption().getOptionId().equals(deleteId)){
+                    cartItemList.remove(cartItem);
+                    break;
+                }
+            }
+        }
         return cart;
     }
 
