@@ -1,10 +1,11 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface NoticeProp {
-  submitData: any;
+  postData: any;
+  patchData: any;
 }
 
-export default function Button({ submitData }: NoticeProp) {
+export default function Button({ postData, patchData }: NoticeProp) {
   const navigate = useNavigate();
   const prevHandler = () => {
     navigate('/admin/notice');
@@ -30,7 +31,7 @@ export default function Button({ submitData }: NoticeProp) {
               type={btn.name === '취소' ? 'button' : 'submit'}
               key={btn.id}
               className={classnames}
-              onClick={btn.name === '취소' ? prevHandler : submitData}
+              onClick={btn.name === '취소' ? prevHandler : postData}
             >
               {btn.name}
             </button>
@@ -43,7 +44,7 @@ export default function Button({ submitData }: NoticeProp) {
               type={btn.name === '취소' ? 'button' : 'submit'}
               key={btn.id}
               className={classnames}
-              onClick={btn.name === '취소' ? prevHandler : submitData}
+              onClick={btn.name === '취소' ? prevHandler : patchData}
             >
               {btn.name}
             </button>
