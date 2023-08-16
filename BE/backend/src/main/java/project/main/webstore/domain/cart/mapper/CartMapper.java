@@ -26,6 +26,8 @@ public class CartMapper {
     }
 
     public CartGetResponseDto toGetResponse(Cart result) {
-        return new CartGetResponseDto(result);
+        if (result != null)
+            return new CartGetResponseDto(result);
+        return null;
     }
 }

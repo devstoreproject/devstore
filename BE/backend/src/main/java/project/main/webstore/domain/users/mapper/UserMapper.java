@@ -11,8 +11,10 @@ public class UserMapper {
         return new User(post);
     }
 
-    public User toEntity(UserPatchRequestDto patch) {
-        return new User(patch);
+    public User toEntity(UserPatchRequestDto patch,Long userId) {
+        if(patch != null)
+            return new User(patch);
+        return new User(userId);
     }
     public UserIdResponseDto toDto(User user) {
         return new UserIdResponseDto(user.getId());
