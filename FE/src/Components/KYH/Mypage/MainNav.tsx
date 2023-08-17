@@ -24,6 +24,4 @@ const linkList = [
   { to: '/mypage/userinfo', text: '사용자 정보' },
   { to: '/mypage/bookmarks', text: '찜' },
   { to: '/mypage/reviews', text: '리뷰' },
-  { to: '/mypage/coupons', text: '쿠폰' },
-  { to: '/mypage/subscription', text: '정기 구독' },
 ];
