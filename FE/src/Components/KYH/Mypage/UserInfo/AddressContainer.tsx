@@ -3,8 +3,8 @@ import Address from './Address';
 import { useState } from 'react';
 
 interface addressContainerProps {
-  address: string;
-  setAddress: React.Dispatch<React.SetStateAction<string>>;
+  addressSimple: string;
+  setAddressSimple: React.Dispatch<React.SetStateAction<string>>;
   addressDetail: string;
   setAddressDetail: React.Dispatch<React.SetStateAction<string>>;
   zipCode: string;
@@ -12,8 +12,8 @@ interface addressContainerProps {
 }
 
 export default function AddressContainer({
-  address,
-  setAddress,
+  addressSimple,
+  setAddressSimple,
   addressDetail,
   setAddressDetail,
   zipCode,
@@ -23,7 +23,7 @@ export default function AddressContainer({
 
   const onCompletePost = (data: any) => {
     setZipCode(data.zonecode);
-    setAddress(data.address);
+    setAddressDetail(data.address);
     setIsOpenPost(false);
   };
   return (
@@ -34,8 +34,8 @@ export default function AddressContainer({
       <Address
         setIsOpenPost={setIsOpenPost}
         addressDetail={addressDetail}
-        setAddressDetail={setAddressDetail}
-        address={address}
+        setAddressSimple={setAddressSimple}
+        addressSimple={addressSimple}
         zipCode={zipCode}
       />
       {isOpenPost ? (
