@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import AddressContainer from './AddressContainer';
 import DeliveryOptionsContainer from './DeliveryOptionsContainer';
 import EmailContainer from './EmailContainer';
-import LandlinePhoneNumberContainer from './LandlinePhoneNumberContainer';
 import NameContainer from './NameContainer';
 import NicknameContainer from './NicknameContainer';
 import PhoneNumberContainer from './PhoneNumberContainer';
@@ -15,19 +14,24 @@ import {
 } from 'utils/auth/authValidate';
 import PasswordContainer from './PasswordContainer';
 import PasswordConfirmContainer from './PasswordConfirmContainer';
-import api from 'api';
+import fetchUserDataEdit from 'utils/mypage/fetchUserDataEdit';
+import { fetchPatchAddress, fetchPostAddress } from 'utils/mypage/fetchAddress';
+import useFetchAddress from 'hooks/mypage/useFetchAddress';
+import { useSelector } from 'react-redux';
 
 export default function UserInfo() {
   const profile = useFetchProfile();
-  const userId = localStorage.getItem('userId');
+  const currentIdx = useSelector((state: number) => state);
+  const address = useFetchAddress();
+
   const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [userName, setUserName] = useState('');
+  const [username, setUsername] = useState('');
   const [phonePrefix, setPhonePrefix] = useState('');
   const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
   const [addressDetail, setAddressDetail] = useState('');
+  const [addressSimple, setAddressSimple] = useState('');
   const [zipCode, setZipCode] = useState('');
 
   const [isNicknameValid, setIsNicknameValid] = useState(true);
@@ -37,51 +41,65 @@ export default function UserInfo() {
   const [isNicknameDuplicate, setIsNicknameDuplicate] = useState(true);
 
   useEffect(() => {
+    setUsername(profile.username);
     setNickname(profile.nickname);
     setPhonePrefix(profile.phone.slice(0, 3));
     setPhone(profile.phone.slice(3));
-  }, [profile]);
+    setZipCode(address[currentIdx]?.zipCode);
+    setAddressDetail(address[currentIdx]?.addressDetail);
+    setAddressSimple(
+      address[currentIdx]?.addressSimple === undefined
+        ? ''
+        : address[currentIdx].addressSimple
+    );
+  }, [profile, address, currentIdx]);
 
-  const patchUserInfo = (e: React.FormEvent) => {
+  const userInfoSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const userInfo = {
+      nickname,
+      username,
+      phone: phonePrefix + phone,
+      password: password === '' ? null : password,
+    };
+
+    const newAddress = {
+      recipient: profile.username,
+      mobileNumber: `${phonePrefix}-${phone.slice(0, 4)}-${phone.slice(4)}`,
+      zipCode,
+      addressDetail,
+      addressSimple,
+    };
 
     if (!ValidateNickname(nickname, setIsNicknameValid)) return;
     if (password !== '' && !ValidatePassword(password, setIsPasswordValid))
       return;
     if (password !== passwordConfirm) return;
-    if (userName !== '' && !ValidateUserName(userName, setIsUserNameValid))
+    if (username !== '' && !ValidateUserName(username, setIsUserNameValid))
       return;
     if (!ValidatePhone(`${phonePrefix}${phone}`, setIsPhoneValid)) return;
     if (!isNicknameDuplicate) return;
 
-    const userInfo = {
-      nickname,
-      phone: phonePrefix + phone,
-    };
+    fetchUserDataEdit(userInfo);
 
-    console.log(userInfo);
-
-    const formData = new FormData();
-    const blob = new Blob([JSON.stringify(userInfo)], {
-      type: 'application/json',
-    });
-
-    formData.append('patch', blob);
-
-    if (userId !== null) {
-      api
-        .patch(`/api/users/${userId}`, formData)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    if (zipCode !== undefined) {
+      if (address[currentIdx] === undefined) {
+        fetchPostAddress(newAddress);
+      } else {
+        if (
+          newAddress.zipCode === address[currentIdx].zipCode &&
+          newAddress.addressDetail === address[currentIdx].addressDetail &&
+          newAddress.addressSimple === address[currentIdx].addressSimple
+        )
+          return;
+        fetchPatchAddress(newAddress, currentIdx);
+      }
     }
   };
 
   return (
-    <form className="flex flex-col" onSubmit={patchUserInfo}>
+    <form className="flex flex-col" onSubmit={userInfoSubmitHandler}>
       <NicknameContainer
         nickname={nickname}
         setNickname={setNickname}
@@ -101,8 +119,8 @@ export default function UserInfo() {
         setPasswordConfirm={setPasswordConfirm}
       />
       <NameContainer
-        userName={userName}
-        setUserName={setUserName}
+        username={username}
+        setUsername={setUsername}
         isUserNameValid={isUserNameValid}
       />
       <PhoneNumberContainer
@@ -112,10 +130,9 @@ export default function UserInfo() {
         phonePrefix={phonePrefix}
         setPhonePrefix={setPhonePrefix}
       />
-      <LandlinePhoneNumberContainer />
       <AddressContainer
-        address={address}
-        setAddress={setAddress}
+        addressSimple={addressSimple}
+        setAddressSimple={setAddressSimple}
         addressDetail={addressDetail}
         setAddressDetail={setAddressDetail}
         zipCode={zipCode}

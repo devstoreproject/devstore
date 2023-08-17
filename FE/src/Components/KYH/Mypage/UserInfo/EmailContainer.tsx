@@ -1,6 +1,6 @@
-import type { profile } from 'model/auth';
+import type { Profile } from 'model/auth';
 
-type email = Pick<profile, 'email'>;
+type email = Pick<Profile, 'email'>;
 
 export default function EmailContainer({ email }: email) {
   return (
