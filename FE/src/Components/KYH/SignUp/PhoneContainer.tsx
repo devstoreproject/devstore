@@ -14,7 +14,7 @@ export default function PhoneNumberContainer({
         <span className="ml-2">휴대전화번호</span>
         <input
           type="text"
-          className="h-10 pl-2 mr-2 border border-black"
+          className="h-10 pl-2 border border-black"
           placeholder="휴대전화번호를 입력해주세요(-제외)"
           value={phone}
           onChange={PhoneNumberInputHandler}
