@@ -16,7 +16,7 @@ public class NoticeMapper {
     }
     public Notice toEntity(NoticePatchRequestDto dto, Long noticeId){
         if(dto != null)
-            return new Notice(noticeId, dto.getTitle(),dto.getContent());
+            return new Notice(noticeId, dto.getTitle(),dto.getContent(),dto.getCategory());
         return new Notice(noticeId);
     }
 

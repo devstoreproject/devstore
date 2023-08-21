@@ -42,10 +42,11 @@ public class Notice extends Auditable {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    public Notice(Long id, String title, String content) {
+    public Notice(Long id, String title, String content,NoticeCategory category) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.noticeCategory = category;
     }
 
     public Notice(String title, String content,NoticeCategory category) {
