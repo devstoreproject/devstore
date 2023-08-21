@@ -7,7 +7,7 @@ interface DataProps {
 export default function ImageBox({ datas }: DataProps) {
   return (
     <div className="py-20 my-10 bg-white">
-      {datas.image != null ? (
+      {datas.image !== null ? (
         <img
           src={datas?.image?.originalPath}
           alt="공지사항 이미지"

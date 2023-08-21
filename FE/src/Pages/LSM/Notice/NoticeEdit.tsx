@@ -5,33 +5,27 @@ import NoticeTitle from 'Components/LSM/Notice/NoticeTitle';
 import api from 'api';
 
 export default function NoticeEdit() {
-  const [datas, setDatas] = useState<any[]>([]);
+  const path = useLocation().pathname.split('/').slice(3)[0];
 
+  const [datas, setDatas] = useState({});
   const { id } = useParams() as { id: string };
 
-  const path = useLocation();
-  const pathName = path.pathname.slice(14);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await api.get(`/api/notices/${id}`);
-        console.log(res);
-        setDatas(res.data.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (id !== undefined) {
-      void fetchData();
+  const fetchData = async () => {
+    try {
+      const res = await api.get(`/api/notices/${id}`);
+      setDatas(res?.data?.data);
+    } catch (error) {
+      console.log(error);
     }
-  }, [id]);
+  };
+  useEffect(() => {
+    void fetchData();
+  }, []);
 
   return (
     <div className="w-250">
       <NoticeTitle />
-      {pathName === 'edit' && <NoticeForm datas={datas} />}
+      {path === 'edit' && <NoticeForm datas={datas} path={path} />}
     </div>
   );
 }

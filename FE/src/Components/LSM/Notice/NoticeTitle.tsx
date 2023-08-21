@@ -2,11 +2,13 @@ import { useLocation } from 'react-router-dom';
 
 export default function NoticeTitle() {
   const path: string = useLocation().pathname.slice(14);
+  const adminPath: string = useLocation().pathname.split('/').slice(3)[0];
 
   const pathList = ['', 'post', 'edit'];
   const titleList = ['📢 공지사항', '공지사항 등록', '공지사항 수정'];
 
-  const idx = pathList.indexOf(path);
+  const idx =
+    path === 'post' ? pathList.indexOf(path) : pathList.indexOf(adminPath);
   const title = titleList[idx];
 
   return (

@@ -9,7 +9,7 @@ export default function NoticePost() {
   return (
     <div className="w-250">
       <NoticeTitle />
-      {pathName === 'post' && <NoticeForm datas={null} />}
+      {pathName === 'post' && <NoticeForm datas={null} path={pathName} />}
     </div>
   );
 }
