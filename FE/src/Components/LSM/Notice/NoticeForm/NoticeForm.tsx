@@ -9,9 +9,10 @@ import api from 'api';
 
 interface NoticeEditProp {
   datas: any;
+  path: string;
 }
 
-export default function NoticeForm({ datas }: NoticeEditProp) {
+export default function NoticeForm({ datas, path }: NoticeEditProp) {
   const navigate = useNavigate();
 
   const { id } = useParams() as { id: string };
@@ -21,9 +22,15 @@ export default function NoticeForm({ datas }: NoticeEditProp) {
   const [category, setCategory] = useState('');
   const [image, setImage] = useState<string | Blob>('');
 
-  const [editTitle, setEditTitle] = useState('');
-  const [editContent, setEditContent] = useState('');
-  const [editCategory, setEditCategory] = useState('');
+  const [editTitle, setEditTitle] = useState<string>(datas?.title);
+  const [editContent, setEditContent] = useState<string>(datas?.content);
+  const [editCategory, setEditCategory] = useState<string>(datas?.category);
+  const [editImage, setEditImage] = useState<string | Blob>(
+    datas?.image?.thumbnailPath
+  );
+
+  console.log(datas?.category);
+  console.log(editCategory);
 
   const postData = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,22 +74,34 @@ export default function NoticeForm({ datas }: NoticeEditProp) {
   const patchData = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (category === '') {
-      alert('카테고리를 선택해주세요!🤔');
-      return;
-    }
+    const formData = new FormData();
+
+    formData.append('image', editImage);
 
     const contents = {
       userId: '2',
-      editTitle,
-      editContent,
-      editCategory,
+      title: editTitle,
+      content: editContent,
+      category: editCategory,
     };
 
+    console.log(editCategory);
+
+    formData.append(
+      'patch',
+      new Blob([JSON.stringify(contents)], { type: 'application/json' })
+    );
+
     try {
-      await api.patch(`/api/notices/${id}`, contents).then((res) => {
-        console.log(res);
-      });
+      await api
+        .patch(`/api/notices/${id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then((res) => {
+          navigate(`/notice/${id}`);
+        });
     } catch (error) {
       console.log(error);
     }
@@ -92,14 +111,32 @@ export default function NoticeForm({ datas }: NoticeEditProp) {
     <form className="flex flex-col">
       <div className="flex items-center mb-4">
         <Select
-          category={category}
+          datas={datas}
+          path={path}
           setCategory={setCategory}
           setEditCategory={setEditCategory}
+          editCategory={editCategory}
+          id={id}
         />
-        <TitleInput setTitle={setTitle} setEditTitle={setEditTitle} />
+        <TitleInput
+          datas={datas}
+          path={path}
+          setTitle={setTitle}
+          setEditTitle={setEditTitle}
+        />
       </div>
-      <Textarea setContent={setContent} setEditContent={setEditContent} />
-      <ImageInput setImage={setImage} />
+      <Textarea
+        datas={datas}
+        path={path}
+        setContent={setContent}
+        setEditContent={setEditContent}
+      />
+      <ImageInput
+        datas={datas}
+        path={path}
+        setImage={setImage}
+        setEditImage={setEditImage}
+      />
       <Button postData={postData} patchData={patchData} />
     </form>
   );

@@ -11,7 +11,9 @@ export default function Button({ postData, patchData }: NoticeProp) {
     navigate('/admin/notice');
   };
 
-  const path: string = useLocation().pathname.slice(14);
+  const postPath: string = useLocation().pathname.slice(14);
+  const editPath: string = useLocation().pathname.split('/').slice(3)[0];
+
   const postButtonList = [
     { id: 1, name: '등록' },
     { id: 2, name: '취소' },
@@ -24,7 +26,7 @@ export default function Button({ postData, patchData }: NoticeProp) {
     'w-20 py-1.5 px-1 text-sm font-semibold hover:bg-gray-400 border rounded-xl border-gray mr-2 transition-all';
   return (
     <div className="flex items-center justify-center mt-8">
-      {path === 'post' &&
+      {postPath === 'post' &&
         postButtonList.map((btn) => {
           return (
             <button
@@ -37,7 +39,7 @@ export default function Button({ postData, patchData }: NoticeProp) {
             </button>
           );
         })}
-      {path === 'edit' &&
+      {editPath === 'edit' &&
         editButtonList.map((btn) => {
           return (
             <button

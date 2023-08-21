@@ -75,7 +75,7 @@ function App() {
           <Route path="sales" element={<Sales />} />
           <Route path="notice" element={<NoticeList />} />
           <Route path="notice/post" element={<NoticePost />} />
-          <Route path="notice/edit" element={<NoticeEdit />} />
+          <Route path="notice/edit/:id" element={<NoticeEdit />} />
         </Route>
         <Route path="/cart" element={<Cart />} />
         <Route path="/checklist" element={<CheckList />} />

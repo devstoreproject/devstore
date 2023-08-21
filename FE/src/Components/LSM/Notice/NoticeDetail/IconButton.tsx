@@ -24,7 +24,7 @@ export default function IconButton({ datas }: DataProps) {
   };
 
   const moveEditHandler = () => {
-    navigate('/admin/notice/edit', { replace: true });
+    navigate(`/admin/notice/edit/${id}`, { replace: true });
   };
 
   const deleteHandler = async () => {
