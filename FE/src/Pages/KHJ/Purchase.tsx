@@ -1,9 +1,9 @@
 import PageHistory from 'Components/KHJ/Common/PageHistory';
 import Delivery from 'Components/KHJ/Purchase/Delivery';
 import Discount from 'Components/KHJ/Purchase/Discount';
+import PayProgress from 'Components/KHJ/Purchase/PayProgress';
 import Payment from 'Components/KHJ/Purchase/Payment';
 import PurchaseList from 'Components/KHJ/Purchase/PurchaseList';
-import TotalPrice from 'Components/KHJ/Purchase/TotalPrice';
 
 export default function Purchase() {
   return (
@@ -13,7 +13,7 @@ export default function Purchase() {
       <Delivery />
       <Discount />
       <Payment />
-      <TotalPrice />
+      <PayProgress />
     </main>
   );
 }
