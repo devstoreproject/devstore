@@ -15,10 +15,12 @@ export default function NoticeDetail() {
     try {
       const res = await api.get(`/api/notices/${id}`);
       setDatas(res?.data?.data);
+      console.log(res?.data?.data);
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     void fetchData();
     window.scrollTo(0, 0);
