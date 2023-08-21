@@ -51,4 +51,12 @@ public class Answer extends Auditable {
         this.question = new Question(questionId);
         this.user = new User(userId);
     }
+    public Answer(Long id,String comment, Long questionId, Long userId) {
+        this.id = id;
+        this.qnaStatus = QnaStatus.ANSWER_COMPLETE;
+        this.comment = comment;
+        this.question = new Question(questionId);
+        this.user = new User(userId);
+    }
+
 }
