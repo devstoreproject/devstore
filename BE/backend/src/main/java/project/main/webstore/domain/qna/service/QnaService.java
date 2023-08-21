@@ -13,6 +13,7 @@ import project.main.webstore.domain.qna.repository.AnswerRepository;
 import project.main.webstore.domain.qna.repository.QuestionRepository;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.enums.UserRole;
+import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
 
@@ -37,7 +38,9 @@ public class QnaService {
 
     public Question patchQuestion(Question request,Long userId){
         Question find = validUserSame(request.getId());
-
+        if(!find.getUser().getId().equals(userId)){
+            throw new BusinessLogicException(UserExceptionCode.USER_INFO_MISMATCH);
+        }
         Optional.ofNullable(request.getQnaStatus()).ifPresent(find::setQnaStatus);
         Optional.ofNullable(request.getComment()).ifPresent(find::setComment);
 

@@ -67,7 +67,7 @@ public class QnaControllerTest {
         headers.setAccept(List.of((MediaType.APPLICATION_JSON)));
         headers.setBearerAuth(accessToken);
 
-        QuestionPostRequestDto post = new QuestionPostRequestDto("등록할 질문입니다.", 1L);
+        QuestionPostRequestDto post = new QuestionPostRequestDto("등록할 질문입니다.");
         // when
         HttpEntity<QuestionPostRequestDto> request = new HttpEntity<>(post, headers);
 
