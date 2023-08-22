@@ -69,4 +69,8 @@ public class Question extends Auditable {
         this.user = new User(userId);
         this.item = new Item(itemId);
     }
+
+    public void addId(Long id) {
+        this.id = id;
+    }
 }

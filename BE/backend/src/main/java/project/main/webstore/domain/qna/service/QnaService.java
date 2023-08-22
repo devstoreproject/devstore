@@ -66,7 +66,7 @@ public class QnaService {
 
     public void deleteAnswer(Long answerId) {
         Answer find = validService.validAnswer(answerId);
-        find.getQuestion().setQnaStatus(QnaStatus.ANSWER_COMPLETE);
+        find.getQuestion().setQnaStatus(QnaStatus.REGISTER);
 
         answerRepository.delete(find);
     }
