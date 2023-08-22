@@ -38,12 +38,26 @@ function CartItemOpt({
     setIsFoldDetail(!isFoldDetail);
     setIsFoldName(false);
   };
-  // 옵션 이름만 추출해서 중복없이 배열로 만들기
-  // 만든 배열을 map으로 옵션 목록으로 만들어주기
+  // 옵션 이름만 추출해서 중복없이 배열로 만드는 함수
+  const optNameListUp = () => {
+    if (isOpt !== undefined && isOptOpen) {
+      const listArr = isOpt.map((opt) => {
+        if (opt.optionName !== null) return opt.optionName;
+        return '옵션이 없습니다';
+      });
+      const optNameResult: string[] = [];
+      for (const opt of listArr) {
+        if (!optNameResult.includes(opt)) {
+          optNameResult.push(opt);
+        }
+      }
+      return optNameResult;
+    }
+  };
+  const optNameList = optNameListUp();
   const filteredOpt = () => {
     const optFilter = (opt: isOptType) => {
-      // return opt.optionName === isOptName;
-      return true;
+      return opt.optionName === isOptName;
     };
     if (isOpt?.length !== 0) {
       const result = isOpt.filter(optFilter);
@@ -65,14 +79,17 @@ function CartItemOpt({
           onClick={handleFoldName}
         >
           <li className="h-14 flex items-center z-30">{isOptName}</li>
-          <li
-            className="h-14 flex items-center z-30"
-            onClick={() => {
-              setIsOptName('옵션 목록1');
-            }}
-          >
-            옵션 목록1
-          </li>
+          {optNameList?.map((opt) => (
+            <li
+              key={opt}
+              className="h-14 flex items-center z-30"
+              onClick={() => {
+                setIsOptName(opt);
+              }}
+            >
+              {opt}
+            </li>
+          ))}
         </ul>
       </div>
       {isOptName !== '옵션 목록' ? (
@@ -84,18 +101,20 @@ function CartItemOpt({
             onClick={handleFoldDetail}
           >
             <li className="h-14 flex items-center">{isOptDetail}</li>
-            {filteredOptArr?.map((opt) => (
-              <li
-                key={opt.optionId}
-                className="h-14 flex items-center"
-                onClick={() => {
-                  setIsOptDetail(opt.optionDetail);
-                  setIsOptId(opt.optionId);
-                }}
-              >
-                옵션 1
-              </li>
-            ))}
+            {filteredOptArr?.map((opt) =>
+              opt.optionDetail !== null ? (
+                <li
+                  key={opt.optionId}
+                  className="h-14 flex items-center"
+                  onClick={() => {
+                    setIsOptDetail(opt.optionDetail);
+                    setIsOptId(opt.optionId);
+                  }}
+                >
+                  {opt.optionDetail}
+                </li>
+              ) : null
+            )}
           </ul>
         </div>
       ) : null}

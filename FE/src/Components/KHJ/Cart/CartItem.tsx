@@ -133,7 +133,7 @@ function CartItem({
       }
       ${isOptName !== '옵션 목록' ? 'pb-20' : ''}`}
     >
-      <input type="checkbox" className="w-5 h-5 border-gray-300"></input>
+      {/* <input type="checkbox" className="w-5 h-5 border-gray-300"></input> */}
       <div className="rounded-xl w-36 h-36 bg-white"></div>
       <div className="w-3/5 relative">
         <div className="flex items-center justify-between">
@@ -159,7 +159,7 @@ function CartItem({
             >
               +
             </button>
-            {item.optionName == null ? (
+            {item.optionName !== null ? (
               <button
                 className={`px-4 h-7 rounded-full border ml-6 ${
                   isOptOpen
@@ -178,7 +178,7 @@ function CartItem({
             ) : null}
           </div>
         </div>
-        {item.optionName == null ? (
+        {item.optionName !== null ? (
           <CartItemOpt
             isOptOpen={isOptOpen}
             isOptName={isOptName}
