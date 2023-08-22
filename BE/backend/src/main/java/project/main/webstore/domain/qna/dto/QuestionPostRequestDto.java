@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class QuestionPostRequestDto {
     @Schema(description = "질문 본문",example = "질문 본문입니다.")
     private String comment;
-    @Schema(description = "사용자 식별자",example = "3")
-    private Long userId;
+//    @Schema(description = "사용자 식별자",example = "3")
+//    private Long userId;
 
 }

@@ -51,14 +51,26 @@ public class Question extends Auditable {
         this.user = new User(userId);
     }
 
-    public Question(Long id, String comment, Long userId, Long itemId) {
+    public Question(String comment) {
+        this.comment = comment;
+    }
+    public Question(Long id, String comment) {
         this.id = id;
         this.comment = comment;
-        this.user = new User(id);
-        this.item = new Item(id);
     }
 
     public Question(Long id) {
+        this.id = id;
+    }
+
+    public Question(Long id, String comment, long userId, long itemId) {
+        this.id = id;
+        this.comment = comment;
+        this.user = new User(userId);
+        this.item = new Item(itemId);
+    }
+
+    public void addId(Long id) {
         this.id = id;
     }
 }

@@ -67,20 +67,6 @@ public class Orders extends Auditable {
     @Embedded
     private PaymentType paymentType;
 
-
-    //TODO : 작업 중인 아이 지불 정보를 알고 있어야하는가 서버가?
-    @Builder
-    public Orders(String message, Cart cart, User user, ShippingInfo info) {
-        this.orderNumber = createOrderNumber();
-        this.message = message;
-        this.ordersStatus = OrdersStatus.ORDER_COMPLETE;
-        this.recipient = info.getRecipient();
-        this.address = info.getAddress();
-        this.orderedItemList = cart.getCartItemList().stream().map(OrderedItem::new).collect(Collectors.toList());
-        this.user = user;
-        this.deliveryPrice = cart.getDeliveryPrice();
-    }
-
     public void setUser(User user) {
         this.user = user;
     }
@@ -137,5 +123,34 @@ public class Orders extends Auditable {
     private int itemCountPlus(OrderedItem orderedItem) {
         int result = orderedItem.getOption().getItemCount() + orderedItem.getItemCount();
         return result;
+    }
+
+
+    //TODO : 작업 중인 아이 지불 정보를 알고 있어야하는가 서버가?
+    @Builder
+    public Orders(String message, Cart cart, User user, ShippingInfo info) {
+        this.orderNumber = createOrderNumber();
+        this.message = message;
+        this.ordersStatus = OrdersStatus.ORDER_COMPLETE;
+        this.recipient = info.getRecipient();
+        this.address = info.getAddress();
+        this.orderedItemList = cart.getCartItemList().stream().map(OrderedItem::new).collect(Collectors.toList());
+        this.user = user;
+        this.deliveryPrice = cart.getDeliveryPrice();
+    }
+
+    public Orders(Long orderId, String message, int deliveryPrice, String trackingNumber, String deliveryCompany, OrdersStatus ordersStatus, String recipient, Address address, List<OrderedItem> orderedItemList, User user, PaymentType paymentType) {
+        this.orderId = orderId;
+        this.orderNumber = createOrderNumber();
+        this.message = message;
+        this.deliveryPrice = deliveryPrice;
+        this.trackingNumber = trackingNumber;
+        this.deliveryCompany = deliveryCompany;
+        this.ordersStatus = ordersStatus;
+        this.recipient = recipient;
+        this.address = address;
+        this.orderedItemList = orderedItemList;
+        this.user = user;
+        this.paymentType = paymentType;
     }
 }

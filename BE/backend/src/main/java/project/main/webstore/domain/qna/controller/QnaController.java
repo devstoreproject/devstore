@@ -81,8 +81,7 @@ public class QnaController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByStatus(@RequestParam Long userId,
-                                                                         @Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable) {
+    public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByStatus(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable) {
         Page<Question> result = getService.findQuestionByStatus(pageable);
         Page<QuestionDto> response = mapper.toResponsePage(result);
         var responseDto = ResponseDto.<Page<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
@@ -95,11 +94,11 @@ public class QnaController {
                                                                            @RequestBody QuestionPostRequestDto postDto,
                                                                            @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        Question request = mapper.toEntity(postDto, itemId);
+        Question request = mapper.toEntity(postDto);
         Question result = service.postQuestion(request,userId,itemId);
         QuestionIdResponseDto response = mapper.toIdResponseDto(result);
         var responseDto = ResponseDto.<QuestionIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
-        URI location = UriCreator.createUri("/qna/{questionId}", response.getQuestionId());
+        URI location = UriCreator.createUri("/qna", response.getQuestionId());
         return ResponseEntity.created(location).body(responseDto);
     }
 
@@ -110,11 +109,11 @@ public class QnaController {
                                                                             @RequestBody QuestionPatchDto patchDto,
                                                                             @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        Question request = mapper.toEntity(patchDto, questionId, itemId,userId);
+        Question request = mapper.toEntity(patchDto, questionId);
         Question result = service.patchQuestion(request,userId);
         QuestionIdResponseDto response = mapper.toIdResponseDto(result);
         var responseDto = ResponseDto.<QuestionIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
-        URI location = UriCreator.createUri("/qna/{questionId}", response.getQuestionId());
+        URI location = UriCreator.createUri("/qna", response.getQuestionId());
         return ResponseEntity.ok().header("Location", location.toString()).body(responseDto);
     }
 
@@ -137,7 +136,7 @@ public class QnaController {
         Answer result = service.postAnswer(request,userId);
         QuestionIdResponseDto response = mapper.toIdResponseDto(result);
         var responseDto = ResponseDto.<QuestionIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
-        URI location = UriCreator.createUri("/qna/{questionId}", response.getQuestionId());
+        URI location = UriCreator.createUri("/qna", response.getQuestionId());
         return ResponseEntity.created(location).body(responseDto);
     }
 

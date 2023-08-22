@@ -42,4 +42,15 @@ public class OrderedItem extends Auditable {
         this.discountedPrice = cartItem.getDiscountedPrice();
     }
 
+    public OrderedItem(Long id, int price, int discountedPrice, int discountRate, int itemCount, String itemDetails, String optionDetails, ItemOption option, Item item) {
+        this.id = id;
+        this.price = price;
+        this.discountedPrice = discountedPrice;
+        this.discountRate = discountRate;
+        this.itemCount = itemCount;
+        this.itemDetails = itemDetails;
+        this.optionDetails = optionDetails;
+        this.option = option;
+        this.item = item;
+    }
 }

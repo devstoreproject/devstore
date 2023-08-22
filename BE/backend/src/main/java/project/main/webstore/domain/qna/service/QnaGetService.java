@@ -6,15 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.qna.entity.Question;
-import project.main.webstore.domain.qna.exception.QnaExceptionCode;
 import project.main.webstore.domain.qna.repository.QuestionRepository;
-import project.main.webstore.exception.BusinessLogicException;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class QnaGetService {
     private final QuestionRepository questionRepository;
+    private final QnaValidService validService;
 
     //Item 게시판에 들어갈 로직
     public Page<Question> findQnaByItemId(Pageable pageable, Long itemId) {
@@ -28,8 +27,7 @@ public class QnaGetService {
 
     //관리자를 위한 질문 조회
     public Question findQuestion(Long questionId) {
-        return questionRepository.findById(questionId)
-                .orElseThrow(() -> new BusinessLogicException(QnaExceptionCode.QUESTION_NOT_FOUND));
+        return validService.validQuestion(questionId);
     }
 
     //관리자를 위한 미 답변 질문 리스트 체크 메서드
