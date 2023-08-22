@@ -30,8 +30,6 @@ public class QnaGetService {
         return validService.validQuestion(questionId);
     }
 
-
-
     //관리자를 위한 미 답변 질문 리스트 체크 메서드
     public Page<Question> findQuestionByStatus(Pageable pageable) {
         return questionRepository.findByStatus(pageable);
