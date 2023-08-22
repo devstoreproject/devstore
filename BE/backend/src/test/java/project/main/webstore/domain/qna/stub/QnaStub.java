@@ -18,9 +18,13 @@ public class QnaStub {
         return new Answer("이곳은 답변입니다.",1L,1L);
     }
 
-    public Question getQna(Long id){
+    public Question getQuestion(Long id){
         return new Question(id,"멘션"+id,1L,1L);
     }
+    public Question getQuestion(){
+        return new Question("멘션",1L,1L);
+    }
+
     public Page<Question> getQnaPage(Long id){
         PageRequest page = PageRequest.of(0, 30);
         List<Question> qnaList = getQnaList(id);
@@ -30,7 +34,7 @@ public class QnaStub {
     private List<Question> getQnaList(Long index) {
         List<Question> list =  new ArrayList<Question>();
         for(long i = 1; i <= index ; i++){
-            list.add(getQna(i));
+            list.add(getQuestion(i));
         }
         return list;
     }

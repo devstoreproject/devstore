@@ -104,7 +104,7 @@ public class QnaControllerTest {
     void qna_get_single_test() throws Exception {
         // given
         Long questionId = 1L;
-        Question qna = qnaStub.getQna(questionId);
+        Question qna = qnaStub.getQuestion(questionId);
         given(getService.findQuestion(anyLong())).willReturn(qna);
         // when
         ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/{questionId}", questionId).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
@@ -145,7 +145,7 @@ public class QnaControllerTest {
         Long itemId = 1L;
         HttpHeaders defaultHeader = utils.getDefaultHeader();
 
-        given(service.postQuestion(any(Question.class), anyLong(), anyLong())).willReturn(qnaStub.getQna(1L));
+        given(service.postQuestion(any(Question.class), anyLong(), anyLong())).willReturn(qnaStub.getQuestion(1L));
 
         // when
         ResultActions perform = mvc.perform(post(DEFAULT_URL + "/items/{itemId}", itemId).headers(defaultHeader).content(content));
@@ -167,7 +167,7 @@ public class QnaControllerTest {
         Long questionId = 1L;
         HttpHeaders defaultHeader = utils.getDefaultHeader();
 
-        Question qna = qnaStub.getQna(1L);
+        Question qna = qnaStub.getQuestion(1L);
         given(service.patchQuestion(any(Question.class), anyLong())).willReturn(qna);
 
         // when
