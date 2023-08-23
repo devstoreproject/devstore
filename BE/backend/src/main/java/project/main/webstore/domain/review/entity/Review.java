@@ -66,16 +66,20 @@ public class Review extends Auditable {
     }
 
     @Builder(builderMethodName = "patchBuilder")
-    public Review(Long id, String comment, Integer rating) {
+    public Review(Long id, String comment, Integer rating,Long userId, Long itemId) {
         this.id = id;
         this.comment = comment;
         this.rating = rating;
+        this.item = new Item(itemId);
+        this.user = new User(userId);
     }
 
     @Builder(builderMethodName = "postBuilder")
-    public Review(String comment, Integer rating) {
+    public Review(String comment, Integer rating,Long userId, Long itemId) {
         this.comment = comment;
         this.rating = rating;
+        this.user = new User(userId);
+        this.item = new Item(itemId);
     }
 
     @Builder(builderMethodName = "stubBuilder", buildMethodName = "stubBuild")

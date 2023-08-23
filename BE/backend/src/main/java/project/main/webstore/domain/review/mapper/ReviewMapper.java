@@ -20,12 +20,22 @@ public class ReviewMapper {
                 .comment(post.getComment())
                 .build();
     }
+    public Review toEntity(ReviewPostRequestDto post,Long userId,Long itemId){
+        return Review.postBuilder()
+                .rating(post.getRating())
+                .comment(post.getComment())
+                .userId(userId)
+                .itemId(itemId)
+                .build();
+    }
 
-    public Review toEntity(ReviewUpdateRequestDto patch,Long reviewId){
+    public Review toEntity(ReviewUpdateRequestDto patch,Long reviewId,Long userId,Long itemId){
         return Review.patchBuilder()
                 .id(reviewId)
                 .comment(patch.getComment())
                 .rating(patch.getRating())
+                .itemId(itemId)
+                .userId(userId)
                 .build();
     }
 

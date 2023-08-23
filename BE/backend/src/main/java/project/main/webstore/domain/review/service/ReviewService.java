@@ -9,6 +9,7 @@ import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.image.utils.ImageUtils;
 import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.item.exception.ItemExceptionCode;
 import project.main.webstore.domain.item.service.ItemService;
 import project.main.webstore.domain.like.entity.Like;
 import project.main.webstore.domain.review.entity.Review;
@@ -48,18 +49,18 @@ public class ReviewService {
         return findReview;
     }
 
-    public Review postReview(Review review, Long userId, Long itemId) {
-        User user = userValidService.validUser(userId);
-        Item item = itemService.validItem(itemId);
+    public Review postReview(Review review) {
+        User user = userValidService.validUser(review.getUser().getId());
+        Item item = itemService.validItem(review.getItem().getItemId());
 
         review.addUserAndItem(user, item);
 
         return reviewRepository.save(review);
     }
 
-    public Review postReview(ImageInfoDto imageInfo, Review review, Long userId, Long itemId) {
-        User user = userValidService.validUser(userId);
-        Item item = itemService.validItem(itemId);
+    public Review postReview(ImageInfoDto imageInfo, Review review) {
+        User user = userValidService.validUser(review.getUser().getId());
+        Item item = itemService.validItem(review.getItem().getItemId());
 
         //이미지 저장 로직
         Image image = fileUploader.uploadImage(imageInfo);
@@ -96,6 +97,25 @@ public class ReviewService {
             ReviewImage reviewImage = new ReviewImage(image, findReview);
             findReview.addReviewImage(reviewImage);
         }
+
+        return findReview;
+    }
+    public Review patchReview(Review review) {
+        Review findReview = reviewValidService.validReview(review.getId());
+
+        //사용자 검증
+        if (!findReview.getUser().getId().equals(review.getUser().getId())) {
+            throw new BusinessLogicException(UserExceptionCode.USER_NOT_SAME);
+        }
+        //아이템 검증
+        if (!findReview.getItem().getItemId().equals(review.getItem().getItemId())) {
+            //TODO: ItemExcpetion 미구현 -> 작업 진행 이후 변경 예정
+            throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_SAME);
+        }
+
+        //기본적인 정보 존재한다면 변경
+        Optional.ofNullable(review.getRating()).ifPresent((findReview::setRating));
+        Optional.ofNullable(review.getComment()).ifPresent((findReview::setComment));
 
         return findReview;
     }

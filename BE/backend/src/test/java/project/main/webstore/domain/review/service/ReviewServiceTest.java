@@ -64,7 +64,7 @@ class ReviewServiceTest {
         given(userValidService.validUser(anyLong())).willReturn(userStub.createUser(userId));
         given(itemService.validItem(anyLong())).willReturn(itemStub.createItem(itemId));
         //when
-        Review result = reviewService.postReview(findReview, userId, itemId);
+        Review result = reviewService.postReview(findReview);
         //then
 
         SoftAssertions.assertSoftly(softAssertions -> {
@@ -83,7 +83,7 @@ class ReviewServiceTest {
         given(reviewRepository.save(ArgumentMatchers.any(Review.class))).willReturn(excepted);
         given(fileUploader.uploadImage(ArgumentMatchers.any(ImageInfoDto.class))).willReturn(imageStub.createImage(1L,0,true));
 
-        Review result = reviewService.postReview(imageInfo, postReview, userId, itemId);
+        Review result = reviewService.postReview(imageInfo, postReview);
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(result.getUser().getId()).as("review의 User엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(userId);
             softAssertions.assertThat(result.getItem().getItemId()).as("review의 Item엔티티의 id틑 post 받은 것과 동일해야합니다.").isEqualTo(itemId);

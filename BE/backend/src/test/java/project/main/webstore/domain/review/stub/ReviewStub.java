@@ -73,7 +73,7 @@ public class ReviewStub {
     }
 
     public ReviewUpdateRequestDto reviewUpdateRequestDto(Long userId) {
-        return new ReviewUpdateRequestDto(userId, "이것은 수정입니다.", 5);
+        return new ReviewUpdateRequestDto( "이것은 수정입니다.", 5);
     }
 
     //이미지단 이동
