@@ -149,7 +149,8 @@ public class User extends Auditable implements Principal {
         this.cart = new Cart(this);
     }
     @Builder(builderMethodName = "patchBuilder")
-    public User(UserPatchRequestDto patch) {
+    public User(UserPatchRequestDto patch, Long userId) {
+        this.id = userId;
         this.nickName = patch.getNickname();
         this.password = patch.getPassword();
         this.lastConnectedDate = LocalDateTime.now();

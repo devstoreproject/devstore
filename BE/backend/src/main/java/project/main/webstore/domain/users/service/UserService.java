@@ -1,6 +1,7 @@
 package project.main.webstore.domain.users.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ import project.main.webstore.utils.FileUploader;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -132,8 +134,10 @@ public class UserService {
      * 회원이 없으명 예외 발생
      * */
     // 내부 동작 메서드 //
-    private User validUser(Long UserId) {
-        return userRepository.findById(UserId).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
+    private User validUser(Long userId) {
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
+        log.info("### userId = {}",findUser.getId());
+        return findUser;
     }
     private User validUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));

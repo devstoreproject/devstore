@@ -156,7 +156,6 @@ public class FileUploader {
             System.out.println("print size = ### " + file.getSize());
             System.out.println("#### " + file.getInputStream());
             return file;
-
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 리사이즈에 실패했습니다.");
         }
