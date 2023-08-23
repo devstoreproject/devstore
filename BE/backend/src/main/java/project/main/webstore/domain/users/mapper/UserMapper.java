@@ -16,6 +16,7 @@ public class UserMapper {
             return new User(patch);
         return new User(userId);
     }
+
     public UserIdResponseDto toDto(User user) {
         return new UserIdResponseDto(user.getId());
     }
