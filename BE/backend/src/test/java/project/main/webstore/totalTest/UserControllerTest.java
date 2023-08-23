@@ -44,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureMockMvc
+@Transactional
 public class UserControllerTest {
     TestRestTemplate template = new TestRestTemplate();
     @Autowired
@@ -52,6 +53,8 @@ public class UserControllerTest {
     MockMvc mvc;
     @Autowired
     Gson gson;
+    @MockBean
+    FileUploader fileUploader;
     @LocalServerPort
     private int port;
 
@@ -61,7 +64,7 @@ public class UserControllerTest {
         // given
         UserPostRequestDto post = new UserPostRequestDto("admin1@gmail.com", "asdffcx1111", "김송모자리", "010-8013-1313", "김송모");
         String content = gson.toJson(post);
-        MockMultipartFile multipartFile = new MockMultipartFile("tmp", "TEST Mock".getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "TEST Mock".getBytes());
         MockMultipartFile postUser = new MockMultipartFile("post", "post", "application/json", content.getBytes(StandardCharsets.UTF_8));
 
         // when
@@ -113,7 +116,6 @@ public class UserControllerTest {
     //TODO: 리펙토링 절실하게 필요
     //Multipart 에서 각각 헤더 형식을 지정해서 잡아야할 경우가 있다.
     //TODO: 검증을 위한 코드 구현 필요
-
 
     @Test
     @DisplayName("사용자 Patch")
