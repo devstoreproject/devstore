@@ -89,6 +89,9 @@ module.exports = {
         250: '62.5rem',
         300: '75rem',
       },
+      left: {
+        122: '30.5rem',
+      },
       boxShadow: {
         signBox: '0px 3px 8px rgba(0, 0, 0, 0.24)',
         btn: 'rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;',
