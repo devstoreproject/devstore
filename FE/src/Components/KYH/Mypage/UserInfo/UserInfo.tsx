@@ -61,15 +61,7 @@ export default function UserInfo() {
       nickname,
       username,
       phone: phonePrefix + phone,
-      password: password === '' ? null : password,
-    };
-
-    const newAddress = {
-      recipient: profile.username,
-      mobileNumber: `${phonePrefix}-${phone.slice(0, 4)}-${phone.slice(4)}`,
-      zipCode,
-      addressDetail,
-      addressSimple,
+      password: password === '' ? '' : password,
     };
 
     if (!ValidateNickname(nickname, setIsNicknameValid)) return;
@@ -82,6 +74,18 @@ export default function UserInfo() {
     if (!isNicknameDuplicate) return;
 
     fetchUserDataEdit(userInfo);
+  };
+
+  const AddressSubmitHandler = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newAddress = {
+      recipient: profile.username,
+      mobileNumber: `${phonePrefix}-${phone.slice(0, 4)}-${phone.slice(4)}`,
+      zipCode,
+      addressDetail,
+      addressSimple,
+    };
 
     if (zipCode !== undefined) {
       if (address[currentIdx] === undefined) {
@@ -99,7 +103,13 @@ export default function UserInfo() {
   };
 
   return (
-    <form className="flex flex-col" onSubmit={userInfoSubmitHandler}>
+    <form
+      className="flex flex-col"
+      onSubmit={(e) => {
+        userInfoSubmitHandler(e);
+        AddressSubmitHandler(e);
+      }}
+    >
       <NicknameContainer
         nickname={nickname}
         setNickname={setNickname}
