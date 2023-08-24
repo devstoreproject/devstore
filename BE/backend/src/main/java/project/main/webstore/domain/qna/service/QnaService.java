@@ -47,7 +47,7 @@ public class QnaService {
     }
 
     public void deleteQuestion(Long questionId, Long userId) {
-        validService.validUserSameOrAdmin(userId);
+        validService.validUserSameOrAdmin(userId,questionId);
         questionRepository.deleteById(questionId);
     }
 

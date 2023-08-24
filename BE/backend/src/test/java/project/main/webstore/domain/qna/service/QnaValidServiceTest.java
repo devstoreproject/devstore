@@ -92,7 +92,7 @@ class QnaValidServiceTest {
         Long userId = 1L;
         given(questionRepository.findById(anyLong())).willReturn(Optional.of(question));
         //when
-        Question result = validService.validUserSameOrAdmin(userId);
+        Question result = validService.validUserSameOrAdmin(userId,questionId);
         //then
         assertThat(result).usingRecursiveComparison().isEqualTo(question);
     }
@@ -105,7 +105,7 @@ class QnaValidServiceTest {
         Long userId = 2L;
         given(questionRepository.findById(anyLong())).willReturn(Optional.of(question));
         //when
-        Assertions.assertThatThrownBy(() -> validService.validUserSameOrAdmin(userId)).isInstanceOf(BusinessLogicException.class).hasMessage("작성자가 일치하지 않습니다.");
+        Assertions.assertThatThrownBy(() -> validService.validUserSameOrAdmin(userId,questionId)).isInstanceOf(BusinessLogicException.class).hasMessage("작성자가 일치하지 않습니다.");
     }
 
     @Test
