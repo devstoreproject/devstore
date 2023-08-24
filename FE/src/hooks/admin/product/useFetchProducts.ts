@@ -13,7 +13,7 @@ const useFetchProducts = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [setProducts]);
 
   return products;
 };
