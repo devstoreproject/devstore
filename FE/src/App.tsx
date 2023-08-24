@@ -8,7 +8,6 @@ import Mypage from 'Pages/KYH/Mypage';
 import OrderList from 'Components/KYH/Mypage/OrderList/OrderList';
 import UserInfo from 'Components/KYH/Mypage/UserInfo/UserInfo';
 import Bookmarks from 'Components/KYH/Mypage/Bookmarks/Bookmarks';
-import Reviews from 'Components/KYH/Mypage/Reviews/Reviews';
 import ProductList from 'Components/KYH/admin/ProductList/ProductList';
 import ReturnOrExchange from 'Components/KYH/admin/ReturnOrExchange/ReturnOrExchange';
 import ProductInquiry from 'Components/KYH/admin/ProductInquiry/ProductInquiry';
@@ -60,7 +59,6 @@ function App() {
           <Route path="orderlist" element={<OrderList />} />
           <Route path="userinfo" element={<UserInfo />} />
           <Route path="bookmarks" element={<Bookmarks />} />
-          <Route path="reviews" element={<Reviews />} />
         </Route>
 
         <Route path="/admin" element={<Admin />}>

@@ -12,7 +12,7 @@ export default function Mypage() {
 
   useEffect(() => {
     if (pathname === '/mypage') {
-      navigate('/mypage/orderlist');
+      navigate('/mypage/userinfo');
     }
   }, [pathname]);
 

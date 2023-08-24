@@ -1,6 +1,23 @@
+import { useEffect } from 'react';
 import OrderItem from './OrderItem';
+import api from 'api';
 
 export default function OrderHistory() {
+  const Authorization = localStorage.getItem('authorization');
+  useEffect(() => {
+    api
+      .get('/api/orders', {
+        headers: {
+          Authorization,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return (
     <div className="flex flex-col mt-14">
       <span className="mb-4 font-bold">주문 내역</span>
