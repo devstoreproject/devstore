@@ -1,6 +1,6 @@
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import { IoMdArrowRoundBack } from 'react-icons/io';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import api from 'api';
 
 interface DataProps {
@@ -10,17 +10,16 @@ interface DataProps {
 export default function IconButton({ datas }: DataProps) {
   const { id } = useParams() as { id: string };
 
-  // const path = useLocation();
-  // const adminPath = path.pathname.slice(1, 6);
+  const path = useLocation();
+  const adminPath = path.pathname.slice(1, 6);
 
   const navigate = useNavigate();
   const movePrevPageHandler = () => {
-    navigate(-1);
-    // if (adminPath === 'admin') {
-    //   navigate('/admin/notice', { replace: true });
-    // } else {
-    //   navigate('/notice', { replace: true });
-    // }
+    if (adminPath === 'admin') {
+      navigate('/admin/notice', { replace: true });
+    } else {
+      navigate('/notice', { replace: true });
+    }
   };
 
   const moveEditHandler = () => {

@@ -15,7 +15,6 @@ export default function NoticeDetail() {
     try {
       const res = await api.get(`/api/notices/${id}`);
       setDatas(res?.data?.data);
-      console.log(res?.data?.data);
     } catch (error) {
       console.log(error);
     }

@@ -29,9 +29,6 @@ export default function NoticeForm({ datas, path }: NoticeEditProp) {
     datas?.image?.thumbnailPath
   );
 
-  console.log(datas?.category);
-  console.log(editCategory);
-
   const postData = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -84,8 +81,6 @@ export default function NoticeForm({ datas, path }: NoticeEditProp) {
       content: editContent,
       category: editCategory,
     };
-
-    console.log(editCategory);
 
     formData.append(
       'patch',
