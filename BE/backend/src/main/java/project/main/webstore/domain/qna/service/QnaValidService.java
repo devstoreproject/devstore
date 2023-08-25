@@ -27,15 +27,15 @@ public class QnaValidService {
                 .orElseThrow(() -> new BusinessLogicException(QnaExceptionCode.QUESTION_NOT_FOUND));
     }
 
-    protected Question validUserSameWithQuestion(Long userId) {
-        Question find = validQuestion(userId);
+    protected Question validUserSameWithQuestion(Long userId,Long questionId) {
+        Question find = validQuestion(questionId);
         if(!find.getUser().getId().equals(userId) ){
             throw new BusinessLogicException(QnaExceptionCode.USER_NOT_SAME);
         }
         return find;
     }
     protected Question validUserSameOrAdmin(Long userId,Long questionId) {
-        Optional<Question> find = questionRepository.findById(userId);
+        Optional<Question> find = questionRepository.findById(questionId);
         if(find.isEmpty())
             return null;
         Question findQuestion = find.get();

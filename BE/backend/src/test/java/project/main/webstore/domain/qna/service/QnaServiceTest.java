@@ -115,7 +115,7 @@ class QnaServiceTest {
         Question patch = qnaStub.getQuestion(2L);
         patch.addId(question.getId());
         Long userId = 1L;
-        given(validService.validUserSameWithQuestion(anyLong())).willReturn(question);
+        given(validService.validUserSameWithQuestion(anyLong(),anyLong())).willReturn(question);
         BDDMockito.willDoNothing().given(userValidService).validUserIdSame(anyLong(),any(Question.class));
         // when
         Question result = service.patchQuestion(patch, userId);
