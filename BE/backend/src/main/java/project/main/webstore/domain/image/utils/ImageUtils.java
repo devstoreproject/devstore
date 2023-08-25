@@ -60,14 +60,32 @@ public class ImageUtils {
         return null;
     }
 
+    public Image patchImageWithDelete(ImageInfoDto info, Image image) {
+        //단순 삭제만 하는 것
+        if(info.getId().equals(image.getId())) {
+            fileUploader.deleteS3Image(image.getImagePath());
+            return null;
+        }
+        //저장된 이미지가 없을 경우
+        if(image != null){
+            fileUploader.deleteS3Image(image.getImagePath());
+        }
+        return fileUploader.uploadImage(info);
+    }
+    //수도 코드
+    //
+
+
     public void deleteImage(List<String> deletePath) {
         for (String path : deletePath) {
             fileUploader.deleteS3Image(path);
         }
     }
-    public void deleteImage(Image image){
+
+    public void deleteImage(Image image) {
         fileUploader.deleteS3Image(image.getImagePath());
     }
+
     private void patchDeleteImage(List<? extends Image> imageList, List<Long> deleteIdList) {
         List<? extends Image> deleteImage = findImageById(deleteIdList, imageList);
         List<String> deleteImagePath = deleteImage.stream().map(Image::getImagePath).collect(Collectors.toList());

@@ -92,9 +92,12 @@ public class Review extends Auditable {
         this.reviewImage = reviewImage;
     }
 
-    public void addReviewImage(ReviewImage reviewImage) {
-        this.reviewImage = reviewImage;
-        reviewImage.setReview(this);
+    public void addOrDeleteReviewImage(ReviewImage reviewImage) {
+        if(reviewImage != null){
+            this.reviewImage = reviewImage;
+            reviewImage.setReview(this);
+        }else
+            this.reviewImage = null;
     }
 
     // #### 편의 메서드 #### //

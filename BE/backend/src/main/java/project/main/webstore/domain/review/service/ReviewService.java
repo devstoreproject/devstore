@@ -55,7 +55,8 @@ public class ReviewService {
 
         review.addUserAndItem(user, item);
 
-        return reviewRepository.save(review);
+        Review save = reviewRepository.save(review);
+        return save;
     }
 
     public Review postReview(ImageInfoDto imageInfo, Review review) {
@@ -67,7 +68,7 @@ public class ReviewService {
 
         //DB 저장
         ReviewImage reviewImage = new ReviewImage(image, review);
-        review.addReviewImage(reviewImage);
+        review.addOrDeleteReviewImage(reviewImage);
 
         review.addUserAndItem(user, item);
 
@@ -83,8 +84,7 @@ public class ReviewService {
         }
         //아이템 검증
         if (!findReview.getItem().getItemId().equals(itemId)) {
-            //TODO: ItemExcpetion 미구현 -> 작업 진행 이후 변경 예정
-            throw new BusinessLogicException(UserExceptionCode.USER_NOT_SAME);
+            throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_SAME);
         }
 
         //기본적인 정보 존재한다면 변경
@@ -93,9 +93,9 @@ public class ReviewService {
 
         //이미지 수정하는 로직
         if (imageInfo != null) {
-            Image image = imageUtils.patchImage(imageInfo, findReview.getReviewImage());
-            ReviewImage reviewImage = new ReviewImage(image, findReview);
-            findReview.addReviewImage(reviewImage);
+            Image image = imageUtils.patchImageWithDelete(imageInfo, findReview.getReviewImage());
+            ReviewImage reviewImage = createReviewImage(image, findReview);
+            findReview.addOrDeleteReviewImage(reviewImage);
         }
 
         return findReview;
@@ -109,7 +109,6 @@ public class ReviewService {
         }
         //아이템 검증
         if (!findReview.getItem().getItemId().equals(review.getItem().getItemId())) {
-            //TODO: ItemExcpetion 미구현 -> 작업 진행 이후 변경 예정
             throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_SAME);
         }
 
@@ -123,7 +122,7 @@ public class ReviewService {
     public void deleteReview(Long reviewId) {
         Review findReview = reviewValidService.validReview(reviewId);
         ReviewImage reviewImage = findReview.getReviewImage();
-        deleteImage(reviewImage);
+        imageUtils.deleteImage(reviewImage);
         reviewRepository.deleteById(reviewId);
     }
 
@@ -140,7 +139,7 @@ public class ReviewService {
         return reviewList.stream().filter(review -> review.isBest()).collect(Collectors.toList());
     }
 
-    private void deleteImage(Image image) {
-        fileUploader.deleteS3Image(image.getImagePath());
+    private ReviewImage createReviewImage(Image image, Review review){
+        return image != null ? new ReviewImage(image, review) : null;
     }
 }
