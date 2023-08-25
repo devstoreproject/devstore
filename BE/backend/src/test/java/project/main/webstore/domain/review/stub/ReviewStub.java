@@ -29,6 +29,22 @@ public class ReviewStub {
                 .rating(10)
                 .stubBuild();
     }
+    public Review createReviewNoComment(Long userId, Long itemId, Long reviewId) {
+        return Review.stubBuilder()
+                .user(new User(userId))
+                .item(new Item(itemId))
+                .id(reviewId)
+                .rating(1)
+                .stubBuild();
+    }
+    public Review createReviewNoRating(Long userId, Long itemId, Long reviewId) {
+        return Review.stubBuilder()
+                .user(new User(userId))
+                .item(new Item(itemId))
+                .id(reviewId)
+                .comment("comment는 짧고 간결하게 사용해주시면 감사하겠습니다." + reviewId)
+                .stubBuild();
+    }
     public Review createReview(Long userId, Long itemId) {
         return Review.stubBuilder()
                 .user(new User(userId))
