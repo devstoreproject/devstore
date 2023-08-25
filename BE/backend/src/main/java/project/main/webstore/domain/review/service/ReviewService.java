@@ -92,14 +92,13 @@ public class ReviewService {
         Optional.ofNullable(review.getComment()).ifPresent((findReview::setComment));
 
         //이미지 수정하는 로직
-        if (imageInfo != null) {
-            Image image = imageUtils.patchImageWithDelete(imageInfo, findReview.getReviewImage());
-            ReviewImage reviewImage = createReviewImage(image, findReview);
-            findReview.addOrDeleteReviewImage(reviewImage);
-        }
+        Image image = imageUtils.patchImageWithDelete(imageInfo, findReview.getReviewImage());
+        ReviewImage reviewImage = createReviewImage(image, findReview);
+        findReview.addOrDeleteReviewImage(reviewImage);
 
         return findReview;
     }
+
     public Review patchReview(Review review) {
         Review findReview = reviewValidService.validReview(review.getId());
 
@@ -119,11 +118,16 @@ public class ReviewService {
         return findReview;
     }
 
-    public void deleteReview(Long reviewId) {
-        Review findReview = reviewValidService.validReview(reviewId);
-        ReviewImage reviewImage = findReview.getReviewImage();
-        imageUtils.deleteImage(reviewImage);
-        reviewRepository.deleteById(reviewId);
+    public void deleteReview(Long reviewId,Long userId) {
+        Optional<Review> findReview = reviewRepository.findById(reviewId);
+        if(findReview.isPresent()){
+            Review review = findReview.get();
+
+            userValidService.validUserIdSame(userId, review);
+
+            imageUtils.deleteImage(review.getReviewImage());
+            reviewRepository.deleteById(reviewId);
+        }
     }
 
     public List<Review> bestReviewByAdmin(List<Long> reviewIdList) {
@@ -139,7 +143,7 @@ public class ReviewService {
         return reviewList.stream().filter(review -> review.isBest()).collect(Collectors.toList());
     }
 
-    private ReviewImage createReviewImage(Image image, Review review){
+    private ReviewImage createReviewImage(Image image, Review review) {
         return image != null ? new ReviewImage(image, review) : null;
     }
 }

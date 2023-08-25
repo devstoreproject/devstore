@@ -83,7 +83,8 @@ public class ImageUtils {
     }
 
     public void deleteImage(Image image) {
-        fileUploader.deleteS3Image(image.getImagePath());
+        if(image != null)
+            fileUploader.deleteS3Image(image.getImagePath());
     }
 
     private void patchDeleteImage(List<? extends Image> imageList, List<Long> deleteIdList) {
