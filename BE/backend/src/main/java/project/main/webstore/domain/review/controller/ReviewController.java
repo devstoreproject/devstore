@@ -105,11 +105,10 @@ public class ReviewController {
     @DeleteMapping("/items/{itemId}/reviews/{reviewId}")
     public ResponseEntity deleteReview(@PathVariable Long itemId,
                                        @PathVariable Long reviewId,
-                                       @RequestParam Long userId,
                                        @AuthenticationPrincipal Object principal
     ) {
-        CheckLoginUser.validUserSame(principal, userId);
-        service.deleteReview(reviewId);
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        service.deleteReview(reviewId,userId);
         return ResponseEntity.noContent().build();
     }
 
