@@ -5,7 +5,6 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -26,11 +25,16 @@ import project.main.webstore.stub.ImageStub;
 import project.main.webstore.utils.FileUploader;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
@@ -65,7 +69,7 @@ class ReviewServiceTest {
 
         Review findReview = reviewStub.createReview(userId, itemId, reviewId);
         findReview.setUser(userStub.createUser(userId));
-        given(reviewRepository.save(ArgumentMatchers.any(Review.class))).willReturn(findReview);
+        given(reviewRepository.save(any(Review.class))).willReturn(findReview);
         given(userValidService.validUser(anyLong())).willReturn(userStub.createUser(userId));
         given(itemService.validItem(anyLong())).willReturn(itemStub.createItem(itemId));
         //when
@@ -86,8 +90,8 @@ class ReviewServiceTest {
         Review postReview = reviewStub.createReview(userId, itemId, reviewId);
         Image image = imageStub.createImage(1L, 0, true);
         Review excepted = reviewStub.createReview(userId, itemId, reviewId, new ReviewImage(image, postReview));
-        given(reviewRepository.save(ArgumentMatchers.any(Review.class))).willReturn(excepted);
-        given(fileUploader.uploadImage(ArgumentMatchers.any(ImageInfoDto.class))).willReturn(imageStub.createImage(1L, 0, true));
+        given(reviewRepository.save(any(Review.class))).willReturn(excepted);
+        given(fileUploader.uploadImage(any(ImageInfoDto.class))).willReturn(imageStub.createImage(1L, 0, true));
 
         Review result = reviewService.postReview(imageInfo, postReview);
         SoftAssertions.assertSoftly(softAssertions -> {
@@ -164,7 +168,7 @@ class ReviewServiceTest {
         savedReview.setReviewImage(reviewImage);
 
         given(reviewValidService.validReview(anyLong())).willReturn(savedReview);
-        given(imageUtils.patchImageWithDelete(ArgumentMatchers.any(ImageInfoDto.class), ArgumentMatchers.any(ReviewImage.class))).willReturn(resultImage);
+        given(imageUtils.patchImageWithDelete(any(ImageInfoDto.class), any(ReviewImage.class))).willReturn(resultImage);
 
         //when
         Review result = reviewService.patchReview(imageInfo, patch);
@@ -190,7 +194,7 @@ class ReviewServiceTest {
         savedReview.setReviewImage(reviewImage);
 
         given(reviewValidService.validReview(anyLong())).willReturn(savedReview);
-        given(imageUtils.patchImageWithDelete(ArgumentMatchers.any(ImageInfoDto.class), ArgumentMatchers.any(ReviewImage.class))).willReturn(null);
+        given(imageUtils.patchImageWithDelete(any(ImageInfoDto.class), any(ReviewImage.class))).willReturn(null);
 
         //when
         Review result = reviewService.patchReview(imageInfo, patch);
@@ -228,16 +232,26 @@ class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("리뷰 삭제 : 성공")
-    void deleteReviewTest() {
+    @DisplayName("리뷰 삭제 : 성공 [등록된 리뷰가 존재하지 않을때]")
+    void delete_review_not_found_review_test() {
+        given(reviewRepository.findById(anyLong())).willReturn(Optional.ofNullable(null));
+
+        reviewService.deleteReview(reviewId,userId);
+        //해당 메서드가 호출이 되었는지 검증하는 코드
+        verify(reviewRepository, times(1)).findById(reviewId);
+    }
+    @Test
+    @DisplayName("리뷰 삭제 : 성공 등록된 리뷰가 존재할 때")
+    void delete_test() {
         Review savedReview = reviewStub.createReview(userId, itemId, reviewId);
 
-
-    }
-    public void deleteReview(Long reviewId) {
-        Review findReview = reviewValidService.validReview(reviewId);
-        ReviewImage reviewImage = findReview.getReviewImage();
-        imageUtils.deleteImage(reviewImage);
-        reviewRepository.deleteById(reviewId);
+        given(reviewRepository.findById(anyLong())).willReturn(Optional.of(savedReview));
+        willDoNothing().given(userValidService).validUserIdSame(anyLong(), any(Review.class));
+        willDoNothing().given(reviewRepository).deleteById(anyLong());
+        reviewService.deleteReview(reviewId,userId);
+        //해당 메서드가 호출이 되었는지 검증하는 코드
+        verify(reviewRepository, times(1)).findById(reviewId);
+        verify(reviewRepository,times(1)).deleteById(reviewId);
+        verify(userValidService,times(1)).validUserIdSame(userId,savedReview);
     }
 }
