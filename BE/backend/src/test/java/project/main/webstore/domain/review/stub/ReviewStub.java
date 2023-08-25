@@ -26,14 +26,13 @@ public class ReviewStub {
                 .item(new Item(itemId))
                 .id(reviewId)
                 .comment("comment는 짧고 간결하게 사용해주시면 감사하겠습니다." + reviewId)
-                .reviewImage(null)
                 .rating(10)
                 .stubBuild();
     }
-    public Review createReview() {
+    public Review createReview(Long userId, Long itemId) {
         return Review.stubBuilder()
-                .user(new User(1L))
-                .item(new Item(1L))
+                .user(new User(userId))
+                .item(new Item(itemId))
                 .id(1L)
                 .comment("기본 본문입니다.")
                 .reviewImage(null)
