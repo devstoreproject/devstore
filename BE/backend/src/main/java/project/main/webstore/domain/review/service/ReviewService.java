@@ -75,15 +75,15 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
-    public Review patchReview(ImageInfoDto imageInfo, Review review, Long userId, Long itemId, Long reviewId) {
-        Review findReview = reviewValidService.validReview(reviewId);
+    public Review patchReview(ImageInfoDto imageInfo, Review review) {
+        Review findReview = reviewValidService.validReview(review.getId());
 
         //사용자 검증
-        if (!findReview.getUser().getId().equals(userId)) {
+        if (!findReview.getUser().getId().equals(review.getUser().getId())) {
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_SAME);
         }
         //아이템 검증
-        if (!findReview.getItem().getItemId().equals(itemId)) {
+        if (!findReview.getItem().getItemId().equals(review.getItem().getItemId())) {
             throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_SAME);
         }
 
