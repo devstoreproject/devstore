@@ -93,6 +93,7 @@ public class ReviewController {
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
                 .customCode(ResponseCode.OK)
                 .data(responsePageDto)
+
                 .build();
 
         return ResponseEntity.ok(response);
@@ -130,20 +131,19 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "리뷰 좋아요 \n 로그인 회원만 사용 가능")
     @PostMapping("/items/{itemId}/reviews/{reviewId}/like")
-    public ResponseEntity<ResponseDto<ReviewIdResponseDto>> addLikeReview(@PathVariable Long reviewId,
+    public ResponseEntity<ResponseDto<ReviewLikeResponseDto>> addLikeReview(@PathVariable Long reviewId,
                                                                           @PathVariable Long itemId,
                                                                           @RequestParam Long userId,
                                                                           @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validUserSame(principal, userId);
-        Review review = service.addLikeReview(reviewId, itemId, userId);
-        ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(review);
-        var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
+        Boolean like = service.addLikeReview(reviewId, itemId, userId);
+        ReviewLikeResponseDto response = reviewMapper.toDto(like);
+        var responseDto = ResponseDto.<ReviewLikeResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
-        URI uri = UriCreator.createUri("/items", "/reviews", review.getItem().getItemId(), review.getId());
-        return ResponseEntity.ok().header("Location", uri.toString()).body(responseDto);
+        return ResponseEntity.ok().body(responseDto);
     }
 
-    @ApiResponse(responseCode = "200", description = "특정 상품에서 좋아요가 가장 많은 리뷰 순으로 정렬, count 만큼 반환 \n 관리자만 사용 가능")
+    @ApiResponse(responseCode = "200", description = "특정 상품에서 좋아요가 가장 많은 리뷰 순으로 정렬, count 만큼 반환")
     @GetMapping("/items/{itemId}/reviews/best")
     public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getBestReview(@PathVariable Long itemId,
                                                                                  @RequestParam Long userId,
@@ -177,9 +177,7 @@ public class ReviewController {
 
     @PostMapping("/reviews/best")
     @ApiResponse(responseCode = "201", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
-    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> pickBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post, @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
-
+    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> pickBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post){
         List<Review> result = service.bestReviewByAdmin(post.getReviewIdList());
         List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
         var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
@@ -188,6 +186,7 @@ public class ReviewController {
                 .build();
         return ResponseEntity.ok(responseDto);
     }
+
     @DeleteMapping("/reviews/best")
     @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
     public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> deleteBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post, @AuthenticationPrincipal Object principal){
@@ -201,3 +200,9 @@ public class ReviewController {
         return ResponseEntity.ok(responseDto);
     }
 }
+
+
+/*
+* 추가 구현 내용
+* Question
+* */

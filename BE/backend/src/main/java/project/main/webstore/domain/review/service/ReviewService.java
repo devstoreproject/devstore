@@ -37,16 +37,24 @@ public class ReviewService {
     private final ItemService itemService;
     private final UserValidService userValidService;
 
-    public Review addLikeReview(Long reviewId, Long itemId, Long userId) {
+    public Boolean addLikeReview(Long reviewId, Long itemId, Long userId) {
         User findUser = userValidService.validUser(userId);
         Review findReview = reviewValidService.validReview(reviewId);
         if (findReview.getItem().getItemId() != itemId) {
             throw new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND);
         }
         Like like = new Like(findUser, findReview);
-        findReview.addLike(like);
 
-        return findReview;
+        List<Like> likeList = findReview.getLikeList();
+        Optional<Like> first = likeList.stream().filter(likes -> likes.getUser().getId().equals(userId)).findFirst();
+
+        if (first.isPresent()) {
+            likeList.remove(first.get());
+            return false;
+        } else {
+            findReview.addLike(like);
+            return true;
+        }
     }
 
     public Review postReview(Review review) {
