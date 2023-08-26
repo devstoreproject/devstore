@@ -9,6 +9,7 @@ import project.main.webstore.domain.image.dto.ImageSortPatchInfo;
 import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.review.dto.ReviewGetResponseDto;
+import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
 import project.main.webstore.domain.review.dto.ReviewUpdateRequestDto;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.users.entity.User;
@@ -64,6 +65,10 @@ public class ReviewStub {
                 .reviewImage(image)
                 .rating(10)
                 .stubBuild();
+    }
+
+    public ReviewPostRequestDto createReviewPostDto(){
+        return new ReviewPostRequestDto("짧고 간결하게 적어봅니다.",10);
     }
 
     public ReviewGetResponseDto reviewGetResponseDto(Review review) {
