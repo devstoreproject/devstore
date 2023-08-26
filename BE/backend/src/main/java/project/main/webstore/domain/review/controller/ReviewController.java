@@ -61,9 +61,7 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "리뷰 전체 조회")
     @GetMapping("/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewAllPage(@PageableDefault(sort = "id")Pageable pageable, @RequestParam Long userId, @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
-        CheckLoginUser.validAdmin(principal);
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewAllPage(@PageableDefault(sort = "id")Pageable pageable) {
         Page<Review> reviewPage = getService.getReviewPage(pageable);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()

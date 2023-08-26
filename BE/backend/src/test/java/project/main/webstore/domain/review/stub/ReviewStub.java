@@ -75,17 +75,39 @@ public class ReviewStub {
         return ReviewGetResponseDto.dtoBuilder().review(review).dtoBuild();
     }
 
-    public List<Review> createListReview() {
+    public List<Review> createList() {
         List<Review> list = new ArrayList<>();
-        for (Long i = 0L; i < 10L; i++) {
+        for (Long i = 1L; i < 10L; i++) {
             list.add(createReview(i, i, i));
+        }
+        return list;
+    }
+    public List<Review> createListItemSame(Long itemId) {
+        List<Review> list = new ArrayList<>();
+        for (Long i = 1L; i < 10L; i++) {
+            list.add(createReview(i, itemId, i));
+        }
+        return list;
+    }
+    public List<Review> createListUserSame(Long userId) {
+        List<Review> list = new ArrayList<>();
+        for (Long i = 1L; i < 10L; i++) {
+            list.add(createReview(userId, i, i));
         }
         return list;
     }
 
     public Page<Review> createPageReview(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
-        return new PageImpl<>(createListReview(), pageRequest, createListReview().size());
+        return new PageImpl<>(createList(), pageRequest, createList().size());
+    }
+    public Page<Review> createPageReviewItemSame(int page,Long itemId, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return new PageImpl<>(createListItemSame(itemId), pageRequest, createListItemSame(itemId).size());
+    }
+    public Page<Review> createPageReviewUserSame(int page,Long userId, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return new PageImpl<>(createListUserSame(userId), pageRequest, createListItemSame(userId).size());
     }
 
     public Page<ReviewGetResponseDto> reviewGetResponseDtoPage(int page, int size) {
