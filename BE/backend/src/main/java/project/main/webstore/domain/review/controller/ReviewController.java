@@ -1,12 +1,12 @@
 package project.main.webstore.domain.review.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -110,14 +110,12 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(path = "/items/{itemId}/reviews/{reviewId}",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(path = "/items/{itemId}/reviews/{reviewId}")
     @ApiResponse(responseCode = "200", description = "리뷰 수정")
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> patchReview(@PathVariable Long itemId,
                                                                         @PathVariable Long reviewId,
-                                                                        @RequestPart(required = false) ReviewUpdateRequestDto patch,
-                                                                        @AuthenticationPrincipal Object principal
+                                                                        @RequestBody(required = false) ReviewUpdateRequestDto patch,
+                                                                        @Parameter(hidden = true) @AuthenticationPrincipal Object principal
     ) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         Review review = reviewMapper.toEntity(patch, reviewId,userId,itemId);
