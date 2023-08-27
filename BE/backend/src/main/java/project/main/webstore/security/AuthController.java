@@ -35,7 +35,7 @@ public class AuthController {
     private final UserService userService;
     @PostMapping("/auth/refresh")
     @ApiResponse(responseCode = "200",description = "엑세스 시간 만료 시 사용되는 API\n Cookie 에 있는 리프레쉬 토큰을 통해 재발급")
-    public ResponseEntity getAccessToken(@CookieValue("refreshToken") String refresh,@RequestHeader("Refresh")String refreshHeader, HttpServletResponse response) {
+    public ResponseEntity getAccessToken(@CookieValue(value = "refreshToken",required = false) String refresh,@RequestHeader(value = "Refresh",required = false)String refreshHeader, HttpServletResponse response) {
         if (refresh == null && refreshHeader == null) {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header("Location", "/api/login").body(ErrorResponse.of(HttpStatus.UNAUTHORIZED));
         }
@@ -45,14 +45,16 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header("Location", "/api/login").body(ErrorResponse.of(HttpStatus.UNAUTHORIZED));
         }
 
-        redisUtils.delete(refresh);
-        redisUtils.set(refresh, userInfo, 420);
         String accessToken = tokenizer.delegateAccessToken(userInfo);
         String refreshToken = tokenizer.delegateRefreshToken(userInfo);
+
+        redisUtils.delete(token);
+        redisUtils.set(refreshToken, userInfo, 420);
+
         Cookie cookie = transUtils.createCookie(refreshToken);
         response.addCookie(cookie);
         HttpHeaders header = new HttpHeaders();
-        header.add("Authorization",accessToken);
+        header.add("Authorization","Bearer"+accessToken);
         header.add("Refresh",refreshToken);
         if(refresh != null)     //토큰 쿠키로 받을 수 있을 때
             return ResponseEntity.noContent().header("Authorization", accessToken).build();

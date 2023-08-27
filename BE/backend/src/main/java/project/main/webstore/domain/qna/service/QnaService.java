@@ -37,7 +37,7 @@ public class QnaService {
     }
 
     public Question patchQuestion(Question request, Long userId) {
-        Question find = validService.validUserSameWithQuestion(request.getId());
+        Question find = validService.validUserSameWithQuestion(userId, request.getId());
         userValidService.validUserIdSame(userId, find);
 
         Optional.ofNullable(request.getQnaStatus()).ifPresent(find::setQnaStatus);
@@ -47,8 +47,10 @@ public class QnaService {
     }
 
     public void deleteQuestion(Long questionId, Long userId) {
-        validService.validUserSameOrAdmin(userId);
-        questionRepository.deleteById(questionId);
+        Question find = validService.validUserSameOrAdmin(userId, questionId);
+        if (find != null)
+            questionRepository.deleteById(questionId);
+
     }
 
     public Answer postAnswer(Answer answer, Long userId) {

@@ -9,6 +9,7 @@ import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.image.utils.ImageUtils;
 import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.item.exception.ItemExceptionCode;
 import project.main.webstore.domain.item.service.ItemService;
 import project.main.webstore.domain.like.entity.Like;
 import project.main.webstore.domain.review.entity.Review;
@@ -22,7 +23,6 @@ import project.main.webstore.utils.FileUploader;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,54 +36,62 @@ public class ReviewService {
     private final ItemService itemService;
     private final UserValidService userValidService;
 
-    public Review addLikeReview(Long reviewId, Long itemId, Long userId) {
+    public Boolean addLikeReview(Long reviewId, Long itemId, Long userId) {
         User findUser = userValidService.validUser(userId);
         Review findReview = reviewValidService.validReview(reviewId);
         if (findReview.getItem().getItemId() != itemId) {
             throw new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND);
         }
         Like like = new Like(findUser, findReview);
-        findReview.addLike(like);
 
-        return findReview;
+        List<Like> likeList = findReview.getLikeList();
+        Optional<Like> first = likeList.stream().filter(likes -> likes.getUser().getId().equals(userId)).findFirst();
+
+        if (first.isPresent()) {
+            likeList.remove(first.get());
+            return false;
+        } else {
+            findReview.addLike(like);
+            return true;
+        }
     }
 
-    public Review postReview(Review review, Long userId, Long itemId) {
-        User user = userValidService.validUser(userId);
-        Item item = itemService.validItem(itemId);
+    public Review postReview(Review review) {
+        User user = userValidService.validUser(review.getUser().getId());
+        Item item = itemService.validItem(review.getItem().getItemId());
 
         review.addUserAndItem(user, item);
 
-        return reviewRepository.save(review);
+        Review save = reviewRepository.save(review);
+        return save;
     }
 
-    public Review postReview(ImageInfoDto imageInfo, Review review, Long userId, Long itemId) {
-        User user = userValidService.validUser(userId);
-        Item item = itemService.validItem(itemId);
+    public Review postReview(ImageInfoDto imageInfo, Review review) {
+        User user = userValidService.validUser(review.getUser().getId());
+        Item item = itemService.validItem(review.getItem().getItemId());
 
         //이미지 저장 로직
         Image image = fileUploader.uploadImage(imageInfo);
 
         //DB 저장
         ReviewImage reviewImage = new ReviewImage(image, review);
-        review.addReviewImage(reviewImage);
+        review.addOrDeleteReviewImage(reviewImage);
 
         review.addUserAndItem(user, item);
 
         return reviewRepository.save(review);
     }
 
-    public Review patchReview(ImageInfoDto imageInfo, Review review, Long userId, Long itemId, Long reviewId) {
-        Review findReview = reviewValidService.validReview(reviewId);
+    public Review patchReview(ImageInfoDto imageInfo, Review review) {
+        Review findReview = reviewValidService.validReview(review.getId());
 
         //사용자 검증
-        if (!findReview.getUser().getId().equals(userId)) {
+        if (!findReview.getUser().getId().equals(review.getUser().getId())) {
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_SAME);
         }
         //아이템 검증
-        if (!findReview.getItem().getItemId().equals(itemId)) {
-            //TODO: ItemExcpetion 미구현 -> 작업 진행 이후 변경 예정
-            throw new BusinessLogicException(UserExceptionCode.USER_NOT_SAME);
+        if (!findReview.getItem().getItemId().equals(review.getItem().getItemId())) {
+            throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_SAME);
         }
 
         //기본적인 정보 존재한다면 변경
@@ -91,20 +99,42 @@ public class ReviewService {
         Optional.ofNullable(review.getComment()).ifPresent((findReview::setComment));
 
         //이미지 수정하는 로직
-        if (imageInfo != null) {
-            Image image = imageUtils.patchImage(imageInfo, findReview.getReviewImage());
-            ReviewImage reviewImage = new ReviewImage(image, findReview);
-            findReview.addReviewImage(reviewImage);
-        }
+        Image image = imageUtils.patchImageWithDelete(imageInfo, findReview.getReviewImage());
+        ReviewImage reviewImage = createReviewImage(image, findReview);
+        findReview.addOrDeleteReviewImage(reviewImage);
 
         return findReview;
     }
 
-    public void deleteReview(Long reviewId) {
-        Review findReview = reviewValidService.validReview(reviewId);
-        ReviewImage reviewImage = findReview.getReviewImage();
-        deleteImage(reviewImage);
-        reviewRepository.deleteById(reviewId);
+    public Review patchReview(Review review) {
+        Review findReview = reviewValidService.validReview(review.getId());
+
+        //사용자 검증
+        if (!findReview.getUser().getId().equals(review.getUser().getId())) {
+            throw new BusinessLogicException(UserExceptionCode.USER_NOT_SAME);
+        }
+        //아이템 검증
+        if (!findReview.getItem().getItemId().equals(review.getItem().getItemId())) {
+            throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_SAME);
+        }
+
+        //기본적인 정보 존재한다면 변경
+        Optional.ofNullable(review.getRating()).ifPresent((findReview::setRating));
+        Optional.ofNullable(review.getComment()).ifPresent((findReview::setComment));
+
+        return findReview;
+    }
+
+    public void deleteReview(Long reviewId,Long userId) {
+        Optional<Review> findReview = reviewRepository.findById(reviewId);
+        if(findReview.isPresent()){
+            Review review = findReview.get();
+
+            userValidService.validUserIdSame(userId, review);
+
+            imageUtils.deleteImage(review.getReviewImage());
+            reviewRepository.deleteById(reviewId);
+        }
     }
 
     public List<Review> bestReviewByAdmin(List<Long> reviewIdList) {
@@ -117,10 +147,13 @@ public class ReviewService {
         List<Review> reviewList = reviewValidService.validReviewList(reviewIdList);
         reviewList.forEach(review -> review.setBest(false));
 
-        return reviewList.stream().filter(review -> review.isBest()).collect(Collectors.toList());
+        return reviewList;
     }
 
-    private void deleteImage(Image image) {
-        fileUploader.deleteS3Image(image.getImagePath());
+    private ReviewImage createReviewImage(Image image, Review review) {
+        return image != null ? new ReviewImage(image, review) : null;
+    }
+    public void deleteReviewForTest(Long reviewId){
+        reviewRepository.deleteById(reviewId);
     }
 }

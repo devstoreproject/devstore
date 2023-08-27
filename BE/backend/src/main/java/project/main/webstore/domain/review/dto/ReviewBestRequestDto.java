@@ -9,4 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ReviewBestRequestDto {
     List<Long> reviewIdList;
+
+    public ReviewBestRequestDto(List<Long> reviewIdList) {
+        this.reviewIdList = reviewIdList;
+    }
 }

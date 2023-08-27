@@ -1,24 +1,15 @@
 package project.main.webstore.domain.review.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.Explode;
-import io.swagger.v3.oas.annotations.enums.ParameterStyle;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import project.main.webstore.domain.image.dto.ImageInfoDto;
-import project.main.webstore.domain.image.mapper.ImageMapper;
 import project.main.webstore.domain.review.dto.*;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.mapper.ReviewMapper;
@@ -41,28 +32,16 @@ public class ReviewController {
     private final ReviewGetService getService;
     private final ReviewService service;
     private final ReviewMapper reviewMapper;
-    private final ImageMapper imageMapper;
 
-    @PostMapping(path = "/items/{itemId}/reviews",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(path = "/items/{itemId}/reviews")
     @ApiResponse(responseCode = "201", description = "리뷰 등록 성공")
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> postReview(@PathVariable Long itemId,
-                                                                       @RequestPart ReviewPostRequestDto post,
-                                                                       @Parameter(description = "Image file", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                                                                               array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))),style = ParameterStyle.FORM,explode = Explode.TRUE)
-                                                                           @RequestPart(required = false) MultipartFile image) {
-        Review review = reviewMapper.toEntity(post);
-
-        Review savedReview;
-        if (image == null) {
-            savedReview = service.postReview(review, post.getUserId(), itemId);
-        } else {
-            ImageInfoDto imageInfo = imageMapper.toLocalDto(image, UPLOAD_DIR);
-            savedReview = service.postReview(imageInfo, review, post.getUserId(), itemId);
-        }
-        ReviewIdResponseDto response = reviewMapper.toDto(savedReview);
+                                                                       @RequestBody ReviewPostRequestDto post,
+                                                                       @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        Review review = reviewMapper.toEntity(post,userId,itemId);
+        Review result = service.postReview(review);
+        ReviewIdResponseDto response = reviewMapper.toDto(result);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
         URI uri = UriCreator.createUri("/item", "/review", itemId, responseDto.getData().getReviewId());
         return ResponseEntity.created(uri).body(responseDto);
@@ -82,9 +61,7 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "리뷰 전체 조회")
     @GetMapping("/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewAllPage(@PageableDefault(sort = "id")Pageable pageable, @RequestParam Long userId, @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
-        CheckLoginUser.validAdmin(principal);
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewAllPage(@PageableDefault(sort = "id")Pageable pageable) {
         Page<Review> reviewPage = getService.getReviewPage(pageable);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
@@ -97,7 +74,8 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "해당 아이템에 존재하는 리뷰 전체 출력")
     @GetMapping("/items/{itemId}/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(@PageableDefault(sort = "id")Pageable pageable, @PathVariable Long itemId) {
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(@PageableDefault(sort = "id")Pageable pageable,
+                                                                                         @PathVariable Long itemId) {
         Page<Review> reviewPage = getService.getReviewPageByItemId(pageable, itemId);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
@@ -110,12 +88,14 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "특정 회원이 작성한 리뷰 전체 조회")
     @GetMapping("/user/{userId}/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewListByUserId(@PageableDefault(sort = "id")Pageable pageable, @PathVariable Long userId) {
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewListByUserId(@PageableDefault(sort = "id")Pageable pageable,
+                                                                                         @PathVariable Long userId) {
         Page<Review> reviewPage = getService.getReviewPageByUserId(pageable, userId);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
                 .customCode(ResponseCode.OK)
                 .data(responsePageDto)
+
                 .build();
 
         return ResponseEntity.ok(response);
@@ -126,31 +106,23 @@ public class ReviewController {
     @DeleteMapping("/items/{itemId}/reviews/{reviewId}")
     public ResponseEntity deleteReview(@PathVariable Long itemId,
                                        @PathVariable Long reviewId,
-                                       @RequestParam Long userId,
-                                       @AuthenticationPrincipal Object principal
+                                       @Parameter(hidden = true)@AuthenticationPrincipal Object principal
     ) {
-        CheckLoginUser.validUserSame(principal, userId);
-        service.deleteReview(reviewId);
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        service.deleteReview(reviewId,userId);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(path = "/items/{itemId}/reviews/{reviewId}",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(path = "/items/{itemId}/reviews/{reviewId}")
     @ApiResponse(responseCode = "200", description = "리뷰 수정")
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> patchReview(@PathVariable Long itemId,
                                                                         @PathVariable Long reviewId,
-                                                                        @RequestPart(required = false) ReviewUpdateRequestDto patch,
-                                                                        @RequestPart(required = false) MultipartFile image,
-                                                                        @AuthenticationPrincipal Object principal
+                                                                        @RequestBody(required = false) ReviewUpdateRequestDto patch,
+                                                                        @Parameter(hidden = true) @AuthenticationPrincipal Object principal
     ) {
-//        CheckLoginUser.validUserSame(principal, patch.getUserId());
-        Review review = reviewMapper.toEntity(patch, reviewId);
-        ImageInfoDto imageInfo = null;
-        if (image != null) {
-            imageInfo = imageMapper.toLocalDto(image, UPLOAD_DIR);
-        }
-        Review patchReview = service.patchReview(imageInfo, review, patch.getUserId(), itemId, reviewId);
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        Review review = reviewMapper.toEntity(patch, reviewId,userId,itemId);
+        Review patchReview = service.patchReview(review);
 
         ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(patchReview);
         var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
@@ -161,27 +133,21 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "리뷰 좋아요 \n 로그인 회원만 사용 가능")
     @PostMapping("/items/{itemId}/reviews/{reviewId}/like")
-    public ResponseEntity<ResponseDto<ReviewIdResponseDto>> addLikeReview(@PathVariable Long reviewId,
-                                                                          @PathVariable Long itemId,
-                                                                          @RequestParam Long userId,
-                                                                          @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
-        Review review = service.addLikeReview(reviewId, itemId, userId);
-        ReviewIdResponseDto reviewIdResponseDto = reviewMapper.toDto(review);
-        var responseDto = ResponseDto.<ReviewIdResponseDto>builder().data(reviewIdResponseDto).customCode(ResponseCode.OK).build();
+    public ResponseEntity<ResponseDto<ReviewLikeResponseDto>> addLikeReview(@PathVariable Long reviewId,
+                                                                            @PathVariable Long itemId,
+                                                                            @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        Boolean like = service.addLikeReview(reviewId, itemId, userId);
+        ReviewLikeResponseDto response = reviewMapper.toDto(like);
+        var responseDto = ResponseDto.<ReviewLikeResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
-        URI uri = UriCreator.createUri("/items", "/reviews", review.getItem().getItemId(), review.getId());
-        return ResponseEntity.ok().header("Location", uri.toString()).body(responseDto);
+        return ResponseEntity.ok().body(responseDto);
     }
 
-    @ApiResponse(responseCode = "200", description = "특정 상품에서 좋아요가 가장 많은 리뷰 순으로 정렬, count 만큼 반환 \n 관리자만 사용 가능")
+    @ApiResponse(responseCode = "200", description = "특정 상품에서 좋아요가 가장 많은 리뷰 순으로 정렬, count 만큼 반환")
     @GetMapping("/items/{itemId}/reviews/best")
     public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getBestReview(@PathVariable Long itemId,
-                                                                                 @RequestParam Long userId,
-                                                                                 @RequestParam int count,
-                                                                                 @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
-        CheckLoginUser.validAdmin(principal);
+                                                                                 @RequestParam int count) {
         List<Review> result = getService.getBestReview(itemId, count);
         List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
 
@@ -193,10 +159,8 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/best")
-    @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
-    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getAdminPickBestReview(@RequestParam Long userId, @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
-
+    @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰")
+    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getAdminPickBestReview(){
         List<Review> result = getService.getBestReviewByAdmin();
         List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
         var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
@@ -207,28 +171,21 @@ public class ReviewController {
     }
 
     @PostMapping("/reviews/best")
-    @ApiResponse(responseCode = "201", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
-    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> pickBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post, @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
-
+    @ApiResponse(responseCode = "200", description = "관리자가 베스트 리뷰 등록")
+    public ResponseEntity<ResponseDto<ReviewBestResponseDto>> pickBestReviewByAdmin(@RequestBody ReviewBestRequestDto post){
         List<Review> result = service.bestReviewByAdmin(post.getReviewIdList());
-        List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
-        var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
+        ReviewBestResponseDto response = reviewMapper.toGetBestListResponse(result);
+        var responseDto = ResponseDto.<ReviewBestResponseDto>builder()
                 .data(response)
                 .customCode(ResponseCode.OK)
                 .build();
         return ResponseEntity.ok(responseDto);
     }
+
     @DeleteMapping("/reviews/best")
-    @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
-    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> delteBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post, @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
+    @ApiResponse(responseCode = "204", description = "관리자가 베스트 리뷰 삭제")
+    public ResponseEntity deleteBestReviewByAdmin(@RequestBody ReviewBestRequestDto post){
         List<Review> result = service.deleteBestReview(post.getReviewIdList());
-        List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
-        var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
-                .data(response)
-                .customCode(ResponseCode.OK)
-                .build();
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.noContent().build();
     }
 }

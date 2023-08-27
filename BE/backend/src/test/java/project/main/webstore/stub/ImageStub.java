@@ -85,6 +85,14 @@ public class ImageStub {
                 .id(id)
                 .build();
     }
+    public ImageInfoDto createImageInfoPath(int order, boolean target) {
+        return ImageInfoDto.dtoBuilder()
+                .uploadDir("review")
+                .representative(target)
+                .order(order)
+                .multipartFile(mockMultipartFile)
+                .build();
+    }
 
     public List<ImageInfoDto> createImageInfo(int order, boolean flag) {
         return Stream.of(

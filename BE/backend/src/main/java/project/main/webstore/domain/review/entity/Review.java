@@ -66,16 +66,20 @@ public class Review extends Auditable {
     }
 
     @Builder(builderMethodName = "patchBuilder")
-    public Review(Long id, String comment, Integer rating) {
+    public Review(Long id, String comment, Integer rating,Long userId, Long itemId) {
         this.id = id;
         this.comment = comment;
         this.rating = rating;
+        this.item = new Item(itemId);
+        this.user = new User(userId);
     }
 
     @Builder(builderMethodName = "postBuilder")
-    public Review(String comment, Integer rating) {
+    public Review(String comment, Integer rating,Long userId, Long itemId) {
         this.comment = comment;
         this.rating = rating;
+        this.user = new User(userId);
+        this.item = new Item(itemId);
     }
 
     @Builder(builderMethodName = "stubBuilder", buildMethodName = "stubBuild")
@@ -88,9 +92,21 @@ public class Review extends Auditable {
         this.reviewImage = reviewImage;
     }
 
-    public void addReviewImage(ReviewImage reviewImage) {
-        this.reviewImage = reviewImage;
-        reviewImage.setReview(this);
+    public Review(String comment, Integer rating, User user, Item item) {
+        this.comment = comment;
+        this.rating = rating;
+        this.best = false;
+        this.user = user;
+        this.item = item;
+        this.likeList = new ArrayList<>();
+    }
+
+    public void addOrDeleteReviewImage(ReviewImage reviewImage) {
+        if(reviewImage != null){
+            this.reviewImage = reviewImage;
+            reviewImage.setReview(this);
+        }else
+            this.reviewImage = null;
     }
 
     // #### 편의 메서드 #### //
