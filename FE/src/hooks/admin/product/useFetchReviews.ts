@@ -16,7 +16,7 @@ const useFetchReviews = () => {
           console.log(err);
         });
     }
-  }, [setReviews]);
+  }, [setReviews, userId]);
 
   return reviews;
 };
