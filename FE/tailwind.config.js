@@ -27,6 +27,9 @@ module.exports = {
         200: '50rem',
         250: '62.5rem',
       },
+      margin: {
+        6.4: '1.6rem',
+      },
       lineHeight: {
         12: '3rem',
       },
@@ -88,9 +91,6 @@ module.exports = {
         200: '50rem',
         250: '62.5rem',
         300: '75rem',
-      },
-      left: {
-        122: '30.5rem',
       },
       boxShadow: {
         signBox: '0px 3px 8px rgba(0, 0, 0, 0.24)',
