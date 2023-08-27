@@ -23,7 +23,6 @@ import project.main.webstore.utils.FileUploader;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -148,7 +147,7 @@ public class ReviewService {
         List<Review> reviewList = reviewValidService.validReviewList(reviewIdList);
         reviewList.forEach(review -> review.setBest(false));
 
-        return reviewList.stream().filter(review -> review.isBest()).collect(Collectors.toList());
+        return reviewList;
     }
 
     private ReviewImage createReviewImage(Image image, Review review) {

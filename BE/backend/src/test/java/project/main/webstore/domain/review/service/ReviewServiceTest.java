@@ -25,12 +25,12 @@ import project.main.webstore.stub.ImageStub;
 import project.main.webstore.utils.FileUploader;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
@@ -254,4 +254,44 @@ class ReviewServiceTest {
         verify(reviewRepository,times(1)).deleteById(reviewId);
         verify(userValidService,times(1)).validUserIdSame(userId,savedReview);
     }
+
+    @Test
+    @DisplayName("리뷰 삭제 : 성공 등록된 리뷰가 존재할 때")
+    void best_review_by_admin_test() {
+        List<Review> list = reviewStub.createList();
+
+        given(reviewValidService.validReviewList(anyList())).willReturn(list);
+
+        //해당 메서드가 호출이 되었는지 검증하는 코드
+        List<Review> reviews = reviewService.bestReviewByAdmin(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L));
+
+        Assertions.assertThat(reviews.get(0).isBest()).isEqualTo(true);
+        Assertions.assertThat(reviews.get(1).isBest()).isEqualTo(true);
+        Assertions.assertThat(reviews.get(2).isBest()).isEqualTo(true);
+        Assertions.assertThat(reviews.get(3).isBest()).isEqualTo(true);
+        Assertions.assertThat(reviews.get(4).isBest()).isEqualTo(true);
+        Assertions.assertThat(reviews.get(5).isBest()).isEqualTo(true);
+        Assertions.assertThat(reviews.get(6).isBest()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("리뷰 삭제 : 성공 등록된 리뷰가 존재할 때")
+    void delete_review_by_admin_test() {
+        List<Review> list = reviewStub.createList();
+
+        given(reviewValidService.validReviewList(anyList())).willReturn(list);
+
+        //해당 메서드가 호출이 되었는지 검증하는 코드
+        List<Review> reviews = reviewService.deleteBestReview(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L));
+
+        Assertions.assertThat(reviews.get(0).isBest()).isEqualTo(false);
+        Assertions.assertThat(reviews.get(1).isBest()).isEqualTo(false);
+        Assertions.assertThat(reviews.get(2).isBest()).isEqualTo(false);
+        Assertions.assertThat(reviews.get(3).isBest()).isEqualTo(false);
+        Assertions.assertThat(reviews.get(4).isBest()).isEqualTo(false);
+        Assertions.assertThat(reviews.get(5).isBest()).isEqualTo(false);
+        Assertions.assertThat(reviews.get(6).isBest()).isEqualTo(false);
+
+    }
+
 }
