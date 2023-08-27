@@ -8,6 +8,7 @@ import project.main.webstore.domain.image.dto.ImageSortDto;
 import project.main.webstore.domain.image.dto.ImageSortPatchInfo;
 import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.review.dto.ReviewBestRequestDto;
 import project.main.webstore.domain.review.dto.ReviewGetResponseDto;
 import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
 import project.main.webstore.domain.review.dto.ReviewUpdateRequestDto;
@@ -82,6 +83,7 @@ public class ReviewStub {
         }
         return list;
     }
+
     public List<Review> createListItemSame(Long itemId) {
         List<Review> list = new ArrayList<>();
         for (Long i = 1L; i < 10L; i++) {
@@ -136,5 +138,12 @@ public class ReviewStub {
                 new ImageSortPatchInfo(null,2, false),
                 new ImageSortPatchInfo(null, 3,target)
         ).collect(Collectors.toList());
+    }
+
+    public ReviewUpdateRequestDto createPatchDto(){
+        return new ReviewUpdateRequestDto("수정된 본문입니다.!!", 1);
+    }
+    public ReviewBestRequestDto createBestRequest(){
+        return new ReviewBestRequestDto(List.of(1L,2L));
     }
 }
