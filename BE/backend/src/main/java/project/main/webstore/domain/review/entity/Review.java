@@ -92,6 +92,15 @@ public class Review extends Auditable {
         this.reviewImage = reviewImage;
     }
 
+    public Review(String comment, Integer rating, User user, Item item) {
+        this.comment = comment;
+        this.rating = rating;
+        this.best = false;
+        this.user = user;
+        this.item = item;
+        this.likeList = new ArrayList<>();
+    }
+
     public void addOrDeleteReviewImage(ReviewImage reviewImage) {
         if(reviewImage != null){
             this.reviewImage = reviewImage;

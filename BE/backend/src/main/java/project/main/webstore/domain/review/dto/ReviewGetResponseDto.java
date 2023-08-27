@@ -23,6 +23,8 @@ public class ReviewGetResponseDto {
     private Long itemId;
     @Schema(description = "리뷰 본문")
     private String comment;
+    @Schema(description = "리뷰 베스트 여부")
+    private boolean best;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
@@ -38,6 +40,7 @@ public class ReviewGetResponseDto {
         this.createdAt = review.getCreatedAt();
         this.modifiedAt = review.getModifiedAt();
         this.userName = review.getUser().getNickName();
+        this.best = review.isBest();
         this.image = review.getReviewImage() != null ? new ImageDto(review.getReviewImage()):null;
     }
 }

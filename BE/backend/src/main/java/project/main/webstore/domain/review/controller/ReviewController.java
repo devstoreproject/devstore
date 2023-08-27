@@ -159,7 +159,7 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/best")
-    @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
+    @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰")
     public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getAdminPickBestReview(){
         List<Review> result = getService.getBestReviewByAdmin();
         List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);

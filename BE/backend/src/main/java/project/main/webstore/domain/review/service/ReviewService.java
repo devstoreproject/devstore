@@ -153,4 +153,7 @@ public class ReviewService {
     private ReviewImage createReviewImage(Image image, Review review) {
         return image != null ? new ReviewImage(image, review) : null;
     }
+    public void deleteReviewForTest(Long reviewId){
+        reviewRepository.deleteById(reviewId);
+    }
 }

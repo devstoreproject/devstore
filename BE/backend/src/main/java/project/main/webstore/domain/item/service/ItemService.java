@@ -83,10 +83,10 @@ public class ItemService {
         Item findItem = validItem(itemId);
 
         List<ItemImage> itemImageList = findItem.getItemImageList();
-        List<String> deletePatchList = itemImageList.stream().map(ItemImage::getImagePath).collect(Collectors.toList());
-
-        imageUtils.deleteImage(deletePatchList);
-
+        if(!itemImageList.isEmpty()) {
+            List<String> deletePatchList = itemImageList.stream().map(ItemImage::getImagePath).collect(Collectors.toList());
+            imageUtils.deleteImage(deletePatchList);
+        }
         itemRepository.delete(findItem);
     }
     public Item validItem(Long itemId) {
