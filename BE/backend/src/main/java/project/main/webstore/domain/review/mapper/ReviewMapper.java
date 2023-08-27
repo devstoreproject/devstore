@@ -52,6 +52,10 @@ public class ReviewMapper {
     public List<ReviewGetResponseDto> toGetListResponse(List<Review> reviewList){
         return reviewList.stream().map(ReviewGetResponseDto::new).collect(Collectors.toList());
     }
+    public ReviewBestResponseDto toGetBestListResponse(List<Review> reviewList){
+        List<Long> list = reviewList.stream().map(review -> review.getId()).collect(Collectors.toList());
+        return new ReviewBestResponseDto(list);
+    }
 
     public Slice<ReviewGetResponseDto> toGetSliceResponse(Slice<Review> reviewSlice){
         return reviewSlice.map(ReviewGetResponseDto::new);

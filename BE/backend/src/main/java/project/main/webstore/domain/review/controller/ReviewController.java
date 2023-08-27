@@ -37,7 +37,7 @@ public class ReviewController {
     @ApiResponse(responseCode = "201", description = "리뷰 등록 성공")
     public ResponseEntity<ResponseDto<ReviewIdResponseDto>> postReview(@PathVariable Long itemId,
                                                                        @RequestBody ReviewPostRequestDto post,
-                                                                       @AuthenticationPrincipal Object principal) {
+                                                                       @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         Review review = reviewMapper.toEntity(post,userId,itemId);
         Review result = service.postReview(review);
@@ -74,7 +74,8 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "해당 아이템에 존재하는 리뷰 전체 출력")
     @GetMapping("/items/{itemId}/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(@PageableDefault(sort = "id")Pageable pageable, @PathVariable Long itemId) {
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(@PageableDefault(sort = "id")Pageable pageable,
+                                                                                         @PathVariable Long itemId) {
         Page<Review> reviewPage = getService.getReviewPageByItemId(pageable, itemId);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
@@ -87,7 +88,8 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "특정 회원이 작성한 리뷰 전체 조회")
     @GetMapping("/user/{userId}/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewListByUserId(@PageableDefault(sort = "id")Pageable pageable, @PathVariable Long userId) {
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewListByUserId(@PageableDefault(sort = "id")Pageable pageable,
+                                                                                         @PathVariable Long userId) {
         Page<Review> reviewPage = getService.getReviewPageByUserId(pageable, userId);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
@@ -104,7 +106,7 @@ public class ReviewController {
     @DeleteMapping("/items/{itemId}/reviews/{reviewId}")
     public ResponseEntity deleteReview(@PathVariable Long itemId,
                                        @PathVariable Long reviewId,
-                                       @AuthenticationPrincipal Object principal
+                                       @Parameter(hidden = true)@AuthenticationPrincipal Object principal
     ) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         service.deleteReview(reviewId,userId);
@@ -132,10 +134,9 @@ public class ReviewController {
     @ApiResponse(responseCode = "200", description = "리뷰 좋아요 \n 로그인 회원만 사용 가능")
     @PostMapping("/items/{itemId}/reviews/{reviewId}/like")
     public ResponseEntity<ResponseDto<ReviewLikeResponseDto>> addLikeReview(@PathVariable Long reviewId,
-                                                                          @PathVariable Long itemId,
-                                                                          @RequestParam Long userId,
-                                                                          @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
+                                                                            @PathVariable Long itemId,
+                                                                            @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
+        Long userId = CheckLoginUser.getContextIdx(principal);
         Boolean like = service.addLikeReview(reviewId, itemId, userId);
         ReviewLikeResponseDto response = reviewMapper.toDto(like);
         var responseDto = ResponseDto.<ReviewLikeResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
@@ -146,11 +147,7 @@ public class ReviewController {
     @ApiResponse(responseCode = "200", description = "특정 상품에서 좋아요가 가장 많은 리뷰 순으로 정렬, count 만큼 반환")
     @GetMapping("/items/{itemId}/reviews/best")
     public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getBestReview(@PathVariable Long itemId,
-                                                                                 @RequestParam Long userId,
-                                                                                 @RequestParam int count,
-                                                                                 @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
-        CheckLoginUser.validAdmin(principal);
+                                                                                 @RequestParam int count) {
         List<Review> result = getService.getBestReview(itemId, count);
         List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
 
@@ -163,9 +160,7 @@ public class ReviewController {
 
     @GetMapping("/reviews/best")
     @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
-    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getAdminPickBestReview(@RequestParam Long userId, @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
-
+    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> getAdminPickBestReview(){
         List<Review> result = getService.getBestReviewByAdmin();
         List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
         var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
@@ -176,11 +171,11 @@ public class ReviewController {
     }
 
     @PostMapping("/reviews/best")
-    @ApiResponse(responseCode = "201", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
-    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> pickBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post){
+    @ApiResponse(responseCode = "200", description = "관리자가 베스트 리뷰 등록")
+    public ResponseEntity<ResponseDto<ReviewBestResponseDto>> pickBestReviewByAdmin(@RequestBody ReviewBestRequestDto post){
         List<Review> result = service.bestReviewByAdmin(post.getReviewIdList());
-        List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
-        var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
+        ReviewBestResponseDto response = reviewMapper.toGetBestListResponse(result);
+        var responseDto = ResponseDto.<ReviewBestResponseDto>builder()
                 .data(response)
                 .customCode(ResponseCode.OK)
                 .build();
@@ -188,21 +183,9 @@ public class ReviewController {
     }
 
     @DeleteMapping("/reviews/best")
-    @ApiResponse(responseCode = "200", description = "관리자가 정한 베스트 리뷰, count 만큼 반환 \n 관리자만 사용 가능")
-    public ResponseEntity<ResponseDto<List<ReviewGetResponseDto>>> deleteBestReviewByAdmin(@RequestParam Long userId, @RequestBody ReviewBestRequestDto post, @AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
+    @ApiResponse(responseCode = "204", description = "관리자가 베스트 리뷰 삭제")
+    public ResponseEntity deleteBestReviewByAdmin(@RequestBody ReviewBestRequestDto post){
         List<Review> result = service.deleteBestReview(post.getReviewIdList());
-        List<ReviewGetResponseDto> response = reviewMapper.toGetListResponse(result);
-        var responseDto = ResponseDto.<List<ReviewGetResponseDto>>builder()
-                .data(response)
-                .customCode(ResponseCode.OK)
-                .build();
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.noContent().build();
     }
 }
-
-
-/*
-* 추가 구현 내용
-* Question
-* */
