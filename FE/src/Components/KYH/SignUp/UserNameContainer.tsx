@@ -1,12 +1,12 @@
-import type { UserName } from 'model/auth';
+import type { Username } from 'model/auth';
 
 export default function UserNameContainer({
-  userName,
-  setUserName,
+  username,
+  setUsername,
   isUserNameValid,
-}: UserName) {
+}: Username) {
   const UserNameInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserName(e.target.value);
+    setUsername(e.target.value);
   };
   return (
     <div className="flex mt-2">
@@ -14,9 +14,9 @@ export default function UserNameContainer({
         <span className="ml-2">이름</span>
         <input
           type="text"
-          className="h-10 pl-2 mr-2 border border-black"
+          className="h-10 pl-2 border border-black"
           placeholder="이름을 입력해 주세요"
-          value={userName}
+          value={username}
           onChange={UserNameInputHandler}
         ></input>
         {isUserNameValid ? null : (

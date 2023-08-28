@@ -15,9 +15,9 @@ export interface passwordConfirm extends Pick<password, 'password'> {
   setPasswordConfirm: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export interface UserName {
-  userName: string;
-  setUserName: React.Dispatch<React.SetStateAction<string>>;
+export interface Username {
+  username: string;
+  setUsername: React.Dispatch<React.SetStateAction<string>>;
   isUserNameValid: boolean;
 }
 
@@ -31,4 +31,27 @@ export interface Phone {
   phone: string;
   setPhone: React.Dispatch<React.SetStateAction<string>>;
   isPhoneValid: boolean;
+}
+
+export interface Profile {
+  userId: number;
+  email: string;
+  phone: string;
+  nickname: string;
+  profileImage: string | null;
+  username: string;
+}
+
+export interface Address {
+  zipCode: string;
+  addressDetail: string;
+  addressSimple: string;
+}
+
+export interface Product {
+  itemId: number;
+  name: string;
+  itemPrice: number;
+  defaultCount: number;
+  totalCount: number;
 }

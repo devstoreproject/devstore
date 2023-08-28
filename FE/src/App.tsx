@@ -8,9 +8,6 @@ import Mypage from 'Pages/KYH/Mypage';
 import OrderList from 'Components/KYH/Mypage/OrderList/OrderList';
 import UserInfo from 'Components/KYH/Mypage/UserInfo/UserInfo';
 import Bookmarks from 'Components/KYH/Mypage/Bookmarks/Bookmarks';
-import Reviews from 'Components/KYH/Mypage/Reviews/Reviews';
-import Coupons from 'Components/KYH/Mypage/Coupons/Coupons';
-import Subscription from 'Components/KYH/Mypage/Subscription/Subscription';
 import ProductList from 'Components/KYH/admin/ProductList/ProductList';
 import ReturnOrExchange from 'Components/KYH/admin/ReturnOrExchange/ReturnOrExchange';
 import ProductInquiry from 'Components/KYH/admin/ProductInquiry/ProductInquiry';
@@ -47,23 +44,18 @@ function App() {
           <Route path="searchcategory" element={<SearchCategory />} />
           <Route path="search" element={<Search />} />
           <Route path="searchcategory/:id" element={<ProductDetail />} />
+          <Route path="/notice" element={<NoticeList />} />
+          <Route path="/notice/:id" element={<NoticeDetail />} />
         </Route>
 
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/sleeperaccount" element={<SleeperAccount />} />
-        <Route path="/notice" element={<NoticeList />} />
-        <Route path="/notice/post" element={<NoticePost />} />
-        <Route path="/notice/edit" element={<NoticeEdit />} />
-        <Route path="/notice/detail" element={<NoticeDetail />} />
 
         <Route path="/mypage" element={<Mypage />}>
           <Route path="orderlist" element={<OrderList />} />
           <Route path="userinfo" element={<UserInfo />} />
           <Route path="bookmarks" element={<Bookmarks />} />
-          <Route path="reviews" element={<Reviews />} />
-          <Route path="coupons" element={<Coupons />} />
-          <Route path="subscription" element={<Subscription />} />
         </Route>
 
         <Route path="/admin" element={<Admin />}>
@@ -73,6 +65,12 @@ function App() {
           <Route path="productinquiry" element={<ProductInquiry />} />
           <Route path="productlist/post" element={<ProductPost />} />
           <Route path="productlist/edit" element={<ProductEdit />} />
+          <Route path="reviewmanagement" element={<ReviewManagement />} />
+          <Route path="orderedlist" element={<OrderedList />} />
+          <Route path="sales" element={<Sales />} />
+          <Route path="notice" element={<NoticeList />} />
+          <Route path="notice/post" element={<NoticePost />} />
+          <Route path="notice/edit/:id" element={<NoticeEdit />} />
         </Route>
         <Route path="/cart" element={<Cart />} />
         <Route path="/checklist" element={<CheckList />} />

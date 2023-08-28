@@ -1,32 +1,52 @@
 import ContentsItem from './ContentsItem';
 
-export default function ContentsList() {
-  const contents = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-  ];
+interface NoticeListProp {
+  tabList: Array<{ id: number; title: string }>;
+  datas: Array<{
+    key: number;
+    category: any;
+    content: string;
+    createAt: string;
+    modifiedAt: string;
+    noticeId: number;
+    title: string;
+    viewCount: number;
+    image: {
+      imageId: number;
+      originalPath: string;
+      thumbnailPath: string;
+    };
+  }>;
+  adminPath: string;
+}
+
+export default function ContentsList({
+  tabList,
+  datas,
+  adminPath,
+}: NoticeListProp) {
   return (
-    <ul className="flex flex-wrap items-center w-full ">
-      {contents.map((content, idx) => (
+    <div
+      className={`flex ${
+        adminPath === 'admin' ? 'flex-wrap' : 'flex-wrap'
+      }  items-center  w-full`}
+    >
+      {datas?.map((data, idx) => (
         <ContentsItem
-          key={idx}
-          classnames={` ${idx % 4 === 0 ? 'ml-0' : ''} ${
-            idx % 4 === 3 ? 'mr-0' : ''
-          }`}
+          classnames="ml-0"
+          key={data.noticeId}
+          tabList={tabList}
+          category={data.category}
+          noticeId={data.noticeId}
+          content={data.content}
+          createAt={data.createAt}
+          modifiedAt={data.modifiedAt}
+          title={data.title}
+          viewCount={data.viewCount}
+          image={data.image}
+          adminPath={adminPath}
         />
       ))}
-    </ul>
+    </div>
   );
 }

@@ -1,20 +1,15 @@
 import { useEffect, useState } from 'react';
 import api from 'api';
+import type { Profile } from 'model/auth';
 
-interface profile {
-  userId: number;
-  email: string;
-  password: string;
-  nickname: string;
-  profileImage: string | null;
-}
 const useFetchProfile = () => {
-  const [profile, setProfile] = useState<profile>({
+  const [profile, setProfile] = useState<Profile>({
     userId: 0,
     email: '',
-    password: '',
+    phone: '',
     nickname: '',
     profileImage: null,
+    username: '',
   });
 
   const userId = localStorage.getItem('userId');

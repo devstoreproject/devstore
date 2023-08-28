@@ -5,10 +5,6 @@ export default function PasswordContainer({
   setPassword,
   isPasswordValid,
 }: password) {
-  const passwordInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
   return (
     <div className="flex mt-2">
       <div className="flex flex-col w-full mr-2">
@@ -18,7 +14,9 @@ export default function PasswordContainer({
           className="h-10 pl-2 border border-black"
           placeholder="비밀번호를 입력하세요"
           value={password}
-          onChange={passwordInputHandler}
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
         ></input>
         {isPasswordValid ? null : (
           <span className="mt-1 ml-2 text-xs font-bold text-red-500">

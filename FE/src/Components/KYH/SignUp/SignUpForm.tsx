@@ -22,7 +22,7 @@ export default function SignUpForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [userName, setUserName] = useState('');
+  const [username, setUsername] = useState('');
   const [nickname, setNickname] = useState('');
   const [phone, setPhone] = useState('');
 
@@ -31,6 +31,7 @@ export default function SignUpForm() {
   const [isUserNameValid, setIsUserNameValid] = useState(true);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [isPhoneValid, setIsPhoneValid] = useState(true);
+  const [isNicknameDuplicate, setIsNicknameDuplicate] = useState(true);
 
   const submitHandler = (e: React.FormEvent): void => {
     e.preventDefault();
@@ -38,7 +39,7 @@ export default function SignUpForm() {
     const userInfo = {
       email,
       password,
-      userName,
+      username,
       nickname,
       phone,
     };
@@ -46,9 +47,10 @@ export default function SignUpForm() {
     if (!ValidateEmail(email, setIsEmailValid)) return;
     if (!ValidatePassword(password, setIsPasswordValid)) return;
     if (password !== passwordConfirm) return;
-    if (!ValidateUserName(userName, setIsUserNameValid)) return;
+    if (!ValidateUserName(username, setIsUserNameValid)) return;
     if (!ValidateNickname(nickname, setIsNicknameValid)) return;
     if (!ValidatePhone(phone, setIsPhoneValid)) return;
+    if (!isNicknameDuplicate) return;
 
     fetchSignUp(userInfo, navigate);
   };
@@ -74,14 +76,16 @@ export default function SignUpForm() {
         setPasswordConfirm={setPasswordConfirm}
       />
       <UserNameContainer
-        userName={userName}
-        setUserName={setUserName}
+        username={username}
+        setUsername={setUsername}
         isUserNameValid={isUserNameValid}
       />
       <NicknameContainer
         nickname={nickname}
         setNickname={setNickname}
         isNicknameValid={isNicknameValid}
+        isNicknameDuplicate={isNicknameDuplicate}
+        setIsNicknameDuplicate={setIsNicknameDuplicate}
       />
       <PhoneContainer
         phone={phone}

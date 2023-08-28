@@ -1,11 +1,11 @@
-import OrderHistory from './OrderHistory';
 import RecentlyViewList from './RecentlyViewList';
+import OrderItems from './OrderItems';
 
 export default function OrderList() {
   return (
     <div className="flex flex-col">
       <RecentlyViewList />
-      <OrderHistory />
+      <OrderItems />
     </div>
   );
 }

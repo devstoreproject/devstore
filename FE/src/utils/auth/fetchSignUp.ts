@@ -3,16 +3,14 @@ import api from 'api';
 interface UserData {
   email: string;
   password: string;
-  userName: string;
+  username: string;
   nickname: string;
   phone: string;
 }
 
 const fetchSignUp = (userData: UserData, navigate: (to: string) => void) => {
   const formData = new FormData();
-  const blob = new Blob([JSON.stringify(userData)], {
-    type: 'application/json',
-  });
+  const blob = new Blob([JSON.stringify(userData)]);
 
   formData.append('post', blob);
 

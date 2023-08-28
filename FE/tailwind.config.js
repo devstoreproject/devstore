@@ -27,6 +27,9 @@ module.exports = {
         200: '50rem',
         250: '62.5rem',
       },
+      margin: {
+        6.4: '1.6rem',
+      },
       lineHeight: {
         12: '3rem',
       },
@@ -43,6 +46,8 @@ module.exports = {
       width: {
         25: '6.25rem',
         26: '6.5rem',
+        66.4: '16.6rem',
+        68.8: '17.2rem',
         95: '23.75rem',
         104: '26rem',
         112: '28rem',
