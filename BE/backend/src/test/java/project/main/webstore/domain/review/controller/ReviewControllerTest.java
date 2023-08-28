@@ -211,7 +211,7 @@ class ReviewControllerTest {
         // given
         HttpHeaders defaultHeader = utils.getDefaultHeader();
 
-        given(service.addLikeReview(anyLong(),anyLong(),anyLong())).willReturn(true);
+        given(service.addLikeReview(anyLong(), anyLong(), anyLong())).willReturn(true);
         // when
         ResultActions perform = mvc.perform(MockMvcRequestBuilders.post(DEFAULT_URL + "/items/{itemId}/reviews/{reviewId}/like", itemId, reviewId).headers(defaultHeader));
         // then
@@ -227,9 +227,9 @@ class ReviewControllerTest {
         // given
         HttpHeaders defaultHeader = utils.getDefaultHeader();
         List<Review> list = reviewStub.createList();
-        given(getService.getBestReview(anyLong(),anyInt())).willReturn(list);
+        given(getService.getBestReview(anyLong(), anyInt())).willReturn(list);
         // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/items/{itemId}/reviews/best", itemId, reviewId).headers(defaultHeader).param("count","10"));
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/items/{itemId}/reviews/best", itemId, reviewId).headers(defaultHeader).param("count", "10"));
         // then
         perform
                 .andDo(log())
@@ -245,7 +245,7 @@ class ReviewControllerTest {
         List<Review> list = reviewStub.createList();
         given(getService.getBestReviewByAdmin()).willReturn(list);
         // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/reviews/best").headers(defaultHeader).param("count","10"));
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/reviews/best").headers(defaultHeader).param("count", "10"));
         // then
         perform
                 .andDo(log())
@@ -270,6 +270,7 @@ class ReviewControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.reviewIdList[0]").value(1L));
     }
+
     @Test
     @DisplayName("베스트 리뷰 삭제")
     void delete_best_review_by_admin_test() throws Exception {
