@@ -22,7 +22,7 @@ export default function Main() {
         <MainThemeProduct />
       </div>
       <MainIntroduce />
-      <div>배포자동화test</div>
+      <div>배포자동화test입니다. 수정해보겠습니다.</div>
     </div>
   );
 }
