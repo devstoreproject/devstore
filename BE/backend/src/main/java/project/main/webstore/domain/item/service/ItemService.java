@@ -21,9 +21,6 @@ import project.main.webstore.domain.item.repository.ItemRepository;
 import project.main.webstore.domain.item.repository.SpecRepository;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.service.UserValidService;
-import project.main.webstore.exception.BusinessLogicException;
-import project.main.webstore.exception.CommonExceptionCode;
-import project.main.webstore.utils.FileUploader;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,19 +33,19 @@ import java.util.stream.Collectors;
 public class ItemService {
     private final ItemRepository itemRepository;
     private final SpecRepository specRepository;
+    private final ItemValidService itemValidService;
     private final UserValidService userValidService;
     private final ImageUtils imageUtils;
 
     // 기존 등록된 item 검증 후 등록
     public Item postItem(Item item) {
-        validItemExist(item);
+        itemValidService.validItemExist(item);
 
         return itemRepository.save(item);
     }
 
     public Item postItem(Item item, List<ImageInfoDto> imageInfoList) {
-        validItemExist(item);
-//        imageUtils.imageValid(imageInfoList);
+        itemValidService.validItemExist(item);
 
         List<Image> images = imageUtils.uploadImageList(imageInfoList);
         List<ItemImage> imageList = images.stream().map(image -> new ItemImage(image, item)).collect(Collectors.toList());
@@ -58,7 +55,7 @@ public class ItemService {
     }
 
     public Item patchItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item) {
-        Item findItem = validItem(item.getItemId());
+        Item findItem = itemValidService.validItem(item.getItemId());
 
         Optional.ofNullable(item.getCategory()).ifPresent(findItem::setCategory);
         Optional.ofNullable(item.getItemName()).ifPresent(findItem::setItemName);
@@ -79,7 +76,7 @@ public class ItemService {
     }
 
     public void deleteItem(Long itemId) {
-        Item findItem = validItem(itemId);
+        Item findItem = itemValidService.validItem(itemId);
 
         List<ItemImage> itemImageList = findItem.getItemImageList();
         if(!itemImageList.isEmpty()) {
@@ -88,14 +85,11 @@ public class ItemService {
         }
         itemRepository.delete(findItem);
     }
-    public Item validItem(Long itemId) {
-        Item item = itemRepository
-                .findByItemId(itemId)
-                .orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND));
+    public Item getItem(Long itemId) {
+        Item item = itemValidService.validItem(itemId);
 
         item.addViewCount();
         return item;
-
     }
     // 아이템 검색
 
@@ -134,7 +128,7 @@ public class ItemService {
         return itemRepository.findAll(pageable);
     }
     public PickedItemDto pickItem(Long itemId, Long userId) {
-        Item find = validItem(itemId);
+        Item find = itemValidService.validItem(itemId);
         User findUser = userValidService.validUser(userId);
         List<PickedItem> userPickedItem = findUser.getPickedItemList();
         List<PickedItem> pickedItemList = userPickedItem;
@@ -160,10 +154,4 @@ public class ItemService {
         return result;
     }
 
-    private void validItemExist(Item item) {
-        Optional<Item> findItem = itemRepository.findByItemId(item.getItemId());
-        if(findItem.isPresent()){
-            throw new BusinessLogicException(CommonExceptionCode.ITEM_EXIST);
-        }
-    }
 }

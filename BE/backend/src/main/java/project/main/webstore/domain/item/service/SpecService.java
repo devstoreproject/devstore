@@ -9,7 +9,6 @@ import project.main.webstore.domain.item.entity.ItemSpec;
 import project.main.webstore.domain.item.repository.SpecRepository;
 import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.exception.BusinessLogicException;
-import project.main.webstore.exception.CommonExceptionCode;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,11 +19,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SpecService {
     private final SpecRepository specRepository;
-    private final ItemService itemService;
+    private final ItemValidService itemValidService;
 
     // TODO: itemSpec
     public ItemSpec writeSpec(ItemSpec itemSpec, Long itemId) {
-        Item findItem = itemService.validItem(itemId);
+        Item findItem = itemValidService.validItem(itemId);
         itemSpec.setItem(findItem);
 
         return specRepository.save(itemSpec);
@@ -54,7 +53,7 @@ public class SpecService {
     }
 
     public List<ItemSpec> getSpecs(Long itemId) {
-        Item findItem = itemService.validItem(itemId);
+        Item findItem = itemValidService.validItem(itemId);
         return findItem.getSpecList();
     }
 

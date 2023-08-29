@@ -1,6 +1,7 @@
 package project.main.webstore.domain.review.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -59,9 +60,14 @@ public class ReviewController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @ApiResponse(responseCode = "200", description = "리뷰 전체 조회")
     @GetMapping("/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewAllPage(@PageableDefault(sort = "id")Pageable pageable) {
+    @ApiResponse(responseCode = "200", description = "리뷰 전체 조회")
+    @Parameters({
+            @Parameter(name = "page", example = "0", description = "첫 페이지가 0번지"),
+            @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
+            @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
+    })
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewAllPage(@Parameter(hidden = true)@PageableDefault(sort = "id")Pageable pageable) {
         Page<Review> reviewPage = getService.getReviewPage(pageable);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
         var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
@@ -72,9 +78,14 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiResponse(responseCode = "200", description = "해당 아이템에 존재하는 리뷰 전체 출력")
     @GetMapping("/items/{itemId}/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(@PageableDefault(sort = "id")Pageable pageable,
+    @ApiResponse(responseCode = "200", description = "해당 아이템에 존재하는 리뷰 전체 출력")
+    @Parameters({
+            @Parameter(name = "page", example = "0", description = "첫 페이지가 0번지"),
+            @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
+            @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
+    })
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(@Parameter(hidden = true)@PageableDefault(sort = "id")Pageable pageable,
                                                                                          @PathVariable Long itemId) {
         Page<Review> reviewPage = getService.getReviewPageByItemId(pageable, itemId);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
@@ -88,7 +99,12 @@ public class ReviewController {
 
     @ApiResponse(responseCode = "200", description = "특정 회원이 작성한 리뷰 전체 조회")
     @GetMapping("/user/{userId}/reviews")
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewListByUserId(@PageableDefault(sort = "id")Pageable pageable,
+    @Parameters({
+            @Parameter(name = "page", example = "0", description = "첫 페이지가 0번지"),
+            @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
+            @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
+    })
+    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewListByUserId(@Parameter(hidden = true)@PageableDefault(sort = "id")Pageable pageable,
                                                                                          @PathVariable Long userId) {
         Page<Review> reviewPage = getService.getReviewPageByUserId(pageable, userId);
         Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);

@@ -10,7 +10,7 @@ import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.image.utils.ImageUtils;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.exception.ItemExceptionCode;
-import project.main.webstore.domain.item.service.ItemService;
+import project.main.webstore.domain.item.service.ItemValidService;
 import project.main.webstore.domain.like.entity.Like;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.repository.ReviewRepository;
@@ -33,7 +33,7 @@ public class ReviewService {
     private final ReviewValidService reviewValidService;
     private final FileUploader fileUploader;
     private final ImageUtils imageUtils;
-    private final ItemService itemService;
+    private final ItemValidService itemValidService;
     private final UserValidService userValidService;
 
     public Boolean addLikeReview(Long reviewId, Long itemId, Long userId) {
@@ -58,7 +58,7 @@ public class ReviewService {
 
     public Review postReview(Review review) {
         User user = userValidService.validUser(review.getUser().getId());
-        Item item = itemService.validItem(review.getItem().getItemId());
+        Item item = itemValidService.validItem(review.getItem().getItemId());
 
         review.addUserAndItem(user, item);
 
@@ -68,7 +68,7 @@ public class ReviewService {
 
     public Review postReview(ImageInfoDto imageInfo, Review review) {
         User user = userValidService.validUser(review.getUser().getId());
-        Item item = itemService.validItem(review.getItem().getItemId());
+        Item item = itemValidService.validItem(review.getItem().getItemId());
 
         //이미지 저장 로직
         Image image = fileUploader.uploadImage(imageInfo);

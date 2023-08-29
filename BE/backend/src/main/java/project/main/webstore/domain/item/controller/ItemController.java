@@ -116,7 +116,7 @@ public class ItemController {
     @GetMapping("/{item-Id}")
     @ApiResponse(responseCode = "200", description = " 단건 조회")
     public ResponseEntity<ResponseDto<ItemResponseDto>> getItem(@PathVariable("item-Id") @Positive Long itemId) {
-        Item item = itemService.validItem(itemId);
+        Item item = itemService.getItem(itemId);
         ItemResponseDto response = itemMapper.toGetResponseDto(item);
         var responseDto = ResponseDto.<ItemResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
