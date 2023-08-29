@@ -24,12 +24,11 @@ import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = "itemId")})
-@NoArgsConstructor(access = PROTECTED)
+@NoArgsConstructor
 public class Item extends Auditable {
     @Setter
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)

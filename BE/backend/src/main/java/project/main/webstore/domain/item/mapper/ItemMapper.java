@@ -19,7 +19,7 @@ public class ItemMapper {
 
     public Item itemPatchDtoToItem(ItemPatchDto itemPatchDto) {
         if (itemPatchDto == null) {
-            return null;
+            return new Item();
         }
         return new Item(itemPatchDto);
 
