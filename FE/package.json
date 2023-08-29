@@ -48,6 +48,9 @@
       "last 1 safari version"
     ]
   },
+  "optionalDependencies": {
+  "fsevents": "*"
+ },
   "devDependencies": {
     "@babel/core": "^7.22.10",
     "@babel/preset-env": "^7.22.10",
