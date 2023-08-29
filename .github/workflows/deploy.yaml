@@ -1,10 +1,6 @@
 name: front-deploy
 
 on:
-  push:
-    branches:
-      - feat/FE/**
-      - feat/fe/**
   pull_request:
     branches:
       - dev/FE
@@ -24,6 +20,10 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: ./FE
+
+      - name: SHOW AWS CLI VERSION
+        run: |
+          aws --version
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
