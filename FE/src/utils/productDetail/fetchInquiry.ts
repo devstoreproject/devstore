@@ -6,7 +6,7 @@ const fetchInquiry = (
   setInquiry: React.Dispatch<React.SetStateAction<InquiryContentType[] | null>>
 ): void => {
   api
-    .get(`api/qna/items/${id}?page=0&size=10`)
+    .get(`api/qna/items/${id}?page=0&size=20`)
     .then((res) => {
       setInquiry(res.data.data.content);
     })
