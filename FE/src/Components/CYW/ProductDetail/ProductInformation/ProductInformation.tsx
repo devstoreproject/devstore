@@ -1,4 +1,4 @@
-import Coupon from './Coupon';
+// import Coupon from './Coupon';
 import DeliveryInformation from './DeliveryInformation';
 import OptionChoice from './OptionChoice';
 import ProductResult from './ProductResult';
@@ -20,7 +20,6 @@ export default function ProductInformation({ product }: ProductTypeProps) {
         delivery={product.deliveryPrice}
         price={product.itemPrice}
       />
-      <Coupon />
       <OptionChoice />
       <ProductResult name={product.name} price={product.itemPrice} />
       <Button />
