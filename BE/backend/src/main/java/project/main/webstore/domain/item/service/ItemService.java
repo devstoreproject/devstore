@@ -39,13 +39,11 @@ public class ItemService {
 
     // 기존 등록된 item 검증 후 등록
     public Item postItem(Item item) {
-        itemValidService.validItemExist(item);
 
         return itemRepository.save(item);
     }
 
     public Item postItem(Item item, List<ImageInfoDto> imageInfoList) {
-        itemValidService.validItemExist(item);
 
         List<Image> images = imageUtils.uploadImageList(imageInfoList);
         List<ItemImage> imageList = images.stream().map(image -> new ItemImage(image, item)).collect(Collectors.toList());
