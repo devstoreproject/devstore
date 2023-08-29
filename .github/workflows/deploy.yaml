@@ -1,17 +1,17 @@
-name: client
+name: front-deploy
 
 on:
+  push:
+    branches:
+      - feat/FE/**
+      - feat/fe/**
   pull_request:
     branches:
       - dev/FE
-    types: [closed]
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-versions: [18.x]
 
     steps:
       - name: Checkout source code.
@@ -33,7 +33,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy to S3
-        run: aws s3 sync build/ s3://${{ secrets.DEV_AWS_S3_BUCKET }} --delete
+        run: aws s3 sync ./build s3://${{ secrets.DEV_AWS_S3_BUCKET }} --delete
         working-directory: ./FE
 
       - name: Invalidate CloudFront Cache
