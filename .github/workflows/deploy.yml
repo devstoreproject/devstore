@@ -1,7 +1,7 @@
 name: client
 
 on:
-  pull_request:
+  push:
     branches:
       - dev/FE
 
