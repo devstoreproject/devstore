@@ -1,6 +1,7 @@
 package project.main.webstore.totalTest;
 
 import com.google.gson.Gson;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -25,18 +26,21 @@ import org.springframework.util.MultiValueMap;
 import project.main.webstore.annotation.WithMockCustomUser;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
-import project.main.webstore.domain.users.dto.*;
+import project.main.webstore.domain.users.dto.UserGetPasswordRequestDto;
+import project.main.webstore.domain.users.dto.UserGetResponseDto;
+import project.main.webstore.domain.users.dto.UserPatchRequestDto;
+import project.main.webstore.domain.users.dto.UserPostRequestDto;
 import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.dto.ResponseDto;
+import project.main.webstore.helper.TestUtils;
+import project.main.webstore.security.dto.UserInfoDto;
 import project.main.webstore.security.jwt.utils.JwtTokenizer;
 import project.main.webstore.utils.FileUploader;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,6 +53,8 @@ public class UserControllerTest {
     TestRestTemplate template = new TestRestTemplate();
     @Autowired
     JwtTokenizer jwtTokenizer;
+    @Autowired
+    TestUtils testUtils;
     @Autowired
     MockMvc mvc;
     @Autowired
@@ -78,7 +84,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("사용자 POST [TestRestTemplate]")
     void post_user_template_test() throws Exception {
-        UserPostRequestDto post = new UserPostRequestDto("admin221@gmail.com", "asdffcx1111", "김송모자리", "010-8013-1313", "김송모");
+        UserPostRequestDto post = new UserPostRequestDto("admin221@gmail.com", "asdffcx1111", "김송모자리", "010-8013-1313", "김송요");
         String content = gson.toJson(post);
 
         HttpHeaders headers = new HttpHeaders();
@@ -140,6 +146,7 @@ public class UserControllerTest {
     @WithMockCustomUser(userId = 1L, userRole = UserRole.CLIENT)
     void getUserTest() throws Exception {
         //보통 요청을 보내야 하기 때문에 Request는 JSON으로 만들지만 Response는 JSON으로
+        //given
         UserGetResponseDto response = new UserGetResponseDto(1L, "admin221@gmail.com", "asdffcx1111", "김송모자리", null, "010-8013-1313", "김송모");
         String content = gson.toJson(response);
         // when
@@ -156,6 +163,25 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("사용자 전체 Get")
+    @WithMockCustomUser(username = "복자", role = "ADMIN", email = "amdin@gmail.com", userId = 2L, userRole = UserRole.ADMIN)
+    void getUsersTest() throws Exception {
+        //given
+        MultiValueMap header = testUtils.getPageParam();
+        // when
+        ResultActions actions = mvc.perform(
+            MockMvcRequestBuilders.get("/api/users").params(header)
+                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON));
+        // then
+        actions
+            .andDo(log())
+            .andExpect(status().isOk())
+        ;
+    }
+
+
+    @Test
     @DisplayName("사용자 Delete")
     @WithMockCustomUser(userId = 1L, userRole = UserRole.CLIENT)
     void deleteUserTest() throws Exception {
@@ -168,4 +194,117 @@ public class UserControllerTest {
             .andDo(log());
     }
 
+    //TODO: 이 코드는 닉네임이 일치하는지에 대한 코드인 거 같은데 ..
+    // String값의 nickname과 infoId의 1L의 닉네임이 다르다는 에러로 뜨는 거 같다
+    @Test
+    @DisplayName("사용자 닉네임 중복 검사")
+    void getNickNameTest() throws Exception {
+        //given
+        UserInfoDto infoDto = new UserInfoDto("1", "admin221@gmailcom", "김송모자리", UserRole.CLIENT);
+
+        String nickName = "닉네임뭐하지";
+
+        Assertions.assertThat(infoDto.getNickName()).isEqualTo("닉네임뭐하지");
+
+        // when
+        ResultActions actions = mvc.perform(
+            MockMvcRequestBuilders.get("/api/users/valid-nick")
+                .param("nickName", nickName));
+
+
+        // then
+        actions
+            .andDo(log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.nickName").value(true));
+        ;
+    }
+
+    // TODO: 기존에 작성한 닉네임 검증 코드
+    //  에러 로그로 이미 가입한 메일 존재로 뜨는데, 필요한건 메일이 아니라 존재하는 닉네임..
+    @Test
+    @DisplayName("사용자 닉네임 중복 검사")
+    @WithMockCustomUser(userId = 1L, userRole = UserRole.CLIENT)
+    void getValidNickTest() throws Exception {
+        //given
+        String nickName = "김송모자리";
+
+        // when
+//        assertEquals("김송모자리", nickName);
+        ResultActions actions = mvc.perform(
+            MockMvcRequestBuilders.get("/api/users/valid-nick")
+                .param("nickName", nickName))
+            ;
+
+        // then
+        actions
+            .andDo(log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.nickName").value(true));
+        ;
+    }
+
+    //TODO: 이메일 인증시 필요한 key값..?
+    @Test
+    @DisplayName("사용자 이메일 인증 TEST")
+    @WithMockCustomUser(userId = 1L, userRole = UserRole.CLIENT)
+    void getCheckEmailTest() throws Exception {
+        //given
+        String email = "admin221@gmailcom";
+        String key = "010101";
+
+        // when
+        ResultActions actions = mvc.perform(
+            MockMvcRequestBuilders.get("/api/users/auth-mail")
+                .param("key", key)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        actions
+            .andDo(log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.email").value(email))
+            .andExpect(jsonPath("$.data.userId").value(1L))
+            .andExpect(jsonPath("$.data.key").value(key))
+        ;
+    }
+    //    @Test
+//    @DisplayName("사용자 이메일 체크")
+//    @WithMockCustomUser(username = "김송모", role = "CLIENT", email = "amdin221@gmail.com", userId = 1L, userRole = UserRole.CLIENT)
+//    void getEmailTest() throws Exception {
+//        //given
+//        Long userId = 1L;
+//        // when
+//        ResultActions actions = mvc.perform(
+//            MockMvcRequestBuilders.get("/api/users/auth-mail")
+//                .param("key", userId))
+//                .contentType(MediaType.APPLICATION_JSON));
+//
+//        // then
+//        actions
+//            .andDo(log())
+//            .andExpect(status().isOk())
+//            .andExpect(jsonPath("$.key"))
+//        ;
+//    }
+
+    @Test
+    @DisplayName("사용자 임시 비밀번호 Get")
+    void getPassWordTest() throws Exception {
+        UserGetPasswordRequestDto request = new UserGetPasswordRequestDto("admin221@gmail.com", "김송모", "010-8013-1313");
+        String content = gson.toJson(request);
+
+        // when
+        ResultActions actions = mvc.perform(
+            MockMvcRequestBuilders.post("/api/users/password")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content));
+
+        // then
+        actions
+            .andDo(log())
+            .andExpect(status().isOk())
+        ;
+    }
 }
