@@ -1,5 +1,6 @@
 package project.main.webstore.domain.item.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,9 @@ public class OptionController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(responseCode = "201", description = "상품 옵션 등록 성공")
-    public ResponseEntity<ResponseDto<OptionIdResponseDto>> postOption(@PathVariable Long itemId, @RequestBody OptionPostRequestDto post, @AuthenticationPrincipal Object principal) {
+    public ResponseEntity<ResponseDto<OptionIdResponseDto>> postOption(@PathVariable Long itemId,
+                                                                       @RequestBody OptionPostRequestDto post,
+                                                                       @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
         ItemOption request = optionMapper.toEntity(post);
         ItemOption result = optionService.writeOption(request, itemId);
