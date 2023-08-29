@@ -1,7 +1,9 @@
 package project.main.webstore.domain.item.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.domain.image.dto.ImageSortDto;
 import project.main.webstore.domain.item.enums.Category;
@@ -12,6 +14,8 @@ import java.util.List;
 @Getter
 @Setter
 @Schema(description = "상품 수정 스키마")
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemPatchDto {
     @Schema(example = "COMPUTER",allowableValues = {"COMPUTER", "MONITOR", "MOUSE", "HEADSET", "CHAIR", "DESK"})
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$")
@@ -30,9 +34,31 @@ public class ItemPatchDto {
     private Integer deliveryPrice;
     private int discountRate;
     //이미지 삭제 로직
+    @Setter
     @Schema(description = "삭제할 이미지의 ID 리스트")
     private List<Long> deleteImageId;
+    @Setter
     @Schema(description = "이미지 정렬 및 대표사진 여부 정보 리스트")
     private List<ImageSortDto> imageSortAndRepresentativeInfo;
 
+    public ItemPatchDto(Category category, String name, String description, int defaultCount, Integer itemPrice, Integer deliveryPrice, int discountRate) {
+        this.category = category;
+        this.name = name;
+        this.description = description;
+        this.defaultCount = defaultCount;
+        this.itemPrice = itemPrice;
+        this.deliveryPrice = deliveryPrice;
+        this.discountRate = discountRate;
+    }
+
+    public ItemPatchDto(Category category, String name, String description, int defaultCount, Integer itemPrice, Integer deliveryPrice, int discountRate, List<Long> deleteImageId) {
+        this.category = category;
+        this.name = name;
+        this.description = description;
+        this.defaultCount = defaultCount;
+        this.itemPrice = itemPrice;
+        this.deliveryPrice = deliveryPrice;
+        this.discountRate = discountRate;
+        this.deleteImageId = deleteImageId;
+    }
 }

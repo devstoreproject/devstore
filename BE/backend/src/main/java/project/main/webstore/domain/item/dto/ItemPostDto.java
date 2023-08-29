@@ -47,4 +47,15 @@ public class ItemPostDto {
     @Schema(description = "저장될 이미지 정보")
     private List<ImageSortDto> infoList;
 
+    public ItemPostDto(Category category, String name, int discountRate, String description, Integer itemPrice, Integer defaultCount, Integer deliveryPrice, List<OptionPostRequestDto> optionList, List<ItemPostSpecDto> specList) {
+        this.category = category;
+        this.name = name;
+        this.discountRate = discountRate;
+        this.description = description;
+        this.itemPrice = itemPrice;
+        this.defaultCount = defaultCount;
+        this.deliveryPrice = deliveryPrice;
+        this.optionList = optionList;
+        this.specList = specList;
+    }
 }
