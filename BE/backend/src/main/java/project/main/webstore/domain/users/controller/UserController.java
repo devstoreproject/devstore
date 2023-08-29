@@ -134,10 +134,9 @@ public class UserController {
     @ApiResponse(responseCode = "200",description = "새로 발급된는 임시 비밀번호가 들어있다.")
     public ResponseEntity<ResponseDto<UserGetPasswordResponseDto>> changePassword(@RequestBody UserGetPasswordRequestDto get){
         User request = userMapper.toEntity(get);
-        User result = service.getTmpPassword(request);
+        String result = service.getTmpPassword(request);
         UserGetPasswordResponseDto response = userMapper.toGetPasswordResponse(result);
         var responseDto = ResponseDto.<UserGetPasswordResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
-
 }

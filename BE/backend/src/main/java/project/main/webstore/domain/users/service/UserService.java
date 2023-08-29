@@ -170,8 +170,8 @@ public class UserService {
         return byEmail.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_LOGIN));
     }
 
-    public User getTmpPassword(User user) {
-        Optional<User> findUser = userRepository.findByEmailAndAndUserNameAndPhone(user.getEmail(), user.getName(), user.getPhone());
+    public String getTmpPassword(User user) {
+        Optional<User> findUser = userRepository.findByEmailAndAndUserNameAndPhone(user.getEmail(), user.getUserName(), user.getPhone());
         User savedUser = findUser.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
         if(!savedUser.getProviderId().equals(ProviderId.JWT)){
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_JWT);
@@ -179,7 +179,7 @@ public class UserService {
         String tmpPassword = RandomStringUtils.randomAlphanumeric(8);
         String encodedPassword = passwordEncoder.encode(tmpPassword);
         savedUser.setPassword(encodedPassword);
-        return savedUser;
+        return tmpPassword;
     }
 
     public void transActive(String username, String password) {

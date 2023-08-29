@@ -35,7 +35,7 @@ public class UserMapper {
         return new User(dto);
     }
 
-    public UserGetPasswordResponseDto toGetPasswordResponse(User user) {
-        return new UserGetPasswordResponseDto(user.getPassword());
+    public UserGetPasswordResponseDto toGetPasswordResponse(String password) {
+        return new UserGetPasswordResponseDto(password);
     }
 }
