@@ -1,4 +1,4 @@
-import type { CategoryContent } from 'Pages/CYW/SearchCategory';
+import type { CategoryContent } from 'Pages/CYW/Products';
 import { useNavigate } from 'react-router-dom';
 
 interface OwnProps {
