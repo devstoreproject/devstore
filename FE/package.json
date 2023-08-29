@@ -35,7 +35,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "craco build",
-    "buildcss": "postcss src/index.css -o build/static/css/tailwind.css",
+    "buildcss": "postcss src/index.css -o build/tailwind.css",
     "test": "jest",
     "eject": "react-scripts eject"
   },
