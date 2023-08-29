@@ -35,11 +35,11 @@ interface AnswerData {
   questionId: number;
 }
 export interface InquiryContentType {
-  answer: AnswerData;
+  answer: AnswerData | null;
   comment: string;
   qnaStatus: QnaStatus;
   questionId: number;
-  userId: number;
+  userId: number | null | string;
 }
 export interface InquiryType {
   content: InquiryContentType[];
@@ -55,18 +55,11 @@ export interface InquiryType {
   totalPages: number;
 }
 
-interface ReviewImageType {
-  imageId: number;
-  imageOrder: number;
-  originalPath: null;
-  representative: boolean;
-  thumbnailPath: null;
-  title: string;
-}
 export interface ReviewContentType {
+  best: boolean;
   comment: string;
   createdAt: string;
-  image: ReviewImageType;
+  image: null;
   itemId: number;
   modifiedAt: string;
   reviewId: number;
@@ -125,7 +118,7 @@ export default function Tab({ product }: ProductTypeProps) {
     <div className="w-3/4 pt-12">
       <div className="flex items-center border-2 rounded-lg border-box text-slate-500">
         <p
-          className={`text-center w-1/3 border-slate-300  ${
+          className={`text-center w-1/3 border-slate-300  cursor-pointer ${
             tab === 0 ? 'underline underline-offset-8' : ''
           }`}
           onClick={handleClick}
@@ -133,7 +126,7 @@ export default function Tab({ product }: ProductTypeProps) {
           상품 상세
         </p>
         <p
-          className={`text-center w-1/3 border-x border-x-slate-300 my-4 ${
+          className={`text-center w-1/3 border-x border-x-slate-300 my-4 cursor-pointer ${
             tab === 1 ? 'underline underline-offset-8' : ''
           }`}
           onClick={handleClick}
@@ -141,7 +134,7 @@ export default function Tab({ product }: ProductTypeProps) {
           상품 리뷰
         </p>
         <p
-          className={`text-center w-1/3 ${
+          className={`text-center w-1/3 cursor-pointer ${
             tab === 2 ? 'underline underline-offset-8' : ''
           }`}
           onClick={handleClick}
@@ -151,7 +144,7 @@ export default function Tab({ product }: ProductTypeProps) {
       </div>
       <div>
         <ProductTab tab={tab} description={product.description} />
-        <ReviewTab tab={tab} review={review} />
+        <ReviewTab tab={tab} review={review} setReview={setReview} />
         <InquiryTab tab={tab} inquiry={inquiry} setInquiry={setInquiry} />
       </div>
     </div>
