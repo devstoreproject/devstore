@@ -4,14 +4,27 @@ on:
   pull_request:
     branches:
       - dev/FE
+    types:
+      - closed
 
 jobs:
-  build:
+  if_merged:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
+      - run: |
+          echo The PR was merged
+
       - name: Checkout source code.
         uses: actions/checkout@v3
+
+      - name: Generate Environment Variables File for Production
+        run: |
+          echo "REACT_APP_BASE_URL=$REACT_APP_BASE_URL" >> .env.production.local
+        env:
+          REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
+        working-directory: ./FE
 
       - name: Install dependencies
         run: npm install
