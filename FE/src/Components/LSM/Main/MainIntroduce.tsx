@@ -21,37 +21,32 @@ export default function MainIntroduce() {
 const members = [
   {
     id: 1,
-    name: '안병욱',
-    link: 'https://github.com/boahn',
-  },
-  {
-    id: 2,
     name: '이기호',
     link: 'https://github.com/LEEGIHO94',
   },
   {
-    id: 3,
+    id: 2,
     name: '이혜인',
     link: 'https://github.com/zoeee6',
   },
   {
-    id: 4,
+    id: 3,
 
     name: '김용희',
     link: 'https://github.com/kyhui1115',
   },
   {
-    id: 5,
+    id: 4,
     name: '김현지',
     link: 'https://github.com/ASOpaper',
   },
   {
-    id: 6,
+    id: 5,
     name: '이승미',
     link: 'https://github.com/mya413',
   },
   {
-    id: 7,
+    id: 6,
     name: '최영웅',
     link: 'https://github.com/memolovel',
   },
