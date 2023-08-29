@@ -47,11 +47,9 @@ public class ItemSpec {
         this.content = content;
         this.item = item;
     }
-
-    // specPatchDto Builder
-    public void specPatchDto(ItemSpec specPatch) {
-        this.name = specPatch.getItem().getItemName();
-        this.content = specPatch.getContent();
+    public ItemSpec(String name, String content) {
+        this.name = name;
+        this.content = content;
     }
     /*
    - spec 작성시 해당 item과 itemId를 가져와 연동하여 작성해야 되는지?
