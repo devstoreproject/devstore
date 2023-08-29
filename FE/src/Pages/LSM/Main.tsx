@@ -1,3 +1,4 @@
+// import { useEffect } from 'react';
 import MainBestProduct from 'Components/LSM/Main/MainBestProduct';
 import MainBestReview from 'Components/LSM/Main/MainBestReview';
 import MainEvent from 'Components/LSM/Main/MainEvent';
@@ -5,6 +6,7 @@ import MainImage from 'Components/LSM/Main/MainImage';
 import MainIntroduce from 'Components/LSM/Main/MainIntroduce';
 import MainNewProduct from 'Components/LSM/Main/MainNewProduct';
 import MainThemeProduct from 'Components/LSM/Main/MainThemeProduct';
+// import api from 'api';
 
 export default function Main() {
   return (
@@ -20,6 +22,7 @@ export default function Main() {
         <MainThemeProduct />
       </div>
       <MainIntroduce />
+      <div>배포자동화test</div>
     </div>
   );
 }
