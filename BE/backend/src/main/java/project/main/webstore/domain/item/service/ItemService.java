@@ -37,7 +37,6 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final SpecRepository specRepository;
     private final UserValidService userValidService;
-    private final FileUploader fileUploader;
     private final ImageUtils imageUtils;
 
     // 기존 등록된 item 검증 후 등록
@@ -49,9 +48,9 @@ public class ItemService {
 
     public Item postItem(Item item, List<ImageInfoDto> imageInfoList) {
         validItemExist(item);
-        imageUtils.imageValid(imageInfoList);
+//        imageUtils.imageValid(imageInfoList);
 
-        List<Image> images = fileUploader.uploadImage(imageInfoList);
+        List<Image> images = imageUtils.uploadImageList(imageInfoList);
         List<ItemImage> imageList = images.stream().map(image -> new ItemImage(image, item)).collect(Collectors.toList());
         item.setItemImageList(imageList);
 
