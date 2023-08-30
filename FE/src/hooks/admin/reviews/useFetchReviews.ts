@@ -1,9 +1,10 @@
 import api from 'api';
+import type { Reviews } from 'model/review';
 import { useEffect, useState } from 'react';
 
 const useFetchReviews = () => {
   const userId = localStorage.getItem('userId');
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState<Reviews[]>([]);
 
   useEffect(() => {
     if (userId !== null) {
