@@ -37,6 +37,8 @@ import ReviewManagement from 'Pages/CYW/ReviewManagement';
 import Search from 'Pages/CYW/Search';
 import SearchCategory from 'Pages/CYW/SearchCategory';
 import Sales from 'Components/KYH/admin/Sales/Sales';
+import Search from 'Pages/CYW/Search';
+import ProductDetail from 'Pages/CYW/ProductDetail';
 
 function App() {
   return (

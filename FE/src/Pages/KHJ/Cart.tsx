@@ -4,6 +4,9 @@ import PageHistory from 'Components/KHJ/Common/PageHistory';
 import CartMain from 'Components/KHJ/Cart/CartMain';
 
 export default function Cart(): React.ReactElement {
+  // 총 금액 및 갯수, 성공 후 리덕스로 리팩토링
+  // const [isTotalPrice, setIsTotalPrice] = useState<Number>(0);
+  // const [isTotalCount, setIsTotalCount] = useState<Number>(0);
   return (
     <>
       <Header />
