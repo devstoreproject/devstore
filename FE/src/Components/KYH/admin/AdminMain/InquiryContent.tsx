@@ -1,8 +1,12 @@
-export default function InquiryContent() {
+import type { Inquiry } from 'model/inquiry';
+
+export default function InquiryContent({ comment, answer }: Inquiry) {
   return (
-    <div className="flex mb-4">
-      <span>문의내용</span>
-      <span className="ml-auto">2023.05.31</span>
+    <div className="flex mb-2">
+      <span>{comment}</span>
+      <span className="ml-auto">
+        {answer === null ? '답변대기중' : '답변완료'}
+      </span>
     </div>
   );
 }
