@@ -19,6 +19,13 @@ jobs:
       - name: Checkout source code.
         uses: actions/checkout@v3
 
+      - name: Generate Environment Variables File for Production
+        run: |
+          echo "REACT_APP_BASE_URL=$REACT_APP_BASE_URL" >> .env.production.local
+        env:
+          REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
+        working-directory: ./FE
+
       - name: Install dependencies
         run: npm install
         working-directory: ./FE
