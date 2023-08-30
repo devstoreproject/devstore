@@ -52,6 +52,5 @@ export interface Product {
   itemId: number;
   name: string;
   itemPrice: number;
-  defaultCount: number;
   totalCount: number;
 }
