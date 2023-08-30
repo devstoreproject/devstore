@@ -3,6 +3,7 @@ import ProductInformation from '../../Components/CYW/ProductDetail/ProductInform
 import Tab from '../../Components/CYW/ProductDetail/Tab/Tab';
 import { useEffect, useState } from 'react';
 import api from 'api';
+import { useParams } from 'react-router-dom';
 
 interface Option {
   itemId: number;
@@ -30,13 +31,13 @@ export interface ProductType {
 
 export default function ProductDetail() {
   const [product, setProduct] = useState<ProductType | null>(null);
+  const { id } = useParams();
 
   useEffect(() => {
     api
-      .get('/api/items/1')
+      .get(`/api/items/${id as string}`)
       .then((res) => {
         setProduct(res.data.data);
-        console.log(res.data.data);
       })
       .catch((err) => {
         console.log(err);

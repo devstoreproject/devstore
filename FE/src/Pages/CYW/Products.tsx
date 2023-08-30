@@ -58,7 +58,7 @@ export interface CategoryType {
   totalPages: number;
 }
 
-export default function SearchCategory() {
+export default function Products() {
   const [category, setCategory] = useState<CategoryContent[] | null>(null);
 
   useEffect(() => {
@@ -71,6 +71,14 @@ export default function SearchCategory() {
         console.log(err);
       });
   }, [setCategory]);
+
+  if (category === null) {
+    return (
+      <div className="flex justify-center items-center pt-104 pb-104 font-bold w-full h-full">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col pt-10">

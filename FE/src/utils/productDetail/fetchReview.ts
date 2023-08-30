@@ -6,7 +6,7 @@ const fetchReview = (
   setReview: React.Dispatch<React.SetStateAction<ReviewContentType[] | null>>
 ): void => {
   api
-    .get(`api/items/${id}/reviews?page=0&size=10`)
+    .get(`api/items/${id}/reviews?page=0&size=20`)
     .then((res) => {
       setReview(res.data.data.content);
     })

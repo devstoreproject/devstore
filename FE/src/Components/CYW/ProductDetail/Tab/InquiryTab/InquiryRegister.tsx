@@ -10,7 +10,8 @@ interface OwnProps {
 
 export default function InquiryRegister({ inquiry, setInquiry }: OwnProps) {
   const [inputValue, setInputValue] = useState<string>('');
-  const userId = localStorage.getItem('userId') ?? '';
+  const userId: string | null = localStorage.getItem('userId');
+  const parsedUserId: number | null = userId !== null ? Number(userId) : null;
   const { id } = useParams();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,19 +21,43 @@ export default function InquiryRegister({ inquiry, setInquiry }: OwnProps) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const requestData = {
-      comment: inputValue,
-      userId,
-    };
+    if (userId === null) {
+      alert('로그인 후에 사용할 수 있습니다.');
+      return;
+    }
+    if (inputValue === '') return;
 
-    api
-      .post(`api/qna/items/${id as string}`, requestData)
-      .then((res) => {
-        setInquiry(res.data.data.content);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const confirmRegistration = window.confirm('글을 등록하시겠습니까?');
+
+    if (confirmRegistration) {
+      const requestData = {
+        comment: inputValue,
+      };
+      api
+        .post(`api/qna/items/${id as string}`, requestData, {
+          headers: {
+            Authorization: localStorage.getItem('authorization'),
+          },
+        })
+        .then((res) => {
+          if (inquiry !== null) {
+            setInquiry([
+              ...inquiry,
+              {
+                answer: null,
+                comment: inputValue,
+                qnaStatus: 'REGISTER',
+                questionId: res.data.data.questionId,
+                userId: parsedUserId,
+              },
+            ]);
+          }
+          setInputValue('');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   return (

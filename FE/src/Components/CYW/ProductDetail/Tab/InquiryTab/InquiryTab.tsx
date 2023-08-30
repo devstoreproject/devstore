@@ -13,7 +13,7 @@ export default function InquiryTab({ tab, inquiry, setInquiry }: OwnProps) {
   return tab === 2 ? (
     <div className="bg-slate-100 rounded-lg">
       <p className="py-4 pl-8 border-b-2">상품 문의</p>
-      <InquiryElement inquiry={inquiry} />
+      <InquiryElement inquiry={inquiry} setInquiry={setInquiry} />
       <PaginationContainer />
       <InquiryRegister inquiry={inquiry} setInquiry={setInquiry} />
     </div>
