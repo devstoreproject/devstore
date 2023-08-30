@@ -2,7 +2,7 @@ import DeliverForm from './DeliverForm';
 
 const Delivery: React.FC = (props) => {
   return (
-    <section className="mx-5 py-7 flex">
+    <section className="mx-5 py-7 flex border-b border-gray-300">
       <div className="w-36">
         <h2>배송지 정보 입력</h2>
         <p>*은 필수 입력입니다.</p>

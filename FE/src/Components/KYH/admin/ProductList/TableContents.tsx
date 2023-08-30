@@ -9,7 +9,6 @@ interface OwnProps extends Product {
 export default function TableContents({
   itemId,
   name,
-  defaultCount,
   totalCount,
   itemPrice,
   setIsDetailModalOpen,
@@ -41,7 +40,7 @@ export default function TableContents({
       />
       <span className="w-16 text-center">{totalCount}</span>
       <span className="w-12 text-center">데이터 필요</span>
-      <span className="w-12 text-center">{totalCount}</span>
+      <span className="w-12 text-center">데이터 필요</span>
       <span className="w-24 text-center">{itemPrice}</span>
     </li>
   );

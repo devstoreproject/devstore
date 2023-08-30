@@ -41,7 +41,7 @@ export default function NoticeList() {
         );
       }
 
-      setDatas(res?.data.data.content);
+      setDatas(res?.data?.data?.content);
     } catch (error) {
       console.log(error);
     }

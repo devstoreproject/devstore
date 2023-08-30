@@ -1,6 +1,19 @@
 import { AiFillCreditCard } from 'react-icons/ai';
+// import * as PortOne from '@portone/browser-sdk/v2';
 
-export default function TotalPrice() {
+// function requestPayment() {
+//   PortOne.requestPayment({
+//     storeId: 'store-b7b3d9f7-e192-4c3d-9b2e-393350c9ce6d',
+//     paymentId: 'paymentId_{now()}',
+//     orderName: '나이키 와플 트레이너 2 SD',
+//     totalAmount: 1000,
+//     currency: 'CURRENCY_KRW',
+//     pgProvider: 'PG_PROVIDER_TOSSPAYMENTS',
+//     payMethod: 'CARD',
+//   });
+// }
+
+export default function PayProgress() {
   const cost = [
     {
       info: '주문금액',

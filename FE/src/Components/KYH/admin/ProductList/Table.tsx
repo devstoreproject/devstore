@@ -30,7 +30,6 @@ export default function Table({
               key={product.itemId}
               itemId={product.itemId}
               name={product.name}
-              defaultCount={product.defaultCount}
               totalCount={product.totalCount}
               itemPrice={product.itemPrice}
               setIsDetailModalOpen={setIsDetailModalOpen}
