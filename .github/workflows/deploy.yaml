@@ -1,4 +1,4 @@
-name: front-deploy
+name: deploy
 
 on:
   pull_request:
@@ -19,18 +19,11 @@ jobs:
       - name: Checkout source code.
         uses: actions/checkout@v3
 
-      - name: Generate Environment Variables File for Production
-        run: |
-          echo "REACT_APP_BASE_URL=$REACT_APP_BASE_URL" >> .env.production.local
-        env:
-          REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
-        working-directory: ./FE
-
       - name: Install dependencies
         run: npm install
         working-directory: ./FE
 
-      - name: Build css
+      - name: Build CSS
         run: npm run buildcss
         working-directory: ./FE
 
@@ -42,16 +35,10 @@ jobs:
         run: |
           aws --version
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Deploy to S3
+      - name: Sync Bucket
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_EC2_METADATA_DISABLED: true
         run: aws s3 sync ./build s3://${{ secrets.DEV_AWS_S3_BUCKET }} --delete
         working-directory: ./FE
-
-      - name: Invalidate CloudFront Cache
-        run: aws cloudfront create-invalidation --distribution-id ${{secrets.DEV_AWS_DISTRIBUTION_ID}} --paths "/*"
