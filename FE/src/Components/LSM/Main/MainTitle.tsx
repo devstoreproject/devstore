@@ -11,7 +11,7 @@ export default function MainTitle({
   classnames = '',
 }: MainTitleItem) {
   return (
-    <div className="mt-20 mb-12 text-center">
+    <div className="text-center mt-28 mb-14">
       <p className={`text-lg font-semibold ${classnames}`}>
         {title}
         <span className="pl-1">{icon}</span>

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import BestItemInfo from './BestItemInfo';
+import NewItemInfo from './NewItemInfo';
 
-interface BestItemProps {
+interface NewItemProps {
   id: number;
   title: string;
   category: any;
@@ -10,14 +10,14 @@ interface BestItemProps {
   idx: number;
 }
 
-export default function BestItem({
+export default function NewItem({
   id,
   title,
   category,
   price,
   image,
   idx,
-}: BestItemProps) {
+}: NewItemProps) {
   const backgroundImage = {
     backgroundImage: `url('${image}')`,
   };
@@ -46,7 +46,7 @@ export default function BestItem({
           {id}
         </div>
       </div>
-      <BestItemInfo title={title} category={category} price={price} />
+      <NewItemInfo title={title} category={category} price={price} />
     </button>
   );
 }

@@ -1,16 +1,26 @@
-import Button from './Button';
+// import Button from './Button';
 import ReviewItem from './ReviewItem';
 
-export default function ReviewItemList() {
-  const items = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+interface ReviewItemListProps {
+  reviewData: any;
+}
+
+export default function ReviewItemList({ reviewData }: ReviewItemListProps) {
   return (
     <div className="relative m-auto">
       <ul className="flex items-center justify-start pb-4 overflow-x-scroll lg:w-full snap-x scrollbar-hide">
-        {items.map((item, idx) => (
-          <ReviewItem key={idx} />
+        {reviewData.map((data: any) => (
+          <ReviewItem
+            key={data.reviewId}
+            id={data.itemId}
+            image={data.image}
+            comment={data.comment}
+            userName={data.userName}
+            modifiedAt={data.modifiedAt}
+          />
         ))}
       </ul>
-      <Button />
+      {/* <Button /> */}
     </div>
   );
 }

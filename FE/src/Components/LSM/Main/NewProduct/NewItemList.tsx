@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import BestItem from './BestItem';
-import Button from './Button';
+import Button from '../BestProduct/Button';
+import NewItem from './NewItem';
 
-interface BestItemListProps {
-  bestItemsData: any;
+interface NewItemListProps {
+  newItemsData: any;
 }
 
-export default function BestItemList({ bestItemsData }: BestItemListProps) {
+export default function NewItemList({ newItemsData }: NewItemListProps) {
   const itemsPerPage = 4;
   const [itemsPerVisiblePage, setItemsPerVisiblePage] =
     useState<number>(itemsPerPage);
@@ -19,7 +19,7 @@ export default function BestItemList({ bestItemsData }: BestItemListProps) {
   const handleNextClick = () => {
     setCurrentPage((prevPage) =>
       Math.min(
-        Math.ceil([...bestItemsData].length / itemsPerVisiblePage) - 1,
+        Math.ceil([...newItemsData].length / itemsPerVisiblePage) - 1,
         prevPage + 1
       )
     );
@@ -48,21 +48,21 @@ export default function BestItemList({ bestItemsData }: BestItemListProps) {
 
   const startIdx = currentPage * itemsPerVisiblePage;
   const endIdx = startIdx + itemsPerVisiblePage;
-  const visibleItems = [...bestItemsData].slice(startIdx, endIdx);
+  const visibleItems = [...newItemsData].slice(startIdx, endIdx);
 
   const transformValue = `translateX(-${
     currentPage * (0.5 / itemsPerVisiblePage)
   }%)`;
 
   return (
-    <div className="relative w-full m-auto">
+    <div className="relative w-full m-auto ">
       <div className="overflow-hidden">
         <div
           className="flex w-full transition-transform duration-100 ease-in-out md:w-full md:flex-wrap md:justify-between sm:px-10 md:px-10"
           style={{ transform: transformValue }}
         >
           {visibleItems?.map((item: any, idx: any) => (
-            <BestItem
+            <NewItem
               key={item.itemId}
               id={item.itemId}
               title={item.name}
@@ -74,7 +74,7 @@ export default function BestItemList({ bestItemsData }: BestItemListProps) {
           ))}
         </div>
       </div>
-      {bestItemsData.length > 4 ? (
+      {newItemsData.length > 4 ? (
         <Button onPrevClick={handlePrevClick} onNextClick={handleNextClick} />
       ) : null}
     </div>
