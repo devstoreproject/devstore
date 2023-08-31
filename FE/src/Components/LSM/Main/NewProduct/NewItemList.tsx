@@ -51,7 +51,7 @@ export default function NewItemList({ newItemsData }: NewItemListProps) {
   const visibleItems = [...newItemsData].slice(startIdx, endIdx);
 
   const transformValue = `translateX(-${
-    currentPage * (0.5 / itemsPerVisiblePage)
+    currentPage * (0.1 / itemsPerVisiblePage)
   }%)`;
 
   return (
@@ -74,9 +74,7 @@ export default function NewItemList({ newItemsData }: NewItemListProps) {
           ))}
         </div>
       </div>
-      {newItemsData.length > 4 ? (
-        <Button onPrevClick={handlePrevClick} onNextClick={handleNextClick} />
-      ) : null}
+      <Button onPrevClick={handlePrevClick} onNextClick={handleNextClick} />
     </div>
   );
 }

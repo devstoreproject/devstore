@@ -58,7 +58,7 @@ export default function NoticeList() {
 
   return (
     <div
-      className={`m-auto max-w-1460 ${adminPath === 'admin' ? '' : 'my-16'}`}
+      className={`m-auto max-w-1460 ${adminPath === 'admin' ? 'm-0' : 'my-16'}`}
     >
       {adminPath === 'admin' ? (
         <div className="flex mb-6 items-cente">

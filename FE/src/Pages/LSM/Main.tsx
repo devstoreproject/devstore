@@ -45,7 +45,7 @@ export default function Main() {
   return (
     <div className="w-full bg-light-gray selection:bg-neon-green">
       <MainImage />
-      <div className="m-auto lg:max-w-365">
+      <div className="m-auto max-w-365">
         <MainBestProduct bestItemsData={bestItemsData} />
         <MainNewProduct newItemsData={newItemsData} />
         <div className="w-full m-auto overflow-hidden">

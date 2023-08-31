@@ -51,7 +51,7 @@ export default function BestItemList({ bestItemsData }: BestItemListProps) {
   const visibleItems = [...bestItemsData].slice(startIdx, endIdx);
 
   const transformValue = `translateX(-${
-    currentPage * (0.5 / itemsPerVisiblePage)
+    currentPage * (0.1 / itemsPerVisiblePage)
   }%)`;
 
   return (
@@ -74,9 +74,7 @@ export default function BestItemList({ bestItemsData }: BestItemListProps) {
           ))}
         </div>
       </div>
-      {bestItemsData.length > 4 ? (
-        <Button onPrevClick={handlePrevClick} onNextClick={handleNextClick} />
-      ) : null}
+      <Button onPrevClick={handlePrevClick} onNextClick={handleNextClick} />
     </div>
   );
 }

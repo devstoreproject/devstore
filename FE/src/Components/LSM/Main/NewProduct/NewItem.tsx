@@ -36,7 +36,7 @@ export default function NewItem({
     <button
       type="button"
       onClick={onClickHandler}
-      className="relative mx-4 cursor-pointer lg:w-1/4 sm:w-full sm:mb-4 md:w-1/2 md:my-2 md:m-auto md:px-4"
+      className="relative w-1/4 mx-4 cursor-pointer sm:w-full sm:mb-4 md:w-1/2 md:my-2 md:m-auto md:px-4"
     >
       <div
         className="mb-2 transition-all bg-white bg-cover rounded-tl-none h-60 rounded-xl hover:scale-95"
