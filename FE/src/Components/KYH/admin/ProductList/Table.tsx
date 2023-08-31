@@ -1,4 +1,4 @@
-import type { Product } from 'model/auth';
+import type { Product } from 'model/product';
 import TableContents from './TableContents';
 import TableTitle from './TableTitle';
 
