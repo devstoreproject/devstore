@@ -1,13 +1,13 @@
 export interface Email {
   email: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
-  isEmailValid: boolean;
+  isEmailValid?: boolean;
 }
 
 export interface password {
   password: string;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
-  isPasswordValid: boolean;
+  isPasswordValid?: boolean;
 }
 
 export interface passwordConfirm extends Pick<password, 'password'> {
@@ -18,19 +18,19 @@ export interface passwordConfirm extends Pick<password, 'password'> {
 export interface Username {
   username: string;
   setUsername: React.Dispatch<React.SetStateAction<string>>;
-  isUserNameValid: boolean;
+  isUserNameValid?: boolean;
 }
 
 export interface Nickname {
   nickname: string;
   setNickname: React.Dispatch<React.SetStateAction<string>>;
-  isNicknameValid: boolean;
+  isNicknameValid?: boolean;
 }
 
 export interface Phone {
   phone: string;
   setPhone: React.Dispatch<React.SetStateAction<string>>;
-  isPhoneValid: boolean;
+  isPhoneValid?: boolean;
 }
 
 export interface Profile {
@@ -46,11 +46,4 @@ export interface Address {
   zipCode: string;
   addressDetail: string;
   addressSimple: string;
-}
-
-export interface Product {
-  itemId: number;
-  name: string;
-  itemPrice: number;
-  totalCount: number;
 }
