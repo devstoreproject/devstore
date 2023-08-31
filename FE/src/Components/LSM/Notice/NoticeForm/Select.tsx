@@ -21,15 +21,12 @@ export default function Select({
       setCategory(e.target.value);
     } else {
       setEditCategory(e.target.value);
-      console.log(e.target.value);
     }
   };
 
   useEffect(() => {
     setEditCategory(datas?.category);
   }, [datas?.category]);
-
-  console.log(editCategory);
 
   return (
     <>
