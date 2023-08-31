@@ -7,9 +7,9 @@ const useFetchInquiry = () => {
 
   useEffect(() => {
     api
-      .get('/api/qna/admin')
+      .get(`/api/qna/admin`)
       .then((res) => {
-        setInquiry(res.data.data.content.reverse());
+        setInquiry(res.data.data.content);
       })
       .catch((err) => {
         console.log(err);
