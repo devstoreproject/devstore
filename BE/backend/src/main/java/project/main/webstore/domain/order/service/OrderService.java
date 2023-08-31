@@ -197,5 +197,12 @@ public class OrderService {
         OrdersStatus value = OrdersStatus.of(status);
         return orderRepository.findByOrdersStatus(pageable, value);
     }
+
+    public Orders changStatus(Long orderId,String status) {
+        OrdersStatus value = OrdersStatus.of(status);
+        Orders findOrder = validOrder(orderId);
+        findOrder.setOrdersStatus(value);
+        return findOrder;
+    }
 }
 

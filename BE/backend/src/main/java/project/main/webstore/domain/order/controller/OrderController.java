@@ -162,8 +162,14 @@ public class OrderController {
 
         return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
     }
+    @PatchMapping("/{orderId}/status")
+    public ResponseEntity<ResponseDto<OrderIdResponseDto>> deliveryCompleteOrder(@PathVariable Long orderId,@RequestParam("status") String status){
+        Orders result = orderService.changStatus(orderId, status);
+        OrderIdResponseDto response = orderMapper.toIdResponse(result);
+        ResponseDto<OrderIdResponseDto> responseDto = ResponseDto.<OrderIdResponseDto>builder().customCode(ResponseCode.OK).data(response).build();
 
-
+        return ResponseEntity.ok().body(responseDto);
+    }
 
     @GetMapping("/status")
     public ResponseEntity<ResponseDto<Page<OrderResponseDto>>> getOrderByStatus(Pageable pageable,@RequestParam("status") String status){
