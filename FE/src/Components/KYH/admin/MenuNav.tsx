@@ -2,7 +2,6 @@ import { NavLink } from 'react-router-dom';
 import { RiFileListFill } from 'react-icons/ri';
 import { FaBox, FaChartLine } from 'react-icons/fa';
 import { IoMdCheckboxOutline } from 'react-icons/io';
-import { BiSolidStar } from 'react-icons/bi';
 import { AiOutlineSound } from 'react-icons/ai';
 import { MdOutlineReviews } from 'react-icons/md';
 import { BsFillQuestionCircleFill } from 'react-icons/bs';
@@ -45,7 +44,6 @@ const menuList = [
     text: '반품 교환 신청 확인',
     icon: <IoMdCheckboxOutline />,
   },
-  { to: '/admin/eventvanner', text: '이벤트 배너', icon: <BiSolidStar /> },
   { to: '/admin/notice', text: '공지사항', icon: <AiOutlineSound /> },
   { to: '/admin/sales', text: '매출', icon: <FaChartLine /> },
   { to: '/admin/reviewmanagement', text: '리뷰', icon: <MdOutlineReviews /> },

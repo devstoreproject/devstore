@@ -16,7 +16,7 @@ export default function PasswordContainer({
           setPassword(e.target.value);
         }}
       />
-      {isPasswordValid ? null : (
+      {isPasswordValid !== undefined && isPasswordValid ? null : (
         <span className="mt-1 ml-2 text-xs font-bold text-red-500">
           영어, 숫자가 포함된 8~16글자이어야 합니다
         </span>

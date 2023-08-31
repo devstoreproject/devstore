@@ -16,7 +16,7 @@ export default function NameContainer({
           setUsername(e.target.value);
         }}
       />
-      {isUserNameValid ? null : (
+      {isUserNameValid !== undefined && isUserNameValid ? null : (
         <span className="mt-1 ml-2 text-xs font-bold text-red-500">
           이름을 입력해 주세요
         </span>

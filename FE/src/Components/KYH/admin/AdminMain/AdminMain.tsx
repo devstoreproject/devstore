@@ -1,6 +1,6 @@
 import InquiryList from './InquiryList';
 import OrderList from './OrderList';
-import OrderStatus from './OrderStatus';
+import OrderStatus from './OrderStatusList';
 import SalesChart from './SalesChart';
 
 export default function AdminMain() {

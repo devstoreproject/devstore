@@ -26,7 +26,7 @@ export default function EmailAndPWContainer({
         onChange={EmailInputHandler}
         value={email}
       />
-      {isEmailValid ? null : (
+      {isEmailValid !== undefined && isEmailValid ? null : (
         <span className="mt-1 ml-2 text-xs font-bold text-red-500">
           올바른 형식의 이메일을 입력해주세요
         </span>
@@ -37,7 +37,7 @@ export default function EmailAndPWContainer({
         onChange={PasswordInputHandler}
         value={password}
       />
-      {isPasswordValid ? null : (
+      {isPasswordValid !== undefined && isPasswordValid ? null : (
         <span className="mt-1 ml-2 text-xs font-bold text-red-500">
           영어, 숫자가 포함된 8~16글자이어야 합니다
         </span>
