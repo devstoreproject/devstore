@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.main.webstore.domain.image.dto.ImageSortDto;
+import project.main.webstore.domain.image.dto.ImageSortPostDto;
 import project.main.webstore.domain.item.enums.Category;
 
 import javax.validation.constraints.NotBlank;
@@ -45,7 +45,7 @@ public class ItemPostDto {
     @Schema(description = "같이 저장될 상품 스펙 정보")
     private List<ItemPostSpecDto> specList;
     @Schema(description = "저장될 이미지 정보")
-    private List<ImageSortDto> infoList;
+    private List<ImageSortPostDto> infoList;
 
     public ItemPostDto(Category category, String name, int discountRate, String description, Integer itemPrice, Integer defaultCount, Integer deliveryPrice, List<OptionPostRequestDto> optionList, List<ItemPostSpecDto> specList) {
         this.category = category;

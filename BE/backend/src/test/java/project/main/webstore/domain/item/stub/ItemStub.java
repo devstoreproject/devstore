@@ -1,6 +1,7 @@
 package project.main.webstore.domain.item.stub;
 
-import project.main.webstore.domain.image.dto.ImageSortDto;
+import project.main.webstore.domain.image.dto.ImageSortPatchDto;
+import project.main.webstore.domain.image.dto.ImageSortPostDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.dto.ItemPostSpecDto;
@@ -29,11 +30,23 @@ public class ItemStub {
         return new Item(createPostDtoWithImage());
     }
 
+    public Item createItemByPatchNoImage() {
+        return new Item(createPatchNoImage());
+    }
+
+    public Item createItemByPatchWithImage() {
+        return new Item(createPatchWithImage());
+    }
+
+    public Item createItemByPatchChangeImage() {
+        return new Item(createPatchWithImage());
+    }
+
     public ItemPatchDto createPatchNoImage(){
         return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10);
     }
     public ItemPatchDto createPatchWithImage() {
-        return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L),List.of(new ImageSortDto(null,2,false)));
+        return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L),List.of(new ImageSortPatchDto(1L,2,false)));
     }
     public ItemPatchDto createPatchChangeDeleteImageId() {
         return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L));
@@ -72,10 +85,10 @@ public class ItemStub {
                 new ItemOption("옵션 설명 3",300,30000,"옵션 이름3")
         );
     }
-    private List<ImageSortDto> createImageList(){
+    private List<ImageSortPostDto> createImageList(){
         return List.of(
-                new ImageSortDto(0,false),
-                new ImageSortDto(1,true)
+                new ImageSortPostDto(0,false),
+                new ImageSortPostDto(1,true)
         );
     }
 

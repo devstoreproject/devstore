@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import project.main.webstore.domain.image.dto.ImageSortDto;
+import project.main.webstore.domain.image.dto.ImageSortPatchDto;
 import project.main.webstore.domain.item.enums.Category;
 
 import javax.validation.constraints.Pattern;
@@ -39,7 +39,7 @@ public class ItemPatchDto {
     private List<Long> deleteImageId;
     @Setter
     @Schema(description = "이미지 정렬 및 대표사진 여부 정보 리스트")
-    private List<ImageSortDto> imageSortAndRepresentativeInfo;
+    private List<ImageSortPatchDto> imageSortAndRepresentativeInfo;
 
     public ItemPatchDto(Category category, String name, String description, int defaultCount, Integer itemPrice, Integer deliveryPrice, int discountRate) {
         this.category = category;
