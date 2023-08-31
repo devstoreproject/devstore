@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.dto.ImageSortDto;
+import project.main.webstore.exception.BusinessLogicException;
+import project.main.webstore.exception.CommonExceptionCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ public class ImageMapper {
         return new ImageInfoDto(sortDto.findImageId(), sortDto.getOrderNumber(), sortDto.isRepresentative());
     }
     public List<ImageInfoDto> toLocalDtoList(List<MultipartFile>fileList, List<? extends ImageSortDto> imageSortDto, String uploadDir){
+        checkImageParam(fileList,imageSortDto);
         List<ImageInfoDto> result = new ArrayList<>();
         int j = 0;
         for(int i = 0 ; i < imageSortDto.size(); i++){
@@ -48,5 +51,13 @@ public class ImageMapper {
                 .id(null)
                 .uploadDir(uploadDir)
                 .build();
+    }
+    private void checkImageParam(List<MultipartFile> imageList, List<? extends ImageSortDto> infoList) {
+        if(imageList == null && infoList != null){
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_NOT_POST);
+        }
+        if (imageList != null && infoList == null) {
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_INFO_NOT_POST);
+        }
     }
 }

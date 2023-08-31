@@ -20,7 +20,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
-import project.main.webstore.domain.image.dto.ImageSortDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
 import project.main.webstore.domain.item.dto.*;
 import project.main.webstore.domain.item.entity.Item;
@@ -29,8 +28,6 @@ import project.main.webstore.domain.item.mapper.ItemMapper;
 import project.main.webstore.domain.item.service.ItemService;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
-import project.main.webstore.exception.BusinessLogicException;
-import project.main.webstore.exception.CommonExceptionCode;
 import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
 
@@ -57,11 +54,11 @@ public class ItemController {
     @ApiResponse(responseCode = "201", description = "상품 등록 성공")
     public ResponseEntity<ResponseDto<ItemIdResponseDto>> createItem(@RequestPart ItemPostDto post,
                                                                      @Parameter(description = "Image files", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                                                                             array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))),style = ParameterStyle.FORM,explode = Explode.TRUE)
+                                                                             array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))), style = ParameterStyle.FORM, explode = Explode.TRUE)
                                                                      @RequestPart(required = false) List<MultipartFile> imageList,
-                                                                     @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+                                                                     @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
-        checkImageParam(imageList,post.getInfoList());
+
         Item request = itemMapper.toEntity(post);
         Item result;
         if (imageList != null) {
@@ -79,7 +76,6 @@ public class ItemController {
     }
 
 
-
     //상품이든 뭐든 다 변경하는 것 (있는 것만 체크)
     @PatchMapping(
             path = "/{itemId}",
@@ -90,13 +86,12 @@ public class ItemController {
     public ResponseEntity<ResponseDto<ItemIdResponseDto>> patchItem(@PathVariable("itemId") Long itemId,
                                                                     @RequestPart(required = false) ItemPatchDto patch,
                                                                     @RequestPart(required = false) List<MultipartFile> imageList,
-                                                                    @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+                                                                    @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
-        checkImageParam(imageList,patch.getImageSortAndRepresentativeInfo());
         Item request = itemMapper.itemPatchDtoToItem(patch);
         request.setItemId(itemId);
         List<ImageInfoDto> imageInfoDtoList = null;
-        if(patch.getImageSortAndRepresentativeInfo() != null) {
+        if (patch.getImageSortAndRepresentativeInfo() != null) {
             imageInfoDtoList = imageMapper.toLocalDtoList(imageList, patch.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
         }
         Item result = itemService.patchItem(imageInfoDtoList, patch.getDeleteImageId(), request);
@@ -111,20 +106,20 @@ public class ItemController {
     @DeleteMapping("/{item-Id}")
     @ApiResponse(responseCode = "204", description = "상품 삭제 성공")
     public ResponseEntity deleteItem(@PathVariable("item-Id") @Positive Long itemId,
-                                     @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+                                     @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
         itemService.deleteItem(itemId);
         URI location = UriCreator.createUri(ITEM_DEFAULT_URL);
-        return ResponseEntity.noContent().header("Location",location.toString()).build();
+        return ResponseEntity.noContent().header("Location", location.toString()).build();
     }
 
     // 단일 아이템 조회
     @GetMapping("/{item-Id}")
     @ApiResponse(responseCode = "200", description = " 단건 조회")
-    public ResponseEntity<ResponseDto<ItemResponseDto>> getItem(@PathVariable("item-Id") @Positive Long itemId ,
-                                                                @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+    public ResponseEntity<ResponseDto<ItemResponseDto>> getItem(@PathVariable("item-Id") @Positive Long itemId,
+                                                                @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        Item item = itemService.getItem(itemId,userId);
+        Item item = itemService.getItem(itemId, userId);
         ItemResponseDto response = itemMapper.toGetResponseDto(item);
         var responseDto = ResponseDto.<ItemResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
@@ -135,13 +130,13 @@ public class ItemController {
     @Parameters({
             @Parameter(name = "page", example = "0", description = "첫 페이지가 0번지"),
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
-            @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
+            @Parameter(name = "sort", example = "createdAt", description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
     public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> searchItem(@RequestParam String itemName,
-                                                                         @Parameter(hidden = true)@PageableDefault  Pageable pageable,
-                                                                         @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+                                                                         @Parameter(hidden = true) @PageableDefault Pageable pageable,
+                                                                         @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        Page<Item> result = itemService.searchItem(itemName, pageable,userId);
+        Page<Item> result = itemService.searchItem(itemName, pageable, userId);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
@@ -154,13 +149,13 @@ public class ItemController {
     @Parameters({
             @Parameter(name = "page", example = "0", description = "첫 페이지가 0번지"),
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
-            @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
+            @Parameter(name = "sort", example = "createdAt", description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
     public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByCategory(@RequestParam Category category,
-                                                                                @Parameter(hidden = true)@PageableDefault(sort = "itemId")  Pageable pageable,
-                                                                                @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+                                                                                @Parameter(hidden = true) @PageableDefault(sort = "itemId") Pageable pageable,
+                                                                                @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        Page<Item> result = itemService.findItemByCategory(category, pageable,userId);
+        Page<Item> result = itemService.findItemByCategory(category, pageable, userId);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
@@ -173,12 +168,12 @@ public class ItemController {
     @Parameters({
             @Parameter(name = "page", example = "0", description = "첫 페이지가 0번지"),
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
-            @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
+            @Parameter(name = "sort", example = "createdAt", description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByHighPrice(@Parameter(hidden = true)@PageableDefault(sort = "itemId") Pageable pageable,
-                                                                                 @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByHighPrice(@Parameter(hidden = true) @PageableDefault(sort = "itemId") Pageable pageable,
+                                                                                 @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        Page<Item> result = itemService.findItemPage(pageable,userId);
+        Page<Item> result = itemService.findItemPage(pageable, userId);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
@@ -190,19 +185,11 @@ public class ItemController {
     @ApiResponse(responseCode = "200", description = "상품 좋아요 기능")
     public ResponseEntity<ResponseDto<PickedItemDto>> pickItem(@PathVariable @Positive Long itemId,
                                                                @RequestParam Long userId,
-                                                               @Parameter(hidden = true)@AuthenticationPrincipal Object principal){
-        CheckLoginUser.validUserSame(principal,userId);
+                                                               @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
+        CheckLoginUser.validUserSame(principal, userId);
         PickedItemDto result = itemService.pickItem(itemId, userId);
 
         var responseDto = ResponseDto.<PickedItemDto>builder().data(result).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
-    }
-    private void checkImageParam(List<MultipartFile> imageList, List<? extends ImageSortDto> infoList) {
-        if(imageList == null && infoList != null){
-            throw new BusinessLogicException(CommonExceptionCode.IMAGE_NOT_POST);
-        }
-        if (imageList != null && infoList == null) {
-            throw new BusinessLogicException(CommonExceptionCode.IMAGE_INFO_NOT_POST);
-        }
     }
 }
