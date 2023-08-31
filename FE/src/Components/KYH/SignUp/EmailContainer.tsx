@@ -18,7 +18,7 @@ export default function EmailContainer({
           }}
           value={email}
         ></input>
-        {isEmailValid ? null : (
+        {isEmailValid !== undefined && isEmailValid ? null : (
           <span className="mt-1 ml-2 text-xs font-bold text-red-500">
             올바른 형식의 이메일을 입력해주세요
           </span>

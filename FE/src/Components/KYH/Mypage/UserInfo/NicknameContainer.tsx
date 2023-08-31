@@ -38,7 +38,7 @@ export default function NicknameContainer({
             중복된 닉네임 입니다. 다른 닉네임을 사용해 주세요
           </span>
         )}
-        {isNicknameValid ? null : (
+        {isNicknameValid !== undefined && isNicknameValid ? null : (
           <span className="mt-1 ml-2 text-xs font-bold text-red-500">
             특수문자, 띄어쓰기를 제외한 한글, 영문, 숫자만 입력 가능합니다.
           </span>

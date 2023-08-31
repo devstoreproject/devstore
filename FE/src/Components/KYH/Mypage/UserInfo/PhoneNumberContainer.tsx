@@ -31,7 +31,7 @@ export default function PhoneNumberContainer({
           setPhone(e.target.value);
         }}
       />
-      {isPhoneValid ? null : (
+      {isPhoneValid !== undefined && isPhoneValid ? null : (
         <span className="mt-1 ml-2 text-xs font-bold text-red-500">
           올바른 번호를 입력해주세요
         </span>
