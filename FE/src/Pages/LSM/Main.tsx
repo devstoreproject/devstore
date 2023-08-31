@@ -39,10 +39,7 @@ export default function Main() {
 
   useEffect(() => {
     void fetchData();
-
-    return () => {
-      window.history.scrollRestoration = 'manual';
-    };
+    window.history.scrollRestoration = 'manual';
   }, []);
 
   return (
