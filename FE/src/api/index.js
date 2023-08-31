@@ -27,7 +27,7 @@ api.interceptors.response.use(
           console.log(err);
         });
     }
-    console.log(err);
+    throw err;
   }
 );
 
