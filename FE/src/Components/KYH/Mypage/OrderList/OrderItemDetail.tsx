@@ -38,7 +38,7 @@ export default function OrderItemDetail({
             value="리뷰 작성하러 가기"
             className="px-2 py-1 text-sm text-gray-600 border border-gray-400 cursor-pointer rounded-2xl hover:bg-gray-300 hober:border-gray-400 hover:text-gray-700"
             onClick={() => {
-              navigate(`/searchcategory/${itemId}`);
+              navigate(`/products/${itemId}`);
             }}
           />
         ) : (
