@@ -1,4 +1,5 @@
 import type { Product } from 'model/product';
+import addCommasToPrice from 'utils/addCommasToPrice';
 
 interface OwnProps extends Product {
   setIsDetailModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,6 +16,7 @@ export default function TableContents({
   setProductId,
   setCheckedId,
 }: OwnProps) {
+  const price = addCommasToPrice(itemPrice);
   return (
     <li className="flex items-center justify-between h-12 px-6 border-b border-b-gray-400">
       <input
@@ -41,7 +43,7 @@ export default function TableContents({
       <span className="w-16 text-center">{totalCount}</span>
       <span className="w-12 text-center">데이터 필요</span>
       <span className="w-12 text-center">데이터 필요</span>
-      <span className="w-24 text-center">{itemPrice}</span>
+      <span className="w-24 text-center">{price}</span>
     </li>
   );
 }
