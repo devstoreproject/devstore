@@ -43,7 +43,8 @@ public class OrderController {
                                                                        @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         OrderLocalDto localOrder = orderMapper.orderPostDtoToOrder(post);
-        Orders createOrder = orderService.createOrder(localOrder, userId);
+        localOrder.addUserId(userId);
+        Orders createOrder = orderService.createOrder(localOrder);
         OrderIdResponseDto response = orderMapper.toIdResponse(createOrder);
 
         var responseDto = ResponseDto.<OrderIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();

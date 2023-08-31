@@ -57,7 +57,7 @@ public class Orders extends Auditable {
     private Address address;
 
     //Cart에서 땡겨다가 쓸것들
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL,mappedBy = "order")
     private List<OrderedItem> orderedItemList;
 
     @ManyToOne(fetch = LAZY)

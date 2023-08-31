@@ -8,7 +8,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import project.main.webstore.domain.order.dto.OrderPostDto;
 import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.dto.ResponseDto;
@@ -36,7 +39,7 @@ public class OrderControllerTest {
         //url 설정
         String url = "http://localhost:" + port + "/api/orders";
 
-        OrderPostDto post = new OrderPostDto("상품 메시지", 1L, 2L, 1L);
+        OrderPostDto post = new OrderPostDto("상품 메시지", 1L);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));

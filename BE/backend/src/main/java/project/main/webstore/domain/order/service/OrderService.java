@@ -33,8 +33,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserValidService userService;
 
-    public Orders createOrder(OrderLocalDto post, Long userId) {
-        User user = userService.validUserAllInfo(userId);
+    public Orders createOrder(OrderLocalDto post) {
+        User user = userService.validUserAllInfo(post.getUserId());
         ShippingInfo shippingInfo = user.getShippingInfo(post.getShippingId());
 
         Cart cart = user.getCart();
