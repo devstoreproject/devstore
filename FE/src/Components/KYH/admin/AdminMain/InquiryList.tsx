@@ -3,7 +3,6 @@ import useFetchInquiry from 'hooks/admin/inquiry/useFetchInquiry';
 
 export default function InquiryList() {
   const inquiry = useFetchInquiry();
-  console.log(inquiry);
 
   return (
     <div className="flex flex-col h-48 px-6 py-4 mt-auto bg-white rounded-lg shadow-signBox w-200">
