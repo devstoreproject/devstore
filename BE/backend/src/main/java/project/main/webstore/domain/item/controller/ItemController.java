@@ -130,7 +130,7 @@ public class ItemController {
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
     public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> searchItem(@RequestParam String itemName,
-                                                                         @Parameter(hidden = true)@PageableDefault(sort = "itemId")  Pageable pageable) {
+                                                                         @Parameter(hidden = true)@PageableDefault  Pageable pageable) {
         Page<Item> result = itemService.searchItem(itemName, pageable);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();

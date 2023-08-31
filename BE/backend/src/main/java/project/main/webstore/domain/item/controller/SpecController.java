@@ -1,5 +1,6 @@
 package project.main.webstore.domain.item.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class SpecController {
     public ResponseEntity editItemSpec(@PathVariable @Positive Long itemId,
                                        @PathVariable("spec-Id") @Positive Long specId,
                                        @RequestBody SpecPatchDto specPatchDto,
-                                       @AuthenticationPrincipal Object principal) {
+                                       @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
 
         ItemSpec request = specMapper.specPatchDtoToSpec(specPatchDto);
@@ -55,7 +56,8 @@ public class SpecController {
 
     @DeleteMapping("/spec/{spec-id}")
     @ApiResponse(responseCode = "204", description = "상품 스펙 삭제 성공")
-    public ResponseEntity deleteItemSpec(@PathVariable("spec-id") @Positive Long specId, @AuthenticationPrincipal Object principal) {
+    public ResponseEntity deleteItemSpec(@PathVariable("spec-id") @Positive Long specId,
+                                         @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
         service.deleteSpec(specId);
 
@@ -70,6 +72,7 @@ public class SpecController {
         var responseDto = ResponseDto.builder().customCode(ResponseCode.OK).data(response).build();
         return ResponseEntity.ok(responseDto);
     }
+
     @GetMapping("/{itemId}/spec")
     @ApiResponse(responseCode = "200", description = "상품 스펙 리스트 조회 성공")
     public ResponseEntity getSpecList(@PathVariable Long itemId){
