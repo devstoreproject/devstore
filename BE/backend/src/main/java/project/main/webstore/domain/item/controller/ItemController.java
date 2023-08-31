@@ -115,8 +115,10 @@ public class ItemController {
     // 단일 아이템 조회
     @GetMapping("/{item-Id}")
     @ApiResponse(responseCode = "200", description = " 단건 조회")
-    public ResponseEntity<ResponseDto<ItemResponseDto>> getItem(@PathVariable("item-Id") @Positive Long itemId) {
-        Item item = itemService.getItem(itemId);
+    public ResponseEntity<ResponseDto<ItemResponseDto>> getItem(@PathVariable("item-Id") @Positive Long itemId ,
+                                                                @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        Item item = itemService.getItem(itemId,userId);
         ItemResponseDto response = itemMapper.toGetResponseDto(item);
         var responseDto = ResponseDto.<ItemResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
@@ -130,8 +132,10 @@ public class ItemController {
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
     public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> searchItem(@RequestParam String itemName,
-                                                                         @Parameter(hidden = true)@PageableDefault  Pageable pageable) {
-        Page<Item> result = itemService.searchItem(itemName, pageable);
+                                                                         @Parameter(hidden = true)@PageableDefault  Pageable pageable,
+                                                                         @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        Page<Item> result = itemService.searchItem(itemName, pageable,userId);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
@@ -147,8 +151,10 @@ public class ItemController {
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
     public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByCategory(@RequestParam Category category,
-                                                                                @Parameter(hidden = true)@PageableDefault(sort = "itemId")  Pageable pageable) {
-        Page<Item> result = itemService.findItemByCategory(category, pageable);
+                                                                                @Parameter(hidden = true)@PageableDefault(sort = "itemId")  Pageable pageable,
+                                                                                @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        Page<Item> result = itemService.findItemByCategory(category, pageable,userId);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
@@ -163,8 +169,10 @@ public class ItemController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByHighPrice(@Parameter(hidden = true)@PageableDefault(sort = "itemId") Pageable pageable) {
-        Page<Item> result = itemService.findItemPage(pageable);
+    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByHighPrice(@Parameter(hidden = true)@PageableDefault(sort = "itemId") Pageable pageable,
+                                                                                 @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        Page<Item> result = itemService.findItemPage(pageable,userId);
         Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
         var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 

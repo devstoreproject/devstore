@@ -62,7 +62,9 @@ public class Item extends Auditable {
     @Enumerated(STRING)
     @Setter
     private Category category;
-
+    @Transient
+    @Setter
+    private boolean like;
 
     // 연관관계 매핑 //
     @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = ALL)

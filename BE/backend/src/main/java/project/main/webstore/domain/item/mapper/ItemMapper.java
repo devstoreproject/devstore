@@ -29,7 +29,7 @@ public class ItemMapper {
 
     // itemResponse Mapper
     public ItemResponseDto toGetResponseDto(Item item) {
-        return ItemResponseDto.response().item(item).build();
+        return new ItemResponseDto(item);
     }
 
 

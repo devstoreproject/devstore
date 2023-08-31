@@ -41,6 +41,7 @@ public class ItemResponseDto {
     private List<OptionResponseDto> optionList;
     @Schema(description = "상품 사진 정보")
     private List<ImageDto> imageList;
+    private boolean like;
 
     @Builder(builderMethodName = "response")
     public ItemResponseDto(Item item) {
@@ -56,5 +57,6 @@ public class ItemResponseDto {
         this.optionList = item.getOptionList() != null ? item.getOptionList().stream().map(OptionResponseDto::new).collect(Collectors.toList()) : new ArrayList<>();
         this.totalCount = item.getTotalCount();
         this.imageList = item.getItemImageList() != null? item.getItemImageList().stream().map(ImageDto::new).collect(Collectors.toList()) : new ArrayList<>();
+        this.like = item.isLike();
     }
 }
