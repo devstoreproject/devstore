@@ -7,10 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.cart.entity.Cart;
+import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
 import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
 import project.main.webstore.domain.order.entity.Orders;
+import project.main.webstore.domain.order.enums.OrderedItem;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.enums.TransCondition;
 import project.main.webstore.domain.order.exception.OrderExceptionCode;
@@ -21,6 +23,7 @@ import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -160,6 +163,39 @@ public class OrderService {
         findOrder.addDelivery(trackingNumber,company);
         findOrder.setOrdersStatus(OrdersStatus.DELIVERY_PROGRESS);
         return findOrder;
+    }
+
+    //배송 완료일로부터 7일 이전에만 가능하다.
+    public Orders refundOrder(Long userId, Long orderId, List<Long> optionId) {
+        //사용자
+        Orders findOrder = validOrder(orderId);
+
+        //사용자 검증
+        userService.validUserIdSame(userId, findOrder);
+
+        //주문 7일 이전 것들만 취소 가능
+        LocalDate deliveryDate = findOrder.getDeliveryDate();
+        LocalDate now = LocalDate.now();
+        if(deliveryDate == null || check7Days(deliveryDate, now)){
+            List<OrderedItem> itemList = findOrder.getOrderedItemList();
+            for (Long id : optionId) {
+                OrderedItem orderedItem = itemList.stream().filter(orderItem -> orderItem.getOrder().getOrderId().equals(id)).findFirst().orElseThrow(()->new BusinessLogicException(OrderExceptionCode.ORDER_ITEM_NOT_FOUND));
+                ItemOption option = orderedItem.getOption();
+                Integer itemCount = option.getItemCount();
+                option.setItemCount(itemCount + orderedItem.getItemCount());
+            }
+            findOrder.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
+        }
+        return findOrder;
+    }
+
+    private boolean check7Days(LocalDate deliveryDate, LocalDate now) {
+        return now.getMonthValue() - deliveryDate.getMonthValue() == 0 && now.getYear() - deliveryDate.getYear() == 0 && now.getDayOfMonth() - deliveryDate.getDayOfMonth() < 7;
+    }
+
+    public Page<Orders> getOrderByStatus(Pageable pageable,String status) {
+        OrdersStatus value = OrdersStatus.of(status);
+        return orderRepository.findByOrdersStatus(pageable, value);
     }
 }
 

@@ -14,6 +14,7 @@ import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.valueObject.Address;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +42,8 @@ public class Orders extends Auditable {
     //송장 번호
     private String trackingNumber;
     private String deliveryCompany;
-
+    @Setter
+    private LocalDate deliveryDate;
     @Setter
     @Builder.Default
     @Enumerated(value = EnumType.STRING)
@@ -57,7 +59,7 @@ public class Orders extends Auditable {
     private Address address;
 
     //Cart에서 땡겨다가 쓸것들
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL,mappedBy = "order")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "order")
     private List<OrderedItem> orderedItemList;
 
     @ManyToOne(fetch = LAZY)
@@ -67,10 +69,38 @@ public class Orders extends Auditable {
     @Embedded
     private PaymentType paymentType;
 
+    //TODO : 작업 중인 아이 지불 정보를 알고 있어야하는가 서버가?
+    @Builder
+    public Orders(String message, Cart cart, User user, ShippingInfo info) {
+        this.orderNumber = createOrderNumber();
+        this.message = message;
+        this.ordersStatus = OrdersStatus.ORDER_COMPLETE;
+        this.recipient = info.getRecipient();
+        this.address = info.getAddress();
+        this.orderedItemList = cart.getCartItemList().stream().map(OrderedItem::new).collect(Collectors.toList());
+        this.user = user;
+        this.deliveryPrice = cart.getDeliveryPrice();
+    }
+
+
+    public Orders(Long orderId, String message, int deliveryPrice, String trackingNumber, String deliveryCompany, OrdersStatus ordersStatus, String recipient, Address address, List<OrderedItem> orderedItemList, User user, PaymentType paymentType) {
+        this.orderId = orderId;
+        this.orderNumber = createOrderNumber();
+        this.message = message;
+        this.deliveryPrice = deliveryPrice;
+        this.trackingNumber = trackingNumber;
+        this.deliveryCompany = deliveryCompany;
+        this.ordersStatus = ordersStatus;
+        this.recipient = recipient;
+        this.address = address;
+        this.orderedItemList = orderedItemList;
+        this.user = user;
+        this.paymentType = paymentType;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
-
 
     public int getTotalOrderedOriginalPrice() {
         return this.orderedItemList.stream().mapToInt(OrderedItem::getPrice).sum();
@@ -80,7 +110,7 @@ public class Orders extends Auditable {
         return this.orderedItemList.stream().mapToInt(OrderedItem::getDiscountedPrice).sum();
     }
 
-    public void addDelivery(String trackingNumber, String deliveryCompany){
+    public void addDelivery(String trackingNumber, String deliveryCompany) {
         this.deliveryCompany = deliveryCompany;
         this.trackingNumber = trackingNumber;
     }
@@ -123,34 +153,5 @@ public class Orders extends Auditable {
     private int itemCountPlus(OrderedItem orderedItem) {
         int result = orderedItem.getOption().getItemCount() + orderedItem.getItemCount();
         return result;
-    }
-
-
-    //TODO : 작업 중인 아이 지불 정보를 알고 있어야하는가 서버가?
-    @Builder
-    public Orders(String message, Cart cart, User user, ShippingInfo info) {
-        this.orderNumber = createOrderNumber();
-        this.message = message;
-        this.ordersStatus = OrdersStatus.ORDER_COMPLETE;
-        this.recipient = info.getRecipient();
-        this.address = info.getAddress();
-        this.orderedItemList = cart.getCartItemList().stream().map(OrderedItem::new).collect(Collectors.toList());
-        this.user = user;
-        this.deliveryPrice = cart.getDeliveryPrice();
-    }
-
-    public Orders(Long orderId, String message, int deliveryPrice, String trackingNumber, String deliveryCompany, OrdersStatus ordersStatus, String recipient, Address address, List<OrderedItem> orderedItemList, User user, PaymentType paymentType) {
-        this.orderId = orderId;
-        this.orderNumber = createOrderNumber();
-        this.message = message;
-        this.deliveryPrice = deliveryPrice;
-        this.trackingNumber = trackingNumber;
-        this.deliveryCompany = deliveryCompany;
-        this.ordersStatus = ordersStatus;
-        this.recipient = recipient;
-        this.address = address;
-        this.orderedItemList = orderedItemList;
-        this.user = user;
-        this.paymentType = paymentType;
     }
 }

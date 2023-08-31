@@ -7,6 +7,7 @@ import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
+import project.main.webstore.domain.order.entity.Orders;
 
 import javax.persistence.*;
 
@@ -30,7 +31,9 @@ public class OrderedItem extends Auditable {
     private ItemOption option;
     @OneToOne
     private Item item;
-
+    @ManyToOne
+    @JoinColumn(name = "ORDER_ID")
+    private Orders order;
     public OrderedItem(CartItem cartItem) {
         this.price =cartItem.getOption().getAdditionalPrice() + cartItem.getOption().getItem().getItemPrice();
         this.discountRate = cartItem.getDiscountedPrice();

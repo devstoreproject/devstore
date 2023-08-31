@@ -23,14 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    //    private final OrderService orderService;
     private final IamportClient client;
     private final RedisUtils redisUtils;
     private final int SAVE_PAY_ACCESS_TIME = 10;
-    //AOP 이용 가능성 확인   사전 등록 -> 사전 등록 시 레디스에 캐시 메모리로 저장, 이후 진짜 저장할 떄 DB에 저장 하면 좋지 않나? 하는 조그만한 생각을 가지고 있음
 
 
-    //프론트엔드와의 상의를 통해 데이터를 변경할 필요가 있을 수 있음
     public PrepareData postPrepare(PrepareData prepareData) {
         try {
             IamportResponse<Prepare> iamportResponse = client.postPrepare(prepareData);

@@ -1,6 +1,7 @@
 package project.main.webstore.domain.order.controller;
 
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class OrderController {
     @ApiResponse(responseCode = "201", description = "주문서 작성, 주문한 아이템 정보 등록")
     @PostMapping
     public ResponseEntity<ResponseDto<OrderIdResponseDto>> postOrder(@RequestBody @Valid OrderPostDto post,
-                                                                       @AuthenticationPrincipal Object principal) {
+                                                                     @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         OrderLocalDto localOrder = orderMapper.orderPostDtoToOrder(post);
         localOrder.addUserId(userId);
@@ -57,7 +58,7 @@ public class OrderController {
     public ResponseEntity<ResponseDto<OrderIdResponseDto>> patchOrder(
                                                                     @PathVariable("order-id") @Positive Long orderId,
                                                                     @RequestBody @Valid OrderPatchDto patchDto,
-                                                                    @AuthenticationPrincipal Object principal) {
+                                                                    @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
 
         OrderLocalDto order = orderMapper.orderPatchDtoToOrder(patchDto, orderId);
@@ -71,7 +72,8 @@ public class OrderController {
 
     @ApiResponse(responseCode = "200", description = "주문정보 가져오기")
     @GetMapping("/{order-id}")
-    public ResponseEntity<ResponseDto<OrderResponseDto>> getOrder(@PathVariable("order-id") @Positive Long orderId,@AuthenticationPrincipal Object principal) {
+    public ResponseEntity<ResponseDto<OrderResponseDto>> getOrder(@PathVariable("order-id") @Positive Long orderId,
+                                                                  @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
 
         Long userId = CheckLoginUser.getContextIdx(principal);
         Orders order = orderService.getOrder(orderId, userId);
@@ -84,7 +86,7 @@ public class OrderController {
     @ApiResponse(responseCode = "200", description = "주문정보 가져오기")
     @GetMapping("/orderNumber")
     public ResponseEntity<ResponseDto<OrderResponseDto>> getOrderByOrderNumber(@RequestParam String orderNumber,
-                                                                               @AuthenticationPrincipal Object principal) {
+                                                                               @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdAdminZero(principal);
 
         Orders order = orderService.getOrder(orderNumber,userId);
@@ -97,8 +99,9 @@ public class OrderController {
 
     @ApiResponse(responseCode = "200", description = "전체 주문정보 가져오기 페이지")
     @GetMapping
-    public ResponseEntity<ResponseDto<Page<OrderResponseDto>>> getOrders(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,@RequestParam(value = "month",required = false) Integer month,
-                                                                         @AuthenticationPrincipal Object principal) {
+    public ResponseEntity<ResponseDto<Page<OrderResponseDto>>> getOrders(@Parameter(hidden = true) @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                         @RequestParam(value = "month",required = false) Integer month,
+                                                                         @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdAdminZero(principal);
         Page<Orders> ordersPage = orderService.getOrders(pageable,userId,month);
         Page<OrderResponseDto> response = orderMapper.orderToOrderResponsePage(ordersPage);
@@ -123,8 +126,7 @@ public class OrderController {
     //Item 별 매출
 
     @GetMapping("/month-sale")
-    public ResponseEntity<ResponseDto<List<OrderMonthlyPriceDto>> > getMonthlyAmount(@AuthenticationPrincipal Object principal){
-//        CheckLoginUser.validAdmin(principal);
+    public ResponseEntity<ResponseDto<List<OrderMonthlyPriceDto>> > getMonthlyAmount(){
         List<OrderDBMonthlyPriceDto> result = orderService.getMonthlyPrice();
         List<OrderMonthlyPriceDto> response = orderMapper.toMonthlyAmountResponse(result);
         var responseDto = ResponseDto.<List<OrderMonthlyPriceDto>>builder().data(response).customCode(ResponseCode.OK).build();
@@ -132,15 +134,14 @@ public class OrderController {
     }
 
     @GetMapping("/items-sale")
-    public ResponseEntity<ResponseDto<List<OrderItemSaleDto>>> getItemPrice(@AuthenticationPrincipal Object principal){
-//        CheckLoginUser.validAdmin(principal);
+    public ResponseEntity<ResponseDto<List<OrderItemSaleDto>>> getItemPrice(){
         List<OrderDBItemSaleDto> result = orderService.getItemPrice();
         List<OrderItemSaleDto> response = orderMapper.toItemSaleResponse(result);
         var responseDto = ResponseDto.<List<OrderItemSaleDto>>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
 
-    @PatchMapping("{orderId}/add-tracking-number")
+    @PatchMapping("/{orderId}/add-tracking-number")
     public ResponseEntity<ResponseDto<OrderIdResponseDto>> setTrackingNumber(@PathVariable @Positive Long orderId, @RequestBody OrderTrackingInfoDto trackingInfo){
         Orders result = orderService.setTrackingNumber(orderId, trackingInfo.getTrackingNumber(),trackingInfo.getDeliveryCompany());
         OrderIdResponseDto response = orderMapper.toIdResponse(result);
@@ -149,5 +150,28 @@ public class OrderController {
 
         return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
     }
-    
+    @PatchMapping("/{orderId}/refund")
+    public ResponseEntity<ResponseDto<OrderIdAndStatusDto>> refundOrder(@PathVariable Long orderId,
+                                                                        @RequestBody OrderRefundRequestDto dto,
+                                                                        @Parameter(hidden = true)@AuthenticationPrincipal Object principal){
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        Orders result = orderService.refundOrder(userId, orderId,dto.getItemIdList());
+        OrderIdAndStatusDto response = orderMapper.toResponse(result);
+        ResponseDto<OrderIdAndStatusDto> responseDto = ResponseDto.<OrderIdAndStatusDto>builder().customCode(ResponseCode.OK).data(response).build();
+        URI uri = UriCreator.createUri(ORDER_URL + "/{orderId}", responseDto.getData().getOrderId());
+
+        return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
+    }
+
+
+
+    @GetMapping("/status")
+    public ResponseEntity<ResponseDto<Page<OrderResponseDto>>> getOrderByStatus(Pageable pageable,@RequestParam("status") String status){
+        Page<Orders> result = orderService.getOrderByStatus(pageable, status);
+        Page<OrderResponseDto> response = orderMapper.orderToOrderResponsePage(result);
+        ResponseDto<Page<OrderResponseDto>> responseDto = ResponseDto.<Page<OrderResponseDto>>builder().customCode(ResponseCode.OK).data(response).build();
+
+        return ResponseEntity.ok().body(responseDto);
+    }
+
 }

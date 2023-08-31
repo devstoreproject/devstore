@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
 import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
 import project.main.webstore.domain.order.entity.Orders;
+import project.main.webstore.domain.order.enums.OrdersStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,5 +48,6 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
             "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt)")
     List<OrderDBItemSaleDto> itemSales();
 
+    Page<Orders> findByOrdersStatus(Pageable pageable, OrdersStatus ordersStatus);
 }
 

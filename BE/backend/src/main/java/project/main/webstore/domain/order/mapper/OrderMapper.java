@@ -47,4 +47,8 @@ public class OrderMapper {
     public List<OrderItemSaleDto> toItemSaleResponse(List<OrderDBItemSaleDto> result) {
         return result.stream().map(OrderItemSaleDto::new).collect(Collectors.toList());
     }
+
+    public OrderIdAndStatusDto toResponse(Orders result) {
+        return new OrderIdAndStatusDto(result.getOrderId(),result.getOrdersStatus());
+    }
 }
