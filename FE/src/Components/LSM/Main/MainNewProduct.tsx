@@ -1,7 +1,11 @@
-import BestItemList from './BestProduct/BestItemList';
 import MainTitle from './MainTitle';
+import NewItemList from './NewProduct/NewItemList';
 
-export default function MainNewProduct() {
+interface MainProp {
+  newItemsData: any;
+}
+
+export default function MainNewProduct({ newItemsData }: MainProp) {
   return (
     <div className="w-full px-10">
       <MainTitle
@@ -10,7 +14,7 @@ export default function MainNewProduct() {
         subTitle="NEW ITEM"
         classnames=""
       />
-      <BestItemList />
+      <NewItemList newItemsData={newItemsData} />
     </div>
   );
 }
