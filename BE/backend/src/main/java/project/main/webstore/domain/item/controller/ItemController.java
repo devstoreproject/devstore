@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
+import project.main.webstore.domain.image.dto.ImageSortDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
 import project.main.webstore.domain.item.dto.*;
 import project.main.webstore.domain.item.entity.Item;
@@ -28,6 +29,8 @@ import project.main.webstore.domain.item.mapper.ItemMapper;
 import project.main.webstore.domain.item.service.ItemService;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
+import project.main.webstore.exception.BusinessLogicException;
+import project.main.webstore.exception.CommonExceptionCode;
 import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
 
@@ -58,7 +61,7 @@ public class ItemController {
                                                                      @RequestPart(required = false) List<MultipartFile> imageList,
                                                                      @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
-
+        checkImageParam(imageList,post.getInfoList());
         Item request = itemMapper.toEntity(post);
         Item result;
         if (imageList != null) {
@@ -75,6 +78,8 @@ public class ItemController {
         return ResponseEntity.created(location).body(responseDto);
     }
 
+
+
     //상품이든 뭐든 다 변경하는 것 (있는 것만 체크)
     @PatchMapping(
             path = "/{itemId}",
@@ -87,6 +92,7 @@ public class ItemController {
                                                                     @RequestPart(required = false) List<MultipartFile> imageList,
                                                                     @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
+        checkImageParam(imageList,patch.getImageSortAndRepresentativeInfo());
         Item request = itemMapper.itemPatchDtoToItem(patch);
         request.setItemId(itemId);
         List<ImageInfoDto> imageInfoDtoList = null;
@@ -191,5 +197,12 @@ public class ItemController {
         var responseDto = ResponseDto.<PickedItemDto>builder().data(result).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
-
+    private void checkImageParam(List<MultipartFile> imageList, List<? extends ImageSortDto> infoList) {
+        if(imageList == null && infoList != null){
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_NOT_POST);
+        }
+        if (imageList != null && infoList == null) {
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_INFO_NOT_POST);
+        }
+    }
 }
