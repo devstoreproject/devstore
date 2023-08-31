@@ -1,7 +1,11 @@
 import ReviewItemList from './BestReview/ReviewItemList';
 import MainTitle from './MainTitle';
 
-export default function MainBestReview() {
+interface MainProp {
+  reviewData: any;
+}
+
+export default function MainBestReview({ reviewData }: MainProp) {
   return (
     <div className="w-full px-10">
       <MainTitle
@@ -9,7 +13,7 @@ export default function MainBestReview() {
         icon="👀"
         subTitle="BEST REVIEW"
       />
-      <ReviewItemList />
+      <ReviewItemList reviewData={reviewData} />
     </div>
   );
 }
