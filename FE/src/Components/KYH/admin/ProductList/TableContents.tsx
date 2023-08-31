@@ -1,4 +1,4 @@
-import type { Product } from 'model/auth';
+import type { Product } from 'model/product';
 
 interface OwnProps extends Product {
   setIsDetailModalOpen: React.Dispatch<React.SetStateAction<boolean>>;

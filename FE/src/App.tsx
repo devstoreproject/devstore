@@ -37,6 +37,7 @@ import ReviewManagement from 'Pages/CYW/ReviewManagement';
 import Search from 'Pages/CYW/Search';
 import Sales from 'Components/KYH/admin/Sales/Sales';
 import Products from 'Pages/CYW/Products';
+import SearchPassword from 'Pages/KYH/SearchPassword';
 
 function App() {
   return (
@@ -49,11 +50,11 @@ function App() {
           <Route path="products/:id" element={<ProductDetail />} />
           <Route path="/notice" element={<NoticeList />} />
           <Route path="/notice/:id" element={<NoticeDetail />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/searchpassword" element={<SearchPassword />} />
+          <Route path="/sleeperaccount" element={<SleeperAccount />} />
         </Route>
-
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/sleeperaccount" element={<SleeperAccount />} />
 
         <Route path="/mypage" element={<Mypage />}>
           <Route path="orderlist" element={<OrderList />} />
