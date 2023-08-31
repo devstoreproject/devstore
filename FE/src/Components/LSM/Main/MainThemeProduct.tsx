@@ -1,7 +1,11 @@
 import MainTitle from './MainTitle';
 import ThemeItemList from './ThemeProduct/ThemeItemList';
 
-export default function MainThemeProduct() {
+interface MainProp {
+  themeData: any;
+}
+
+export default function MainThemeProduct({ themeData }: MainProp) {
   return (
     <div className="w-full px-10">
       <MainTitle
@@ -10,7 +14,7 @@ export default function MainThemeProduct() {
         subTitle="THEME ITEM"
         classnames="text-left"
       />
-      <ThemeItemList />
+      <ThemeItemList themeData={themeData} />
     </div>
   );
 }
