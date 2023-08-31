@@ -8,7 +8,7 @@ export default function SearchPasswordNavBtn() {
       value="비밀번호 찾기"
       className="ml-20 cursor-pointer hover:text-blue-500"
       onClick={() => {
-        navigate('/serachpassword');
+        navigate('/searchpassword');
       }}
     />
   );

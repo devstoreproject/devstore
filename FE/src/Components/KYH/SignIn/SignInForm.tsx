@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import EmailAndPWContainer from './EmailAndPWContainer';
 import KeepLoginContainer from './KeepLoginContainer';
-import SearchPasswordContainer from './SearchPasswordContainer';
 import OneClickLogInContainer from './OneClickLogInContainer';
 import { useState } from 'react';
 import { ValidateEmail, ValidatePassword } from 'utils/auth/authValidate';
 import fetchSignIn from 'utils/auth/fetchSignIn';
+import SearchPasswordNavBtn from './SearchPasswordNavBtn';
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ export default function SignInForm() {
       />
       <div className="flex justify-between mt-2">
         <KeepLoginContainer />
-        <SearchPasswordContainer />
+        <SearchPasswordNavBtn />
       </div>
       {isSignInSuccess ? null : (
         <span className="mt-4 text-sm font-bold text-center text-red-500">
