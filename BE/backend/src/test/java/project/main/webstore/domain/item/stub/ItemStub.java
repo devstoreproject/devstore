@@ -48,6 +48,9 @@ public class ItemStub {
     public ItemPatchDto createPatchWithImage() {
         return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L),List.of(new ImageSortPatchDto(1L,2,false)));
     }
+    public ItemPatchDto createPatchWithImageTwo() {
+        return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L),List.of(new ImageSortPatchDto(1L,2,false),new ImageSortPatchDto(null,1,true),new ImageSortPatchDto(null,2,false)));
+    }
     public ItemPatchDto createPatchChangeDeleteImageId() {
         return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L));
     }

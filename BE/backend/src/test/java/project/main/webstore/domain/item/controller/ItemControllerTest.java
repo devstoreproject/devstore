@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import project.main.webstore.annotation.WithMockCustomUser;
+import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.service.ItemService;
@@ -80,6 +82,63 @@ class ItemControllerTest {
                 .andDo(MockMvcResultHandlers.log())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.itemId").value(1L))
                 .andExpect(MockMvcResultMatchers.header().string("Location","/api/items/1"));
+    }
+
+    @Test
+    @DisplayName("상품 수정")
+    @WithMockCustomUser
+    void patch_item_no_image_test() throws Exception {
+        ItemPatchDto patch = itemStub.createPatchNoImage();
+        String content = gson.toJson(patch);
+        MockMultipartFile patchItem = new MockMultipartFile("patch", "patch", "application/json", content.getBytes(StandardCharsets.UTF_8));
+        Item item = itemStub.createItem(1L);
+        given(itemService.patchItem(any(),any(),any(Item.class))).willReturn(item);
+
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH,DEFAULT_URL + "/{itemId}",1l).file(patchItem).accept(MediaType.APPLICATION_JSON));
+
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.itemId").value(1L))
+                .andExpect(MockMvcResultMatchers.header().string("Location","/api/items/1"));
+    }
+    @Test
+    @DisplayName("상품 수정 :[사진 삭제만]")
+    @WithMockCustomUser
+    void patch_item_delete_image_test() throws Exception {
+        ItemPatchDto patch = itemStub.createPatchChangeDeleteImageId();
+        String content = gson.toJson(patch);
+        MockMultipartFile patchItem = new MockMultipartFile("patch", "patch", "application/json", content.getBytes(StandardCharsets.UTF_8));
+        Item item = itemStub.createItem(1L);
+        given(itemService.patchItem(any(),anyList(),any(Item.class))).willReturn(item);
+
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH,DEFAULT_URL + "/{itemId}",1l).file(patchItem).accept(MediaType.APPLICATION_JSON));
+
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.itemId").value(1L))
+                .andExpect(MockMvcResultMatchers.header().string("Location","/api/items/1"));
+    }
+    @Test
+    @DisplayName("상품 수정 :변경")
+    @WithMockCustomUser
+    void patch_item_change_image_test() throws Exception {
+        ItemPatchDto patch = itemStub.createPatchWithImage();
+        String content = gson.toJson(patch);
+        MockMultipartFile multipartFile = new MockMultipartFile("imageList", "originalFilename1.jpg","jpg","TEST Mock".getBytes());
+        MockMultipartFile patchItem = new MockMultipartFile("patch", "patch", "application/json", content.getBytes(StandardCharsets.UTF_8));
+        Item item = itemStub.createItem(1L);
+        given(itemService.patchItem(anyList(),anyList(),any(Item.class))).willReturn(item);
+
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH,DEFAULT_URL + "/{itemId}",1l).file(multipartFile).file(patchItem).accept(MediaType.APPLICATION_JSON));
+
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.itemId").value(1L))
+                .andExpect(MockMvcResultMatchers.header().string("Location","/api/items/1"));
+    }
+
+    @Test
+    void deleteItem() {
     }
 
 
