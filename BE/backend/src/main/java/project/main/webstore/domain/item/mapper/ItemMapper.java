@@ -8,6 +8,9 @@ import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.dto.ItemResponseDto;
 import project.main.webstore.domain.item.entity.Item;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class ItemMapper {
     public Item toEntity(ItemPostDto itemPostDto) {
@@ -24,10 +27,6 @@ public class ItemMapper {
         return new Item(itemPatchDto);
 
     }
-
-    // Price Method
-
-    // itemResponse Mapper
     public ItemResponseDto toGetResponseDto(Item item) {
         return new ItemResponseDto(item);
     }
@@ -39,6 +38,10 @@ public class ItemMapper {
 
     public Page<ItemResponseDto> toGetPageResponse(Page<Item> items) {
         return items.map(ItemResponseDto::new);
+    }
+
+    public List<ItemResponseDto> toGetResponseListDto(List<Item> result) {
+        return result.stream().map(ItemResponseDto::new).collect(Collectors.toList());
     }
 }
 

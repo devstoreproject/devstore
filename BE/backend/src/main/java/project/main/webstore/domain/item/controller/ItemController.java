@@ -180,6 +180,16 @@ public class ItemController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/favorite")
+    @ApiResponse(responseCode = "200", description = "상품 좋아요 기능")
+    public ResponseEntity<ResponseDto<List<ItemResponseDto>>> pickItem(@Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
+        Long userId = CheckLoginUser.getContextIdx(principal);
+        List<Item> result = itemService.getPickedItem(userId);
+        List<ItemResponseDto> response = itemMapper.toGetResponseListDto(result);
+        var responseDto = ResponseDto.<List<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        return ResponseEntity.ok(responseDto);
+    }
+
     //이미 찜이 되어있으면 최소 아니면 찜 하기 기능 구현 완료
     @PostMapping("/{itemId}/favorite")
     @ApiResponse(responseCode = "200", description = "상품 좋아요 기능")

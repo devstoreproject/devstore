@@ -185,4 +185,13 @@ public class ItemService {
             }
         }
     }
+
+    public List<Item> getPickedItem(Long userId) {
+        User findUser = userValidService.validUser(userId);
+        List<PickedItem> list = findUser.getPickedItemList();
+        if (list == null) {
+            return null;
+        }
+        return list.stream().map(PickedItem::getItem).collect(Collectors.toList());
+    }
 }
