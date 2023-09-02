@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.item.exception.ItemExceptionCode;
 import project.main.webstore.domain.item.repository.ItemRepository;
 import project.main.webstore.exception.BusinessLogicException;
-import project.main.webstore.exception.CommonExceptionCode;
 
 import java.util.Optional;
 
@@ -19,12 +19,12 @@ public class ItemValidService {
     public Item validItem(Long id){
         return itemRepository
                 .findByItemId(id)
-                .orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND));
+                .orElseThrow(() -> new BusinessLogicException(ItemExceptionCode.ITEM_NOT_FOUND));
     }
     protected void validItemExist(Item item) {
         Optional<Item> findItem = itemRepository.findByItemId(item.getItemId());
         if(findItem.isPresent()){
-            throw new BusinessLogicException(CommonExceptionCode.ITEM_EXIST);
+            throw new BusinessLogicException(ItemExceptionCode.ITEM_EXIST);
         }
     }
 }

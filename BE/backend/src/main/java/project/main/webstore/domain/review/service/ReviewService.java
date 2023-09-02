@@ -18,7 +18,6 @@ import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
-import project.main.webstore.exception.CommonExceptionCode;
 import project.main.webstore.utils.FileUploader;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public class ReviewService {
         User findUser = userValidService.validUser(userId);
         Review findReview = reviewValidService.validReview(reviewId);
         if (findReview.getItem().getItemId() != itemId) {
-            throw new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND);
+            throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_FOUND);
         }
         Like like = new Like(findUser, findReview);
 
