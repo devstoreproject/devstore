@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.item.entity.ItemOption;
+import project.main.webstore.domain.order.dto.OrderDBDailyPriceDto;
 import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
 import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
@@ -119,6 +120,9 @@ public class OrderService {
 
     public List<OrderDBMonthlyPriceDto> getMonthlyPrice(){
         return orderRepository.monthlyPrice();
+    }
+    public List<OrderDBDailyPriceDto> getDailyPrice(){
+        return orderRepository.dailyPrice();
     }
 
     public List<OrderDBItemSaleDto> getItemPrice(){

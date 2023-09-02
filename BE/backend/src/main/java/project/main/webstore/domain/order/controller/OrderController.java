@@ -133,6 +133,14 @@ public class OrderController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/day-sale")
+    public ResponseEntity<ResponseDto<List<OrderDailyPriceDto>> > getDailyAmount(){
+        List<OrderDBDailyPriceDto> result = orderService.getDailyPrice();
+        List<OrderDailyPriceDto> response = orderMapper.toDailyAmountResponse(result);
+        var responseDto = ResponseDto.<List<OrderDailyPriceDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        return ResponseEntity.ok(responseDto);
+    }
+
     @GetMapping("/items-sale")
     public ResponseEntity<ResponseDto<List<OrderItemSaleDto>>> getItemPrice(){
         List<OrderDBItemSaleDto> result = orderService.getItemPrice();
