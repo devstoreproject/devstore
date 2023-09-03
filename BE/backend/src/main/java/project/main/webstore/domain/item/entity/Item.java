@@ -72,8 +72,6 @@ public class Item extends Auditable {
     @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = ALL)
     private List<ItemOption> optionList = new ArrayList<>();
 
-    @OneToMany(cascade = ALL)
-    private List<CartItem> cartItemList = new ArrayList<>();
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
     private List<Review> reviewList = new ArrayList<>();
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
@@ -85,7 +83,9 @@ public class Item extends Auditable {
     @OneToOne(cascade = ALL)
     @Setter
     private ItemOption defaultItem;
-
+    @Setter
+    @OneToMany(cascade = ALL,orphanRemoval = true)
+    private List<CartItem> cartItemList = new ArrayList<>();
     public Item(Long itemId) {
         this.itemId = itemId;
     }

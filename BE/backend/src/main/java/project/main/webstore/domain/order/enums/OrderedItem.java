@@ -27,7 +27,8 @@ public class OrderedItem extends Auditable {
     private int itemCount;
     private String itemDetails;
     private String optionDetails;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "Item_Option_ID")
     private ItemOption option;
     @OneToOne
     private Item item;
