@@ -12,6 +12,7 @@ import project.main.webstore.domain.image.entity.ItemImage;
 import project.main.webstore.domain.image.utils.ImageUtils;
 import project.main.webstore.domain.item.dto.PickedItemDto;
 import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.entity.ItemSpec;
 import project.main.webstore.domain.item.entity.PickedItem;
 import project.main.webstore.domain.item.enums.Category;
@@ -61,7 +62,7 @@ public class ItemService {
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);
 
-        if(imageInfoDtoList != null){
+        if (imageInfoDtoList != null) {
             imageUtils.imageValid(imageInfoDtoList);
             List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
             if (imageList.isEmpty() == false) {
@@ -75,15 +76,20 @@ public class ItemService {
         Item findItem = itemValidService.validItem(itemId);
 
         List<ItemImage> itemImageList = findItem.getItemImageList();
-        if(!itemImageList.isEmpty()) {
+        if (!itemImageList.isEmpty()) {
             List<String> deletePatchList = itemImageList.stream().map(ItemImage::getImagePath).collect(Collectors.toList());
             imageUtils.deleteImage(deletePatchList);
         }
+
+        //CartItem 부터 삭제 진행
+        List<ItemOption> optionList = findItem.getOptionList();
+
         itemRepository.delete(findItem);
     }
+
     public Item getItem(Long itemId, Long userId) {
         Item item = itemValidService.validItem(itemId);
-        if(!userId.equals(-1L)){
+        if (!userId.equals(-1L)) {
             User user = userValidService.validUser(userId);
             List<PickedItem> pickedItemList = user.getPickedItemList();
             for (PickedItem pickedItem : pickedItemList) {
@@ -99,7 +105,7 @@ public class ItemService {
     // 아이템 검색
 
     public Page<Item> searchItem(String keyword, Pageable pageable, Long userId) {
-        if(keyword == null) {
+        if (keyword == null) {
             return itemRepository.findAll(pageable);
         }
         Page<Item> findItem = itemRepository.findByItemNameContainingIgnoreCase(keyword, pageable);
@@ -107,15 +113,15 @@ public class ItemService {
         if (!userId.equals(-1L)) {
             User user = userValidService.validUser(userId);
             List<PickedItem> pickedItemList = user.getPickedItemList();
-            transLike(pickedItemList,findItem);
+            transLike(pickedItemList, findItem);
         }
 
         return findItem;
     }
 
 
-    public Page<Item> searchItemBySpec(String keyword,Pageable pageable,Long userId){
-        if(keyword == null) {
+    public Page<Item> searchItemBySpec(String keyword, Pageable pageable, Long userId) {
+        if (keyword == null) {
             return itemRepository.findAll(pageable);
         }
         Page<ItemSpec> findSpec = specRepository.findByKeyword(keyword, pageable);
@@ -123,17 +129,18 @@ public class ItemService {
         if (!userId.equals(-1L)) {
             User user = userValidService.validUser(userId);
             List<PickedItem> pickedItemList = user.getPickedItemList();
-            transLike(pickedItemList,trans);
+            transLike(pickedItemList, trans);
         }
         return trans;
     }
+
     // 카테고리 조회
     public Page<Item> findItemByCategory(Category category, Pageable pageable, Long userId) {
         Page<Item> findItem = itemRepository.findItemByCategory(category, pageable);
         if (!userId.equals(-1L)) {
             User user = userValidService.validUser(userId);
             List<PickedItem> pickedItemList = user.getPickedItemList();
-            transLike(pickedItemList,findItem);
+            transLike(pickedItemList, findItem);
         }
         return findItem;
     }
@@ -144,10 +151,11 @@ public class ItemService {
         if (!userId.equals(-1L)) {
             User user = userValidService.validUser(userId);
             List<PickedItem> pickedItemList = user.getPickedItemList();
-            transLike(pickedItemList,findItem);
+            transLike(pickedItemList, findItem);
         }
         return findItem;
     }
+
     public PickedItemDto pickItem(Long itemId, Long userId) {
         Item find = itemValidService.validItem(itemId);
         User findUser = userValidService.validUser(userId);
@@ -158,15 +166,16 @@ public class ItemService {
         boolean flag = pickedItemList.stream().map(pickedItem -> pickedItem.getItem().getItemId()).anyMatch(id -> id.equals(itemId));
         PickedItemDto result = new PickedItemDto(userId, itemId);
         //찜취소
-        if(flag){
+        if (flag) {
             for (PickedItem pickedItem : userPickedItem) {
-                if(pickedItem.getItem().getItemId() == itemId){
+                if (pickedItem.getItem().getItemId().equals(itemId)) {
                     userPickedItem.remove(pickedItem);
                     itemPickedItem.remove(pickedItem);
                     result.setPicked(false);
+                    break;
                 }
             }
-        }else{
+        } else {
             PickedItem pickedItem = new PickedItem(find, findUser);
             pickedItemList.add(pickedItem);
             userPickedItem.add(pickedItem);
@@ -192,6 +201,7 @@ public class ItemService {
         if (list == null) {
             return null;
         }
-        return list.stream().map(PickedItem::getItem).collect(Collectors.toList());
+        List<Item> result = list.stream().map(PickedItem::getItem).peek(item -> item.setLike(true)).collect(Collectors.toList());
+        return result;
     }
 }
