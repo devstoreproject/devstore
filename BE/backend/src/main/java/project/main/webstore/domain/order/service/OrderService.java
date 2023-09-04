@@ -80,22 +80,23 @@ public class OrderService {
         if (userId.equals(-1L)) {
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_LOGIN);
         } else if (userId.equals(0L)) {
+            //관리자 일 경우
             if(month != null){
                 LocalDateTime now = LocalDateTime.now().minusMonths(month);
 
-                orderRepository.findByMonth(pageable,now);
+                return orderRepository.findByMonth(pageable,now);
             }else {
                 return orderRepository.findAll(pageable);
             }
         } else {
+            //회원 일 경우
             if(month != null){
                 LocalDateTime now = LocalDateTime.now().minusMonths(month);
-                orderRepository.findByUserIdAndMonth(pageable,userId,now);
+                return orderRepository.findByUserIdAndMonth(pageable,userId,now);
             }else {
                 return orderRepository.findAllByUserId(pageable, userId);
             }
         }
-        return null;
     }
 
 

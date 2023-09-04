@@ -33,6 +33,8 @@ public class OrderMapper {
     }
 
     public Page<OrderResponseDto> orderToOrderResponsePage(Page<Orders> orderPage) {
+        if(orderPage == null)
+            return null;
         return orderPage.map(OrderResponseDto::new);
     }
 

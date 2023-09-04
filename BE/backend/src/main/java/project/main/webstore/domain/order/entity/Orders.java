@@ -15,6 +15,7 @@ import project.main.webstore.valueObject.Address;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -93,7 +94,7 @@ public class Orders extends Auditable {
         this.ordersStatus = ordersStatus;
         this.recipient = recipient;
         this.address = address;
-        this.orderedItemList = orderedItemList;
+        this.orderedItemList = orderedItemList != null ? orderedItemList : new ArrayList<>();
         this.user = user;
         this.paymentType = paymentType;
     }
@@ -103,11 +104,15 @@ public class Orders extends Auditable {
     }
 
     public int getTotalOrderedOriginalPrice() {
-        return this.orderedItemList.stream().mapToInt(OrderedItem::getPrice).sum();
+        if(orderedItemList!= null)
+            return this.orderedItemList.stream().mapToInt(OrderedItem::getPrice).sum();
+        return 0;
     }
 
     public int getTotalOrderedDiscountedPrice() {
-        return this.orderedItemList.stream().mapToInt(OrderedItem::getDiscountedPrice).sum();
+        if(orderedItemList!= null)
+            return this.orderedItemList.stream().mapToInt(OrderedItem::getDiscountedPrice).sum();
+        return 0;
     }
 
     public void addDelivery(String trackingNumber, String deliveryCompany) {
