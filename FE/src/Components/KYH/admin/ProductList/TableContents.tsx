@@ -1,13 +1,18 @@
 import type { Product } from 'model/product';
+import type { StoreType } from 'model/redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setItemId } from 'store/modules/setItemId';
 import addCommasToPrice from 'utils/addCommasToPrice';
 
 interface OwnProps extends Product {
+  idx: number;
   setIsDetailModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProductId: React.Dispatch<React.SetStateAction<number>>;
   setCheckedId: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 export default function TableContents({
+  idx,
   itemId,
   name,
   totalCount,
@@ -17,6 +22,10 @@ export default function TableContents({
   setCheckedId,
 }: OwnProps) {
   const price = addCommasToPrice(itemPrice);
+  const dispatch = useDispatch();
+  const getItemId = useSelector((e: StoreType) => e.currentItemId);
+  console.log(getItemId);
+
   return (
     <li className="flex items-center justify-between h-12 px-6 border-b border-b-gray-400">
       <input
@@ -25,12 +34,13 @@ export default function TableContents({
         onChange={(e) => {
           if (e.target.checked) {
             setCheckedId((prev) => [...prev, itemId]);
+            dispatch(setItemId(itemId));
           } else {
             setCheckedId((prev) => prev.filter((id) => id !== itemId));
           }
         }}
       />
-      <span>{itemId}</span>
+      <span>{idx + 1}</span>
       <input
         className="text-center text-gray-700 underline truncate cursor-pointer w-120 decoration-2 underline-offset-4"
         value={name}
