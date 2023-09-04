@@ -24,9 +24,10 @@ export default function Table({
       ) : null}
       <TableTitle />
       <ul>
-        {products.map((product) => {
+        {products.map((product, idx) => {
           return (
             <TableContents
+              idx={idx}
               key={product.itemId}
               itemId={product.itemId}
               name={product.name}
