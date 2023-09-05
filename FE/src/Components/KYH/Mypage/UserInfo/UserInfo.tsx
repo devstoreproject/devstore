@@ -18,10 +18,11 @@ import fetchUserDataEdit from 'utils/mypage/fetchUserDataEdit';
 import { fetchPatchAddress, fetchPostAddress } from 'utils/mypage/fetchAddress';
 import useFetchAddress from 'hooks/mypage/useFetchAddress';
 import { useSelector } from 'react-redux';
+import type { StoreType } from 'model/redux';
 
 export default function UserInfo() {
   const profile = useFetchProfile();
-  const currentIdx = useSelector((state: number) => state);
+  const currentIdx = useSelector((state: StoreType) => state.currentAddress);
   const address = useFetchAddress();
 
   const [nickname, setNickname] = useState('');
