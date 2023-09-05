@@ -11,7 +11,7 @@ export default function OrderListTableContents({
   orderItemList,
   discountedPrice,
 }: Order) {
-  const ConvertedOrderStatus = descriptionToOrderStatus(ordersStatus);
+  const descOrderStatus = descriptionToOrderStatus(ordersStatus);
   const date = addPeriodToDate(createdAt);
   const totalPrice = addCommasToPrice(discountedPrice);
   const totalOrderCount = orderCount(orderItemList);
@@ -20,7 +20,7 @@ export default function OrderListTableContents({
     <div className="flex justify-between mb-2">
       <span>1</span>
       <span className="w-48 text-center">{orderNumber}</span>
-      <span className="w-20 text-center">{ConvertedOrderStatus}</span>
+      <span className="w-20 text-center">{descOrderStatus}</span>
       <span className="w-40 text-center">{date}</span>
       <p className="text-center truncate w-60">
         {orderItemList[0]?.itemName} 외 {totalOrderCount}
