@@ -36,7 +36,7 @@ export default function OrderListBtnContainer({ checkedId }: OwnProps) {
   };
 
   return (
-    <div className="ml-auto">
+    <div className="mt-4 ml-auto">
       <button
         className="w-40 h-10 mr-6 border border-gray-500 rounded-3xl"
         onClick={deleteBtnHandler}

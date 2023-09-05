@@ -18,9 +18,9 @@ export default function Table({
   setCheckedId,
 }: OwnProps) {
   return (
-    <div className="bg-gray-100 border border-gray-400 rounded-t-lg w-300 h-128">
+    <div className="bg-gray-100 border border-gray-400 rounded-t-lg w-300 h-132.8">
       {isDetailModalOpen ? (
-        <div className="absolute bg-black border border-black rounded-t-lg opacity-50 w-300 h-128" />
+        <div className="absolute bg-black border border-black rounded-t-lg opacity-50 w-300 h-132.8" />
       ) : null}
       <TableTitle />
       <ul>
