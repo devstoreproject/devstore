@@ -16,6 +16,10 @@ api.interceptors.response.use(
     return res;
   },
   (err) => {
+    if (err.config.url === '/api/login') throw err;
+    if (err.config.url === '/api/auth/refresh') throw err;
+    const originalRequest = err.config;
+
     if (err.response.status === 401) {
       refreshApi
         .post('/api/auth/refresh')
@@ -26,7 +30,10 @@ api.interceptors.response.use(
         .catch((err) => {
           console.log(err);
         });
+
+      return api(originalRequest);
     }
+
     throw err;
   }
 );
