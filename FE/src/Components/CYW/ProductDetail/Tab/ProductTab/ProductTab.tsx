@@ -1,3 +1,5 @@
+import DOMPurify from 'isomorphic-dompurify';
+
 export default function ProductTab({
   tab,
   description,
@@ -7,7 +9,12 @@ export default function ProductTab({
 }) {
   return tab === 0 ? (
     <div className="flex justify-center">
-      <div>{description}</div>
+      <div
+        className="ql-editor"
+        dangerouslySetInnerHTML={{
+          __html: DOMPurify.sanitize(description),
+        }}
+      />
     </div>
   ) : null;
 }
