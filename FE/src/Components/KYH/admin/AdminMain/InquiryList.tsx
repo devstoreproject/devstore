@@ -10,6 +10,7 @@ export default function InquiryList() {
       {inquiry.slice(0, 4).map((content) => (
         <InquiryContent
           key={content.questionId}
+          itemId={content.itemId}
           comment={content.comment}
           answer={content.answer}
         />

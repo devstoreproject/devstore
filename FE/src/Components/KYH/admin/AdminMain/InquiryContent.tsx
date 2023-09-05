@@ -1,6 +1,6 @@
 import type { Inquiry } from 'model/inquiry';
 
-export default function InquiryContent({ comment, answer }: Inquiry) {
+export default function InquiryContent({ comment, answer, itemId }: Inquiry) {
   return (
     <div className="flex mb-2">
       <span>{comment}</span>
