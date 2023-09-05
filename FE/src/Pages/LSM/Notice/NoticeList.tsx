@@ -37,7 +37,7 @@ export default function NoticeList() {
         );
       } else {
         res = await api.get(
-          '/api/notices?page=0&size=10&sort=id,desc&sort=createdAt,desc'
+          '/api/notices?page=0&size=20&sort=id,desc&sort=createdAt,desc'
         );
       }
 
