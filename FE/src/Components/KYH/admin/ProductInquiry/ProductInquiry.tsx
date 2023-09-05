@@ -9,7 +9,6 @@ export default function ProductInquiry() {
   const [inquirys, setInquirys] = useState<Inquiry[]>([]);
   const [page, setPage] = useState(0);
   const defaultInquiry = useFetchInquiryPaging(page);
-  console.log(defaultInquiry);
 
   useEffect(() => {
     setInquirys(defaultInquiry);
