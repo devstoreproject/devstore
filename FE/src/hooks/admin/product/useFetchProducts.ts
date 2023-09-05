@@ -3,10 +3,15 @@ import { useEffect, useState } from 'react';
 
 const useFetchProducts = () => {
   const [products, setProducts] = useState([]);
+  const Authorization = localStorage.getItem('authorization');
 
   useEffect(() => {
     api
-      .get('/api/items?page=0&size=10')
+      .get('/api/items?page=0&size=50', {
+        headers: {
+          Authorization,
+        },
+      })
       .then((res) => {
         setProducts(res.data.data.content);
       })
