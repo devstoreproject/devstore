@@ -6,9 +6,12 @@ import type { ProductType } from '../../../../Pages/CYW/ProductDetail';
 import fetchInquiry from 'utils/productDetail/fetchInquiry';
 import fetchReview from 'utils/productDetail/fetchReview';
 import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setTab } from 'store/modules/setCurrentTab';
 
 interface ProductTypeProps {
   product: ProductType;
+  tab: number;
 }
 
 export type QnaStatus = 'ANSWER_COMPLETE' | 'REGISTER';
@@ -91,8 +94,8 @@ export interface ReviewType {
   totalPages: number;
 }
 
-export default function Tab({ product }: ProductTypeProps) {
-  const [tab, setTab] = useState<number>(0);
+export default function Tab({ product, tab }: ProductTypeProps) {
+  const dispatch = useDispatch();
   const [review, setReview] = useState<ReviewContentType[] | null>(null);
   const [inquiry, setInquiry] = useState<InquiryContentType[] | null>(null);
   const { id } = useParams();
@@ -100,16 +103,17 @@ export default function Tab({ product }: ProductTypeProps) {
   const handleClick = (event: React.MouseEvent<HTMLParagraphElement>) => {
     if (event.currentTarget.textContent === '상품 상세') {
       if (tab === 0) return;
-      setTab(0);
+      dispatch(setTab(0));
     }
     if (event.currentTarget.textContent === '상품 리뷰') {
       if (tab === 1) return;
-      setTab(1);
+      dispatch(setTab(1));
+
       fetchReview(id as string, setReview);
     }
     if (event.currentTarget.textContent === '상품 문의') {
       if (tab === 2) return;
-      setTab(2);
+      dispatch(setTab(2));
       fetchInquiry(id as string, setInquiry);
     }
   };

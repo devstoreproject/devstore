@@ -4,6 +4,9 @@ import Tab from '../../Components/CYW/ProductDetail/Tab/Tab';
 import { useEffect, useState } from 'react';
 import api from 'api';
 import { useParams } from 'react-router-dom';
+import type { StoreType } from 'model/redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTab } from 'store/modules/setCurrentTab';
 
 interface Option {
   itemId: number;
@@ -30,6 +33,8 @@ export interface ProductType {
 }
 
 export default function ProductDetail() {
+  const dispatch = useDispatch();
+  const tab = useSelector((state: StoreType) => state.currentTab);
   const [product, setProduct] = useState<ProductType | null>(null);
   const { id } = useParams();
 
@@ -44,9 +49,13 @@ export default function ProductDetail() {
       });
   }, [setProduct]);
 
+  useEffect(() => {
+    dispatch(setTab(tab));
+  }, [tab]);
+
   if (product === null) {
     return (
-      <div className="flex justify-center items-center pt-104 pb-104 font-bold w-full h-full">
+      <div className="flex items-center justify-center w-full h-full font-bold pt-104 pb-104">
         Loading...
       </div>
     );
@@ -62,7 +71,7 @@ export default function ProductDetail() {
         <ProductInformation product={product} />
       </div>
       <div className="flex justify-center">
-        <Tab product={product} />
+        <Tab product={product} tab={tab} />
       </div>
     </div>
   );
