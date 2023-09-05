@@ -10,7 +10,7 @@ export interface adminNavProps {
 export default function AdminNav({ isFold, setIsFold }: adminNavProps) {
   return (
     <div
-      className={`fixed flex flex-col h-screen px-6 bg-white shadow-signBox transition-all duration-200 ease-linear ${
+      className={`fixed z-10 flex flex-col h-screen px-6 bg-white shadow-signBox transition-all duration-200 ease-linear ${
         isFold ? 'w-25' : 'w-80'
       }`}
     >
