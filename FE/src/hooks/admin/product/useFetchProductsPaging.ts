@@ -1,13 +1,13 @@
 import api from 'api';
 import { useEffect, useState } from 'react';
 
-const useFetchProducts = () => {
+const useFetchProductsPaging = (page: number) => {
   const [products, setProducts] = useState([]);
   const Authorization = localStorage.getItem('authorization');
 
   useEffect(() => {
     api
-      .get('/api/items?page=0&size=50', {
+      .get(`/api/items?page=${page}&size=10`, {
         headers: {
           Authorization,
         },
@@ -18,9 +18,9 @@ const useFetchProducts = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [setProducts]);
+  }, [setProducts, page]);
 
   return products;
 };
 
-export default useFetchProducts;
+export default useFetchProductsPaging;

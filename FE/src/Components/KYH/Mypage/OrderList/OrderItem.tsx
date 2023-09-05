@@ -5,6 +5,7 @@ import OrderItemDetail from './OrderItemDetail';
 import OrderItemDetailTitle from './OrderItemDetailTitle';
 import addPeriodToDate from 'utils/admin/order/addPeriodToDate';
 import orderCount from 'utils/admin/order/orderCount';
+import descriptionToOrderStatus from 'utils/admin/order/descriptionToOrderStatus';
 
 export default function OrderItem({
   orderNumber,
@@ -17,11 +18,12 @@ export default function OrderItem({
   const totalPrice = addCommasToPrice(discountedPrice);
   const date = addPeriodToDate(createdAt);
   const totalOrderCount = orderCount(orderItemList);
+  const descOrderStatus = descriptionToOrderStatus(ordersStatus);
 
   return (
     <li>
       <label
-        className={`flex flex-col px-4 pt-4 pb-4 mb-1 bg-white border cursor-pointer border-gray-300 rounded-xl hover:bg-gray-100 hover:border-gray-400 ${
+        className={`flex flex-col px-4 pt-4 pb-4 mb-1 bg-white border cursor-pointer border-gray-300 rounded-xl hover:bg-gray-100 hover:border-gray-400 transition-all duration-200 ease-linear ${
           isAccordionOpen ? '' : 'h-20'
         }`}
       >
@@ -37,7 +39,7 @@ export default function OrderItem({
             <span className="text-sm">주문번호</span>
             <span className="mt-2 text-sm text-gray-500">{orderNumber}</span>
           </div>
-          <div className="flex flex-col ml-16 w-128">
+          <div className="flex flex-col ml-16 w-72">
             <p className="text-sm">
               {orderItemList[0]?.itemName} 외 {totalOrderCount}
             </p>
@@ -45,11 +47,11 @@ export default function OrderItem({
               총 {totalPrice}원
             </span>
           </div>
-          <div className="flex flex-col w-24">
-            <span className="text-sm text-right">주문일자</span>
-            <span className="mt-2 text-sm text-right text-gray-500">
-              {date}
+          <div className="flex flex-col w-72">
+            <span className="text-sm text-gray-500 text-end">
+              주문일자 : {date}
             </span>
+            <span className="font-bold text-end">{descOrderStatus}</span>
           </div>
         </div>
         {isAccordionOpen ? <OrderItemDetailTitle /> : null}

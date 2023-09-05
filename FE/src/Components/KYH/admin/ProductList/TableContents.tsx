@@ -1,6 +1,5 @@
 import type { Product } from 'model/product';
-import type { StoreType } from 'model/redux';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setItemId } from 'store/modules/setItemId';
 import addCommasToPrice from 'utils/addCommasToPrice';
 
@@ -23,11 +22,13 @@ export default function TableContents({
 }: OwnProps) {
   const price = addCommasToPrice(itemPrice);
   const dispatch = useDispatch();
-  const getItemId = useSelector((e: StoreType) => e.currentItemId);
-  console.log(getItemId);
 
   return (
-    <li className="flex items-center justify-between h-12 px-6 border-b border-b-gray-400">
+    <li
+      className={`flex items-center justify-between h-12 px-6 border-b-gray-400 hover:bg-gray-300 hover:font-bold ${
+        idx % 10 === 9 ? '' : 'border-b'
+      }`}
+    >
       <input
         type="checkbox"
         className="w-5 h-5"
@@ -42,7 +43,7 @@ export default function TableContents({
       />
       <span>{idx + 1}</span>
       <input
-        className="text-center text-gray-700 underline truncate cursor-pointer w-120 decoration-2 underline-offset-4"
+        className="text-center text-gray-700 truncate cursor-pointer w-120"
         value={name}
         type="button"
         onClick={() => {

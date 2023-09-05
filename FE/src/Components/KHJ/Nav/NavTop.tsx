@@ -4,6 +4,7 @@ import fetchLogOut from 'utils/auth/fetchLogOut';
 
 export default function NavTop() {
   const authorization = localStorage.getItem('authorization');
+  const userId = localStorage.getItem('userId');
   const navigate = useNavigate();
 
   const linkTo = [
@@ -34,6 +35,18 @@ export default function NavTop() {
         </ul>
       </article>
       <ul className="flex">
+        {userId === '1' ? (
+          <li>
+            <button
+              onClick={() => {
+                navigate('/admin');
+              }}
+              className="font-bold"
+            >
+              관리자 페이지
+            </button>
+          </li>
+        ) : null}
         <li className="ml-6">
           {authorization === null ? null : (
             <button

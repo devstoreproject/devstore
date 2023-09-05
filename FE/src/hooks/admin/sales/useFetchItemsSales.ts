@@ -1,26 +1,27 @@
 import api from 'api';
 import { useEffect, useState } from 'react';
 
-const useFetchProducts = () => {
-  const [products, setProducts] = useState([]);
+const useFetchItemsSales = () => {
+  const [itemSales, setItemSales] = useState([]);
   const Authorization = localStorage.getItem('authorization');
 
   useEffect(() => {
     api
-      .get('/api/items?page=0&size=50', {
+      .get('/api/orders/items-sale', {
         headers: {
           Authorization,
         },
       })
       .then((res) => {
-        setProducts(res.data.data.content);
+        console.log(res.data.data);
+        // setItemSales(res.data.data.content);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [setProducts]);
+  }, [setItemSales]);
 
-  return products;
+  return itemSales;
 };
 
-export default useFetchProducts;
+export default useFetchItemsSales;

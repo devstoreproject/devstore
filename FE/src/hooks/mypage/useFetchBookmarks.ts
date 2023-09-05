@@ -1,26 +1,24 @@
 import api from 'api';
+import type { Bookmark } from 'model/product';
 import { useEffect, useState } from 'react';
 
-const useFetchProducts = () => {
-  const [products, setProducts] = useState([]);
+export default function useFetchBookmarks() {
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const Authorization = localStorage.getItem('authorization');
-
   useEffect(() => {
     api
-      .get('/api/items?page=0&size=50', {
+      .get('/api/items/favorite', {
         headers: {
           Authorization,
         },
       })
       .then((res) => {
-        setProducts(res.data.data.content);
+        setBookmarks(res.data.data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [setProducts]);
+  }, [setBookmarks, Authorization]);
 
-  return products;
-};
-
-export default useFetchProducts;
+  return bookmarks;
+}
