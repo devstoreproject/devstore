@@ -14,10 +14,11 @@ export default function NavBottom({
   setSearchOpen,
 }: NavFoldingType): React.ReactElement {
   const navigate = useNavigate();
+  const authorization = localStorage.getItem('authorization');
   const sizeAll: number = 22;
   const linkTo = [
     {
-      to: '/mypage',
+      to: authorization === null ? '/signin' : '/mypage',
       icon: <BsFillPersonFill size={sizeAll} />,
     },
     {
