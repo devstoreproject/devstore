@@ -1,3 +1,4 @@
+import type { Sales } from 'model/sales';
 import {
   LineChart,
   Line,
@@ -7,50 +8,30 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import salseToChartData from 'utils/sales/salesToChartData';
 
-export default function Chart() {
-  const data = [
-    {
-      name: '5월',
-      매출금액: 1200000,
-    },
-    {
-      name: '6월',
-      매출금액: 890000,
-    },
-    {
-      name: '7월',
-      매출금액: 800000,
-    },
-    {
-      name: '8월',
-      매출금액: 1000000,
-    },
-    {
-      name: '9월',
-      매출금액: 1200000,
-    },
-    {
-      name: '10월',
-      매출금액: 1800000,
-    },
-    {
-      name: '11월',
-      매출금액: 2400000,
-    },
-    {
-      name: '12월',
-      매출금액: 3000000,
-    },
-  ];
+interface OwnProps {
+  sales: Sales[];
+  salesStatus: boolean[];
+  width: number;
+  height: number;
+  margin: {
+    left: number;
+    top: number;
+    right: number;
+  };
+}
 
+export default function Chart({
+  sales,
+  salesStatus,
+  width,
+  height,
+  margin,
+}: OwnProps) {
+  const salesData = salseToChartData(sales, salesStatus);
   return (
-    <LineChart
-      width={550}
-      height={250}
-      data={data}
-      margin={{ left: 16, top: 30, right: 16 }}
-    >
+    <LineChart width={width} height={height} data={salesData} margin={margin}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />
       <YAxis />
