@@ -1,15 +1,24 @@
 import axios from 'axios';
 
+const Authorization = localStorage.getItem('authorization');
+const Refresh = localStorage.getItem('refresh');
+
 const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
+  headers: {
+    Authorization,
+  },
 });
 
 const refreshApi = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
   headers: {
-    Refresh: localStorage.getItem('refresh'),
+    Refresh,
   },
 });
+
+let isRefreshing = false;
+let refreshSubscribers = [];
 
 api.interceptors.response.use(
   (res) => {
@@ -21,17 +30,31 @@ api.interceptors.response.use(
     const originalRequest = err.config;
 
     if (err.response.status === 401) {
-      refreshApi
-        .post('/api/auth/refresh')
-        .then((res) => {
-          localStorage.setItem('authorization', res.headers.authorization);
-          localStorage.setItem('refresh', res.headers.refresh);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      if (!isRefreshing) {
+        isRefreshing = true;
 
-      return api(originalRequest);
+        return refreshApi
+          .post('/api/auth/refresh')
+          .then((res) => {
+            localStorage.setItem('authorization', res.headers.authorization);
+            localStorage.setItem('refresh', res.headers.refresh);
+            isRefreshing = false;
+            // 다시 시도하는 요청을 모두 처리
+            refreshSubscribers.forEach((callback) => callback());
+            refreshSubscribers = [];
+            return api(originalRequest);
+          })
+          .catch((refreshErr) => {
+            console.log(refreshErr);
+            isRefreshing = false;
+          });
+      } else {
+        return new Promise((resolve) => {
+          refreshSubscribers.push(() => {
+            resolve(api(originalRequest));
+          });
+        });
+      }
     }
 
     throw err;
