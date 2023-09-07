@@ -52,7 +52,7 @@ public class ItemController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(responseCode = "201", description = "상품 등록 성공")
-    public ResponseEntity<ResponseDto<ItemIdResponseDto>> createItem(@RequestPart ItemPostDto post,
+    public ResponseEntity<ResponseDto<ItemIdResponseDto>> createItem(@RequestPart@Validated ItemPostDto post,
                                                                      @Parameter(description = "Image files", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
                                                                              array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))), style = ParameterStyle.FORM, explode = Explode.TRUE)
                                                                      @RequestPart(required = false) List<MultipartFile> imageList,

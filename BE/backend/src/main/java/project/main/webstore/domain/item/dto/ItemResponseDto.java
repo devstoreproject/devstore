@@ -51,7 +51,7 @@ public class ItemResponseDto {
         this.description = item.getDescription();
         this.itemPrice = item.getItemPrice();
         this.deliveryPrice = item.getDeliveryPrice();
-        this.defaultCount = item.getTotalCount();
+        this.defaultCount = item.getDefaultItem().getItemCount();
         this.viewCount = item.getViewCount();
         this.specList = item.getSpecList() != null ? item.getSpecList().stream().map(SpecResponseDto::new).collect(Collectors.toList()) : new ArrayList<>();
         this.optionList = item.getOptionList() != null ? item.getOptionList().stream().map(OptionResponseDto::new).collect(Collectors.toList()) : new ArrayList<>();
