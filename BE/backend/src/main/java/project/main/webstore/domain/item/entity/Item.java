@@ -176,7 +176,7 @@ public class Item extends Auditable {
     }
 
     public ItemImage getDefaultImage() {
-        return itemImageList.stream().filter(Image::isRepresentative).findFirst().get();
+        return itemImageList.stream().filter(Image::isRepresentative).findFirst().orElse(null);
     }
 
     public void addViewCount() {

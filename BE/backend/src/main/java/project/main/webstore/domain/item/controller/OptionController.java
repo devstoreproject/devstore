@@ -50,9 +50,7 @@ public class OptionController {
         return ResponseEntity.created(uri).body(responseDto);
     }
 
-    @PatchMapping(path = "/options/{option-Id}",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(path = "/options/{option-Id}")
     @ApiResponse(responseCode = "200", description = "상품 옵션 수정 성공")
     public ResponseEntity<ResponseDto<ItemOption>> editItemOption(@PathVariable("option-Id") @Positive Long OptionId,
                                                                   @RequestBody OptionPatchDto patch) {
