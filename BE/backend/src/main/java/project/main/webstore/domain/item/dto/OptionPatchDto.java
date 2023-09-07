@@ -11,10 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OptionPatchDto {
+    private Long optionId;
     @Schema(description = "상품 옵션 정보")
     private String optionDetail;
     private String optionName;
     @Schema(description = "옵션 수량")
     private Integer itemCount;
+    private Integer additionalPrice;
 
 }
