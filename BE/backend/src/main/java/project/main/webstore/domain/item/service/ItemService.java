@@ -13,16 +13,16 @@ import project.main.webstore.domain.image.utils.ImageUtils;
 import project.main.webstore.domain.item.dto.PickedItemDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
-import project.main.webstore.domain.item.entity.ItemSpec;
 import project.main.webstore.domain.item.entity.PickedItem;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.repository.ItemRepository;
-import project.main.webstore.domain.item.repository.SpecRepository;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.service.UserValidService;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
-    private final SpecRepository specRepository;
     private final ItemValidService itemValidService;
     private final UserValidService userValidService;
     private final ImageUtils imageUtils;
@@ -51,9 +50,48 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    public Item patchItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item) {
+    public Item patchItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item,List<Long> deleteOptionIdList) {
         Item findItem = itemValidService.validItem(item.getItemId());
 
+        changValue(item, findItem);
+        deleteOption(findItem,deleteOptionIdList);
+        addOptionList(findItem,item.getOptionList());
+
+        if (imageInfoDtoList != null) {
+            changImage(imageInfoDtoList, deleteImageId, item, findItem);
+        }
+        return findItem;
+    }
+
+    private void addOptionList(Item findItem, List<ItemOption> pathOptionList) {
+        List<ItemOption> findOptionList = findItem.getOptionList();
+        Set<ItemOption> checkOptionSet = new HashSet<>();
+
+        checkOptionSet.addAll(pathOptionList);
+        findOptionList.removeIf(checkOptionSet::add);
+        findOptionList.addAll(checkOptionSet);
+    }
+
+    private void deleteOption(Item findItem, List<Long> deleteOptionIdList) {
+        List<ItemOption> findOption = findItem.getOptionList();
+        for (ItemOption option : findOption) {
+            for (Long optionId : deleteOptionIdList) {
+                if (option.getOptionId().equals(optionId)) {
+                    findOption.remove(option);
+                }
+            }
+        }
+    }
+
+    private void changImage(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item, Item findItem) {
+        imageUtils.imageValid(imageInfoDtoList);
+        List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
+        if (imageList.isEmpty() == false) {
+            imageList.stream().map(image -> new ItemImage(image, item)).forEach(findItem::addItemImage);
+        }
+    }
+
+    private void changValue(Item item, Item findItem) {
         Optional.ofNullable(item.getCategory()).ifPresent(findItem::setCategory);
         Optional.ofNullable(item.getItemName()).ifPresent(findItem::setItemName);
         Optional.ofNullable(item.getDiscountRate()).ifPresent(findItem::setDiscountRate);
@@ -61,16 +99,8 @@ public class ItemService {
         Optional.ofNullable(item.getDefaultItem()).ifPresent(findItem::setDefaultItem);
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);
-
-        if (imageInfoDtoList != null) {
-            imageUtils.imageValid(imageInfoDtoList);
-            List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
-            if (imageList.isEmpty() == false) {
-                imageList.stream().map(image -> new ItemImage(image, item)).forEach(findItem::addItemImage);
-            }
-        }
-        return findItem;
     }
+
 
     public void deleteItem(Long itemId) {
         Item findItem = itemValidService.validItem(itemId);
@@ -80,10 +110,6 @@ public class ItemService {
             List<String> deletePatchList = itemImageList.stream().map(ItemImage::getImagePath).collect(Collectors.toList());
             imageUtils.deleteImage(deletePatchList);
         }
-
-        //CartItem 부터 삭제 진행
-        List<ItemOption> optionList = findItem.getOptionList();
-
         itemRepository.delete(findItem);
     }
 
@@ -117,21 +143,6 @@ public class ItemService {
         }
 
         return findItem;
-    }
-
-
-    public Page<Item> searchItemBySpec(String keyword, Pageable pageable, Long userId) {
-        if (keyword == null) {
-            return itemRepository.findAll(pageable);
-        }
-        Page<ItemSpec> findSpec = specRepository.findByKeyword(keyword, pageable);
-        Page<Item> trans = findSpec.map(ItemSpec::getItem);
-        if (!userId.equals(-1L)) {
-            User user = userValidService.validUser(userId);
-            List<PickedItem> pickedItemList = user.getPickedItemList();
-            transLike(pickedItemList, trans);
-        }
-        return trans;
     }
 
     // 카테고리 조회

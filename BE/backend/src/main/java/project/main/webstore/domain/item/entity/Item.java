@@ -68,8 +68,6 @@ public class Item extends Auditable {
 
     // 연관관계 매핑 //
     @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = ALL)
-    private List<ItemSpec> specList = new ArrayList<>();
-    @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = ALL)
     private List<ItemOption> optionList = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
@@ -99,21 +97,25 @@ public class Item extends Auditable {
         this.deliveryPrice = post.getDeliveryPrice();
         this.defaultItem = new ItemOption(0, post.getDefaultCount(), this);
         this.category = post.getCategory();
-        this.specList = post.getSpecList() != null ? post.getSpecList().stream().map(spec -> new ItemSpec(spec.getName(), spec.getContent(), this)).collect(Collectors.toList()) : new ArrayList<>();
         this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(), option.getItemCount(), option.getAdditionalPrice(), this)).collect(Collectors.toList()) : new ArrayList<>();
     }
 
-    public Item(ItemPatchDto patch) {
+    public Item(ItemPatchDto patch, Long itemId) {
+        this.itemId = itemId;
         this.itemName = patch.getName();
         this.description = patch.getDescription();
         this.discountRate = patch.getDiscountRate();
         this.defaultItem = new ItemOption(0, patch.getDefaultCount(), this);
+        this.itemPrice = patch.getItemPrice();;
         this.deliveryPrice = patch.getDeliveryPrice();
         this.category = patch.getCategory();
+        this.optionList = patch.getUpdateOptionList() != null ? patch.getUpdateOptionList().stream().map(ItemOption::new).collect(Collectors.toList()) : null;
     }
 
+
+
     @Builder(builderMethodName = "stub")
-    public Item(List<ItemImage> itemImageList, Long itemId, String itemName, String description, Integer itemPrice, Integer deliveryPrice, Integer discountRate, Category category, List<ItemSpec> specList, List<ItemOption> optionList, List<CartItem> cartItemList, List<Review> reviewList, List<Question> questionList, List<PickedItem> pickedItem, ItemOption defaultItem) {
+    public Item(List<ItemImage> itemImageList, Long itemId, String itemName, String description, Integer itemPrice, Integer deliveryPrice, Integer discountRate, Category category, List<ItemOption> optionList, List<CartItem> cartItemList, List<Review> reviewList, List<Question> questionList, List<PickedItem> pickedItem, ItemOption defaultItem) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.description = description;
@@ -123,7 +125,6 @@ public class Item extends Auditable {
         this.deliveryPrice = deliveryPrice;
         this.discountRate = discountRate;
         this.category = category;
-        this.specList = specList;
         this.optionList = optionList;
         this.cartItemList = cartItemList;
         this.reviewList = reviewList;
@@ -133,7 +134,7 @@ public class Item extends Auditable {
         this.itemImageList = itemImageList;
     }
 
-    public Item(Long itemId, String itemName, String description,Integer itemPrice, Integer deliveryPrice, Integer discountRate, Category category, List<ItemSpec> specList, List<ItemOption> optionList) {
+    public Item(Long itemId, String itemName, String description,Integer itemPrice, Integer deliveryPrice, Integer discountRate, Category category, List<ItemOption> optionList) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.description = description;
@@ -142,7 +143,6 @@ public class Item extends Auditable {
         this.deliveryPrice = deliveryPrice;
         this.discountRate = discountRate;
         this.category = category;
-        this.specList = specList;
         this.optionList = optionList;
         this.cartItemList = new ArrayList<>();
         this.reviewList = new ArrayList<>();

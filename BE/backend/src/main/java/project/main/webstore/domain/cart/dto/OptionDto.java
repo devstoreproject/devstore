@@ -14,7 +14,6 @@ public class OptionDto {
     private int defaultPrice;
     private int additionalPrice;
     private int discountRate;
-    private String itemName;
     private String optionName;
     private String optionDetail;
     private ImageDto imageInfo;
@@ -26,7 +25,6 @@ public class OptionDto {
         this.defaultPrice = entity.getOption().getItem().getItemPrice();
         this.additionalPrice = entity.getOption().getAdditionalPrice();
         this.discountRate = entity.getOption().getItem().getDiscountRate();
-        this.itemName = entity.getOption().getItem().getItemName();
         this.optionName = entity.getOption().getOptionName();
         this.optionDetail = entity.getOption().getOptionDetail();
         this.imageInfo =entity.getOption().getItem().getDefaultImage() != null ? new ImageDto(entity.getOption().getItem().getDefaultImage()) : null;
