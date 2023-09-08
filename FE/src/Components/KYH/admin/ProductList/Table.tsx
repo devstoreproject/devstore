@@ -3,6 +3,7 @@ import TableContents from './TableContents';
 import TableTitle from './TableTitle';
 
 interface OwnProps {
+  page: number;
   products: Product[];
   isDetailModalOpen: boolean;
   setIsDetailModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,6 +17,7 @@ export default function Table({
   setIsDetailModalOpen,
   setProductId,
   setCheckedId,
+  page,
 }: OwnProps) {
   return (
     <div className="bg-gray-100 border border-gray-400 rounded-t-lg w-300 h-132.8">
@@ -31,11 +33,12 @@ export default function Table({
               key={product.itemId}
               itemId={product.itemId}
               name={product.name}
-              totalCount={product.totalCount}
+              optionList={product.optionList}
               itemPrice={product.itemPrice}
               setIsDetailModalOpen={setIsDetailModalOpen}
               setProductId={setProductId}
               setCheckedId={setCheckedId}
+              page={page}
             />
           );
         })}
