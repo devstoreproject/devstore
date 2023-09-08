@@ -47,6 +47,7 @@ public class Item extends Auditable {
 
     private long viewCount;
 
+    @Setter
     @Enumerated(STRING)
     private ItemStatus itemStatus = ItemStatus.ON_STACK;
 

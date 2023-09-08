@@ -10,11 +10,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
+import project.main.webstore.domain.image.entity.ItemImage;
 import project.main.webstore.domain.image.utils.ImageUtils;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.exception.ItemExceptionCode;
 import project.main.webstore.domain.item.repository.ItemRepository;
-import project.main.webstore.domain.item.repository.SpecRepository;
 import project.main.webstore.domain.item.stub.ItemStub;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
@@ -22,10 +22,12 @@ import project.main.webstore.exception.CommonExceptionCode;
 import project.main.webstore.stub.ImageStub;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.anyList;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith({MockitoExtension.class})
 class ItemServiceTest {
@@ -35,8 +37,6 @@ class ItemServiceTest {
     ItemValidService itemValidService;
     @Mock
     ItemRepository itemRepository;
-    @Mock
-    SpecRepository specRepository;
     @Mock
     UserValidService userValidService;
     @Mock
@@ -91,7 +91,7 @@ class ItemServiceTest {
         Item item = itemStub.createItem(1L);
         given(itemValidService.validItem(anyLong())).willReturn(item);
         // when
-        Item result = service.patchItem(null, null, itemByPatchNoImage);
+        Item result = service.patchItem(null, null, itemByPatchNoImage,null);
         // then
         Assertions.assertThat(result.getItemId()).isEqualTo(1L);
         Assertions.assertThat(result.getDeliveryPrice()).isEqualTo(itemByPatchNoImage.getDeliveryPrice());
@@ -112,7 +112,7 @@ class ItemServiceTest {
         given(imageUtils.patchImage(anyList(), anyList(), anyList())).willReturn(imageList);
 
         // when
-        Item result = service.patchItem(imageInfo, List.of(1L), itemByPatchNoImage);
+        Item result = service.patchItem(imageInfo, List.of(1L), itemByPatchNoImage ,null);
         // then
         Assertions.assertThat(result.getItemId()).isEqualTo(1L);
     }
@@ -126,7 +126,7 @@ class ItemServiceTest {
         Item item = itemStub.createItem(1L);
         given(itemValidService.validItem(anyLong())).willReturn(item);
         // when
-        Item result = service.patchItem(null, null, itemEmpty);
+        Item result = service.patchItem(null, null, itemEmpty,null);
         // then
         Assertions.assertThat(result.getItemId()).isEqualTo(1L);
         Assertions.assertThat(result).usingRecursiveComparison().isEqualTo(item);
@@ -140,7 +140,7 @@ class ItemServiceTest {
         Item item = itemStub.createItem(1L);
         given(itemValidService.validItem(anyLong())).willThrow(new BusinessLogicException(ItemExceptionCode.ITEM_NOT_FOUND));
         // when then
-        Assertions.assertThatThrownBy(() ->   service.patchItem(null, null, itemEmpty)).isInstanceOf(BusinessLogicException.class)
+        Assertions.assertThatThrownBy(() ->   service.patchItem(null, null, itemEmpty,null)).isInstanceOf(BusinessLogicException.class)
                 .hasMessage("아이템이 존재하지 않습니다.");
 
     }
@@ -156,8 +156,41 @@ class ItemServiceTest {
         given(imageUtils.patchImage(anyList(), anyList(), anyList())).willThrow(new BusinessLogicException(CommonExceptionCode.IMAGE_ORDER_ALWAYS_UNIQUE));
 
         // when then
-        Assertions.assertThatThrownBy(() ->   service.patchItem(imageInfo, List.of(1L), itemByPatchNoImage)).isInstanceOf(BusinessLogicException.class)
+        Assertions.assertThatThrownBy(() ->   service.patchItem(imageInfo, List.of(1L), itemByPatchNoImage,null)).isInstanceOf(BusinessLogicException.class)
                 .hasMessage("이미지 순서는 중복될 수 없습니다.");
     }
 
+    @Test
+    @DisplayName("상품 삭제 : 이미지 없음")
+    void delete_item_no_image_test() throws Exception{
+        // given
+        Long itemId = 1L;
+        given(itemValidService.validItem(anyLong())).willReturn(itemStub.createItemByPatchNoImage());
+        willDoNothing().given(itemRepository).delete(any(Item.class));
+        // when
+        service.deleteItem(itemId);
+        // then
+        verify(itemValidService, times(1)).validItem(itemId);
+        verify(itemRepository, times(1)).delete(any(Item.class));
+
+    }
+    @Test
+    @DisplayName("상품 삭제 : 이미지 없음")
+    void delete_item_with_image_test() throws Exception{
+        // given
+        Long itemId = 1L;
+        Item item = itemStub.createItem(1L);
+        List<Image> imageList = imageStub.createImageList(2);
+        List<ItemImage> image = imageList.stream().map(imageE -> new ItemImage(imageE, item)).collect(Collectors.toList());
+        item.setItemImageList(image);
+
+        given(itemValidService.validItem(anyLong())).willReturn(item);
+        willDoNothing().given(itemRepository).delete(any(Item.class));
+        willDoNothing().given(imageUtils).deleteImage(anyList());
+        // when
+        service.deleteItem(itemId);
+        // then
+        verify(itemValidService, times(1)).validItem(itemId);
+        verify(itemRepository, times(1)).delete(any(Item.class));
+    }
 }

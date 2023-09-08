@@ -15,14 +15,14 @@ import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.entity.PickedItem;
 import project.main.webstore.domain.item.enums.Category;
+import project.main.webstore.domain.item.enums.ItemStatus;
 import project.main.webstore.domain.item.repository.ItemRepository;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.service.UserValidService;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,8 +53,10 @@ public class ItemService {
     public Item patchItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item,List<Long> deleteOptionIdList) {
         Item findItem = itemValidService.validItem(item.getItemId());
 
-        changValue(item, findItem);
+        changItemValue(item, findItem);
+        //삭제 먼저
         deleteOption(findItem,deleteOptionIdList);
+        //옵션 변경
         addOptionList(findItem,item.getOptionList());
 
         if (imageInfoDtoList != null) {
@@ -63,15 +65,41 @@ public class ItemService {
         return findItem;
     }
 
-    private void addOptionList(Item findItem, List<ItemOption> pathOptionList) {
+    private void addOptionList(Item findItem, List<ItemOption> patchOptionList) {
         List<ItemOption> findOptionList = findItem.getOptionList();
-        Set<ItemOption> checkOptionSet = new HashSet<>();
+        List<ItemOption> addOptionList =  separateList(patchOptionList);
 
-        checkOptionSet.addAll(pathOptionList);
-        findOptionList.removeIf(checkOptionSet::add);
-        findOptionList.addAll(checkOptionSet);
+        changeOptionValue(patchOptionList, findOptionList);
+
+        for (ItemOption addOption : addOptionList) {
+            findOptionList.add(addOption);
+            addOption.setItem(findItem);
+        }
     }
 
+    private void changeOptionValue(List<ItemOption> patchOptionList, List<ItemOption> findOptionList) {
+        for (ItemOption findOption : findOptionList) {
+            for (ItemOption patchOption : patchOptionList) {
+                if (patchOption.getOptionId().equals(findOption.getOptionId())) {
+                    changOptionValue(findOption,patchOption);
+                }
+            }
+        }
+    }
+
+    private List<ItemOption> separateList(List<ItemOption> patchOptionList) {
+        ArrayList<ItemOption> addOptionList = new ArrayList<>();
+        for (ItemOption itemOption : patchOptionList) {
+            if(itemOption.getOptionId() == null){
+                addOptionList.add(itemOption);
+                patchOptionList.remove(itemOption);
+            }
+        }
+        return addOptionList;
+    }
+
+
+    //TODO : 간소화 작업 필요
     private void deleteOption(Item findItem, List<Long> deleteOptionIdList) {
         List<ItemOption> findOption = findItem.getOptionList();
         for (ItemOption option : findOption) {
@@ -91,7 +119,7 @@ public class ItemService {
         }
     }
 
-    private void changValue(Item item, Item findItem) {
+    private void changItemValue(Item item, Item findItem) {
         Optional.ofNullable(item.getCategory()).ifPresent(findItem::setCategory);
         Optional.ofNullable(item.getItemName()).ifPresent(findItem::setItemName);
         Optional.ofNullable(item.getDiscountRate()).ifPresent(findItem::setDiscountRate);
@@ -99,7 +127,19 @@ public class ItemService {
         Optional.ofNullable(item.getDefaultItem()).ifPresent(findItem::setDefaultItem);
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);
+        if (findItem.getDefaultItem().getItemCount() > 0) {
+            item.setItemStatus(ItemStatus.ON_STACK);
+        } else {
+            item.setItemStatus(ItemStatus.SOLD_OUT);
+        }
     }
+    private void changOptionValue(ItemOption find, ItemOption patch){
+        Optional.ofNullable(patch.getOptionDetail()).ifPresent(find::setOptionDetail);
+        Optional.ofNullable(patch.getOptionName()).ifPresent(find::setOptionName);
+        Optional.ofNullable(patch.getAdditionalPrice()).ifPresent(find::setAdditionalPrice);
+        Optional.ofNullable(patch.getItemCount()).ifPresent(find::setItemCount);
+    }
+
 
 
     public void deleteItem(Long itemId) {

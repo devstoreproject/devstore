@@ -8,6 +8,7 @@ import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.dto.ItemResponseDto;
 import project.main.webstore.domain.item.entity.Item;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,12 +21,17 @@ public class ItemMapper {
         return new Item(itemPostDto);
     }
 
-    public Item itemPatchDtoToItem(ItemPatchDto itemPatchDto) {
+    public Item itemPatchDtoToItem(ItemPatchDto itemPatchDto, Long itemId) {
         if (itemPatchDto == null) {
-            return new Item();
+            return new Item(itemId);
         }
-        return new Item(itemPatchDto);
 
+        return new Item(itemPatchDto,itemId);
+    }
+    public List<Long> checkListEmpty(List<Long> list) {
+        if(list == null)
+            return new ArrayList<>();
+        return list;
     }
     public ItemResponseDto toGetResponseDto(Item item) {
         return new ItemResponseDto(item);

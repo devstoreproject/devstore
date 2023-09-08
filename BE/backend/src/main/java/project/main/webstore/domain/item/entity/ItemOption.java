@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.domain.cart.entity.CartItem;
+import project.main.webstore.domain.item.dto.OptionPatchDto;
 import project.main.webstore.domain.order.enums.OrderedItem;
 
 import javax.persistence.*;
@@ -17,19 +18,18 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "ITEM_OPTION")
 @NoArgsConstructor(access = PROTECTED)
 public class ItemOption {
     @Id
-    @Setter
     @Column(name = "ITEM_OPTION_ID", updatable = false)
     @GeneratedValue(strategy = IDENTITY)
     private Long optionId;
-    @Setter
     private String optionDetail;
     private String optionName;
 
-    private int additionalPrice;
+    private Integer additionalPrice;
     @Setter
     private Integer itemCount;
 
@@ -73,6 +73,16 @@ public class ItemOption {
         this.additionalPrice = additionalPrice;
         this.itemCount = itemCount;
         this.item = item;
+        this.cartItemList = new ArrayList<>();
+        this.orderItem = new ArrayList<>();
+    }
+    public ItemOption(OptionPatchDto dto) {
+        this.optionId = dto.getOptionId();
+        this.optionName = dto.getOptionName();
+        this.additionalPrice = dto.getAdditionalPrice();
+        this.optionDetail = dto.getOptionDetail();
+        this.itemCount = dto.getItemCount();
+        this.item = new Item();
         this.cartItemList = new ArrayList<>();
         this.orderItem = new ArrayList<>();
     }

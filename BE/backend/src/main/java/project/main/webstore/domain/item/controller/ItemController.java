@@ -55,10 +55,7 @@ public class ItemController {
     public ResponseEntity<ResponseDto<ItemIdResponseDto>> createItem(@RequestPart@Validated ItemPostDto post,
                                                                      @Parameter(description = "Image files", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
                                                                              array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))), style = ParameterStyle.FORM, explode = Explode.TRUE)
-                                                                     @RequestPart(required = false) List<MultipartFile> imageList,
-                                                                     @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validAdmin(principal);
-
+                                                                     @RequestPart(required = false) List<MultipartFile> imageList) {
         Item request = itemMapper.toEntity(post);
         Item result;
         if (imageList != null) {
@@ -69,14 +66,11 @@ public class ItemController {
         }
         ItemIdResponseDto response = itemMapper.toIdResponse(result);
         URI location = UriCreator.createUri(ITEM_DEFAULT_URL, result.getItemId());
-
         var responseDto = ResponseDto.<ItemIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
 
         return ResponseEntity.created(location).body(responseDto);
     }
 
-
-    //상품이든 뭐든 다 변경하는 것 (있는 것만 체크)
     @PatchMapping(
             path = "/{itemId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -85,16 +79,19 @@ public class ItemController {
     @ApiResponse(responseCode = "200", description = "리뷰 수정 성공")
     public ResponseEntity<ResponseDto<ItemIdResponseDto>> patchItem(@PathVariable("itemId") Long itemId,
                                                                     @RequestPart(required = false) ItemPatchDto patch,
-                                                                    @RequestPart(required = false) List<MultipartFile> imageList,
-                                                                    @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validAdmin(principal);
-        Item request = itemMapper.itemPatchDtoToItem(patch);
-        request.setItemId(itemId);
+                                                                    @RequestPart(required = false) List<MultipartFile> imageList) {
+
+        Item request = itemMapper.itemPatchDtoToItem(patch,itemId);
+        List<Long> requestDeleteOptionIdList = itemMapper.checkListEmpty(patch.getDeleteOptionId());
+        List<Long> requestDeleteImageList = itemMapper.checkListEmpty(patch.getDeleteImageId());
+
         List<ImageInfoDto> imageInfoDtoList = null;
+
         if (patch.getImageSortAndRepresentativeInfo() != null) {
             imageInfoDtoList = imageMapper.toLocalDtoList(imageList, patch.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
         }
-        Item result = itemService.patchItem(imageInfoDtoList, patch.getDeleteImageId(), request);
+
+        Item result = itemService.patchItem(imageInfoDtoList, requestDeleteOptionIdList, request,requestDeleteImageList);
 
         ItemIdResponseDto response = itemMapper.toIdResponse(result);
         URI uri = UriCreator.createUri(ITEM_DEFAULT_URL, result.getItemId());
@@ -105,9 +102,7 @@ public class ItemController {
 
     @DeleteMapping("/{item-Id}")
     @ApiResponse(responseCode = "204", description = "상품 삭제 성공")
-    public ResponseEntity deleteItem(@PathVariable("item-Id") @Positive Long itemId,
-                                     @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validAdmin(principal);
+    public ResponseEntity deleteItem(@PathVariable("item-Id") @Positive Long itemId) {
         itemService.deleteItem(itemId);
         URI location = UriCreator.createUri(ITEM_DEFAULT_URL);
         return ResponseEntity.noContent().header("Location", location.toString()).build();

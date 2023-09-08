@@ -27,7 +27,6 @@ import project.main.webstore.annotation.WithMockCustomUser;
 import project.main.webstore.domain.image.dto.ImageSortPostDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
-import project.main.webstore.domain.item.dto.ItemPostSpecDto;
 import project.main.webstore.domain.item.dto.OptionPostRequestDto;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.stub.ItemStub;
@@ -38,6 +37,7 @@ import project.main.webstore.security.jwt.utils.JwtTokenizer;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @MockBean(JpaMetamodelMappingContext.class)
@@ -71,7 +71,6 @@ public class ItemControllerTest {
                 .discountRate(10)
                 .name("맥북")
                 .description("이것은 맥북입니다.")
-                .specList(List.of(new ItemPostSpecDto("CPU", "짱짱강함"), new ItemPostSpecDto("CTO", "짱짱강할껄")))
                 .optionList(List.of(new OptionPostRequestDto("옵션 세부 내역", 100, 10000, "옵션 이름"), new OptionPostRequestDto("옵션 세부 내역", 100, 10000, "옵션 이름")))
                 .infoList(List.of(new ImageSortPostDto(1, true)))
                 .build();
@@ -152,5 +151,19 @@ public class ItemControllerTest {
                 .andExpect(MockMvcResultMatchers.header().string("Location", "/api/items/1"));
     }
 
+
+    @Test
+    @DisplayName("상품 삭제")
+    @WithMockCustomUser
+    void delete_image_test() throws Exception{
+        // given
+
+        // when
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.delete(DEFAULT_URL + "/{item-Id}", 1L));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 
 }
