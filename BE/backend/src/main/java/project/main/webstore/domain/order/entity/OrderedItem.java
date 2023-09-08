@@ -1,4 +1,4 @@
-package project.main.webstore.domain.order.enums;
+package project.main.webstore.domain.order.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,6 @@ import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
-import project.main.webstore.domain.order.entity.Orders;
 
 import javax.persistence.*;
 

@@ -32,7 +32,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Item extends Auditable {
     @Setter
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
-    List<ItemImage> itemImageList = new ArrayList<>();
+    private List<ItemImage> itemImageList = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(nullable = false)
@@ -60,6 +60,7 @@ public class Item extends Auditable {
     private Integer deliveryPrice;
     @Setter
     private Integer discountRate;
+    private int salesQuantity;
     @Enumerated(STRING)
     @Setter
     private Category category;
@@ -96,9 +97,9 @@ public class Item extends Auditable {
         this.discountRate = post.getDiscountRate();
         this.itemPrice = post.getItemPrice();
         this.deliveryPrice = post.getDeliveryPrice();
-        this.defaultItem = new ItemOption(0, post.getDefaultCount(), this);
+        this.defaultItem = new ItemOption(0, post.getDefaultCount(),this);
         this.category = post.getCategory();
-        this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(), option.getItemCount(), option.getAdditionalPrice(), this)).collect(Collectors.toList()) : new ArrayList<>();
+        this.optionList = post.getOptionList() != null ? post.getOptionList().stream().map(option -> new ItemOption(option.getOptionDetail(), option.getAdditionalPrice(), option.getItemCount(),option.getOptionName(), this)).collect(Collectors.toList()) : new ArrayList<>();
     }
 
     public Item(ItemPatchDto patch, Long itemId) {
@@ -182,6 +183,13 @@ public class Item extends Auditable {
 
     public void addViewCount() {
         this.viewCount++;
+    }
+    public void addSalesQuantity(int count){
+        this.salesQuantity += count;
+    }
+    public void minusSalesQuantity(int count){
+        this.salesQuantity -= count;
+
     }
 }
 

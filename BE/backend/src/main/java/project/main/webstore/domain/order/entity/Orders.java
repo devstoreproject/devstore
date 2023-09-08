@@ -4,7 +4,6 @@ import lombok.*;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.item.exception.ItemExceptionCode;
-import project.main.webstore.domain.order.enums.OrderedItem;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.enums.PaymentType;
 import project.main.webstore.domain.order.enums.TransCondition;

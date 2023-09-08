@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import project.main.webstore.domain.image.dto.ImageSortPostDto;
 import project.main.webstore.domain.item.enums.Category;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 public class ItemPostDto {
-    @NotBlank
     @Schema(example = "COMPUTER",allowableValues = {"COMPUTER", "MONITOR", "MOUSE", "HEADSET", "CHAIR", "DESK"},description = "상품 카테고리")
     private Category category;
     @NotNull

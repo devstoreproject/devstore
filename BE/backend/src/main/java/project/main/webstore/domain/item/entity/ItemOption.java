@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.item.dto.OptionPatchDto;
-import project.main.webstore.domain.order.enums.OrderedItem;
+import project.main.webstore.domain.order.entity.OrderedItem;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -85,5 +85,13 @@ public class ItemOption {
         this.item = new Item();
         this.cartItemList = new ArrayList<>();
         this.orderItem = new ArrayList<>();
+    }
+
+    public ItemOption(String optionDetail, Integer additionalPrice, Integer itemCount,String optionName, Item item) {
+        this.optionDetail = optionDetail;
+        this.optionName = optionName;
+        this.additionalPrice = additionalPrice;
+        this.itemCount = itemCount;
+        this.item = item;
     }
 }
