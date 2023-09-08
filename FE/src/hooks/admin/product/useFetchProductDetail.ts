@@ -9,15 +9,10 @@ const useFetchProductDetail = (productId: number) => {
     defaultCount: 0,
     optionList: [],
   });
-  const Authorization = localStorage.getItem('authorization');
 
   useEffect(() => {
     api
-      .get(`/api/items/${productId}`, {
-        headers: {
-          Authorization,
-        },
-      })
+      .get(`/api/items/${productId}`)
       .then((res) => {
         setProduct(res.data.data);
       })

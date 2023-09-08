@@ -15,7 +15,7 @@ export default function OrderListTable() {
           ordersStatus={order.ordersStatus}
           createdAt={order.createdAt}
           orderItemList={order.orderItemList}
-          discountedPrice={order.discountedPrice}
+          totalPrice={order.totalPrice}
         />
       ))}
     </>

@@ -2,7 +2,11 @@ export interface Product {
   itemId: number;
   name: string;
   itemPrice: number;
-  totalCount: number;
+  optionList: option[];
+}
+
+export interface option {
+  itemCount: number;
 }
 
 export interface Bookmark {

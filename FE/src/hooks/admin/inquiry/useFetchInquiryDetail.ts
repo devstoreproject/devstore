@@ -9,15 +9,10 @@ const useFetchInquiryDetail = (inquiryId: number) => {
       comment: '',
     },
   });
-  const Authorization = localStorage.getItem('authorization');
 
   useEffect(() => {
     api
-      .get(`/api/qna/${inquiryId}`, {
-        headers: {
-          Authorization,
-        },
-      })
+      .get(`/api/qna/${inquiryId}`)
       .then((res) => {
         setInquiryDetail(res.data.data);
       })

@@ -62,7 +62,7 @@ export default function UserInfo() {
       nickname,
       username,
       phone: phonePrefix + phone,
-      password: password === '' ? '' : password,
+      password: password === '' ? null : password,
     };
 
     if (!ValidateNickname(nickname, setIsNicknameValid)) return;

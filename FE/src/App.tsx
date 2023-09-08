@@ -9,7 +9,6 @@ import OrderList from 'Components/KYH/Mypage/OrderList/OrderList';
 import UserInfo from 'Components/KYH/Mypage/UserInfo/UserInfo';
 import Bookmarks from 'Components/KYH/Mypage/Bookmarks/Bookmarks';
 import ProductList from 'Components/KYH/admin/ProductList/ProductList';
-import ReturnOrExchange from 'Components/KYH/admin/ReturnOrExchange/ReturnOrExchange';
 import ProductInquiry from 'Components/KYH/admin/ProductInquiry/ProductInquiry';
 import Admin from 'Pages/KYH/Admin';
 import NoticeList from 'Pages/LSM/Notice/NoticeList';
@@ -65,7 +64,6 @@ function App() {
         <Route path="/admin" element={<Admin />}>
           <Route path="" element={<AdminMain />} />
           <Route path="productlist" element={<ProductList />} />
-          <Route path="returnorexchange" element={<ReturnOrExchange />} />
           <Route path="productinquiry" element={<ProductInquiry />} />
           <Route path="productlist/post" element={<ProductPost />} />
           <Route path="productlist/edit" element={<ProductEdit />} />

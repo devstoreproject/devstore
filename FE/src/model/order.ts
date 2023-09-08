@@ -1,7 +1,7 @@
 export interface Order {
   orderId?: number;
   orderNumber: string;
-  discountedPrice: number;
+  totalPrice: number;
   createdAt: number[];
   ordersStatus:
     | 'ORDER_COMPLETE'
@@ -17,9 +17,8 @@ export interface Order {
 }
 
 export interface OrderItem {
-  itemId: number;
+  itemId?: number;
   itemName: string;
   itemCount: number;
   itemPrice: number;
-  discountPrice: number;
 }

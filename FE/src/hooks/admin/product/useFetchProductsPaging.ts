@@ -1,17 +1,13 @@
 import api from 'api';
+import type { Product } from 'model/product';
 import { useEffect, useState } from 'react';
 
 const useFetchProductsPaging = (page: number) => {
-  const [products, setProducts] = useState([]);
-  const Authorization = localStorage.getItem('authorization');
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     api
-      .get(`/api/items?page=${page}&size=10`, {
-        headers: {
-          Authorization,
-        },
-      })
+      .get(`/api/items?page=${page}&size=10`)
       .then((res) => {
         setProducts(res.data.data.content);
       })
@@ -20,7 +16,7 @@ const useFetchProductsPaging = (page: number) => {
       });
   }, [setProducts, page]);
 
-  return products;
+  return { products, setProducts };
 };
 
 export default useFetchProductsPaging;

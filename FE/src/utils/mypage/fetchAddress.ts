@@ -9,13 +9,8 @@ interface FetchAddress {
 }
 
 export const fetchPostAddress = (address: FetchAddress) => {
-  const Authorization = localStorage.getItem('authorization');
   api
-    .post('/api/address', address, {
-      headers: {
-        Authorization,
-      },
-    })
+    .post('/api/address', address)
     .then(() => {
       window.alert('수정완료');
     })
@@ -25,15 +20,10 @@ export const fetchPostAddress = (address: FetchAddress) => {
 };
 
 export const fetchPatchAddress = (address: FetchAddress, idx: number) => {
-  const Authorization = localStorage.getItem('authorization');
   const addressNumber = idx + 1;
 
   api
-    .patch(`/api/address/${addressNumber}`, address, {
-      headers: {
-        Authorization,
-      },
-    })
+    .patch(`/api/address/${addressNumber}`, address)
     .then(() => {
       window.alert('수정완료');
     })

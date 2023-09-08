@@ -7,7 +7,6 @@ interface UserInfo {
 
 const fetchUserDataEdit = (userInfo: UserInfo) => {
   const userId = localStorage.getItem('userId');
-  const authorization = localStorage.getItem('authorization');
 
   const formData = new FormData();
   const blob = new Blob([JSON.stringify(userInfo)], {
@@ -18,11 +17,7 @@ const fetchUserDataEdit = (userInfo: UserInfo) => {
 
   if (userId !== null) {
     api
-      .patch(`/api/users/${userId}`, formData, {
-        headers: {
-          Authorization: authorization,
-        },
-      })
+      .patch(`/api/users/${userId}`, formData)
       .then(() => {
         window.alert('수정완료');
       })

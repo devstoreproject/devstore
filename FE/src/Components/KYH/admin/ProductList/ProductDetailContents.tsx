@@ -1,5 +1,6 @@
 import OptionTitle from './OptionTitle';
 import Option from './Option';
+import addCommasToPrice from 'utils/addCommasToPrice';
 
 interface OwnProps {
   product: {
@@ -18,6 +19,7 @@ export interface option {
   itemCount: number;
 }
 export default function ProductDetailContents({ product }: OwnProps) {
+  const price = addCommasToPrice(product.itemPrice);
   return (
     <div className="w-96">
       <div className="flex items-center h-10 pl-4 text-sm bg-gray-100 border border-gray-300 rounded-tr-lg">
@@ -27,7 +29,7 @@ export default function ProductDetailContents({ product }: OwnProps) {
         {product.category}
       </div>
       <div className="flex items-center h-10 pl-4 text-sm bg-gray-100 border border-gray-300">
-        {product.itemPrice}
+        {price}
       </div>
       <div className="flex items-center h-10 pl-4 text-sm bg-gray-100 border border-gray-300">
         {product.defaultCount}
@@ -37,7 +39,7 @@ export default function ProductDetailContents({ product }: OwnProps) {
       </div>
       <div className="flex flex-col h-48 text-sm bg-gray-100 border border-gray-300 rounded-br-lg">
         <OptionTitle />
-        {product.optionList.map((option) => {
+        {product.optionList.slice(1).map((option) => {
           return (
             <Option
               key={option.optionId}

@@ -1,30 +1,36 @@
 import api from 'api';
 import axios from 'axios';
+import type { Product } from 'model/product';
 import { useNavigate } from 'react-router-dom';
 
 interface OwnProps {
   checkedId: number[];
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 }
 
-export default function OrderListBtnContainer({ checkedId }: OwnProps) {
+export default function OrderListBtnContainer({
+  checkedId,
+  setProducts,
+}: OwnProps) {
   const navigate = useNavigate();
-  const Authorization = localStorage.getItem('authorization');
 
   const deleteBtnHandler = () => {
+    const lastTotalCheckedId = checkedId.slice(1);
     const userConfirmed = window.confirm('삭제하시겠습니까?');
 
     if (userConfirmed) {
-      const fetchDelete = checkedId.slice(1).map(async (id) => {
-        await api.delete(`/api/items/${id}`, {
-          headers: {
-            Authorization,
-          },
-        });
+      const fetchDelete = lastTotalCheckedId.map(async (id) => {
+        await api.delete(`/api/items/${id}`);
       });
 
       axios
         .all(fetchDelete)
         .then(() => {
+          setProducts((prev) =>
+            prev.filter(
+              (product) => !lastTotalCheckedId.includes(product.itemId)
+            )
+          );
           window.alert('삭제되었습니다.');
         })
         .catch((err) => {

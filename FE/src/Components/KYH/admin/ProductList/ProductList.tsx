@@ -5,7 +5,7 @@ import ProductDetail from './ProductDetail';
 import { CgCloseR } from 'react-icons/cg';
 import useFetchProductsPaging from 'hooks/admin/product/useFetchProductsPaging';
 import PaginationContainer from '../ProductInquiry/PaginationContainer';
-import useFetchItemsSales from 'hooks/admin/sales/useFetchItemsSales';
+// import useFetchItemsSales from 'hooks/admin/sales/useFetchItemsSales';
 
 export default function ProductList() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -13,9 +13,9 @@ export default function ProductList() {
   const [checkedId, setCheckedId] = useState([0]);
   const [page, setPage] = useState(0);
 
-  const products = useFetchProductsPaging(page);
-  const itemSales = useFetchItemsSales();
-  console.log(itemSales);
+  const { products, setProducts } = useFetchProductsPaging(page);
+  // const itemSales = useFetchItemsSales();
+  // console.log(itemSales);
 
   return (
     <div className="relative flex flex-col w-300">
@@ -41,10 +41,14 @@ export default function ProductList() {
         setIsDetailModalOpen={setIsDetailModalOpen}
         setProductId={setProductId}
         setCheckedId={setCheckedId}
+        page={page}
       />
       <div className="flex flex-col mt-2">
         <PaginationContainer page={page} setPage={setPage} />
-        <OrderListBtnContainer checkedId={checkedId} />
+        <OrderListBtnContainer
+          checkedId={checkedId}
+          setProducts={setProducts}
+        />
       </div>
     </div>
   );
