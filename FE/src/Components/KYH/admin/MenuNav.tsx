@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { RiFileListFill } from 'react-icons/ri';
 import { FaBox, FaChartLine } from 'react-icons/fa';
-import { IoMdCheckboxOutline } from 'react-icons/io';
 import { AiOutlineSound } from 'react-icons/ai';
 import { MdOutlineReviews } from 'react-icons/md';
 import { BsFillQuestionCircleFill } from 'react-icons/bs';
@@ -39,11 +38,6 @@ const menuList = [
     icon: <RiFileListFill />,
   },
   { to: '/admin/orderedlist', text: '주문 된 상품 내역', icon: <FaBox /> },
-  {
-    to: '/admin/returnorexchange',
-    text: '반품 교환 신청 확인',
-    icon: <IoMdCheckboxOutline />,
-  },
   { to: '/admin/notice', text: '공지사항', icon: <AiOutlineSound /> },
   { to: '/admin/sales', text: '매출', icon: <FaChartLine /> },
   { to: '/admin/reviewmanagement', text: '리뷰', icon: <MdOutlineReviews /> },
