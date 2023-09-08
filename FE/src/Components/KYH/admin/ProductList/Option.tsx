@@ -1,3 +1,5 @@
+import addCommasToPrice from 'utils/addCommasToPrice';
+
 interface OwnProps {
   name: string | null;
   additionalPrice: number;
@@ -5,11 +7,12 @@ interface OwnProps {
 }
 
 export default function Option({ name, additionalPrice, itemCount }: OwnProps) {
+  const price = addCommasToPrice(additionalPrice);
   return (
     <div className="flex border-b-2 border-gray-300">
       <div className="flex items-center justify-center h-8 w-36">{name}</div>
       <div className="flex items-center justify-center w-32 h-8 border-gray-300 border-x-2">
-        {additionalPrice}
+        {price}
       </div>
       <div className="flex items-center justify-center h-8 w-28">
         {itemCount}
