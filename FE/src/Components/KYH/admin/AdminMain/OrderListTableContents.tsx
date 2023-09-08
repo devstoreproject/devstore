@@ -9,11 +9,11 @@ export default function OrderListTableContents({
   ordersStatus,
   createdAt,
   orderItemList,
-  discountedPrice,
+  totalPrice,
 }: Order) {
   const descOrderStatus = descriptionToOrderStatus(ordersStatus);
   const date = addPeriodToDate(createdAt);
-  const totalPrice = addCommasToPrice(discountedPrice);
+  const price = addCommasToPrice(totalPrice);
   const totalOrderCount = orderCount(orderItemList);
 
   return (
@@ -25,7 +25,7 @@ export default function OrderListTableContents({
       <p className="text-center truncate w-60">
         {orderItemList[0]?.itemName} 외 {totalOrderCount}
       </p>
-      <span className="w-40 text-center">{totalPrice}</span>
+      <span className="w-40 text-center">{price}</span>
     </div>
   );
 }

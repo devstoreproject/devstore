@@ -14,14 +14,13 @@ export default function OrderItemDetail({
   itemName,
   itemCount,
   itemPrice,
-  discountPrice,
   itemId,
 }: OwnProps) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const reviews = useFetchReviews();
   const filteredReview = reviews.filter((review) => review.itemId === itemId);
-  const totalPrice = addCommasToPrice(discountPrice);
+  const totalPrice = addCommasToPrice(itemPrice * itemCount);
   const price = addCommasToPrice(itemPrice);
 
   return (
@@ -43,8 +42,10 @@ export default function OrderItemDetail({
             value="리뷰 작성하러 가기"
             className="px-2 py-1 text-sm text-gray-600 border border-gray-400 cursor-pointer rounded-2xl hover:bg-black hover:text-white"
             onClick={() => {
-              navigate(`/products/${itemId}`);
-              dispatch(setTab(1));
+              if (itemId !== undefined) {
+                navigate(`/products/${itemId}`);
+                dispatch(setTab(1));
+              }
             }}
           />
         ) : (

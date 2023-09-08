@@ -12,7 +12,7 @@ export default function OrderItems() {
           <OrderItem
             key={order.orderId}
             orderNumber={order.orderNumber}
-            discountedPrice={order.discountedPrice}
+            totalPrice={order.totalPrice}
             createdAt={order.createdAt}
             orderItemList={order.orderItemList}
             ordersStatus={order.ordersStatus}

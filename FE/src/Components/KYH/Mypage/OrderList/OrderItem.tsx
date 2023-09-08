@@ -9,13 +9,13 @@ import descriptionToOrderStatus from 'utils/admin/order/descriptionToOrderStatus
 
 export default function OrderItem({
   orderNumber,
-  discountedPrice,
+  totalPrice,
   createdAt,
   orderItemList,
   ordersStatus,
 }: Order) {
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-  const totalPrice = addCommasToPrice(discountedPrice);
+  const price = addCommasToPrice(totalPrice);
   const date = addPeriodToDate(createdAt);
   const totalOrderCount = orderCount(orderItemList);
   const descOrderStatus = descriptionToOrderStatus(ordersStatus);
@@ -43,9 +43,7 @@ export default function OrderItem({
             <p className="text-sm">
               {orderItemList[0]?.itemName} 외 {totalOrderCount}
             </p>
-            <span className="mt-2 text-sm text-gray-500">
-              총 {totalPrice}원
-            </span>
+            <span className="mt-2 text-sm text-gray-500">총 {price}원</span>
           </div>
           <div className="flex flex-col w-72">
             <span className="text-sm text-gray-500 text-end">
@@ -63,7 +61,6 @@ export default function OrderItem({
                 itemPrice={orderItem.itemPrice}
                 itemName={orderItem.itemName}
                 itemCount={orderItem.itemCount}
-                discountPrice={orderItem.discountPrice}
                 itemId={orderItem.itemId}
               />
             ))
