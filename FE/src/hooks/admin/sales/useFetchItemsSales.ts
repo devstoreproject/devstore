@@ -3,15 +3,10 @@ import { useEffect, useState } from 'react';
 
 const useFetchItemsSales = () => {
   const [itemSales, setItemSales] = useState([]);
-  const Authorization = localStorage.getItem('authorization');
 
   useEffect(() => {
     api
-      .get('/api/orders/items-sale', {
-        headers: {
-          Authorization,
-        },
-      })
+      .get('/api/orders/items-sale')
       .then((res) => {
         console.log(res.data.data);
         // setItemSales(res.data.data.content);

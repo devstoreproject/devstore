@@ -3,16 +3,11 @@ import type { Inquiry } from 'model/inquiry';
 import { useEffect, useState } from 'react';
 
 const useFetchInquiry = () => {
-  const Authorization = localStorage.getItem('authorization');
   const [inpuiry, setInquiry] = useState<Inquiry[]>([]);
 
   useEffect(() => {
     api
-      .get(`/api/qna/admin?sort=createdAt,desc`, {
-        headers: {
-          Authorization,
-        },
-      })
+      .get(`/api/qna/admin?sort=createdAt,desc`)
       .then((res) => {
         setInquiry(res.data.data.content);
       })

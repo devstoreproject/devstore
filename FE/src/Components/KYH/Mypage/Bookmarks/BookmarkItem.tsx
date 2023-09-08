@@ -15,7 +15,6 @@ export default function BookmarkItem({
   const [isBookmark, setIsBookmark] = useState(true);
   const navigate = useNavigate();
   const userId = localStorage.getItem('userId');
-  const Authorization = localStorage.getItem('authorization');
   const price = addCommasToPrice(itemPrice);
 
   useEffect(() => {
@@ -25,15 +24,7 @@ export default function BookmarkItem({
   const favoriteBtnHandler = () => {
     if (userId !== null) {
       api
-        .post(
-          `/api/items/${itemId}/favorite?userId=${userId}`,
-          {},
-          {
-            headers: {
-              Authorization,
-            },
-          }
-        )
+        .post(`/api/items/${itemId}/favorite?userId=${userId}`)
         .then((res) => {
           setIsBookmark((prev) => !prev);
         })

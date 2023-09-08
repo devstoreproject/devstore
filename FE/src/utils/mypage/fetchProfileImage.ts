@@ -3,7 +3,6 @@ import type { Profile } from 'model/auth';
 
 const fetchProfileImage = (image: File, profile: Profile) => {
   const userId = localStorage.getItem('userId');
-  const authorization = localStorage.getItem('authorization');
 
   const formData = new FormData();
   const blob = new Blob([JSON.stringify({})], {
@@ -15,11 +14,7 @@ const fetchProfileImage = (image: File, profile: Profile) => {
 
   if (userId !== null) {
     api
-      .patch(`/api/users/${userId}`, formData, {
-        headers: {
-          Authorization: authorization,
-        },
-      })
+      .patch(`/api/users/${userId}`, formData)
       .then((res) => {
         console.log(res);
       })

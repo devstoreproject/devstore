@@ -13,16 +13,11 @@ const useFetchProfile = () => {
   });
 
   const userId = localStorage.getItem('userId');
-  const authorization = localStorage.getItem('authorization');
 
   useEffect(() => {
     if (userId !== null) {
       api
-        .get(`/api/users/${userId}`, {
-          headers: {
-            Authorization: authorization,
-          },
-        })
+        .get(`/api/users/${userId}`)
         .then((res) => {
           setProfile(res.data.data);
         })
@@ -30,7 +25,7 @@ const useFetchProfile = () => {
           console.error(err);
         });
     }
-  }, [setProfile, authorization]);
+  }, [setProfile]);
 
   return profile;
 };

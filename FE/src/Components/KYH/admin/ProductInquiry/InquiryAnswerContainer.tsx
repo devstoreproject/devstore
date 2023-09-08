@@ -10,7 +10,6 @@ export default function InquiryAnswerContainer({
   answer,
   inquiryId,
 }: OwnProps) {
-  const Authorization = localStorage.getItem('authorization');
   const [inquiryAnswer, setInquiryAnswer] = useState('');
   const [comment, setComment] = useState('');
 
@@ -23,17 +22,9 @@ export default function InquiryAnswerContainer({
     e.preventDefault();
 
     api
-      .post(
-        `/api/qna/${inquiryId}/answer`,
-        {
-          comment,
-        },
-        {
-          headers: {
-            Authorization,
-          },
-        }
-      )
+      .post(`/api/qna/${inquiryId}/answer`, {
+        comment,
+      })
       .then((res) => {
         console.log(res);
         setInquiryAnswer(comment);
