@@ -3,7 +3,7 @@ import SearchTableTitle from './SearchTableTitle';
 
 export default function SearchTable() {
   return (
-    <div className="flex bg-gray-100 border border-gray-400 rounded-lg h-96 w-300">
+    <div className="flex h-16 bg-gray-100 border border-gray-400 rounded-lg w-300">
       <SearchTableTitle />
       <SearchTableContents />
     </div>

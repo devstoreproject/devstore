@@ -7,7 +7,7 @@ import {
 
 export default function PaginationContainer() {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center justify-center w-300">
       <button className="text-lg text-gray-500 bg-white border border-gray-300 rounded-l-md">
         <MdKeyboardDoubleArrowLeft />
       </button>
