@@ -7,13 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.cart.entity.Cart;
+import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.order.dto.OrderDBDailyPriceDto;
 import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
 import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
+import project.main.webstore.domain.order.entity.OrderedItem;
 import project.main.webstore.domain.order.entity.Orders;
-import project.main.webstore.domain.order.enums.OrderedItem;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.enums.TransCondition;
 import project.main.webstore.domain.order.exception.OrderExceptionCode;
@@ -44,7 +45,6 @@ public class OrderService {
         Cart cart = user.getCart();
         //장바구니 비우기
         user.setCart(null);
-        //TODO : 쿠폰 구현 이후 변경 필요
         Orders order = new Orders(post.getMessage(), cart, user, shippingInfo);
         order.transItemCount(TransCondition.MINUS);
         return orderRepository.save(order);
@@ -59,7 +59,6 @@ public class OrderService {
     }
 
     public Orders getOrder(Long orderId, Long userId) {
-        //TODO: 본인 체크 필수 혹은 관리자
         User user = userService.validUser(userId);
         Orders order = validOrder(orderId);
         order.setUser(user);
@@ -205,8 +204,35 @@ public class OrderService {
 
     public Orders changStatus(Long orderId,String status) {
         OrdersStatus value = OrdersStatus.of(status);
+
+        if(value == OrdersStatus.DELIVERY_COMPLETE)
+            return orderStatusComplete(orderId);
+        else if (value == OrdersStatus.ORDER_CANCEL) {
+            return orderStatusCancel(orderId);
+        }else {
+            Orders findOrder = validOrder(orderId);
+            findOrder.setOrdersStatus(value);
+            return findOrder;
+        }
+    }
+    public Orders orderStatusComplete(Long orderId) {
         Orders findOrder = validOrder(orderId);
-        findOrder.setOrdersStatus(value);
+        findOrder.setOrdersStatus(OrdersStatus.DELIVERY_COMPLETE);
+        List<OrderedItem> orderedItemList = findOrder.getOrderedItemList();
+        for (OrderedItem orderedItem : orderedItemList) {
+            Item item = orderedItem.getItem();
+            item.addSalesQuantity(orderedItem.getItemCount());
+        }
+        return findOrder;
+    }
+    public Orders orderStatusCancel(Long orderId) {
+        Orders findOrder = validOrder(orderId);
+        findOrder.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
+        List<OrderedItem> orderedItemList = findOrder.getOrderedItemList();
+        for (OrderedItem orderedItem : orderedItemList) {
+            Item item = orderedItem.getItem();
+            item.minusSalesQuantity(orderedItem.getItemCount());
+        }
         return findOrder;
     }
 }

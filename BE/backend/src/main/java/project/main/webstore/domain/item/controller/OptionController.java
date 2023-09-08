@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +32,11 @@ public class OptionController {
     private final OptionMapper optionMapper;
     private final OptionService optionService;
 
-    @PostMapping(path = "/{itemId}/options",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/{itemId}/options")
     @ApiResponse(responseCode = "201", description = "상품 옵션 등록 성공")
     public ResponseEntity<ResponseDto<OptionIdResponseDto>> postOption(@PathVariable Long itemId,
                                                                        @RequestBody OptionPostRequestDto post,
-                                                                       @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+                                                                       @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validAdmin(principal);
         ItemOption request = optionMapper.toEntity(post);
         ItemOption result = optionService.writeOption(request, itemId);

@@ -40,6 +40,7 @@ public class ItemResponseDto {
     @Schema(description = "상품 사진 정보")
     private List<ImageDto> imageList;
     private boolean like;
+    private int salesQuantity;
 
     @Builder(builderMethodName = "response")
     public ItemResponseDto(Item item) {
@@ -55,5 +56,6 @@ public class ItemResponseDto {
         this.totalCount = item.getTotalCount();
         this.imageList = item.getItemImageList() != null? item.getItemImageList().stream().map(ImageDto::new).collect(Collectors.toList()) : new ArrayList<>();
         this.like = item.isLike();
+        this.salesQuantity = item.getSalesQuantity();
     }
 }

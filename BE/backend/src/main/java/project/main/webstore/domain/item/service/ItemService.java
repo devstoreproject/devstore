@@ -50,14 +50,14 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    public Item patchItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item,List<Long> deleteOptionIdList) {
+    public Item patchItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item, List<Long> deleteOptionIdList) {
         Item findItem = itemValidService.validItem(item.getItemId());
 
         changItemValue(item, findItem);
         //삭제 먼저
-        deleteOption(findItem,deleteOptionIdList);
+        deleteOption(findItem, deleteOptionIdList);
         //옵션 변경
-        addOptionList(findItem,item.getOptionList());
+        addOptionList(findItem, item.getOptionList());
 
         if (imageInfoDtoList != null) {
             changImage(imageInfoDtoList, deleteImageId, item, findItem);
@@ -67,7 +67,7 @@ public class ItemService {
 
     private void addOptionList(Item findItem, List<ItemOption> patchOptionList) {
         List<ItemOption> findOptionList = findItem.getOptionList();
-        List<ItemOption> addOptionList =  separateList(patchOptionList);
+        List<ItemOption> addOptionList = separateList(patchOptionList);
 
         changeOptionValue(patchOptionList, findOptionList);
 
@@ -81,7 +81,7 @@ public class ItemService {
         for (ItemOption findOption : findOptionList) {
             for (ItemOption patchOption : patchOptionList) {
                 if (patchOption.getOptionId().equals(findOption.getOptionId())) {
-                    changOptionValue(findOption,patchOption);
+                    changOptionValue(findOption, patchOption);
                 }
             }
         }
@@ -90,7 +90,7 @@ public class ItemService {
     private List<ItemOption> separateList(List<ItemOption> patchOptionList) {
         ArrayList<ItemOption> addOptionList = new ArrayList<>();
         for (ItemOption itemOption : patchOptionList) {
-            if(itemOption.getOptionId() == null){
+            if (itemOption.getOptionId() == null) {
                 addOptionList.add(itemOption);
                 patchOptionList.remove(itemOption);
             }
@@ -133,13 +133,13 @@ public class ItemService {
             item.setItemStatus(ItemStatus.SOLD_OUT);
         }
     }
-    private void changOptionValue(ItemOption find, ItemOption patch){
+
+    private void changOptionValue(ItemOption find, ItemOption patch) {
         Optional.ofNullable(patch.getOptionDetail()).ifPresent(find::setOptionDetail);
         Optional.ofNullable(patch.getOptionName()).ifPresent(find::setOptionName);
         Optional.ofNullable(patch.getAdditionalPrice()).ifPresent(find::setAdditionalPrice);
         Optional.ofNullable(patch.getItemCount()).ifPresent(find::setItemCount);
     }
-
 
 
     public void deleteItem(Long itemId) {
