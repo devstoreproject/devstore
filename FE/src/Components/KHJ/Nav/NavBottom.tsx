@@ -18,6 +18,10 @@ export default function NavBottom({
   const sizeAll: number = 22;
   const linkTo = [
     {
+      to: '/search',
+      icon: <BiSearch size={sizeAll} />,
+    },
+    {
       to: authorization === null ? '/signin' : '/mypage',
       icon: <BsFillPersonFill size={sizeAll} />,
     },
@@ -26,7 +30,7 @@ export default function NavBottom({
       icon: <BiBell size={sizeAll} />,
     },
     {
-      to: '/mypage/b',
+      to: '/cart',
       icon: <BiSolidCartAlt size={sizeAll} />,
     },
   ];
@@ -53,7 +57,7 @@ export default function NavBottom({
         </button>
       </h1>
       <ul className="absolute flex top-2/4 right-5 -translate-y-2/4 sm:relative sm:translate-y-0 sm:top-auto sm:right-5">
-        <li
+        {/* <li
           onClick={() => {
             setSearchOpen(true);
           }}
@@ -61,7 +65,7 @@ export default function NavBottom({
           <button>
             <BiSearch size={sizeAll} />
           </button>
-        </li>
+        </li> */}
         {linkTo.map((link) => (
           <li className="ml-6" key={link.to}>
             <Link to={link.to}>{link.icon}</Link>

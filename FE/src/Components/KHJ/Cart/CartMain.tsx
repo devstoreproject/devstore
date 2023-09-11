@@ -1,20 +1,20 @@
 import api from 'api';
 import CartItem from './CartItem';
 import { useEffect, useState } from 'react';
-
-interface cartInfoType {
-  cartId: number;
-  deliveryPrice: number;
-  discountedPrice: number;
-  itemList: [];
-  totalPrice: number;
-  userId: number;
-}
+import { Link } from 'react-router-dom';
+import type { cartInfoType } from '../Type/CartTypes';
 
 export default function CartMain() {
   const [isCart, setIsCart] = useState<any[]>([]);
   const [isCartInfo, setIsCartInfo] = useState<cartInfoType>();
   const userId = Number(localStorage.getItem('userId'));
+
+  // cart에 담겨있는 아이템 확인
+  const inCartOptId = () => {
+    const optionIds = isCart?.map((item) => item.optionId);
+    return optionIds;
+  };
+
   // 장바구니 가져오기
   const getCart = (userId: number) => {
     api
@@ -32,6 +32,7 @@ export default function CartMain() {
         }
       });
   };
+
   // 가격에 콤마
   const regexComma = /\B(?=(\d{3})+(?!\d))/g;
   const discountTotal = isCartInfo?.discountedPrice
@@ -41,14 +42,18 @@ export default function CartMain() {
     .toString()
     .replace(regexComma, ',');
   const allPrice = () => {
-    if (isCartInfo !== undefined) {
-      const result = isCartInfo.discountedPrice + isCartInfo.deliveryPrice;
+    if (isCartInfo?.cartId !== undefined) {
+      const result =
+        Number(isCartInfo?.discountedPrice) + Number(isCartInfo?.deliveryPrice);
       return result.toString().replace(regexComma, ',');
     }
   };
+
+  const inCartOptIdOn = inCartOptId();
   useEffect(() => {
     getCart(userId);
   }, [userId]);
+
   if (isCart.length !== 0) {
     return (
       <section className="mx-5">
@@ -61,6 +66,8 @@ export default function CartMain() {
                 key={item.optionId}
                 userId={userId}
                 getCart={getCart}
+                setIsCart={setIsCart}
+                inCartId={inCartOptIdOn}
               />
             ))}
           </ul>
@@ -75,9 +82,11 @@ export default function CartMain() {
               총합
               <strong className="ml-2 text-2xl">{allPrice()}</strong>
             </p>
-            <button className="ml-4 w-60 h-14 bg-light-black rounded-full text-xl text-white">
-              구매하기
-            </button>
+            <Link to={`/purchase/order`}>
+              <button className="ml-4 w-60 h-14 bg-light-black rounded-full text-xl text-white">
+                구매하기
+              </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -90,12 +99,7 @@ export default function CartMain() {
         </div>
         <div className="flex justify-end items-center mt-6">
           <div className="flex items-center">
-            <button
-              className="ml-4 w-60 h-14 bg-light-black rounded-full text-xl text-white opacity-30"
-              disabled
-            >
-              구매하기
-            </button>
+            <button disabled>구매하기</button>
           </div>
         </div>
       </section>

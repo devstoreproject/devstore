@@ -10,16 +10,28 @@ export default function GlobalNav({
   const linkTo = {
     category: [
       {
-        to: '/login',
+        to: '/com',
+        text: '컴퓨터',
+      },
+      {
+        to: '/mon',
         text: '모니터',
       },
       {
-        to: '/signup',
-        text: '손목보호대',
+        to: '/mo',
+        text: '마우스',
       },
       {
-        to: '/service',
-        text: '마우스',
+        to: '/head',
+        text: '헤드셋',
+      },
+      {
+        to: '/de',
+        text: '책상',
+      },
+      {
+        to: '/c',
+        text: '의자',
       },
     ],
     service: [
@@ -27,12 +39,9 @@ export default function GlobalNav({
         to: '/notice',
         text: '공지사항',
       },
-      {
-        to: '/notica',
-        text: '고객센터',
-      },
     ],
   };
+  const authorization = localStorage.getItem('authorization');
   const category = linkTo.category;
   const service = linkTo.service;
   return (
@@ -49,26 +58,37 @@ export default function GlobalNav({
       >
         <RxHamburgerMenu size={24} />
       </button>
-      <div className="box-border bg-neon-green rounded-xl">
-        <Link to="/login" className="flex px-5 py-5">
-          <BsFillPersonFill size={24} />
-          <span className="block ml-3">로그인</span>
-        </Link>
+      <div className="box-border border-4 bg-neon-green rounded-xl hover:bg-white border-neon-green">
+        {authorization === null ? (
+          <Link to="/signin" className="flex px-5 py-5">
+            <BsFillPersonFill size={24} />
+            <span className="block ml-3">로그인</span>
+          </Link>
+        ) : (
+          <Link to="/mypage" className="flex px-5 py-5">
+            <BsFillPersonFill size={24} />
+            <span className="block ml-3">마이페이지</span>
+          </Link>
+        )}
       </div>
-      <h3>Category</h3>
+      <h3 className="px-5 py-2 mt-2">Category</h3>
       <ul>
         {category.map((link) => (
-          <li key={link.to}>
-            <Link to={link.to}>{link.text}</Link>
-          </li>
+          <Link to={link.to} key={link.to}>
+            <li className="h-12 px-5 flex items-center hover:bg-slate-100">
+              {link.text}
+            </li>
+          </Link>
         ))}
       </ul>
-      <h3>Service</h3>
+      <h3 className="px-5 py-2 mt-2">Service</h3>
       <ul>
         {service.map((link) => (
-          <li key={link.to}>
-            <Link to={link.to}>{link.text}</Link>
-          </li>
+          <Link to={link.to} key={link.to}>
+            <li className="h-12 px-5 flex items-center hover:bg-slate-100">
+              {link.text}
+            </li>
+          </Link>
         ))}
       </ul>
     </nav>
