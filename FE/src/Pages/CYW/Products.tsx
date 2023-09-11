@@ -1,6 +1,7 @@
 import CategoryResult from 'Components/CYW/SearchCategory/CategoryResult';
 import api from 'api';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 export interface CategoryOptionList {
   itemId: number;
@@ -16,12 +17,21 @@ export interface CategorySpecList {
   content: string;
 }
 
+export interface ImageListType {
+  imageId: number;
+  imageOrder: number;
+  originalPath: string;
+  representative: boolean;
+  thumbnailPath: string;
+  title: string;
+}
+
 export interface CategoryContent {
   category: string;
   defaultCount: number;
   deliveryPrice: number;
   description: string;
-  imageList: [];
+  imageList: ImageListType[];
   itemId: number;
   itemPrice: number;
   name: string;
@@ -59,33 +69,34 @@ export interface CategoryType {
 }
 
 export default function Products() {
-  const [category, setCategory] = useState<CategoryContent[] | null>(null);
+  const { category } = useParams();
+  const [categoryData, setCategoryData] = useState<CategoryContent[]>([]);
+  const categoryName = category === undefined ? '전체' : category;
+  const bigCategory: string | undefined = category?.toLocaleUpperCase();
 
   useEffect(() => {
+    const apiEndPoint = `api/items/search/category?category=${
+      bigCategory as string
+    }&page=0&size=20&sort=createdAt`;
+
     api
-      .get('api/items?page=0&size=10')
+      .get(apiEndPoint)
       .then((res) => {
-        setCategory(res.data.data.content);
+        setCategoryData(res.data.data.content);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [setCategory]);
-
-  if (category === null) {
-    return (
-      <div className="flex justify-center items-center pt-104 pb-104 font-bold w-full h-full">
-        Loading...
-      </div>
-    );
-  }
+  }, [setCategoryData, bigCategory]);
 
   return (
     <div className="flex flex-col pt-10">
-      <p className="text-slate-600 pl-136">{`홈 > 카테고리 > 전체`}</p>
+      <p className="text-slate-600 pl-136">{`홈 > 카테고리 > ${categoryName}`}</p>
       <div className="flex flex-col items-center">
-        <h1 className="flex justify-center text-3xl font-bold pt-10">전체</h1>
-        <CategoryResult category={category} />
+        <h1 className="flex justify-center text-3xl font-bold pt-10">
+          {categoryName}
+        </h1>
+        <CategoryResult categoryData={categoryData} />
       </div>
     </div>
   );
