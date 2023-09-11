@@ -13,6 +13,9 @@ export default function InquiryRegister({ inquiry, setInquiry }: OwnProps) {
   const userId: string | null = localStorage.getItem('userId');
   const parsedUserId: number | null = userId !== null ? Number(userId) : null;
   const { id } = useParams();
+  const headers = {
+    headers: { Authorization: localStorage.getItem('authorization') },
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -29,16 +32,12 @@ export default function InquiryRegister({ inquiry, setInquiry }: OwnProps) {
 
     const confirmRegistration = window.confirm('글을 등록하시겠습니까?');
 
+    const requestData = {
+      comment: inputValue,
+    };
     if (confirmRegistration) {
-      const requestData = {
-        comment: inputValue,
-      };
       api
-        .post(`api/qna/items/${id as string}`, requestData, {
-          headers: {
-            Authorization: localStorage.getItem('authorization'),
-          },
-        })
+        .post(`api/qna/items/${id as string}`, requestData, headers)
         .then((res) => {
           if (inquiry !== null) {
             setInquiry([

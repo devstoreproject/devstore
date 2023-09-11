@@ -53,13 +53,9 @@ export default function InquiryEditDeleteBtn({
       api
         .patch(
           `api/qna/items/${id as string}/${inquiryItem.questionId}`,
+          { comment },
           {
-            comment,
-          },
-          {
-            headers: {
-              Authorization: localStorage.getItem('authorization'),
-            },
+            headers: { Authorization: localStorage.getItem('authorization') },
           }
         )
         .then(() => {
