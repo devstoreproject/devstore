@@ -1,12 +1,9 @@
-interface DeliveryInformationProps {
+interface OwnProps {
   delivery: number;
   price: number;
 }
 
-export default function DeliveryInformation({
-  delivery,
-  price,
-}: DeliveryInformationProps) {
+export default function DeliveryInformation({ delivery, price }: OwnProps) {
   return (
     <div className="pt-2">
       <div className="flex">

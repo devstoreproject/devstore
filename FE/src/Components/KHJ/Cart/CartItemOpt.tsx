@@ -83,7 +83,7 @@ function CartItemOpt({
       itemList: [
         {
           optionId: isOptId,
-          itemCount: itemCount,
+          itemCount,
         },
       ],
     };

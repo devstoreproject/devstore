@@ -8,27 +8,40 @@ import type { StoreType } from 'model/redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTab } from 'store/modules/setCurrentTab';
 
-interface Option {
+export interface OptionListType {
+  additionalPrice: number;
+  itemCount: number;
   itemId: number;
+  optionDetail: string | null;
   optionId: number;
-  optionDetail: string;
+  optionName: string;
 }
-interface Spec {
-  specId: number;
-  itemName: string;
+export interface SpecListType {
   content: string;
+  specId: number;
+  specName: string;
 }
 
+export interface ImageList {
+  imageId: number;
+  imageOrder: number;
+  originalPath: string;
+  representative: boolean;
+  thumbnailPath: string;
+  title: string;
+}
 export interface ProductType {
+  imageList: ImageList[];
   category: string;
   defaultCount: number;
   deliveryPrice: number;
   description: string;
   itemId: number;
   itemPrice: number;
+  like: boolean;
   name: string;
-  optionList: Option[];
-  specList: Spec[];
+  optionList: OptionListType[];
+  specList: SpecListType[];
   totalCount: number;
 }
 
@@ -67,7 +80,7 @@ export default function ProductDetail() {
         <p className="w-1/2 pt-10 text-slate-600">{`카테고리 > ${product.category}`}</p>
       </div>
       <div className="flex justify-center pt-10">
-        <ProductImg />
+        <ProductImg product={product} />
         <ProductInformation product={product} />
       </div>
       <div className="flex justify-center">

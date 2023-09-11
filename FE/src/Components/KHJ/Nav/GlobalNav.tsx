@@ -10,28 +10,28 @@ export default function GlobalNav({
   const linkTo = {
     category: [
       {
-        to: '/com',
+        to: '/products/computer',
         text: '컴퓨터',
       },
       {
-        to: '/mon',
+        to: '/products/monitor',
         text: '모니터',
       },
       {
-        to: '/mo',
+        to: '/products/mouse',
         text: '마우스',
       },
       {
-        to: '/head',
+        to: '/products/headset',
         text: '헤드셋',
       },
       {
-        to: '/de',
-        text: '책상',
+        to: '/products/chair',
+        text: '의자',
       },
       {
-        to: '/c',
-        text: '의자',
+        to: '/products/desk',
+        text: '책상',
       },
     ],
     service: [

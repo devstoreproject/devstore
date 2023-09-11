@@ -5,11 +5,8 @@ export default function BestReviewTitle() {
       <span className="flex items-center justify-center text-gray-600 bg-slate-100 border-b border-r border-b-gray-400 border-r-gray-400 w-56 py-4">
         제품명
       </span>
-      <span className="flex items-center justify-center text-gray-600 bg-slate-100 border-b border-r border-b-gray-400 border-r-gray-400 w-175 py-4">
+      <span className="flex items-center justify-center text-gray-600 bg-slate-100 border-b border-r border-b-gray-400 border-r-gray-400 w-200 py-4">
         리뷰
-      </span>
-      <span className="flex items-center justify-center text-gray-600 bg-slate-100 border-b border-r border-b-gray-400 border-r-gray-400 w-25 py-4">
-        평점
       </span>
       <span className="flex items-center justify-center text-gray-600 bg-slate-100 border-b border-r rounded-tr-lg border-b-gray-400 border-r-gray-400 w-32 py-4">
         해제하기

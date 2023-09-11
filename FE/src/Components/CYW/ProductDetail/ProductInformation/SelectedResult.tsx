@@ -1,14 +1,24 @@
-import { useState } from 'react';
+import type { OptionListType } from 'Pages/CYW/ProductDetail';
 import { CiCirclePlus, CiCircleMinus } from 'react-icons/ci';
 import { RxCross2 } from 'react-icons/rx';
 
-interface ProductResultProps {
+interface OwnProps {
   name: string;
   price: number;
+  option: OptionListType[];
+  productCount: number;
+  selectedValue: number;
+  setProductCount: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function ProductResult({ name, price }: ProductResultProps) {
-  const [productCount, setProductCount] = useState<number>(1);
+export default function SelectedResult({
+  name,
+  price,
+  option,
+  productCount,
+  setProductCount,
+  selectedValue,
+}: OwnProps) {
   const btnSize = 24;
   return (
     <div className="pt-5">
@@ -19,10 +29,13 @@ export default function ProductResult({ name, price }: ProductResultProps) {
             <RxCross2 size={18} />
           </div>
         </div>
-        <div className="flex pt-1">
-          <span className="font-light">색상: 화이트</span>
-          <span className="font-light pl-2">너비: 24인치</span>
-        </div>
+        {option.map((optionItem, i) => (
+          <div className="flex pt-1" key={i}>
+            <span className="font-light">
+              {optionItem.optionName}: {selectedValue}
+            </span>
+          </div>
+        ))}
         <div className="flex items-center pt-2">
           <button
             onClick={() => {

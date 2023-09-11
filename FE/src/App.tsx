@@ -40,9 +40,10 @@ function App() {
       <Routes>
         <Route element={<BasicLayout />}>
           <Route path="/" element={<Main />} />
-          <Route path="products" element={<Products />} />
+          <Route path="products/:category" element={<Products />} />
+          <Route path="products/:category/:id" element={<ProductDetail />} />
           <Route path="search" element={<Search />} />
-          <Route path="products/:id" element={<ProductDetail />} />
+          <Route path="search/:id" element={<ProductDetail />} />
           <Route path="/notice" element={<NoticeList />} />
           <Route path="/notice/:id" element={<NoticeDetail />} />
           <Route path="/signup" element={<SignUp />} />
