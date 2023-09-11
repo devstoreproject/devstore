@@ -2,13 +2,13 @@ import type { CategoryContent } from 'Pages/CYW/Products';
 import CategoryItem from './CategoryItem';
 
 interface OwnProps {
-  category: CategoryContent[] | null;
+  categoryData: CategoryContent[] | null;
 }
 
-export default function CategoryResult({ category }: OwnProps) {
+export default function CategoryResult({ categoryData }: OwnProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-16">
-      {category?.map((categoryItem) => (
+    <div className="flex flex-row flex-wrap justify-center pt-20 pb-20 gap-x-8 gap-y-8">
+      {categoryData?.map((categoryItem) => (
         <CategoryItem key={categoryItem.itemId} categoryItem={categoryItem} />
       ))}
     </div>
