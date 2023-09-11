@@ -15,11 +15,10 @@ export default function OrderListBtnContainer({
   const navigate = useNavigate();
 
   const deleteBtnHandler = () => {
-    const lastTotalCheckedId = checkedId.slice(1);
     const userConfirmed = window.confirm('삭제하시겠습니까?');
 
     if (userConfirmed) {
-      const fetchDelete = lastTotalCheckedId.map(async (id) => {
+      const fetchDelete = checkedId.map(async (id) => {
         await api.delete(`/api/items/${id}`);
       });
 
@@ -27,9 +26,7 @@ export default function OrderListBtnContainer({
         .all(fetchDelete)
         .then(() => {
           setProducts((prev) =>
-            prev.filter(
-              (product) => !lastTotalCheckedId.includes(product.itemId)
-            )
+            prev.filter((product) => !checkedId.includes(product.itemId))
           );
           window.alert('삭제되었습니다.');
         })

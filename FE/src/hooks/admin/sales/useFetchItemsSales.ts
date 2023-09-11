@@ -1,15 +1,15 @@
 import api from 'api';
+import type { ItemSales } from 'model/sales';
 import { useEffect, useState } from 'react';
 
 const useFetchItemsSales = () => {
-  const [itemSales, setItemSales] = useState([]);
+  const [itemSales, setItemSales] = useState<ItemSales[]>([]);
 
   useEffect(() => {
     api
       .get('/api/orders/items-sale')
       .then((res) => {
-        console.log(res.data.data);
-        // setItemSales(res.data.data.content);
+        setItemSales(res.data.data);
       })
       .catch((err) => {
         console.log(err);

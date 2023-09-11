@@ -1,15 +1,10 @@
 import OptionTitle from './OptionTitle';
-import Option from './Option';
+import OptionContents from './OptionContents';
 import addCommasToPrice from 'utils/addCommasToPrice';
+import type { ProductDetail } from 'model/product';
 
 interface OwnProps {
-  product: {
-    name: string;
-    category: string;
-    itemPrice: number;
-    defaultCount: number;
-    optionList: option[];
-  };
+  product: ProductDetail;
 }
 
 export interface option {
@@ -21,7 +16,7 @@ export interface option {
 export default function ProductDetailContents({ product }: OwnProps) {
   const price = addCommasToPrice(product.itemPrice);
   return (
-    <div className="w-96">
+    <div className="w-144">
       <div className="flex items-center h-10 pl-4 text-sm bg-gray-100 border border-gray-300 rounded-tr-lg">
         {product.name}
       </div>
@@ -32,18 +27,19 @@ export default function ProductDetailContents({ product }: OwnProps) {
         {price}
       </div>
       <div className="flex items-center h-10 pl-4 text-sm bg-gray-100 border border-gray-300">
-        {product.defaultCount}
+        {product.totalCount}
       </div>
       <div className="flex items-center h-10 pl-4 text-sm bg-gray-100 border border-gray-300">
         데이터 필요
       </div>
-      <div className="flex flex-col h-48 text-sm bg-gray-100 border border-gray-300 rounded-br-lg">
+      <div className="flex flex-col text-sm bg-gray-100 border border-gray-300 rounded-br-lg">
         <OptionTitle />
-        {product.optionList.slice(1).map((option) => {
+        {product.optionList.map((option) => {
           return (
-            <Option
+            <OptionContents
               key={option.optionId}
-              name={option.optionName}
+              optionName={option.optionName}
+              optionDetail={option.optionName}
               additionalPrice={option.additionalPrice}
               itemCount={option.itemCount}
             />

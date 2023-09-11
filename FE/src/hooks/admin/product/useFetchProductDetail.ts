@@ -1,13 +1,15 @@
 import api from 'api';
+import type { ProductDetail } from 'model/product';
 import { useEffect, useState } from 'react';
 
 const useFetchProductDetail = (productId: number) => {
-  const [product, setProduct] = useState({
+  const [product, setProduct] = useState<ProductDetail>({
     name: '',
     category: '',
     itemPrice: 0,
-    defaultCount: 0,
+    totalCount: 0,
     optionList: [],
+    salesQuantity: 0,
   });
 
   useEffect(() => {

@@ -2,13 +2,10 @@ import { useState } from 'react';
 import useFetchSales from 'hooks/admin/sales/useFetchSales';
 import SalesChartHeader from '../AdminMain/SalesChartHeader';
 import Chart from '../AdminMain/Chart';
-import useFetchProducts from 'hooks/admin/product/useFetchProducts';
 
 export default function SalesChart() {
   const [salesStatus, setSalesStatus] = useState([false, true]);
   const sales = useFetchSales(salesStatus);
-  const products = useFetchProducts();
-  console.log(products);
   return (
     <div className="px-6 py-4 mb-4 bg-white border border-gray-400 rounded-lg w-300">
       <SalesChartHeader
