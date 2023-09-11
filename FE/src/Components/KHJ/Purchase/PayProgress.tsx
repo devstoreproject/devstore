@@ -1,51 +1,42 @@
 import { AiFillCreditCard } from 'react-icons/ai';
-// import * as PortOne from '@portone/browser-sdk/v2';
+import type { cartInfoType } from '../Type/CartTypes';
+import { useState } from 'react';
 
-// function requestPayment() {
-//   PortOne.requestPayment({
-//     storeId: 'store-b7b3d9f7-e192-4c3d-9b2e-393350c9ce6d',
-//     paymentId: 'paymentId_{now()}',
-//     orderName: '나이키 와플 트레이너 2 SD',
-//     totalAmount: 1000,
-//     currency: 'CURRENCY_KRW',
-//     pgProvider: 'PG_PROVIDER_TOSSPAYMENTS',
-//     payMethod: 'CARD',
-//   });
-// }
+interface payProps {
+  requestPayment: () => void;
+  isCartInfo?: cartInfoType;
+  payGo: () => void;
+  payGoShip: () => void;
+  isMe: boolean;
+  setIsMe: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-export default function PayProgress() {
+export default function PayProgress({
+  requestPayment,
+  isCartInfo,
+  payGo,
+  payGoShip,
+  isMe,
+  setIsMe,
+}: payProps) {
+  const [warningCheck, setWarningCheck] = useState<boolean>(false);
   const cost = [
     {
-      info: '주문금액',
-      cost: '416,000',
-    },
-    {
-      info: '할인',
-      cost: '-18,000',
+      info: '최종결제금액',
+      cost: isCartInfo?.totalPrice,
     },
     {
       info: '배송비',
-      cost: '0',
+      cost: isCartInfo?.deliveryPrice,
     },
-    {
-      info: '적립금 사용',
-      cost: '-700',
-    },
-    {
-      info: '적립금',
-      cost: '1,400',
-    },
-    // {
-    //   info: '최종결제금액',
-    //   cost: '398,000',
-    // },
   ];
+
   return (
-    <section className="mx-5 flex justify-between pb-7 border-b border-gray-300 mb-16">
-      <div className="flex justify-between flex-wrap">
+    <section className="mx-5 flex justify-between pb-7 border-b border-gray-300 mb-16 gap-5">
+      <div className="flex justify-between gap-5">
         <h2 className="w-14 mt-7">결제</h2>
         <p className="flex items-center h-6 whitespace-nowrap mt-7">
-          <AiFillCreditCard /> 카드 결제 (1234-1234-****-****) 일시불
+          <AiFillCreditCard /> 카드 결제 일시불
         </p>
         <div className="mt-4 w-80">
           {cost.map((info) => (
@@ -55,19 +46,28 @@ export default function PayProgress() {
             </p>
           ))}
         </div>
-        <div className="flex justify-end w-full mt-3 border-t border-gray-300">
-          <p className="mt-3 flex justify-between w-80">
-            <span>최종결제금액</span>
-            <strong className="text-2xl">398,000</strong>
-          </p>
-        </div>
       </div>
       <div className="mt-auto text-right">
         <p>
-          <input type="radio" className="mr-2" />
+          <input
+            type="radio"
+            className="mr-2"
+            onClick={() => {
+              setWarningCheck(true);
+            }}
+          />
           주문 내역을 확인하고 결제가 진행되는 것에 동의합니다.
         </p>
-        <button className="mt-3 w-60 h-14 bg-light-black rounded-full text-xl text-white">
+        <button
+          className="mt-3 w-60 h-14 bg-light-black rounded-full text-xl text-white"
+          onClick={() => {
+            if (!isMe && warningCheck) {
+              payGo();
+            } else if (isMe && warningCheck) {
+              payGoShip();
+            }
+          }}
+        >
           결제하기
         </button>
       </div>

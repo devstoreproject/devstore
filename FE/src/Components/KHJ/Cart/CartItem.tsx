@@ -7,6 +7,8 @@ interface CartItemProps {
   item: CartItemList;
   userId: number;
   getCart: (userId: number) => void;
+  inCartId: number[];
+  setIsCart: React.Dispatch<React.SetStateAction<any>>;
 }
 
 interface itemBody {
@@ -18,6 +20,8 @@ function CartItem({
   item,
   userId,
   getCart,
+  inCartId,
+  setIsCart,
 }: CartItemProps): React.ReactElement {
   const [isOptOpen, setIsOptOpen] = useState(false);
   const [isQuantity, setIsQuantity] = useState(item.count);
@@ -32,9 +36,6 @@ function CartItem({
   // 가격에 콤마 찍어주기
   const regexComma = /\B(?=(\d{3})+(?!\d))/g;
   const priceComma = item.defaultPrice.toString().replace(regexComma, ',');
-  const discount = item.defaultPrice * item.discountRate;
-  const discountPrice = item.defaultPrice - discount;
-  const discountPriceComma = discountPrice.toString().replace(regexComma, ',');
 
   // 장바구니 변겅 API
   const fetchCartCount = (userId: number, itemBody: itemBody) => {
@@ -105,7 +106,7 @@ function CartItem({
         console.log(err);
       });
   };
-  // 옵션 변경
+  // 옵션 수량 변경
   const fetchOptChange = (optionId: number, itemCount: number) => {
     const userId = Number(localStorage.getItem('userId'));
     const data = {
@@ -134,14 +135,24 @@ function CartItem({
       ${isOptName !== '옵션 목록' ? 'pb-20' : ''}`}
     >
       {/* <input type="checkbox" className="w-5 h-5 border-gray-300"></input> */}
-      <div className="rounded-xl w-36 h-36 bg-white"></div>
+      <div className="rounded-xl w-36 h-36 bg-white flex justify-center align-middle overflow-hidden">
+        {item.imageInfo !== null && (
+          <img
+            src={item.imageInfo.thumbnailPath}
+            alt={item.imageInfo.title}
+            className="max-w-max"
+          />
+        )}
+      </div>
       <div className="w-3/5 relative">
         <div className="flex items-center justify-between">
           <div>
             <h3>{item.itemName}</h3>
             <div className="text-subtitle-gray">
               {item.optionName !== null ? (
-                <span className="mr-4">색상 : {item.optionName}</span>
+                <span className="mr-4">
+                  {item.optionName} : {item.optionDetail}
+                </span>
               ) : null}
             </div>
           </div>
@@ -180,12 +191,16 @@ function CartItem({
         </div>
         {item.optionName !== null ? (
           <CartItemOpt
+            setIsCart={setIsCart}
             isOptOpen={isOptOpen}
             isOptName={isOptName}
             setIsOptName={setIsOptName}
             fetchOptChange={fetchOptChange}
             itemCount={item.count}
+            itemId={item.itemId}
             isOpt={isOpt}
+            inCartId={inCartId}
+            fetchDelCart={fetchDelCart}
           />
         ) : null}
       </div>
@@ -193,8 +208,7 @@ function CartItem({
         <span className="absolute bottom-3/4 text-subtitle-gray right-0">
           할인가
         </span>
-        <del className="text-subtitle-gray mr-2">{priceComma}</del>
-        <strong className="text-xl font-normal">{discountPriceComma}</strong>
+        <strong className="text-xl font-normal">{priceComma}</strong>
       </div>
     </li>
   );

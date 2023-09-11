@@ -1,6 +1,19 @@
+import type { ShippingList } from '../Type/ShippingType';
 import DeliverForm from './DeliverForm';
 
-const Delivery: React.FC = (props) => {
+interface ShipProps {
+  isShippingFormWrite: ShippingList;
+  setIsShippingFormWrite: React.Dispatch<React.SetStateAction<ShippingList>>;
+  isMe: boolean;
+  setIsMe: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Delivery = ({
+  isShippingFormWrite,
+  setIsShippingFormWrite,
+  isMe,
+  setIsMe,
+}: ShipProps) => {
   return (
     <section className="mx-5 py-7 flex border-b border-gray-300">
       <div className="w-36">
@@ -10,14 +23,17 @@ const Delivery: React.FC = (props) => {
       <form className="flex">
         <div className="w-32">
           <p className="h-14 flex items-center">받는 이*</p>
-          <p className="h-14 flex items-center mt-3">이메일*</p>
           <p className="h-14 flex items-center mt-3">휴대전화*</p>
-          <p className="h-14 flex items-center mt-3">일반전화</p>
           <p className="h-14 flex items-center mt-3">주소*</p>
           <p className="h-14 flex items-center mt-3"></p>
-          <p className="h-14 flex items-center mt-3">배송요청사항</p>
+          {/* <p className="h-14 flex items-center mt-3">배송요청사항</p> */}
         </div>
-        <DeliverForm />
+        <DeliverForm
+          isShippingFormWrite={isShippingFormWrite}
+          setIsShippingFormWrite={setIsShippingFormWrite}
+          isMe={isMe}
+          setIsMe={setIsMe}
+        />
       </form>
     </section>
   );

@@ -18,18 +18,12 @@ import NoticeDetail from 'Pages/LSM/Notice/NoticeDetail';
 import ProductPost from 'Pages/LSM/Product/ProductPost';
 import ProductEdit from 'Pages/LSM/Product/ProductEdit';
 import Cart from 'Pages/KHJ/Cart';
-import CheckList from 'Pages/KHJ/CheckList';
 import PurchaseMain from 'Pages/KHJ/PurchaseMain';
 import Purchase from 'Pages/KHJ/Purchase';
 import PurComplete from 'Pages/KHJ/PurComplete';
 import PurComDetail from 'Pages/KHJ/PurComDetail';
-import OrderMain from 'Pages/KHJ/OrderMain';
-import Order from 'Pages/KHJ/Order';
 import AdminMain from 'Components/KYH/admin/AdminMain/AdminMain';
 import BasicLayout from 'Pages/LSM/BasicLayout';
-import Return from 'Pages/KHJ/Return';
-import Exchange from 'Pages/KHJ/Exchange';
-import Cancel from 'Pages/KHJ/Cancel';
 import ProductDetail from 'Pages/CYW/ProductDetail';
 import OrderedList from 'Pages/CYW/OrderedList';
 import ReviewManagement from 'Pages/CYW/ReviewManagement';
@@ -37,6 +31,8 @@ import Search from 'Pages/CYW/Search';
 import Sales from 'Components/KYH/admin/Sales/Sales';
 import Products from 'Pages/CYW/Products';
 import SearchPassword from 'Pages/KYH/SearchPassword';
+import OrderCom from 'Pages/KHJ/OrderCom';
+import OrderComDetail from 'Pages/KHJ/OrderComDetail';
 
 function App() {
   return (
@@ -53,6 +49,15 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/searchpassword" element={<SearchPassword />} />
           <Route path="/sleeperaccount" element={<SleeperAccount />} />
+
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/purchase" element={<PurchaseMain />}>
+            <Route path="order" element={<Purchase />} />
+            <Route path="complete" element={<PurComplete />} />
+            <Route path="detail" element={<PurComDetail />} />
+          </Route>
+          <Route path="/complete/:id" element={<OrderCom />} />
+          <Route path="/complete/detail/:id" element={<OrderComDetail />} />
         </Route>
 
         <Route path="/mypage" element={<Mypage />}>
@@ -73,19 +78,6 @@ function App() {
           <Route path="notice" element={<NoticeList />} />
           <Route path="notice/post" element={<NoticePost />} />
           <Route path="notice/edit/:id" element={<NoticeEdit />} />
-        </Route>
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checklist" element={<CheckList />} />
-        <Route path="/purchase" element={<PurchaseMain />}>
-          <Route path="" element={<Purchase />} />
-          <Route path="complete" element={<PurComplete />} />
-          <Route path="detail" element={<PurComDetail />} />
-        </Route>
-        <Route path="/order" element={<OrderMain />}>
-          <Route path="" element={<Order />} />
-          <Route path="return" element={<Return />} />
-          <Route path="exchange" element={<Exchange />} />
-          <Route path="cancel" element={<Cancel />} />
         </Route>
       </Routes>
     </BrowserRouter>

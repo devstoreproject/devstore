@@ -1,10 +1,10 @@
-export interface CartItemType {
+export interface cartInfoType {
   cartId: number;
-  userId: number;
   deliveryPrice: number;
-  totalPrice: number;
   discountedPrice: number;
   itemList: CartItemList[];
+  totalPrice: number;
+  userId: number;
 }
 
 export interface CartItemList {
@@ -16,6 +16,7 @@ export interface CartItemList {
   discountRate: number;
   itemName: string;
   optionName?: string;
+  optionDetail?: string;
   imageInfo: CartImage;
 }
 
