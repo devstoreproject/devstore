@@ -47,6 +47,12 @@ public class OrderService {
         user.setCart(null);
         Orders order = new Orders(post.getMessage(), cart, user, shippingInfo);
         order.transItemCount(TransCondition.MINUS);
+        List<OrderedItem> orderedItemList = order.getOrderedItemList();
+        //여기
+        for (OrderedItem orderedItem : orderedItemList) {
+            Item item = orderedItem.getItem();
+            item.addSalesQuantity(orderedItem.getItemCount());
+        }
         return orderRepository.save(order);
     }
 
@@ -218,11 +224,11 @@ public class OrderService {
     public Orders orderStatusComplete(Long orderId) {
         Orders findOrder = validOrder(orderId);
         findOrder.setOrdersStatus(OrdersStatus.DELIVERY_COMPLETE);
-        List<OrderedItem> orderedItemList = findOrder.getOrderedItemList();
-        for (OrderedItem orderedItem : orderedItemList) {
-            Item item = orderedItem.getItem();
-            item.addSalesQuantity(orderedItem.getItemCount());
-        }
+//        List<OrderedItem> orderedItemList = findOrder.getOrderedItemList();
+//        for (OrderedItem orderedItem : orderedItemList) {
+//            Item item = orderedItem.getItem();
+//            item.addSalesQuantity(orderedItem.getItemCount());
+//        }
         return findOrder;
     }
     public Orders orderStatusCancel(Long orderId) {

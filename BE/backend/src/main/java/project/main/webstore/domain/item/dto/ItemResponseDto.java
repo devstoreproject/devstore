@@ -52,7 +52,7 @@ public class ItemResponseDto {
         this.deliveryPrice = item.getDeliveryPrice();
         this.defaultCount = item.getDefaultItem().getItemCount();
         this.viewCount = item.getViewCount();
-        this.optionList = item.getOptionList() != null ? item.getOptionList().stream().map(OptionResponseDto::new).collect(Collectors.toList()) : new ArrayList<>();
+        this.optionList = item.getOptionListWithOutDefault().stream().map(OptionResponseDto::new).collect(Collectors.toList());
         this.totalCount = item.getTotalCount();
         this.imageList = item.getItemImageList() != null? item.getItemImageList().stream().map(ImageDto::new).collect(Collectors.toList()) : new ArrayList<>();
         this.like = item.isLike();

@@ -14,12 +14,14 @@ public class OptionDto {
     private int defaultPrice;
     private int additionalPrice;
     private int discountRate;
+    private String itemName;
     private String optionName;
     private String optionDetail;
     private ImageDto imageInfo;
 
     public OptionDto(CartItem entity) {
         this.itemId = entity.getOption().getItem().getItemId();
+        this.itemName = entity.getOption().getItem().getItemName();
         this.optionId = entity.getOption().getOptionId();
         this.count = entity.getItemCount();
         this.defaultPrice = entity.getOption().getItem().getItemPrice();

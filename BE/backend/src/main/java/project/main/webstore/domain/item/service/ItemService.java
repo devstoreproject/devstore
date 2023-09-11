@@ -124,9 +124,10 @@ public class ItemService {
         Optional.ofNullable(item.getItemName()).ifPresent(findItem::setItemName);
         Optional.ofNullable(item.getDiscountRate()).ifPresent(findItem::setDiscountRate);
         Optional.ofNullable(item.getDescription()).ifPresent(findItem::setDescription);
-        Optional.ofNullable(item.getDefaultItem()).ifPresent(findItem::setDefaultItem);
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);
+
+        Optional.ofNullable(item.getDefaultItem().getItemCount()).ifPresent(count ->findItem.getDefaultItem().setItemCount(count));
         if (findItem.getDefaultItem().getItemCount() > 0) {
             item.setItemStatus(ItemStatus.ON_STACK);
         } else {
