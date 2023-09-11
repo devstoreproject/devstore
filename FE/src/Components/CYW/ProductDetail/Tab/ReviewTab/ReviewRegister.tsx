@@ -20,8 +20,6 @@ export default function ReviewRegister({ review, setReview }: OwnProps) {
     setInputValue(event.target.value);
   };
 
-  console.log(review);
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -49,7 +47,7 @@ export default function ReviewRegister({ review, setReview }: OwnProps) {
           if (review !== null) {
             const currentDate = new Date();
             const year = currentDate.getFullYear();
-            const month = currentDate.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
+            const month = currentDate.getMonth() + 1;
             const day = currentDate.getDate();
             const formattedDate = `${year}-${month}-${day}`;
             setReview([
@@ -85,7 +83,6 @@ export default function ReviewRegister({ review, setReview }: OwnProps) {
           className="px-5 py-3 border lg:w-full rounded-3xl border-gray w-250"
           onChange={handleInputChange}
         />
-        {/* <input type="file" accept="image/*" className="" /> */}
       </div>
       <button className="px-10 py-2 ml-2 border border-gray bg-slate-800 text-slate-50 rounded-3xl">
         리뷰 남기기

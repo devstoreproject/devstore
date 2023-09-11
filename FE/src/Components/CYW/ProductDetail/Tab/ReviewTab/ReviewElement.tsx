@@ -16,7 +16,12 @@ export default function ReviewElement({ review, setReview }: OwnProps) {
           className="flex items-center border-b-2 py-4 pl-8 px-10"
         >
           <UserInfo review={reviewItem} />
-          <UserReview review={reviewItem} setReview={setReview} i={i} />
+          <UserReview
+            review={review}
+            reviewItem={reviewItem}
+            setReview={setReview}
+            i={i}
+          />
         </div>
       ))}
     </div>
