@@ -33,8 +33,10 @@ export default function Table({
               key={product.itemId}
               itemId={product.itemId}
               name={product.name}
+              totalCount={product.totalCount}
               optionList={product.optionList}
               itemPrice={product.itemPrice}
+              salesQuantity={product.salesQuantity}
               setIsDetailModalOpen={setIsDetailModalOpen}
               setProductId={setProductId}
               setCheckedId={setCheckedId}
