@@ -1,8 +1,8 @@
-interface PriceProps {
+interface OwnProps {
   price: number;
 }
 
-export default function Price({ price }: PriceProps) {
+export default function Price({ price }: OwnProps) {
   return (
     <div className="flex justify-end pt-2">
       <span className="text-right line-through text-slate-400 pr-2 font-normal">
