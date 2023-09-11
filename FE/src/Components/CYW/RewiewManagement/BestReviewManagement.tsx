@@ -1,11 +1,29 @@
 import BestReviewTitle from './BestReviewTitle';
 import BestReviewContents from './BestReviewContents';
+import type {
+  BestReviewType,
+  ItemContentType,
+} from 'Pages/CYW/ReviewManagement';
 
-export default function BestReviewManagement() {
+interface OwnProps {
+  bestReview: BestReviewType[];
+  item: ItemContentType[];
+  setBestReview: React.Dispatch<React.SetStateAction<BestReviewType[]>>;
+}
+
+export default function BestReviewManagement({
+  bestReview,
+  item,
+  setBestReview,
+}: OwnProps) {
   return (
-    <div className="flex flex-col bg-gray-100 border border-gray-400 rounded-lg h-100 w-300">
+    <div className="flex flex-col border-gray-400 border border-r-0 border-b-0 rounded-t-lg w-300">
       <BestReviewTitle />
-      <BestReviewContents />
+      <BestReviewContents
+        bestReview={bestReview}
+        item={item}
+        setBestReview={setBestReview}
+      />
     </div>
   );
 }
