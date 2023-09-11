@@ -111,7 +111,7 @@ public class Item extends Auditable {
         this.itemPrice = patch.getItemPrice();;
         this.deliveryPrice = patch.getDeliveryPrice();
         this.category = patch.getCategory();
-        this.optionList = patch.getUpdateOptionList() != null ? patch.getUpdateOptionList().stream().map(ItemOption::new).collect(Collectors.toList()) : null;
+        this.optionList = patch.getUpdateOptionList() != null ? patch.getUpdateOptionList().stream().map(ItemOption::new).collect(Collectors.toList()) : new ArrayList<>();
     }
 
 
@@ -189,7 +189,17 @@ public class Item extends Auditable {
     }
     public void minusSalesQuantity(int count){
         this.salesQuantity -= count;
-
+    }
+    public List<ItemOption> getOptionListWithOutDefault(){
+        if(optionList == null)
+            return new ArrayList<>();
+        for (ItemOption itemOption : optionList) {
+            if(itemOption.isDefaultOption()){
+                optionList.remove(itemOption);
+                break;
+            }
+        }
+        return optionList;
     }
 }
 

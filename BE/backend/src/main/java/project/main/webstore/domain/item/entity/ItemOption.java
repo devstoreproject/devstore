@@ -32,6 +32,7 @@ public class ItemOption {
     private Integer additionalPrice;
     @Setter
     private Integer itemCount;
+    private boolean defaultOption;
 
     @Setter
     @ManyToOne(fetch = LAZY)
@@ -73,6 +74,7 @@ public class ItemOption {
         this.additionalPrice = additionalPrice;
         this.itemCount = itemCount;
         this.item = item;
+        this.defaultOption =true;
         this.cartItemList = new ArrayList<>();
         this.orderItem = new ArrayList<>();
     }

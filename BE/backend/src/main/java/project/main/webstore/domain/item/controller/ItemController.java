@@ -139,7 +139,7 @@ public class ItemController {
     }
 
     // 아이템 카테고리별 조회
-    @GetMapping("search/category")
+    @GetMapping("/search/category")
     @ApiResponse(responseCode = "200", description = "상품 카테고리별 조회 페이징")
     @Parameters({
             @Parameter(name = "page", example = "0", description = "첫 페이지가 0번지"),
