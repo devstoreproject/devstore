@@ -3,15 +3,20 @@ import {
   MdOutlineKeyboardArrowRight,
 } from 'react-icons/md';
 import SlideImgItem from './SlideImgItem';
+import type { ProductType } from 'Pages/CYW/ProductDetail';
 
-export default function SlideImg() {
+interface OwnProps {
+  product: ProductType | null;
+}
+
+export default function SlideImg({ product }: OwnProps) {
   const btnSize = 20;
   return (
     <div className="flex justify-center items-center pt-4">
       <button>
         <MdOutlineKeyboardArrowLeft size={btnSize} />
       </button>
-      <SlideImgItem />
+      <SlideImgItem product={product} />
       <button>
         <MdOutlineKeyboardArrowRight size={btnSize} />
       </button>
