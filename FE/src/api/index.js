@@ -39,7 +39,7 @@ api.interceptors.response.use(
             localStorage.setItem('authorization', res.headers.authorization);
             localStorage.setItem('refresh', res.headers.refresh);
             isRefreshing = false;
-            // 다시 시도하는 요청을 모두 처리
+
             refreshSubscribers.forEach((callback) => callback());
             refreshSubscribers = [];
             return api(originalRequest);
