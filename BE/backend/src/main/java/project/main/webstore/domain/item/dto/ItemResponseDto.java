@@ -35,12 +35,12 @@ public class ItemResponseDto {
     private int defaultCount;
     @Schema(description = "옵션이 없는 상품 전체 수량")
     private long viewCount;
-    @Schema(description = "상품의 스펙들 정보")
-    private List<SpecResponseDto> specList;
     @Schema(description = "상품의 옵션들 정보")
     private List<OptionResponseDto> optionList;
     @Schema(description = "상품 사진 정보")
     private List<ImageDto> imageList;
+    private boolean like;
+    private int salesQuantity;
 
     @Builder(builderMethodName = "response")
     public ItemResponseDto(Item item) {
@@ -50,11 +50,12 @@ public class ItemResponseDto {
         this.description = item.getDescription();
         this.itemPrice = item.getItemPrice();
         this.deliveryPrice = item.getDeliveryPrice();
-        this.defaultCount = item.getTotalCount();
+        this.defaultCount = item.getDefaultItem().getItemCount();
         this.viewCount = item.getViewCount();
-        this.specList = item.getSpecList() != null ? item.getSpecList().stream().map(SpecResponseDto::new).collect(Collectors.toList()) : new ArrayList<>();
-        this.optionList = item.getOptionList() != null ? item.getOptionList().stream().map(OptionResponseDto::new).collect(Collectors.toList()) : new ArrayList<>();
+        this.optionList = item.getOptionListWithOutDefault().stream().map(OptionResponseDto::new).collect(Collectors.toList());
         this.totalCount = item.getTotalCount();
         this.imageList = item.getItemImageList() != null? item.getItemImageList().stream().map(ImageDto::new).collect(Collectors.toList()) : new ArrayList<>();
+        this.like = item.isLike();
+        this.salesQuantity = item.getSalesQuantity();
     }
 }

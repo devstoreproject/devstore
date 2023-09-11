@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.main.webstore.audit.Auditable;
+import project.main.webstore.domain.item.exception.ItemExceptionCode;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.exception.BusinessLogicException;
-import project.main.webstore.exception.CommonExceptionCode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class Cart extends Auditable {
 
     public int getOriginalTotalPrice() {
         if(cartItemList.isEmpty()){
-            throw new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND);
+            throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_FOUND);
         }
         int cartPrice = cartItemList.stream().mapToInt(CartItem::getTotalPrice).sum();
         return cartPrice;
@@ -50,7 +50,7 @@ public class Cart extends Auditable {
 
     public int getDiscountedTotalPrice() {
         if(cartItemList.isEmpty()){
-            throw new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND);
+            throw new BusinessLogicException(ItemExceptionCode.ITEM_NOT_FOUND);
         }
         int cartPrice = cartItemList.stream().mapToInt(CartItem::getDiscountedPrice).sum();
         return cartPrice;

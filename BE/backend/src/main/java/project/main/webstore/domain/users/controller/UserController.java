@@ -15,6 +15,7 @@ import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
 import project.main.webstore.domain.users.dto.*;
 import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.mapper.UserMapper;
 import project.main.webstore.domain.users.service.UserService;
 import project.main.webstore.dto.ResponseDto;
@@ -50,7 +51,7 @@ public class UserController {
         User result = service.postUser(user, infoDto);
         UserIdResponseDto response = userMapper.toDto(result);
         var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
-        URI location = UriCreator.createUri("/users/{userId}", response.getUserId());
+        URI location = UriCreator.createUri("/users", response.getUserId());
 
         return ResponseEntity.created(location).body(responseDto);
     }
@@ -73,7 +74,7 @@ public class UserController {
 
         UserIdResponseDto response = userMapper.toDto(result);
         var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
-        URI location = UriCreator.createUri("/users/{userId}", response.getUserId());
+        URI location = UriCreator.createUri("/users", response.getUserId());
 
         return ResponseEntity.ok().header("Location", location.toString()).body(responseDto);
     }
@@ -140,4 +141,12 @@ public class UserController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PostMapping("/set-default")
+    public ResponseEntity setDefault() {
+        User user = new User(1L);
+        user.setPassword("admin111!!");
+        user.setProviderId(ProviderId.JWT);
+        service.patchUser(user,null);
+        return ResponseEntity.noContent().build();
+    }
 }

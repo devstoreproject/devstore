@@ -1,5 +1,6 @@
 package project.main.webstore.domain.users.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class ShippingController {
 
     @PostMapping
     public ResponseEntity<ResponseDto<ShippingInfoResponseDto>> createInfo(@RequestBody @Valid ShippingInfoPostDto post,
-                                     @AuthenticationPrincipal Object principal) {
+                                     @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         ShippingInfo info = mapper.infoPostToInfo(post);
         ShippingInfo writeInfo = service.writeInfo(info, userId);
@@ -43,7 +44,7 @@ public class ShippingController {
 
     @PatchMapping("/{shipping-info-id}")
     public ResponseEntity<ResponseDto<ShippingInfoResponseDto>> patchShippingInfo(@PathVariable("shipping-info-id") @Positive Long shippingInfoId,
-                                            @AuthenticationPrincipal Object principal,
+                                                                                  @Parameter(hidden = true)@AuthenticationPrincipal Object principal,
                                             @RequestBody @Valid ShippingInfoPatchDto patch) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         ShippingInfo info = mapper.infoPatchToInfo(patch);
@@ -77,7 +78,7 @@ public class ShippingController {
 
     @DeleteMapping("/{shipping-info-id}")
     public ResponseEntity deleteShippingInfo(@PathVariable("shipping-info-id") @Positive Long shippingInfoId,
-                                             @AuthenticationPrincipal Object principal) {
+                                             @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         service.deleteInfo(shippingInfoId, userId);
 

@@ -8,6 +8,10 @@ import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.dto.ItemResponseDto;
 import project.main.webstore.domain.item.entity.Item;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class ItemMapper {
     public Item toEntity(ItemPostDto itemPostDto) {
@@ -17,19 +21,20 @@ public class ItemMapper {
         return new Item(itemPostDto);
     }
 
-    public Item itemPatchDtoToItem(ItemPatchDto itemPatchDto) {
+    public Item itemPatchDtoToItem(ItemPatchDto itemPatchDto, Long itemId) {
         if (itemPatchDto == null) {
-            return null;
+            return new Item(itemId);
         }
-        return new Item(itemPatchDto);
 
+        return new Item(itemPatchDto,itemId);
     }
-
-    // Price Method
-
-    // itemResponse Mapper
+    public List<Long> checkListEmpty(List<Long> list) {
+        if(list == null)
+            return new ArrayList<>();
+        return list;
+    }
     public ItemResponseDto toGetResponseDto(Item item) {
-        return ItemResponseDto.response().item(item).build();
+        return new ItemResponseDto(item);
     }
 
 
@@ -39,6 +44,10 @@ public class ItemMapper {
 
     public Page<ItemResponseDto> toGetPageResponse(Page<Item> items) {
         return items.map(ItemResponseDto::new);
+    }
+
+    public List<ItemResponseDto> toGetResponseListDto(List<Item> result) {
+        return result.stream().map(ItemResponseDto::new).collect(Collectors.toList());
     }
 }
 

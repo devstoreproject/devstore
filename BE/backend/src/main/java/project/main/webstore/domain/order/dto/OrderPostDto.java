@@ -18,6 +18,4 @@ public class OrderPostDto { // 주문정보 (유저, 배송지, 카트 정보)
     @Size(min = 0, max = 20)
     private String message;
     private Long shippingInfoId;
-    private Long userId;
-    private Long cartId;
 }

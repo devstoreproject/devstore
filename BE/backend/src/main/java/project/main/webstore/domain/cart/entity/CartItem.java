@@ -22,6 +22,7 @@ public class CartItem {
 
     // 연관관계 매핑 //
 
+    @Setter
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "OPTION_ID")
     private ItemOption option;

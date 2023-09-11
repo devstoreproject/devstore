@@ -9,7 +9,6 @@ import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.repository.OptionRepository;
 import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.exception.BusinessLogicException;
-import project.main.webstore.exception.CommonExceptionCode;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +19,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OptionService {
     private final OptionRepository optionRepository;
-    private final ItemService itemService;
+    private final ItemValidService itemValidService;
 
     public ItemOption writeOption(ItemOption itemOption, Long itemId) {
-        Item findItem = itemService.validItem(itemId);
+        Item findItem = itemValidService.validItem(itemId);
         itemOption.setItem(findItem);
         findItem.getOptionList().add(itemOption);
 

@@ -1,4 +1,4 @@
-package project.main.webstore.domain.order.enums;
+package project.main.webstore.domain.order.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,11 +26,14 @@ public class OrderedItem extends Auditable {
     private int itemCount;
     private String itemDetails;
     private String optionDetails;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "Item_Option_ID")
     private ItemOption option;
     @OneToOne
     private Item item;
-
+    @ManyToOne
+    @JoinColumn(name = "ORDER_ID")
+    private Orders order;
     public OrderedItem(CartItem cartItem) {
         this.price =cartItem.getOption().getAdditionalPrice() + cartItem.getOption().getItem().getItemPrice();
         this.discountRate = cartItem.getDiscountedPrice();

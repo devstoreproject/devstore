@@ -13,7 +13,7 @@ import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.image.utils.ImageUtils;
-import project.main.webstore.domain.item.service.ItemService;
+import project.main.webstore.domain.item.service.ItemValidService;
 import project.main.webstore.domain.item.stub.ItemStub;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.repository.ReviewRepository;
@@ -51,7 +51,7 @@ class ReviewServiceTest {
     @Mock
     private FileUploader fileUploader;
     @Mock
-    private ItemService itemService;
+    private ItemValidService itemValidService;
     private ReviewStub reviewStub = new ReviewStub();
     private ImageStub imageStub = new ImageStub();
     private UserStub userStub = new UserStub();
@@ -71,7 +71,7 @@ class ReviewServiceTest {
         findReview.setUser(userStub.createUser(userId));
         given(reviewRepository.save(any(Review.class))).willReturn(findReview);
         given(userValidService.validUser(anyLong())).willReturn(userStub.createUser(userId));
-        given(itemService.validItem(anyLong())).willReturn(itemStub.createItem(itemId));
+        given(itemValidService.validItem(anyLong())).willReturn(itemStub.createItem(itemId));
         //when
         Review result = reviewService.postReview(findReview);
         //then

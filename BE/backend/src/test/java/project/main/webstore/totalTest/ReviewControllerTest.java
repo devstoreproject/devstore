@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import project.main.webstore.annotation.WithMockCustomUser;
 import project.main.webstore.domain.item.dto.ItemPostDto;
-import project.main.webstore.domain.item.dto.ItemPostSpecDto;
 import project.main.webstore.domain.item.dto.OptionPostRequestDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
@@ -75,7 +74,7 @@ public class ReviewControllerTest {
         User user = userService.postUser(new User(post), null);
         userId = user.getId();
         //회원 상품 등록
-        ItemPostDto postDto = new ItemPostDto(Category.COMPUTER, "맥북", 10, "이것은맥북입니다.", 1000000, 100, 3000, List.of(new OptionPostRequestDto("디테일1", 100, 1000, "옵션 이름")), List.of(new ItemPostSpecDto("이름", "본문")), null);
+        ItemPostDto postDto = new ItemPostDto(Category.COMPUTER, "맥북", 10, "이것은맥북입니다.", 1000000, 100, 3000, List.of(new OptionPostRequestDto("디테일1", 100, 1000, "옵션 이름")), null);
         Item item = itemService.postItem(new Item(postDto));
         itemId = item.getItemId();
         //리뷰 등록

@@ -23,7 +23,18 @@ public class ImageUtils {
         if (checkRepresentative.size() != 1) {
             throw new BusinessLogicException(CommonExceptionCode.IMAGE_HAS_ALWAYS_REPRESENTATIVE);
         }
+
+    }
+    public void imageValidDTOOrder(List<ImageInfoDto> imageInfoList) {
+
         boolean check = imageInfoList.stream().map(ImageInfoDto::getOrder).distinct().count() != imageInfoList.size();
+        if (check) {
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_ORDER_ALWAYS_UNIQUE);
+        }
+    }
+    public void imageValidOrder(List<? extends Image> imageInfoList) {
+
+        boolean check = imageInfoList.stream().map(Image::getImageOrder).distinct().count() != imageInfoList.size();
         if (check) {
             throw new BusinessLogicException(CommonExceptionCode.IMAGE_ORDER_ALWAYS_UNIQUE);
         }
@@ -36,7 +47,7 @@ public class ImageUtils {
             List<ImageInfoDto> savedImageList = infoList.stream().filter(info -> info.getId() != null).collect(Collectors.toList());
 
             changeRepresentativeAndOrder(savedImageList, imageList);
-
+            imageValidOrder(imageList);
             //로직 수정 이후 검증 추가 필요
 
             if (deleteIdList != null) {
@@ -85,6 +96,12 @@ public class ImageUtils {
     public void deleteImage(Image image) {
         if(image != null)
             fileUploader.deleteS3Image(image.getImagePath());
+    }
+
+    public List<Image> uploadImageList(List<ImageInfoDto> imageInfoList){
+        imageValid(imageInfoList);
+        imageValidDTOOrder(imageInfoList);
+        return fileUploader.uploadImage(imageInfoList);
     }
 
     private void patchDeleteImage(List<? extends Image> imageList, List<Long> deleteIdList) {

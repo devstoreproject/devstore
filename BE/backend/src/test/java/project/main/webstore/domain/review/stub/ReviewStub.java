@@ -4,8 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import project.main.webstore.domain.image.dto.ImageSortDto;
-import project.main.webstore.domain.image.dto.ImageSortPatchInfo;
+import project.main.webstore.domain.image.dto.ImageSortPatchDto;
+import project.main.webstore.domain.image.dto.ImageSortPostDto;
 import project.main.webstore.domain.image.entity.ReviewImage;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.review.dto.ReviewBestRequestDto;
@@ -121,22 +121,22 @@ public class ReviewStub {
     }
 
     //이미지단 이동
-    public List<ImageSortDto> imageSortListDto(boolean target) {
+    public List<ImageSortPostDto> imageSortListDto(boolean target) {
         return Stream.of(
                 imageSortDto(0, false),
                 imageSortDto(1, target)
         ).collect(Collectors.toList());
     }
 
-    public ImageSortDto imageSortDto(int order, boolean representative) {
-        return new ImageSortDto(order, representative);
+    public ImageSortPostDto imageSortDto(int order, boolean representative) {
+        return new ImageSortPostDto(order, representative);
     }
 
-    public List<ImageSortPatchInfo> imageSortPatchInfoList(boolean target) {
+    public List<ImageSortPatchDto> imageSortPatchInfoList(boolean target) {
         return Stream.of(
-                new ImageSortPatchInfo(1L,1, false),
-                new ImageSortPatchInfo(null,2, false),
-                new ImageSortPatchInfo(null, 3,target)
+                new ImageSortPatchDto(1L,1, false),
+                new ImageSortPatchDto(null,2, false),
+                new ImageSortPatchDto(null, 3,target)
         ).collect(Collectors.toList());
     }
 

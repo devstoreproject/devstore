@@ -1,12 +1,10 @@
 package project.main.webstore.domain.order.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
+@Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderLocalDto {
@@ -16,12 +14,12 @@ public class OrderLocalDto {
     private Long cartId;
     private Long orderId;
 
-
+    public void addUserId(Long userId){
+        this.userId = userId;
+    }
     public OrderLocalDto(OrderPostDto post) {
         this.message = post.getMessage();
         this.shippingId = post.getShippingInfoId();
-        this.userId = post.getUserId();
-        this.cartId = post.getCartId();
     }
     public OrderLocalDto(OrderPatchDto patch) {
         this.message = patch.getMessage();
