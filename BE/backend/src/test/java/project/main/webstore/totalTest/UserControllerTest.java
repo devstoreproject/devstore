@@ -70,13 +70,28 @@ public class UserControllerTest {
         // given
         UserPostRequestDto post = new UserPostRequestDto("admin1@gmail.com", "asdffcx1111", "김송모자리", "010-8013-1313", "김송모");
         String content = gson.toJson(post);
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "TEST Mock".getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image","original.jpg","jpg", "TEST Mock".getBytes());
         MockMultipartFile postUser = new MockMultipartFile("post", "post", "application/json", content.getBytes(StandardCharsets.UTF_8));
 
         // when
 
         // then
         mvc.perform(MockMvcRequestBuilders.multipart("/api/users").file(multipartFile).file(postUser).accept(MediaType.APPLICATION_JSON))
+            .andDo(log())
+            .andExpect(jsonPath("$.data.userId").value(3L));
+    }
+    @Test
+    @DisplayName("사용자 Post")
+    void postUserNoImageTest() throws Exception {
+        // given
+        UserPostRequestDto post = new UserPostRequestDto("admin1@gmail.com", "asdffcx1111", "김송모자리", "010-8013-1313", "김송모");
+        String content = gson.toJson(post);
+        MockMultipartFile postUser = new MockMultipartFile("post", "post", "application/json", content.getBytes(StandardCharsets.UTF_8));
+
+        // when
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.multipart("/api/users").file(postUser).accept(MediaType.APPLICATION_JSON))
             .andDo(log())
             .andExpect(jsonPath("$.data.userId").value(3L));
     }
@@ -241,7 +256,7 @@ public class UserControllerTest {
             .andDo(log())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.nickName").value(true));
-        ;
+
     }
 
     //TODO: 이메일 인증시 필요한 key값..?
