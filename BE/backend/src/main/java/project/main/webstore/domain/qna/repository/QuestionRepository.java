@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import project.main.webstore.domain.qna.entity.Question;
+import project.main.webstore.domain.qna.enums.QnaStatus;
+
+import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question,Long> {
 
@@ -14,6 +17,8 @@ public interface QuestionRepository extends JpaRepository<Question,Long> {
 
     Page<Question> findAllQnaByUserId(Pageable pageable, Long userId);
 
-    @Query("select q from Question  q where q.qnaStatus = project.main.webstore.domain.qna.enums.QnaStatus.REGISTER")
-    Page<Question> findByStatus(Pageable pageable);
+//    = project.main.webstore.domain.qna.enums.QnaStatus.REGISTER
+    @Query("select q from Question  q where q.qnaStatus = :register or q.qnaStatus = :complete ")
+    Page<Question> findByStatus(Pageable pageable, @Param("register") QnaStatus register, @Param("complete") QnaStatus complete);
+
 }
