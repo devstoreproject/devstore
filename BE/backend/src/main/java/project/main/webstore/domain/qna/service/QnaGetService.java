@@ -6,7 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.qna.entity.Question;
+import project.main.webstore.domain.qna.enums.QnaStatus;
 import project.main.webstore.domain.qna.repository.QuestionRepository;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,7 +34,8 @@ public class QnaGetService {
     }
 
     //관리자를 위한 미 답변 질문 리스트 체크 메서드
-    public Page<Question> findQuestionByStatus(Pageable pageable) {
-        return questionRepository.findByStatus(pageable);
+    //TODO: status 추가
+    public Page<Question> findQuestionByStatus(Pageable pageable, QnaStatus register, QnaStatus complete) {
+        return questionRepository.findByStatus(pageable, register, complete);
     }
 }
