@@ -54,12 +54,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest
 @MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureMockMvc
 @Transactional
 public class UserControllerTest {
-    TestRestTemplate template = new TestRestTemplate();
     @Autowired
     JwtTokenizer jwtTokenizer;
     @Autowired
@@ -73,12 +72,9 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
     @MockBean
-    private UserMapper userMapper;
-    @MockBean
-    private ImageMapper imageMapper;
-    @LocalServerPort
-    private int port;
+    private UserValidService validUser;
     private UserStub userStub = new UserStub();
+    private ImageStub imageStub = new ImageStub();
 
     @Test
     @DisplayName("유저 회원가입 TEST")
@@ -86,6 +82,9 @@ public class UserControllerTest {
         // given
         UserPostRequestDto requestDto = new UserPostRequestDto("admin002@gmail.com", "admin12345", "이뽀삐", "010-1234-4568", "이삐뽀");
         String content = gson.toJson(requestDto);
+        User post = userStub.createUser(null);
+        User user = userStub.createUser(2L);
+        ImageInfoDto imageInfoDto = imageStub.createImageInfoDto(1, true);
 
         MockMultipartFile multipartFile = new MockMultipartFile("image", "image.ong", MediaType.IMAGE_PNG_VALUE, "TEST Mock".getBytes());
         MockMultipartFile postUser = new MockMultipartFile("post", "post", "application/json", content.getBytes(StandardCharsets.UTF_8));
@@ -97,7 +96,6 @@ public class UserControllerTest {
 
         // when
         ResultActions actions = mvc.perform(multipart("/api/users")
-            .file("image", "TEST Mock".getBytes())
             .file(multipartFile)
             .file(postUser)
             .accept(MediaType.APPLICATION_JSON)
