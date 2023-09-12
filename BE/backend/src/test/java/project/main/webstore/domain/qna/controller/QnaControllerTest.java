@@ -24,6 +24,7 @@ import project.main.webstore.domain.qna.dto.QuestionPatchDto;
 import project.main.webstore.domain.qna.dto.QuestionPostRequestDto;
 import project.main.webstore.domain.qna.entity.Answer;
 import project.main.webstore.domain.qna.entity.Question;
+import project.main.webstore.domain.qna.enums.QnaStatus;
 import project.main.webstore.domain.qna.mapper.QnaMapper;
 import project.main.webstore.domain.qna.service.QnaGetService;
 import project.main.webstore.domain.qna.service.QnaService;
@@ -70,12 +71,12 @@ public class QnaControllerTest {
         given(getService.findQnaByItemId(any(Pageable.class), anyLong())).willReturn(qnaPage);
         // when
         ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/items/{itemId}", itemId)
-                .params(pageParam).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+            .params(pageParam).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
         // then
         perform
-                .andDo(log())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content[0].questionId").value(1L));
+            .andDo(log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.content[0].questionId").value(1L));
 
     }
 
@@ -93,9 +94,9 @@ public class QnaControllerTest {
         ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/users", userId).params(pageParam).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
         // then
         perform
-                .andDo(log())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content[0].questionId").value(1L));
+            .andDo(log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.content[0].questionId").value(1L));
     }
 
     @Test
@@ -110,28 +111,37 @@ public class QnaControllerTest {
         ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/{questionId}", questionId).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
         // then
         perform
-                .andDo(log())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.questionId").value(qna.getId()))
-                .andExpect(jsonPath("$.data.userId").value(1L));
+            .andDo(log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.questionId").value(qna.getId()))
+            .andExpect(jsonPath("$.data.userId").value(1L));
     }
+
     @Test
     @DisplayName("상품Qna조회")
     @WithMockCustomUser
     void qna_get_admin_test() throws Exception {
         // given
         Long questionId = 1L;
+        //TODO: Qna 상태별 로직 추가
+        QnaStatus register = QnaStatus.REGISTER;
+        QnaStatus complete = QnaStatus.ANSWER_COMPLETE;
         Page<Question> qnaPage = qnaStub.getQnaPage(10L);
         MultiValueMap pageParam = utils.getPageParam();
-        given(getService.findQuestionByStatus(any(Pageable.class))).willReturn(qnaPage);
+
+        given(getService.findQuestionByStatus(any(Pageable.class), any(QnaStatus.class), any(QnaStatus.class))).willReturn(qnaPage);
         // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/admin").params(pageParam).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/admin")
+            .params(pageParam)
+            .param("register", QnaStatus.REGISTER.name())
+            .param("complete", QnaStatus.ANSWER_COMPLETE.name())
+            .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
         // then
         List<Question> content = qnaPage.getContent();
         perform
-                .andDo(log())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content[0].questionId").value(content.get(0).getId()));
+            .andDo(log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.content[0].questionId").value(content.get(0).getId()));
     }
 
 
@@ -151,9 +161,9 @@ public class QnaControllerTest {
         ResultActions perform = mvc.perform(post(DEFAULT_URL + "/items/{itemId}", itemId).headers(defaultHeader).content(content));
         // then
         perform
-                .andDo(log())
-                .andExpect(jsonPath("$.data.questionId").value(1L))
-                .andExpect(MockMvcResultMatchers.header().string("Location", "/api/qna/1"));
+            .andDo(log())
+            .andExpect(jsonPath("$.data.questionId").value(1L))
+            .andExpect(MockMvcResultMatchers.header().string("Location", "/api/qna/1"));
     }
 
     @Test
@@ -171,13 +181,14 @@ public class QnaControllerTest {
         given(service.patchQuestion(any(Question.class), anyLong())).willReturn(qna);
 
         // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.patch(DEFAULT_URL + "/items/{itemId}/{questionId}", itemId,questionId).headers(defaultHeader).content(content));
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.patch(DEFAULT_URL + "/items/{itemId}/{questionId}", itemId, questionId).headers(defaultHeader).content(content));
         // then
         perform
-                .andDo(log())
-                .andExpect(jsonPath("$.data.questionId").value(1L))
-                .andExpect(MockMvcResultMatchers.header().string("Location", "/api/qna/1"));
+            .andDo(log())
+            .andExpect(jsonPath("$.data.questionId").value(1L))
+            .andExpect(MockMvcResultMatchers.header().string("Location", "/api/qna/1"));
     }
+
     @Test
     @DisplayName("질문 삭제 테스트")
     @WithMockCustomUser(userId = 1L, userRole = UserRole.CLIENT, role = "CLIENT")
@@ -185,14 +196,14 @@ public class QnaControllerTest {
         // given
         Long questionId = 1L;
 
-        BDDMockito.willDoNothing().given(service).deleteQuestion(anyLong(),anyLong());
+        BDDMockito.willDoNothing().given(service).deleteQuestion(anyLong(), anyLong());
 
         // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.delete(DEFAULT_URL + "/{questionId}",questionId));
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.delete(DEFAULT_URL + "/{questionId}", questionId));
         // then
         perform
-                .andDo(log())
-                .andExpect(status().isNoContent());
+            .andDo(log())
+            .andExpect(status().isNoContent());
     }
 
     @Test
@@ -205,17 +216,17 @@ public class QnaControllerTest {
         Long questionId = 1L;
         HttpHeaders defaultHeader = utils.getDefaultHeader();
 
-        given(service.postAnswer(any(Answer.class),anyLong())).willReturn(qnaStub.getAnswer(1L));
+        given(service.postAnswer(any(Answer.class), anyLong())).willReturn(qnaStub.getAnswer(1L));
 
         // when
         ResultActions perform = mvc.perform(post(DEFAULT_URL + "/{questionId}/answer", questionId).headers(defaultHeader).content(content));
         // then
         perform
-                .andDo(log())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.questionId").value(1L))
-                .andExpect(jsonPath("$.code").value("C201"))
-                .andExpect(MockMvcResultMatchers.header().string("Location", "/api/qna/1"));
+            .andDo(log())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.data.questionId").value(1L))
+            .andExpect(jsonPath("$.code").value("C201"))
+            .andExpect(MockMvcResultMatchers.header().string("Location", "/api/qna/1"));
     }
 
     @Test
@@ -228,11 +239,11 @@ public class QnaControllerTest {
         BDDMockito.willDoNothing().given(service).deleteAnswer(anyLong());
 
         // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.delete(DEFAULT_URL + "/{questionId}/answer/{answerId}",questionId,answerId));
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.delete(DEFAULT_URL + "/{questionId}/answer/{answerId}", questionId, answerId));
         // then
         perform
-                .andDo(log())
-                .andExpect(status().isNoContent());
+            .andDo(log())
+            .andExpect(status().isNoContent());
     }
 
 }
