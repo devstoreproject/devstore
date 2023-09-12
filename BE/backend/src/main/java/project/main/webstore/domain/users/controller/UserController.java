@@ -73,7 +73,7 @@ public class UserController {
 
         UserIdResponseDto response = userMapper.toDto(result);
         var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
-        URI location = UriCreator.createUri("/users/{userId}", response.getUserId());
+        URI location = UriCreator.createUri("/users", response.getUserId());
 
         return ResponseEntity.ok().header("Location", location.toString()).body(responseDto);
     }
