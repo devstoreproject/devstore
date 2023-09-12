@@ -41,7 +41,7 @@ public class UserService {
         verifyExistsEmail(user.getEmail());
         setEncryptedPassword(user);
         saveProfileImageIfHas(user, imageInfo);
-        publisher.publishEvent(new UserRegistrationApplicationEvent(this,user, CheckCondition.JOIN));
+//        publisher.publishEvent(new UserRegistrationApplicationEvent(this, user, CheckCondition.JOIN));
         return userRepository.save(user);
 
     }
@@ -55,7 +55,7 @@ public class UserService {
                 case SLEEP:
                     if (isProvider(user, savedUser)) {
                         //변경사항 확인후 저장
-                        changeInfoToOAuthUser(user,savedUser);
+                        changeInfoToOAuthUser(user, savedUser);
                         return savedUser;
                     } else {
                         throw new BusinessLogicException(UserExceptionCode.USER_JWT_EXIST);
@@ -64,7 +64,7 @@ public class UserService {
                     changeInfoToOAuthUser(user, savedUser); //값이 변경된다.
                     return savedUser;
             }
-        }else if(findUser.isEmpty()){
+        } else if(findUser.isEmpty()) {
             setEncryptedPassword(user);
             return userRepository.save(user);
         }
@@ -99,15 +99,15 @@ public class UserService {
         return findUser;
     }
 
-    public boolean checkNickName(String nick){
+    public boolean checkNickName(String nick) {
         Optional<User> find = userRepository.findByNickName(nick);
-        if(find.isPresent()){
+        if (find.isPresent()) {
             throw new BusinessLogicException(UserExceptionCode.USER_EXIST);
         }
         return true;
     }
 
-    public User authMail(String key){
+    public User authMail(String key) {
         Object byKey = redisUtils.findByKey(key);
         String email = Optional.ofNullable((String) redisUtils.findByKey(key)).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_MAIL_TIME_OUT));
 
@@ -115,12 +115,13 @@ public class UserService {
         user.setUserStatus(UserStatus.ACTIVE);
         return user;
     }
+
     /*
      * 회원이 존재 하면 예외 발생
      * */
     private void verifyExistsEmail(String email) {
         Optional<User> byEmail = userRepository.findByEmail(email);
-        if(byEmail.isPresent()){
+        if (byEmail.isPresent()) {
             throw new BusinessLogicException(UserExceptionCode.USER_EXIST);
         }
     }
@@ -136,9 +137,10 @@ public class UserService {
     // 내부 동작 메서드 //
     private User validUser(Long userId) {
         User findUser = userRepository.findById(userId).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
-        log.info("### userId = {}",findUser.getId());
+        log.info("### userId = {}", findUser.getId());
         return findUser;
     }
+
     private User validUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
     }
@@ -163,7 +165,7 @@ public class UserService {
     }
 
     // tmp 임시
-    public User tmpLogin(LoginDto loginDto){
+    public User tmpLogin(LoginDto loginDto) {
         String encode = passwordEncoder.encode(loginDto.getPassword());
         Optional<User> byEmail = userRepository.findByEmail(loginDto.getUsername());
 
@@ -173,7 +175,7 @@ public class UserService {
     public String getTmpPassword(User user) {
         Optional<User> findUser = userRepository.findByEmailAndAndUserNameAndPhone(user.getEmail(), user.getUserName(), user.getPhone());
         User savedUser = findUser.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND));
-        if(!savedUser.getProviderId().equals(ProviderId.JWT)){
+        if (!savedUser.getProviderId().equals(ProviderId.JWT)) {
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_JWT);
         }
         String tmpPassword = RandomStringUtils.randomAlphanumeric(8);
@@ -185,10 +187,10 @@ public class UserService {
     public void transActive(String username, String password) {
         User user = validUserByEmail(username);
         String encode = passwordEncoder.encode(password);
-        if(!user.getPassword().equals(encode)){
+        if (!user.getPassword().equals(encode)) {
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_FOUND);
         }
-        publisher.publishEvent(new UserRegistrationApplicationEvent(this,user,CheckCondition.ACTIVE));
+        publisher.publishEvent(new UserRegistrationApplicationEvent(this, user, CheckCondition.ACTIVE));
 
 
     }
