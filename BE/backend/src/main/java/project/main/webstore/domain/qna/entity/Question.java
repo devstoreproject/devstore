@@ -32,7 +32,7 @@ public class Question extends Auditable {
     private String comment;
 
     @Enumerated(STRING)
-    private QnaStatus qnaStatus = QnaStatus.REGISTER;
+    private QnaStatus qnaStatus;
 
     @ManyToOne(fetch = LAZY)
     private User user;
