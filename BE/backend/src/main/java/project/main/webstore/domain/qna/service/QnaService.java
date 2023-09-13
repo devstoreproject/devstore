@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.item.entity.Item;
-import project.main.webstore.domain.item.service.ItemService;
+import project.main.webstore.domain.item.service.ItemValidService;
 import project.main.webstore.domain.qna.entity.Answer;
 import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.qna.enums.QnaStatus;
@@ -23,11 +23,11 @@ public class QnaService {
     private final QnaValidService validService;
     private final AnswerRepository answerRepository;
     private final UserValidService userValidService;
-    private final ItemService itemService;
+    private final ItemValidService itemValidService;
 
     public Question postQuestion(Question question, Long userId, Long itemId) {
         User findUser = userValidService.validUser(userId);
-        Item findItem = itemService.validItem(itemId);
+        Item findItem = itemValidService.validItem(itemId);
 
         question.setUser(findUser);
         question.setItem(findItem);
@@ -37,7 +37,7 @@ public class QnaService {
     }
 
     public Question patchQuestion(Question request, Long userId) {
-        Question find = validService.validUserSameWithQuestion(request.getId());
+        Question find = validService.validUserSameWithQuestion(userId, request.getId());
         userValidService.validUserIdSame(userId, find);
 
         Optional.ofNullable(request.getQnaStatus()).ifPresent(find::setQnaStatus);
@@ -47,8 +47,10 @@ public class QnaService {
     }
 
     public void deleteQuestion(Long questionId, Long userId) {
-        validService.validUserSameOrAdmin(userId);
-        questionRepository.deleteById(questionId);
+        Question find = validService.validUserSameOrAdmin(userId, questionId);
+        if (find != null)
+            questionRepository.deleteById(questionId);
+
     }
 
     public Answer postAnswer(Answer answer, Long userId) {

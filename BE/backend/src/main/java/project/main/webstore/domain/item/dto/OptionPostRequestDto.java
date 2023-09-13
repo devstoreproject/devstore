@@ -15,7 +15,7 @@ public class OptionPostRequestDto {
     private int itemCount;
     @Schema(description = "옵션 상품 추가 가격", example = "100")
     private int additionalPrice;
-
+    @Schema(description = "옵션 이름", example = "옵션 이름")
     private String optionName;
 
 }

@@ -8,15 +8,17 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
-public class OrderMonthlyPriceDto {
+public class OrderDailyPriceDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "Asia/Seoul")
     private LocalDate localDate;
     private Long totalDiscountedPrice;
     private Long totalOriginalPrice;
 
-    public OrderMonthlyPriceDto(OrderDBMonthlyPriceDto dto) {
-        this.localDate = LocalDate.of(dto.getYear(),dto.getMonth(),30);
+    public OrderDailyPriceDto(OrderDBDailyPriceDto dto) {
+        this.localDate = LocalDate.of(dto.getYear(),dto.getMonth(),dto.getDay());
         this.totalDiscountedPrice = dto.getTotalDiscountedPrice();
         this.totalOriginalPrice = dto.getTotalOriginalPrice();
     }
+
+
 }

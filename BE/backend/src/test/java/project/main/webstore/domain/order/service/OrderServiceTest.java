@@ -51,7 +51,7 @@ class OrderServiceTest {
         BDDMockito.given(userService.validUserAllInfo(ArgumentMatchers.anyLong())).willReturn(user);
         BDDMockito.given(orderRepository.save(ArgumentMatchers.any(Orders.class))).willReturn(order);
 
-        Orders result = orderService.createOrder(post, 1L);
+        Orders result = orderService.createOrder(post);
 
         //then
         Assertions.assertThat(result.getRecipient()).isEqualTo(info.getRecipient()); //비교검증

@@ -20,5 +20,13 @@ public enum OrdersStatus {
         this.index = index;
         this.ordersStatus = ordersStatus;
     }
+
+    public static OrdersStatus of(String status) {
+        for (OrdersStatus value : OrdersStatus.values()) {
+            if(value.name().equals(status))
+                return value;
+        }
+        throw new IllegalArgumentException("잘못된 상태값");
+    }
 }
 

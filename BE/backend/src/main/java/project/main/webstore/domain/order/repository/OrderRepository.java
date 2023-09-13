@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import project.main.webstore.domain.order.dto.OrderDBDailyPriceDto;
 import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
 import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
 import project.main.webstore.domain.order.entity.Orders;
+import project.main.webstore.domain.order.enums.OrdersStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,13 +41,22 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
             "JOIN o.orderedItemList oi " +
             "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt)")
     List<OrderDBMonthlyPriceDto> monthlyPrice();
+
+    @Query("SELECT new project.main.webstore.domain.order.dto.OrderDBDailyPriceDto(YEAR(o.createdAt), MONTH(o.createdAt),DAY(o.createdAt), " +
+            "SUM(oi.itemCount * oi.discountedPrice),SUM(oi.itemCount * oi.price)) " +
+            "FROM Orders o " +
+            "JOIN o.orderedItemList oi " +
+            "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt),DAY(o.createdAt) ")
+    List<OrderDBDailyPriceDto> dailyPrice();
+
     @Query("SELECT new project.main.webstore.domain.order.dto.OrderDBItemSaleDto(i.itemId, i.itemName, " +
             "SUM(oi.itemCount * oi.discountedPrice),SUM(oi.itemCount * oi.price)) " +
             "FROM Orders o " +
             "JOIN o.orderedItemList oi " +
             "JOIN oi.item i " +
-            "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt)")
+            "GROUP BY oi.item.itemId")
     List<OrderDBItemSaleDto> itemSales();
 
+    Page<Orders> findByOrdersStatus(Pageable pageable, OrdersStatus ordersStatus);
 }
 

@@ -58,8 +58,8 @@ public class FileUploader {
         List<MultipartFile> thumList = infoList.stream().map(info -> resizeImage(info.getMultipartFile(), info.getFileName(), info.getExt(), 300)).collect(Collectors.toList());
         List<String> hashList = thumList.stream().map(this::createHashByMD5).collect(Collectors.toList());
 
-        //검증
-        validImageAlreadyHas(hashList);
+        //검증 TODO: 같은 이미지 중복 저장 가능한지 상의 필요
+//        validImageAlreadyHas(hashList);
 
         //저장 로직 실행
         for (int i = 0; i < infoList.size(); i++) {
