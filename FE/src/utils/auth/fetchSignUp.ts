@@ -3,7 +3,7 @@ import api from 'api';
 interface UserData {
   email: string;
   password: string;
-  username: string;
+  userName: string;
   nickname: string;
   phone: string;
 }
