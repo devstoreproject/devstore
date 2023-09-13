@@ -13,6 +13,7 @@ export default function ReviewItemList({ reviewData }: ReviewItemListProps) {
           <ReviewItem
             key={data.reviewId}
             id={data.itemId}
+            category={data.category}
             image={data.image}
             comment={data.comment}
             userName={data.userName}
