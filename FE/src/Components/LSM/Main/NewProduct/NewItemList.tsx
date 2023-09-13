@@ -70,6 +70,7 @@ export default function NewItemList({ newItemsData }: NewItemListProps) {
               price={item.itemPrice}
               image={item?.imageList[idx]?.thumbnailPath}
               idx={idx}
+              currentPage={currentPage}
             />
           ))}
         </div>

@@ -70,6 +70,7 @@ export default function BestItemList({ bestItemsData }: BestItemListProps) {
               price={item.itemPrice}
               image={item?.imageList[idx]?.thumbnailPath}
               idx={idx}
+              currentPage={currentPage}
             />
           ))}
         </div>
