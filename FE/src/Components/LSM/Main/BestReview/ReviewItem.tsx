@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 interface ReviewItemProps {
   image: string;
+  category: any;
   comment: string;
   id: number;
   userName: string;
@@ -9,6 +10,7 @@ interface ReviewItemProps {
 
 export default function ReviewItem({
   image,
+  category,
   comment,
   id,
   userName,
@@ -17,7 +19,7 @@ export default function ReviewItem({
   const navigate = useNavigate();
 
   const movePageHandler = () => {
-    navigate(`/products/${id}`);
+    navigate(`/products/${category as string}/${id}`);
     window.scrollTo(0, 0);
   };
 

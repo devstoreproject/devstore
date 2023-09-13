@@ -30,7 +30,7 @@ export default function NewItem({
   const navigate = useNavigate();
 
   const onClickHandler = () => {
-    navigate(`/products/${id}`);
+    navigate(`/products/${category as string}/${id}`);
     window.scrollTo(0, 0);
   };
 
