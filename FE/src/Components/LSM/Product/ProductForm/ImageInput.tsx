@@ -7,6 +7,8 @@ interface ImageInputProp {
   setImagePreview: React.Dispatch<React.SetStateAction<any>>;
   images: any;
   setImages: React.Dispatch<React.SetStateAction<any>>;
+  editImages: any;
+  setEditImages: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export default function ImageInput({
@@ -14,6 +16,8 @@ export default function ImageInput({
   setImagePreview,
   images,
   setImages,
+  editImages,
+  setEditImages,
 }: ImageInputProp) {
   const [isRepresentative, setIsRepresentative] = useState<boolean[]>([
     false,
@@ -32,12 +36,12 @@ export default function ImageInput({
       if (imageIdx === idx) {
         return {
           ...image,
-          representative: true, // 현재 이미지를 true로 설정
+          representative: true,
         };
       } else {
         return {
           ...image,
-          representative: false, // 다른 이미지들을 false로 설정
+          representative: false,
         };
       }
     });
