@@ -2,6 +2,8 @@ import api from 'api';
 import axios from 'axios';
 import type { Product } from 'model/product';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import type { StoreType } from 'model/redux';
 
 interface OwnProps {
   checkedId: number[];
@@ -13,6 +15,7 @@ export default function OrderListBtnContainer({
   setProducts,
 }: OwnProps) {
   const navigate = useNavigate();
+  const getItemId = useSelector((e: StoreType) => e.currentItemId);
 
   const deleteBtnHandler = () => {
     const userConfirmed = window.confirm('삭제하시겠습니까?');
@@ -49,7 +52,7 @@ export default function OrderListBtnContainer({
       <button
         className="w-40 h-10 mr-6 text-white bg-gray-700 rounded-3xl"
         onClick={() => {
-          navigate('/admin/productlist/edit');
+          navigate(`/admin/productlist/edit/${getItemId}`);
         }}
       >
         선택 상품 수정하기
