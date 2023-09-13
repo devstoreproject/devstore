@@ -120,14 +120,15 @@ public class CartService {
 
     public void deleteCartItem(List<CartItem> cartItemList, List<Long> deleteIdList) {
         Map<Long, Integer> checkIsDelete = new ConcurrentHashMap<>();
-
+        //삭제할 것들이 먼저 나온다.
         for (Long deleteId : deleteIdList) {
             checkIsDelete.put(deleteId, -1);
         }
-
-        for (CartItem cartItem : cartItemList) {
-            Integer itemCount = checkIsDelete.put(cartItem.getOption().getOptionId(),
-                    cartItem.getItemCount());
+        //기존에 있는 상품들이 들어간다.
+        for (int i = 0 ; i < cartItemList.size() ; i++) {
+            CartItem cartItem = cartItemList.get(i);
+            Integer itemCount = checkIsDelete.put(cartItem.getOption().getOptionId(), cartItem.getItemCount());
+            //만약 데이터가 null이 아니라면 cartItem을 지워버린다.
             if (itemCount != null) {
                 cartItemList.remove(cartItem);
             }

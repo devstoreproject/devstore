@@ -79,23 +79,32 @@ public class ItemService {
     }
 
     private void changeOptionValue(List<ItemOption> patchOptionList, List<ItemOption> findOptionList) {
+        Map<Long,ItemOption> findPatchMap = new ConcurrentHashMap<>();
+
+        for (ItemOption itemOption : patchOptionList) {
+            findPatchMap.put(itemOption.getOptionId(),itemOption);
+        }
         for (ItemOption findOption : findOptionList) {
-            for (ItemOption patchOption : patchOptionList) {
-                if (patchOption.getOptionId().equals(findOption.getOptionId())) {
-                    changOptionValue(findOption, patchOption);
-                }
+            ItemOption patchOption = findPatchMap.put(findOption.getOptionId(), findOption);
+            if(patchOption != null){
+                changOptionValue(findOption, patchOption);
             }
         }
     }
 
     private List<ItemOption> separateList(List<ItemOption> patchOptionList) {
         ArrayList<ItemOption> addOptionList = new ArrayList<>();
-        for (ItemOption itemOption : patchOptionList) {
+        int index = 0;
+        while(index < patchOptionList.size()){
+            ItemOption itemOption = patchOptionList.get(index);
             if (itemOption.getOptionId() == null) {
                 addOptionList.add(itemOption);
                 patchOptionList.remove(itemOption);
+            }else{
+                index++;
             }
         }
+
         return addOptionList;
     }
 
@@ -108,7 +117,8 @@ public class ItemService {
             getDeleteItemByMap.put(itemOption.getOptionId(),itemOption);
         }
 
-        for (Long optionId : deleteOptionIdList) {
+        for (int i = 0 ; i < deleteOptionIdList.size() ; i++) {
+            Long optionId = deleteOptionIdList.get(i);
             ItemOption pre = getDeleteItemByMap.put(optionId, new ItemOption());
             if(pre != null){
                 savedOptionList.remove(pre);
