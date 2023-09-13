@@ -6,6 +6,7 @@ interface ThemeItemProps {
   category: string;
   description: string;
   image: string;
+  id: number;
 }
 
 export default function ThemeItem({
@@ -13,6 +14,7 @@ export default function ThemeItem({
   category,
   description,
   image,
+  id,
 }: ThemeItemProps) {
   const backgroundImage = {
     backgroundImage: `url('${image}')`,
@@ -24,7 +26,7 @@ export default function ThemeItem({
   const navigate = useNavigate();
 
   const onClickHandler = () => {
-    navigate('/search');
+    navigate(`/search/${category}/${id}`);
     window.scrollTo(0, 0);
   };
   return (

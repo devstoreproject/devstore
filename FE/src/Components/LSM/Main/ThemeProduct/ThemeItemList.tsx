@@ -12,6 +12,7 @@ export default function ThemeItemList({ themeData }: ThemeItemListProps) {
         {themeData.map((data: any, idx: any) => (
           <ThemeItem
             key={data.itemId}
+            id={data.itemId}
             category={data.category}
             title={data.name}
             description={data.description}
