@@ -32,7 +32,11 @@ export default function ReviewItem({
       >
         <img
           className="object-cover w-full h-48 rounded-tl-2xl rounded-tr-2xl"
-          src={image !== null ? image : 'https://source.unsplash.com/random'}
+          src={
+            image !== null
+              ? image
+              : 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3440&q=80'
+          }
           alt="리뷰 이미지"
         />
         <div className="flex items-center justify-start w-full h-32 px-4">

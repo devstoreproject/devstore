@@ -72,7 +72,7 @@ function App() {
           <Route path="productlist" element={<ProductList />} />
           <Route path="productinquiry" element={<ProductInquiry />} />
           <Route path="productlist/post" element={<ProductPost />} />
-          <Route path="productlist/edit" element={<ProductEdit />} />
+          <Route path="productlist/edit/:id" element={<ProductEdit />} />
           <Route path="reviewmanagement" element={<ReviewManagement />} />
           <Route path="orderedlist" element={<OrderedList />} />
           <Route path="sales" element={<Sales />} />
