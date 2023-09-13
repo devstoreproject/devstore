@@ -113,7 +113,7 @@ function DeliverForm({
               </ul>
             </div>
             - */}
-            <p className="h-14 border border-gray-300 rounded-full px-10 ml-2 flex items-center w-64">
+            <p className="h-14 border border-gray-300 rounded-full px-10 flex items-center w-64">
               {isShippingFormWrite.mobileNumber}
             </p>
           </div>
