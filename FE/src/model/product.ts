@@ -21,8 +21,7 @@ export interface Option {
   optionId?: number;
   itemCount: number;
   additionalPrice: number;
-  optionName: string | null;
-  optionDetail: string | null;
+  optionDetail: string;
 }
 
 export interface Bookmark {
