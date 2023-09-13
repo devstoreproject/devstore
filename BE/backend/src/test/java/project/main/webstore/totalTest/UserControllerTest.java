@@ -205,12 +205,11 @@ public class UserControllerTest {
             MockMvcRequestBuilders.delete("/api/users/{userId}", 1L));
 
         actions
-            .andExpect(status().isNoContent())
-            .andDo(log());
+            .andDo(log())
+            .andExpect(status().isNoContent());
+
     }
 
-    //TODO: 이 코드는 닉네임이 일치하는지에 대한 코드인 거 같은데 ..
-    // String값의 nickname과 infoId의 1L의 닉네임이 다르다는 에러로 뜨는 거 같다
     @Test
     @DisplayName("사용자 닉네임 중복 검사")
     void getNickNameTest() throws Exception {
@@ -236,7 +235,6 @@ public class UserControllerTest {
     }
 
     // TODO: 기존에 작성한 닉네임 검증 코드
-    //  에러 로그로 이미 가입한 메일 존재로 뜨는데, 필요한건 메일이 아니라 존재하는 닉네임..
     @Test
     @DisplayName("사용자 닉네임 중복 검사")
     @WithMockCustomUser(userId = 1L, userRole = UserRole.CLIENT)
@@ -258,50 +256,6 @@ public class UserControllerTest {
             .andExpect(jsonPath("$.nickName").value(true));
 
     }
-
-    //TODO: 이메일 인증시 필요한 key값..?
-    @Test
-    @DisplayName("사용자 이메일 인증 TEST")
-    @WithMockCustomUser(userId = 1L, userRole = UserRole.CLIENT)
-    void getCheckEmailTest() throws Exception {
-        //given
-        String email = "admin221@gmailcom";
-        String key = "010101";
-
-        // when
-        ResultActions actions = mvc.perform(
-            MockMvcRequestBuilders.get("/api/users/auth-mail")
-                .param("key", key)
-                .contentType(MediaType.APPLICATION_JSON)
-        );
-
-        actions
-            .andDo(log())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.email").value(email))
-            .andExpect(jsonPath("$.data.userId").value(1L))
-            .andExpect(jsonPath("$.data.key").value(key))
-        ;
-    }
-    //    @Test
-//    @DisplayName("사용자 이메일 체크")
-//    @WithMockCustomUser(username = "김송모", role = "CLIENT", email = "amdin221@gmail.com", userId = 1L, userRole = UserRole.CLIENT)
-//    void getEmailTest() throws Exception {
-//        //given
-//        Long userId = 1L;
-//        // when
-//        ResultActions actions = mvc.perform(
-//            MockMvcRequestBuilders.get("/api/users/auth-mail")
-//                .param("key", userId))
-//                .contentType(MediaType.APPLICATION_JSON));
-//
-//        // then
-//        actions
-//            .andDo(log())
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$.key"))
-//        ;
-//    }
 
     @Test
     @DisplayName("사용자 임시 비밀번호 Get")

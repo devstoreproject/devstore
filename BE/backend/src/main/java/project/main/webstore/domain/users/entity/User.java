@@ -165,5 +165,4 @@ public class User extends Auditable implements Principal {
         this.userName = dto.getName();
         this.phone = dto.getPhone();
     }
-
 }

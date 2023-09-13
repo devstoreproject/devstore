@@ -21,7 +21,7 @@ public class UserMapper {
     public UserIdResponseDto toDto(User user) {
         return new UserIdResponseDto(user.getId());
     }
-    public UserGetResponseDto toGetDtoResponse(User user){
+    public UserGetResponseDto toGetDtoResponse(User user) {
         if(user == null)
             return null;
         return new UserGetResponseDto(user);
