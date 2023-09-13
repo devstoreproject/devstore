@@ -36,13 +36,12 @@ public class UserController {
     private final ImageMapper imageMapper;
 
     @PostMapping(
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ApiResponse(responseCode = "201", description = "회원 가입")
-    public ResponseEntity<ResponseDto<UserIdResponseDto>> postUser(
-            @RequestPart UserPostRequestDto post,
-            @RequestPart(required = false) MultipartFile image) {
+    public ResponseEntity<ResponseDto<UserIdResponseDto>> postUser(@RequestPart UserPostRequestDto post,
+                                                                   @RequestPart(required = false) MultipartFile image) {
         User user = userMapper.toEntity(post);
         ImageInfoDto infoDto = null;
         if (image != null) {
@@ -51,21 +50,22 @@ public class UserController {
         User result = service.postUser(user, infoDto);
         UserIdResponseDto response = userMapper.toDto(result);
         var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
+
         URI location = UriCreator.createUri("/users", response.getUserId());
 
         return ResponseEntity.created(location).body(responseDto);
     }
 
     @PatchMapping(path = "/{userId}",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(responseCode = "200", description = "사용자 정보 수정")
     public ResponseEntity<ResponseDto<UserIdResponseDto>> patchUser(@PathVariable Long userId,
                                                                     @RequestPart(required = false) UserPatchRequestDto patch,
                                                                     @RequestPart(required = false) MultipartFile image,
                                                                     @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validUserSame(principal, userId);
-        User request = userMapper.toEntity(patch,userId);
+        User request = userMapper.toEntity(patch, userId);
         ImageInfoDto infoDto = null;
         if (image != null) {
             infoDto = imageMapper.toLocalDto(image, UPLOAD_DIR);
@@ -83,7 +83,7 @@ public class UserController {
     @GetMapping("/{userId}")
     @ApiResponse(responseCode = "200", description = "사용자 조회")
     public ResponseEntity<ResponseDto<UserGetResponseDto>> getUser(@PathVariable Long userId,
-                                  @AuthenticationPrincipal Object principal) {
+                                                                   @AuthenticationPrincipal Object principal) {
         CheckLoginUser.validUserSame(principal, userId);
         User result = service.getUser(userId);
         UserGetResponseDto response = userMapper.toGetDtoResponse(result);
@@ -95,7 +95,7 @@ public class UserController {
     @GetMapping
     @ApiResponse(responseCode = "200", description = "사용자 정보 리스트 조회\n 관리자만 가능한 코드")
     public ResponseEntity<ResponseDto<Page<UserGetResponseDto>>> getUserPage(@AuthenticationPrincipal Object principal,
-                                      Pageable pageable) {
+                                                                             Pageable pageable) {
         CheckLoginUser.validAdmin(principal);
         Page<User> result = service.getUserPage(pageable);
         Page<UserGetResponseDto> response = userMapper.toGetDtoResponse(result);
@@ -115,15 +115,15 @@ public class UserController {
     }
 
     @GetMapping("/valid-nick")
-    @ApiResponse(responseCode = "200",description = "닉네임 중복 검사")
-    public ResponseEntity<ResponseDto<Boolean>> validNickName(@Parameter(description = "닉네임",example = "김성자의생활")@RequestParam("nickName") String nickName){
+    @ApiResponse(responseCode = "200", description = "닉네임 중복 검사")
+    public ResponseEntity<ResponseDto<Boolean>> validNickName(@Parameter(description = "닉네임", example = "김성자의생활") @RequestParam("nickName") String nickName) {
         boolean result = service.checkNickName(nickName);
         ResponseDto<Boolean> responseDto = ResponseDto.<Boolean>builder().data(result).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/auth-mail")
-    public ResponseEntity<ResponseDto<UserIdResponseDto>> checkMail(@RequestParam("key") String key){
+    public ResponseEntity<ResponseDto<UserIdResponseDto>> checkMail(@RequestParam("key") String key) {
         User result = service.authMail(key);
         UserIdResponseDto response = userMapper.toDto(result);
         var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
@@ -132,10 +132,10 @@ public class UserController {
     }
 
     @PostMapping("/password")
-    @ApiResponse(responseCode = "200",description = "새로 발급된는 임시 비밀번호가 들어있다.")
-    public ResponseEntity<ResponseDto<UserGetPasswordResponseDto>> changePassword(@RequestBody UserGetPasswordRequestDto get){
+    @ApiResponse(responseCode = "200", description = "새로 발급된는 임시 비밀번호가 들어있다.")
+    public ResponseEntity<ResponseDto<UserGetPasswordResponseDto>> changePassword(@RequestBody UserGetPasswordRequestDto get) {
         User request = userMapper.toEntity(get);
-        User result = service.getTmpPassword(request);
+        String result = service.getTmpPassword(request);
         UserGetPasswordResponseDto response = userMapper.toGetPasswordResponse(result);
         var responseDto = ResponseDto.<UserGetPasswordResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);

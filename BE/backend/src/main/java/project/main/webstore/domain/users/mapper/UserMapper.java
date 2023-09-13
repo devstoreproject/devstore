@@ -21,7 +21,7 @@ public class UserMapper {
     public UserIdResponseDto toDto(User user) {
         return new UserIdResponseDto(user.getId());
     }
-    public UserGetResponseDto toGetDtoResponse(User user){
+    public UserGetResponseDto toGetDtoResponse(User user) {
         if(user == null)
             return null;
         return new UserGetResponseDto(user);
@@ -35,7 +35,7 @@ public class UserMapper {
         return new User(dto);
     }
 
-    public UserGetPasswordResponseDto toGetPasswordResponse(User user) {
-        return new UserGetPasswordResponseDto(user.getPassword());
+    public UserGetPasswordResponseDto toGetPasswordResponse(String password) {
+        return new UserGetPasswordResponseDto(password);
     }
 }

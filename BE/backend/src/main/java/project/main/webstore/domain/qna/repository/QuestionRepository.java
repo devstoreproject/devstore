@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.qna.enums.QnaStatus;
 
+import java.util.List;
+
 public interface QuestionRepository extends JpaRepository<Question,Long> {
 
     @Query("select q from Question q where q.item.itemId = :itemId")

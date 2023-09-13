@@ -9,6 +9,8 @@ import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.qna.enums.QnaStatus;
 import project.main.webstore.domain.qna.repository.QuestionRepository;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

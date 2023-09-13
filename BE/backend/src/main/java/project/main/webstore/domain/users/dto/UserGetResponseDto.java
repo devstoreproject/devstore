@@ -1,10 +1,12 @@
 package project.main.webstore.domain.users.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import project.main.webstore.domain.users.entity.User;
 
 @Getter
+@Builder
 @AllArgsConstructor
 public class UserGetResponseDto {
     private Long userId;
