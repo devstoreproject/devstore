@@ -35,7 +35,7 @@ export default function NavTop() {
         </ul>
       </article>
       <ul className="flex">
-        {userId === '1' ? (
+        {userId === '1' || userId === '2' ? (
           <li>
             <button
               onClick={() => {
