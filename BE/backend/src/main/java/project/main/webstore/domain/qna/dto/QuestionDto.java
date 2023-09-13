@@ -17,6 +17,8 @@ public class QuestionDto {
     private QnaStatus qnaStatus;
     @Schema(description = "사용자 식별자")
     private Long userId;
+    @Schema(description = "상품 식별자")
+    private Long itemId;
     @Schema(description = "답변 정보",implementation = AnswerDto.class)
     private AnswerDto answer;
 
@@ -25,6 +27,7 @@ public class QuestionDto {
         this.comment = question.getComment();
         this.qnaStatus = question.getQnaStatus();
         this.userId = question.getUser().getId();
+        this.itemId = question.getItem().getItemId();
         this.answer = question.getAnswer() != null ? new AnswerDto(question.getAnswer()) : null;
     }
 }

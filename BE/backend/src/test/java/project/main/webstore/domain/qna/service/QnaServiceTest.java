@@ -9,11 +9,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import project.main.webstore.domain.item.entity.Item;
-import project.main.webstore.domain.item.service.ItemService;
+import project.main.webstore.domain.item.service.ItemValidService;
 import project.main.webstore.domain.qna.entity.Answer;
 import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.qna.enums.QnaStatus;
-import project.main.webstore.domain.qna.repository.AnswerRepository;
 import project.main.webstore.domain.qna.repository.QuestionRepository;
 import project.main.webstore.domain.qna.stub.QnaStub;
 import project.main.webstore.domain.users.entity.User;
@@ -35,12 +34,11 @@ class QnaServiceTest {
     QuestionRepository questionRepository;
     @Mock
     QnaValidService validService;
-    @Mock
-    AnswerRepository answerRepository;
+
     @Mock
     UserValidService userValidService;
     @Mock
-    ItemService itemService;
+    ItemValidService itemValidService;
     QnaStub qnaStub = new QnaStub();
 
     @Test
@@ -55,7 +53,7 @@ class QnaServiceTest {
 
 
         given(userValidService.validUser(anyLong())).willReturn(new User(userId));
-        given(itemService.validItem(anyLong())).willReturn(new Item(itemId));
+        given(itemValidService.validItem(anyLong())).willReturn(new Item(itemId));
         given(questionRepository.save(any(Question.class))).willReturn(expect);
 
         // when
@@ -97,7 +95,7 @@ class QnaServiceTest {
         Question questionNotId = qnaStub.getQuestion();
 
         given(userValidService.validUser(anyLong())).willReturn(new User(userId));
-        given(itemService.validItem(anyLong())).willThrow(BusinessLogicException.class);
+        given(itemValidService.validItem(anyLong())).willThrow(BusinessLogicException.class);
 
         // when
         Throwable throwable = catchThrowable(() -> service.postQuestion(questionNotId, userId, itemId));
@@ -115,7 +113,7 @@ class QnaServiceTest {
         Question patch = qnaStub.getQuestion(2L);
         patch.addId(question.getId());
         Long userId = 1L;
-        given(validService.validUserSameWithQuestion(anyLong())).willReturn(question);
+        given(validService.validUserSameWithQuestion(anyLong(),anyLong())).willReturn(question);
         BDDMockito.willDoNothing().given(userValidService).validUserIdSame(anyLong(),any(Question.class));
         // when
         Question result = service.patchQuestion(patch, userId);
@@ -133,7 +131,7 @@ class QnaServiceTest {
         // given
         Long questionId = 1L;
         Long userId = 1L;
-        given(validService.validUserSameOrAdmin(anyLong())).willReturn(qnaStub.getQuestion(1L));
+        given(validService.validUserSameOrAdmin(anyLong(),anyLong())).willReturn(qnaStub.getQuestion(1L));
         willDoNothing().given(questionRepository).deleteById(anyLong());
         // when
         service.deleteQuestion(questionId,userId);

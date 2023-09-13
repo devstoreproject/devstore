@@ -34,8 +34,12 @@ public class QnaGetService {
     }
 
     //관리자를 위한 미 답변 질문 리스트 체크 메서드
-    //TODO: status 추가
-    public Page<Question> findQuestionByStatus(Pageable pageable, QnaStatus register, QnaStatus complete) {
-        return questionRepository.findByStatus(pageable, register, complete);
+    public Page<Question> findQuestionByStatus(Pageable pageable,String status) {
+        QnaStatus qnaStatus = QnaStatus.of(status);
+        if (qnaStatus == null) {
+            return questionRepository.findAll(pageable);
+        } else {
+            return questionRepository.findByStatus(pageable,qnaStatus);
+        }
     }
 }

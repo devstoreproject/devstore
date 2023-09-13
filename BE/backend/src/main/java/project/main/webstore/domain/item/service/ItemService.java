@@ -1,11 +1,15 @@
 package project.main.webstore.domain.item.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
@@ -14,20 +18,13 @@ import project.main.webstore.domain.image.entity.ItemImage;
 import project.main.webstore.domain.image.utils.ImageUtils;
 import project.main.webstore.domain.item.dto.PickedItemDto;
 import project.main.webstore.domain.item.entity.Item;
-import project.main.webstore.domain.item.entity.ItemSpec;
+import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.entity.PickedItem;
 import project.main.webstore.domain.item.enums.Category;
+import project.main.webstore.domain.item.enums.ItemStatus;
 import project.main.webstore.domain.item.repository.ItemRepository;
-import project.main.webstore.domain.item.repository.SpecRepository;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.service.UserValidService;
-import project.main.webstore.exception.BusinessLogicException;
-import project.main.webstore.exception.CommonExceptionCode;
-import project.main.webstore.utils.FileUploader;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,107 +32,200 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
-    private final SpecRepository specRepository;
+    private final ItemValidService itemValidService;
     private final UserValidService userValidService;
-    private final FileUploader fileUploader;
     private final ImageUtils imageUtils;
 
     // 기존 등록된 item 검증 후 등록
     public Item postItem(Item item) {
-        validItemExist(item);
 
         return itemRepository.save(item);
     }
 
     public Item postItem(Item item, List<ImageInfoDto> imageInfoList) {
-        validItemExist(item);
-        imageUtils.imageValid(imageInfoList);
 
-        List<Image> images = fileUploader.uploadImage(imageInfoList);
+        List<Image> images = imageUtils.uploadImageList(imageInfoList);
         List<ItemImage> imageList = images.stream().map(image -> new ItemImage(image, item)).collect(Collectors.toList());
         item.setItemImageList(imageList);
 
         return itemRepository.save(item);
     }
 
-    public Item patchItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item) {
-        Item findItem = validItem(item.getItemId());
+    public Item patchItem(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item, List<Long> deleteOptionIdList) {
+        Item findItem = itemValidService.validItem(item.getItemId());
 
+        changItemValue(item, findItem);
+        //삭제 먼저
+        deleteOption(findItem, deleteOptionIdList);
+        //옵션 변경
+        addOptionList(findItem, item.getOptionList());
+
+        if (imageInfoDtoList != null) {
+            changImage(imageInfoDtoList, deleteImageId, item, findItem);
+        }
+        return findItem;
+    }
+
+    private void addOptionList(Item findItem, List<ItemOption> patchOptionList) {
+        List<ItemOption> findOptionList = findItem.getOptionList();
+        List<ItemOption> addOptionList = separateList(patchOptionList);
+
+        changeOptionValue(patchOptionList, findOptionList);
+
+        for (ItemOption addOption : addOptionList) {
+            findOptionList.add(addOption);
+            addOption.setItem(findItem);
+        }
+    }
+
+    private void changeOptionValue(List<ItemOption> patchOptionList, List<ItemOption> findOptionList) {
+        Map<Long,ItemOption> findPatchMap = new ConcurrentHashMap<>();
+
+        for (ItemOption itemOption : patchOptionList) {
+            findPatchMap.put(itemOption.getOptionId(),itemOption);
+        }
+        for (ItemOption findOption : findOptionList) {
+            ItemOption patchOption = findPatchMap.put(findOption.getOptionId(), findOption);
+            if(patchOption != null){
+                changOptionValue(findOption, patchOption);
+            }
+        }
+    }
+
+    private List<ItemOption> separateList(List<ItemOption> patchOptionList) {
+        ArrayList<ItemOption> addOptionList = new ArrayList<>();
+        int index = 0;
+        while(index < patchOptionList.size()){
+            ItemOption itemOption = patchOptionList.get(index);
+            if (itemOption.getOptionId() == null) {
+                addOptionList.add(itemOption);
+                patchOptionList.remove(itemOption);
+            }else{
+                index++;
+            }
+        }
+
+        return addOptionList;
+    }
+
+
+    private void deleteOption(Item findItem, List<Long> deleteOptionIdList) {
+        Map<Long,ItemOption> getDeleteItemByMap = new ConcurrentHashMap<>();
+        List<ItemOption> savedOptionList = findItem.getOptionList();
+
+        for (ItemOption itemOption : savedOptionList) {
+            getDeleteItemByMap.put(itemOption.getOptionId(),itemOption);
+        }
+
+        for (int i = 0 ; i < deleteOptionIdList.size() ; i++) {
+            Long optionId = deleteOptionIdList.get(i);
+            ItemOption pre = getDeleteItemByMap.put(optionId, new ItemOption());
+            if(pre != null){
+                savedOptionList.remove(pre);
+            }
+        }
+
+    }
+
+    private void changImage(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item, Item findItem) {
+        imageUtils.imageValid(imageInfoDtoList);
+        List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
+        if (!imageList.isEmpty()) {
+            imageList.stream().map(image -> new ItemImage(image, item)).forEach(findItem::addItemImage);
+        }
+    }
+
+    private void changItemValue(Item item, Item findItem) {
         Optional.ofNullable(item.getCategory()).ifPresent(findItem::setCategory);
         Optional.ofNullable(item.getItemName()).ifPresent(findItem::setItemName);
         Optional.ofNullable(item.getDiscountRate()).ifPresent(findItem::setDiscountRate);
         Optional.ofNullable(item.getDescription()).ifPresent(findItem::setDescription);
-        Optional.ofNullable(item.getDefaultItem()).ifPresent(findItem::setDefaultItem);
         Optional.ofNullable(item.getItemPrice()).ifPresent(findItem::setItemPrice);
         Optional.ofNullable(item.getDeliveryPrice()).ifPresent(findItem::setDeliveryPrice);
 
-        if(imageInfoDtoList != null){
-            imageUtils.imageValid(imageInfoDtoList);
-            List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
-            if (imageList.isEmpty() == false) {
-                imageList.stream().map(image -> new ItemImage(image, item)).forEach(findItem::addItemImage);
-            }
+        Optional.ofNullable(item.getDefaultItem().getItemCount()).ifPresent(count ->findItem.getDefaultItem().setItemCount(count));
+        if (findItem.getDefaultItem().getItemCount() > 0) {
+            item.setItemStatus(ItemStatus.ON_STACK);
+        } else {
+            item.setItemStatus(ItemStatus.SOLD_OUT);
         }
-        return findItem;
     }
+
+    private void changOptionValue(ItemOption find, ItemOption patch) {
+        Optional.ofNullable(patch.getOptionDetail()).ifPresent(find::setOptionDetail);
+        Optional.ofNullable(patch.getOptionName()).ifPresent(find::setOptionName);
+        Optional.ofNullable(patch.getAdditionalPrice()).ifPresent(find::setAdditionalPrice);
+        Optional.ofNullable(patch.getItemCount()).ifPresent(find::setItemCount);
+    }
+
 
     public void deleteItem(Long itemId) {
-        Item findItem = validItem(itemId);
+        Item findItem = itemValidService.validItem(itemId);
 
         List<ItemImage> itemImageList = findItem.getItemImageList();
-        List<String> deletePatchList = itemImageList.stream().map(ItemImage::getImagePath).collect(Collectors.toList());
-
-        imageUtils.deleteImage(deletePatchList);
-
+        if (!itemImageList.isEmpty()) {
+            List<String> deletePatchList = itemImageList.stream().map(ItemImage::getImagePath).collect(Collectors.toList());
+            imageUtils.deleteImage(deletePatchList);
+        }
         itemRepository.delete(findItem);
     }
-    public Item validItem(Long itemId) {
-        Item item = itemRepository
-                .findByItemId(itemId)
-                .orElseThrow(() -> new BusinessLogicException(CommonExceptionCode.ITEM_NOT_FOUND));
 
+    public Item getItem(Long itemId, Long userId) {
+        Item item = itemValidService.validItem(itemId);
+        if (!userId.equals(-1L)) {
+            User user = userValidService.validUser(userId);
+            List<PickedItem> pickedItemList = user.getPickedItemList();
+            for (PickedItem pickedItem : pickedItemList) {
+                if (pickedItem.getItem().getItemId().equals(item.getItemId())) {
+                    item.setLike(true);
+                }
+            }
+        }
         item.addViewCount();
-        return item;
 
+        return item;
     }
     // 아이템 검색
 
-    public Page<Item> searchItem(String keyword, Pageable pageable) {
-        if(keyword == null) {
+    public Page<Item> searchItem(String keyword, Pageable pageable, Long userId) {
+        if (keyword == null) {
             return itemRepository.findAll(pageable);
         }
         Page<Item> findItem = itemRepository.findByItemNameContainingIgnoreCase(keyword, pageable);
+
+        if (!userId.equals(-1L)) {
+            User user = userValidService.validUser(userId);
+            List<PickedItem> pickedItemList = user.getPickedItemList();
+            transLike(pickedItemList, findItem);
+        }
+
         return findItem;
     }
-    //TODO: 스펙 검색, 이름 검색 모두 작업 진행이 가능하다. 다만 두개 모두 페이징 처리 해서 가져오는 방식은 일단 불가능하다. DB에서 가져올 때 페이징 처리를 하고, 이를 JAVA 단에서 합쳐서 페이징 처리한다는 것 자체가 조금은 이상한 것 같다.
-    //요청이 올때마다 서버에서 DB에서 데이터 뒤져서 가져오고 이걸 다시 합치고 페이징 처리하는 일련의 과정이 번거롭고 불필요하다고 생각이 들었다. 서버에서 한방에 모든 데이터를 넘겨주고 프론트에서 제어하는 방법 등등이 효율적인 것 같다.
-    public Page<Item> searchItemBySpec(String keyword,Pageable pageable){
-        if(keyword == null) {
-            return itemRepository.findAll(pageable);
-        }
-        Page<ItemSpec> findSpec = specRepository.findByKeyword(keyword, pageable);
-        Page<Item> trans = findSpec.map(ItemSpec::getItem);
-        return trans;
-    }
-    // 아이템 최신순 정렬
 
-    private Page<Item> findItemByPageRequest(Pageable pageable) {
-        Pageable pageRequest = PageRequest.of(pageable.getPageNumber(),pageable.getPageSize(),Sort.by("itemId").descending());
-
-        return itemRepository.findAll(pageRequest);
-    }
     // 카테고리 조회
-
-    public Page<Item> findItemByCategory(Category category, Pageable pageable) {
-        return itemRepository.findItemByCategory(category, pageable);
+    public Page<Item> findItemByCategory(Category category, Pageable pageable, Long userId) {
+        Page<Item> findItem = itemRepository.findItemByCategory(category, pageable);
+        if (!userId.equals(-1L)) {
+            User user = userValidService.validUser(userId);
+            List<PickedItem> pickedItemList = user.getPickedItemList();
+            transLike(pickedItemList, findItem);
+        }
+        return findItem;
     }
     // 높은 가격순 정렬
 
-    public Page<Item> findItemPage(Pageable pageable) {
-        return itemRepository.findAll(pageable);
+    public Page<Item> findItemPage(Pageable pageable, Long userId) {
+        Page<Item> findItem = itemRepository.findAll(pageable);
+        if (!userId.equals(-1L)) {
+            User user = userValidService.validUser(userId);
+            List<PickedItem> pickedItemList = user.getPickedItemList();
+            transLike(pickedItemList, findItem);
+        }
+        return findItem;
     }
+
     public PickedItemDto pickItem(Long itemId, Long userId) {
-        Item find = validItem(itemId);
+        Item find = itemValidService.validItem(itemId);
         User findUser = userValidService.validUser(userId);
         List<PickedItem> userPickedItem = findUser.getPickedItemList();
         List<PickedItem> pickedItemList = userPickedItem;
@@ -144,15 +234,16 @@ public class ItemService {
         boolean flag = pickedItemList.stream().map(pickedItem -> pickedItem.getItem().getItemId()).anyMatch(id -> id.equals(itemId));
         PickedItemDto result = new PickedItemDto(userId, itemId);
         //찜취소
-        if(flag){
+        if (flag) {
             for (PickedItem pickedItem : userPickedItem) {
-                if(pickedItem.getItem().getItemId() == itemId){
+                if (pickedItem.getItem().getItemId().equals(itemId)) {
                     userPickedItem.remove(pickedItem);
                     itemPickedItem.remove(pickedItem);
                     result.setPicked(false);
+                    break;
                 }
             }
-        }else{
+        } else {
             PickedItem pickedItem = new PickedItem(find, findUser);
             pickedItemList.add(pickedItem);
             userPickedItem.add(pickedItem);
@@ -161,10 +252,23 @@ public class ItemService {
         return result;
     }
 
-    private void validItemExist(Item item) {
-        Optional<Item> findItem = itemRepository.findByItemId(item.getItemId());
-        if(findItem.isPresent()){
-            throw new BusinessLogicException(CommonExceptionCode.ITEM_EXIST);
+    private void transLike(List<PickedItem> pickedItemList, Page<Item> findItem) {
+        for (PickedItem pickedItem : pickedItemList) {
+            Long itemId = pickedItem.getItem().getItemId();
+            for (Item item : findItem.getContent()) {
+                if (item.getItemId().equals(itemId)) {
+                    item.setLike(true);
+                }
+            }
         }
+    }
+
+    public List<Item> getPickedItem(Long userId) {
+        User findUser = userValidService.validUser(userId);
+        List<PickedItem> list = findUser.getPickedItemList();
+        if (list == null) {
+            return new ArrayList<Item>();
+        }
+        return list.stream().map(PickedItem::getItem).peek(item -> item.setLike(true)).collect(Collectors.toList());
     }
 }

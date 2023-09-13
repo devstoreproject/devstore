@@ -1,6 +1,16 @@
 package project.main.webstore.domain.qna.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.google.gson.Gson;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -31,16 +41,6 @@ import project.main.webstore.domain.qna.service.QnaService;
 import project.main.webstore.domain.qna.stub.QnaStub;
 import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.helper.TestUtils;
-
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @MockBean(JpaMetamodelMappingContext.class)
@@ -129,7 +129,8 @@ public class QnaControllerTest {
         Page<Question> qnaPage = qnaStub.getQnaPage(10L);
         MultiValueMap pageParam = utils.getPageParam();
 
-        given(getService.findQuestionByStatus(any(Pageable.class), any(QnaStatus.class), any(QnaStatus.class))).willReturn(qnaPage);
+        given(getService.findQuestionByStatus(any(Pageable.class),anyString())).willReturn(qnaPage);
+
         // when
         ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/admin")
             .params(pageParam)

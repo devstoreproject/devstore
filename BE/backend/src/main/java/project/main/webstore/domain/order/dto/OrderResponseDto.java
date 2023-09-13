@@ -39,7 +39,7 @@ public class OrderResponseDto { // 주문서 총 정보
         this.orderNumber = order.getOrderNumber();
         this.addressInfo = new ShippingAddressInfoDto(order.getAddress(), order.getRecipient());
         this.userInfo = new UserOrderDto(order.getUser());
-        this.orderItemList = order.getOrderedItemList().stream().map(OrderItemResponseDto::new).collect(Collectors.toList());
+        this.orderItemList = order.getOrderedItemList() != null ? order.getOrderedItemList().stream().map(OrderItemResponseDto::new).collect(Collectors.toList()) : null;
         this.totalPrice = order.getTotalOrderedOriginalPrice();
         this.discountedPrice = order.getTotalOrderedDiscountedPrice();
         this.deliveryPrice = order.getDeliveryPrice();

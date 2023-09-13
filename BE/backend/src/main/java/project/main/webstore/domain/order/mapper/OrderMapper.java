@@ -33,6 +33,8 @@ public class OrderMapper {
     }
 
     public Page<OrderResponseDto> orderToOrderResponsePage(Page<Orders> orderPage) {
+        if(orderPage == null)
+            return null;
         return orderPage.map(OrderResponseDto::new);
     }
 
@@ -46,5 +48,13 @@ public class OrderMapper {
 
     public List<OrderItemSaleDto> toItemSaleResponse(List<OrderDBItemSaleDto> result) {
         return result.stream().map(OrderItemSaleDto::new).collect(Collectors.toList());
+    }
+
+    public OrderIdAndStatusDto toResponse(Orders result) {
+        return new OrderIdAndStatusDto(result.getOrderId(),result.getOrdersStatus());
+    }
+
+    public List<OrderDailyPriceDto> toDailyAmountResponse(List<OrderDBDailyPriceDto> result) {
+        return result.stream().map(OrderDailyPriceDto::new).collect(Collectors.toList());
     }
 }

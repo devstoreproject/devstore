@@ -17,8 +17,6 @@ public interface QuestionRepository extends JpaRepository<Question,Long> {
 
     Page<Question> findAllQnaByUserId(Pageable pageable, Long userId);
 
-//    = project.main.webstore.domain.qna.enums.QnaStatus.REGISTER
-    @Query("select q from Question  q where q.qnaStatus = :register or q.qnaStatus = :complete ")
-    Page<Question> findByStatus(Pageable pageable, @Param("register") QnaStatus register, @Param("complete") QnaStatus complete);
-
+    @Query("select q from Question  q where q.qnaStatus = :status")
+    Page<Question> findByStatus(Pageable pageable,@Param("status")QnaStatus status);
 }

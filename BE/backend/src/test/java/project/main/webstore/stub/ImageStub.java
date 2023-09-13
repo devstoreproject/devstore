@@ -43,7 +43,7 @@ public class ImageStub {
 
     public List<Image> createImageList(int idx) {
         List<Image> list = new ArrayList<>();
-        for (int i = 0; i < idx; i++) {
+        for (int i = 1; i <= idx; i++) {
             boolean representative = i == 1;
             list.add(createImage((long) i, i, representative));
         }
@@ -83,6 +83,14 @@ public class ImageStub {
                 .order(order)
                 .multipartFile(mockMultipartFile)
                 .id(id)
+                .build();
+    }
+    public ImageInfoDto createImageInfoPath(int order, boolean target) {
+        return ImageInfoDto.dtoBuilder()
+                .uploadDir("review")
+                .representative(target)
+                .order(order)
+                .multipartFile(mockMultipartFile)
                 .build();
     }
 
