@@ -26,7 +26,7 @@ export default function ThemeItem({
   const navigate = useNavigate();
 
   const onClickHandler = () => {
-    navigate(`/search/${category}/${id}`);
+    navigate(`/products/${category}/${id}`);
     window.scrollTo(0, 0);
   };
   return (
