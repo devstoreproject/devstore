@@ -1,19 +1,29 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import DOMPurify from 'isomorphic-dompurify';
 import AWS from 'aws-sdk';
 
 interface ProductProp {
-  contents: any;
+  datas: any;
+  pathName: string;
+  contents: string;
+  editContents: string;
   setContents: React.Dispatch<React.SetStateAction<any>>;
+  setEditContents: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const REGION = process.env.REACT_APP_AWS_S3_BUCKET_REGION;
 const ACCESS_KEY = process.env.REACT_APP_AWS_S3_BUCKET_ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_S3_BUCKET_SECRET_ACCESS_KEY;
 
-export default function ContentsInput({ contents, setContents }: ProductProp) {
+export default function ContentsInput({
+  datas,
+  pathName,
+  contents,
+  editContents,
+  setContents,
+  setEditContents,
+}: ProductProp) {
   const quillRef = useRef<any>(null);
 
   const imageHandler = async () => {
@@ -24,7 +34,6 @@ export default function ContentsInput({ contents, setContents }: ProductProp) {
 
     input.onchange = async () => {
       const file = input.files?.[0];
-
       try {
         const name = Date.now();
 
@@ -47,7 +56,15 @@ export default function ContentsInput({ contents, setContents }: ProductProp) {
         const range = editor.getSelection();
 
         const imgUrl = upload.promise().then((res) => {
-          setContents((prev: string) => `${prev}<img src ="${res.Location}"/>`);
+          if (pathName === 'post') {
+            setContents(
+              (prev: string) => `${prev}<img src ="${res.Location}"/>`
+            );
+          } else {
+            setEditContents(
+              (prev: string) => `${prev}<img src ="${res.Location}"/>`
+            );
+          }
         });
 
         editor.insertEmbed(range.index, 'image', imgUrl);
@@ -86,28 +103,42 @@ export default function ContentsInput({ contents, setContents }: ProductProp) {
     'align',
   ];
 
+  useEffect(() => {
+    if (datas?.description !== null) {
+      setEditContents(datas?.description);
+    }
+  }, [datas]);
+
   return (
     <div className="">
       <p className="mb-6 text-subtitle-gray">상품 상세 내용</p>
-      <div className="">
-        <div
-          className="ql-editor"
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(contents),
-          }}
-        />
-        <ReactQuill
-          ref={quillRef}
-          modules={modules}
-          formats={formats}
-          theme="snow"
-          placeholder="내용을 입력해주세요..."
-          value={contents}
-          onChange={setContents}
-          style={{ width: '1000px', paddingRight: '60px' }}
-          className="ql-toolbar ql-container"
-        />
-      </div>
+      <>
+        {pathName === 'post' ? (
+          <ReactQuill
+            ref={quillRef}
+            modules={modules}
+            formats={formats}
+            theme="snow"
+            placeholder="내용을 입력해주세요..."
+            value={contents}
+            onChange={setContents}
+            style={{ width: '1000px', paddingRight: '60px' }}
+            className="ql-toolbar ql-container"
+          />
+        ) : (
+          <ReactQuill
+            ref={quillRef}
+            modules={modules}
+            formats={formats}
+            theme="snow"
+            placeholder="내용을 입력해주세요..."
+            value={editContents}
+            onChange={setEditContents}
+            style={{ width: '1000px', paddingRight: '60px' }}
+            className="ql-toolbar ql-container"
+          />
+        )}
+      </>
     </div>
   );
 }
