@@ -60,7 +60,7 @@ export default function InquiryRegister({ inquiry, setInquiry }: OwnProps) {
   };
 
   return (
-    <form className="flex justify-center pb-4" onSubmit={handleSubmit}>
+    <form className="flex justify-center pb-4 pt-4" onSubmit={handleSubmit}>
       <input
         id="inquiryRegister"
         type="text"

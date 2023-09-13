@@ -74,7 +74,7 @@ export default function ReviewRegister({ review, setReview }: OwnProps) {
   };
 
   return (
-    <form className="flex justify-center pb-4" onSubmit={handleSubmit}>
+    <form className="flex justify-center pb-4 pt-4" onSubmit={handleSubmit}>
       <div className="flex flex-col">
         <input
           id="inquiryRegister"
