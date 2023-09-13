@@ -6,7 +6,7 @@ const useFetchProducts = () => {
 
   useEffect(() => {
     api
-      .get('/api/items?page=0&size=50')
+      .get('/api/items')
       .then((res) => {
         setProducts(res.data.data.content);
       })
