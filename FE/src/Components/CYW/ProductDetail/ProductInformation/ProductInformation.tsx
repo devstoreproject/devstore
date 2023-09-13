@@ -25,7 +25,6 @@ export default function ProductInformation({ product }: ProductTypeProps) {
       />
       <OptionChoice
         option={product.optionList}
-        spec={product.specList}
         selectedValue={selectedValue}
         setSelectedValue={setSelectedValue}
       />
