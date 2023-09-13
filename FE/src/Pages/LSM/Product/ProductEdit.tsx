@@ -19,11 +19,6 @@ export default function ProductEdit() {
       setDatas(res?.data?.data);
       const optionList = res?.data?.data?.optionList;
       dispatch(setOptionId(optionList));
-
-      // optionList.forEach((option: any) => {
-      //   dispatch(setOptionId(option.optionId));
-      // });
-      console.log(res?.data?.data);
     } catch (error) {
       console.log(error);
     }
