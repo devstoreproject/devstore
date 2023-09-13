@@ -1,5 +1,13 @@
 package project.main.webstore.domain.order.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -7,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.domain.cart.entity.Cart;
+import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.order.dto.OrderDBDailyPriceDto;
@@ -25,11 +34,6 @@ import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
 @Service
 @Slf4j
 @Transactional
@@ -37,23 +41,50 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final UserValidService userService;
-
+    
     public Orders createOrder(OrderLocalDto post) {
         User user = userService.validUserAllInfo(post.getUserId());
         ShippingInfo shippingInfo = user.getShippingInfo(post.getShippingId());
 
         Cart cart = user.getCart();
-        //장바구니 비우기
-        user.setCart(null);
-        Orders order = new Orders(post.getMessage(), cart, user, shippingInfo);
-        order.transItemCount(TransCondition.MINUS);
-        List<OrderedItem> orderedItemList = order.getOrderedItemList();
-        //여기
+        List<CartItem> requestOrderItemList = seperateOrderedItem(cart.getCartItemList(), post.getOrderCartItemIdList());
+        
+       List<OrderedItem> orderedItemList = requestOrderItemList.stream().map(OrderedItem::new).collect(Collectors.toList());
+
         for (OrderedItem orderedItem : orderedItemList) {
             Item item = orderedItem.getItem();
             item.addSalesQuantity(orderedItem.getItemCount());
         }
+
+        int deliveryPrice = requestOrderItemList.stream()
+                .mapToInt(cartItem -> cartItem.getOption().getItem().getDeliveryPrice()).max()
+                .getAsInt();
+
+        Orders order = new Orders(post.getMessage(),orderedItemList,deliveryPrice,user,shippingInfo);
+        order.transItemCount(TransCondition.MINUS);
+        
+
+        
         return orderRepository.save(order);
+    }
+
+    private List<CartItem> seperateOrderedItem(List<CartItem> cartItemList, List<Long> cartItemIdList) {
+        List<CartItem> requestOrderedItemList = new ArrayList<>();
+
+        Map<Long,CartItem> seperateOrderedItemMap = new ConcurrentHashMap();
+
+        for (CartItem savedCartItem : cartItemList) {
+            seperateOrderedItemMap.put(savedCartItem.getId(),savedCartItem);
+        }
+
+        for (Long cartItemId : cartItemIdList) {
+            CartItem previousCartItem = seperateOrderedItemMap.put(cartItemId, new CartItem());
+            if(previousCartItem != null){
+                cartItemList.remove(previousCartItem);
+                requestOrderedItemList.add(previousCartItem);
+            }
+        }
+        return requestOrderedItemList;
     }
 
     // 주문 양식만 수정 요청 사항만 수정이 가능하다.
@@ -73,7 +104,6 @@ public class OrderService {
     }
 
     public Orders getOrder(String orderNumber, Long userId) {
-        //TODO: 본인 체크 필수 혹은 관리자
         User findUser = userService.validUser(userId);
         Orders findOrder = validOrderByOrderNumberAllInfo(orderNumber);
         findOrder.getUser().validUserHasAccess(findUser);
@@ -224,11 +254,6 @@ public class OrderService {
     public Orders orderStatusComplete(Long orderId) {
         Orders findOrder = validOrder(orderId);
         findOrder.setOrdersStatus(OrdersStatus.DELIVERY_COMPLETE);
-//        List<OrderedItem> orderedItemList = findOrder.getOrderedItemList();
-//        for (OrderedItem orderedItem : orderedItemList) {
-//            Item item = orderedItem.getItem();
-//            item.addSalesQuantity(orderedItem.getItemCount());
-//        }
         return findOrder;
     }
     public Orders orderStatusCancel(Long orderId) {

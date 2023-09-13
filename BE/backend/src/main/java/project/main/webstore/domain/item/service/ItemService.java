@@ -1,5 +1,11 @@
 package project.main.webstore.domain.item.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,11 +25,6 @@ import project.main.webstore.domain.item.enums.ItemStatus;
 import project.main.webstore.domain.item.repository.ItemRepository;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.service.UserValidService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -78,43 +79,58 @@ public class ItemService {
     }
 
     private void changeOptionValue(List<ItemOption> patchOptionList, List<ItemOption> findOptionList) {
+        Map<Long,ItemOption> findPatchMap = new ConcurrentHashMap<>();
+
+        for (ItemOption itemOption : patchOptionList) {
+            findPatchMap.put(itemOption.getOptionId(),itemOption);
+        }
         for (ItemOption findOption : findOptionList) {
-            for (ItemOption patchOption : patchOptionList) {
-                if (patchOption.getOptionId().equals(findOption.getOptionId())) {
-                    changOptionValue(findOption, patchOption);
-                }
+            ItemOption patchOption = findPatchMap.put(findOption.getOptionId(), findOption);
+            if(patchOption != null){
+                changOptionValue(findOption, patchOption);
             }
         }
     }
 
     private List<ItemOption> separateList(List<ItemOption> patchOptionList) {
         ArrayList<ItemOption> addOptionList = new ArrayList<>();
-        for (ItemOption itemOption : patchOptionList) {
+        int index = 0;
+        while(index < patchOptionList.size()){
+            ItemOption itemOption = patchOptionList.get(index);
             if (itemOption.getOptionId() == null) {
                 addOptionList.add(itemOption);
                 patchOptionList.remove(itemOption);
+            }else{
+                index++;
             }
         }
+
         return addOptionList;
     }
 
 
-    //TODO : 간소화 작업 필요
     private void deleteOption(Item findItem, List<Long> deleteOptionIdList) {
-        List<ItemOption> findOption = findItem.getOptionList();
-        for (ItemOption option : findOption) {
-            for (Long optionId : deleteOptionIdList) {
-                if (option.getOptionId().equals(optionId)) {
-                    findOption.remove(option);
-                }
+        Map<Long,ItemOption> getDeleteItemByMap = new ConcurrentHashMap<>();
+        List<ItemOption> savedOptionList = findItem.getOptionList();
+
+        for (ItemOption itemOption : savedOptionList) {
+            getDeleteItemByMap.put(itemOption.getOptionId(),itemOption);
+        }
+
+        for (int i = 0 ; i < deleteOptionIdList.size() ; i++) {
+            Long optionId = deleteOptionIdList.get(i);
+            ItemOption pre = getDeleteItemByMap.put(optionId, new ItemOption());
+            if(pre != null){
+                savedOptionList.remove(pre);
             }
         }
+
     }
 
     private void changImage(List<ImageInfoDto> imageInfoDtoList, List<Long> deleteImageId, Item item, Item findItem) {
         imageUtils.imageValid(imageInfoDtoList);
         List<Image> imageList = imageUtils.patchImage(imageInfoDtoList, findItem.getItemImageList(), deleteImageId);
-        if (imageList.isEmpty() == false) {
+        if (!imageList.isEmpty()) {
             imageList.stream().map(image -> new ItemImage(image, item)).forEach(findItem::addItemImage);
         }
     }
@@ -251,9 +267,8 @@ public class ItemService {
         User findUser = userValidService.validUser(userId);
         List<PickedItem> list = findUser.getPickedItemList();
         if (list == null) {
-            return null;
+            return new ArrayList<Item>();
         }
-        List<Item> result = list.stream().map(PickedItem::getItem).peek(item -> item.setLike(true)).collect(Collectors.toList());
-        return result;
+        return list.stream().map(PickedItem::getItem).peek(item -> item.setLike(true)).collect(Collectors.toList());
     }
 }

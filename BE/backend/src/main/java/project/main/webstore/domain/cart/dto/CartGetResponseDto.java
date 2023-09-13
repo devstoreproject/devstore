@@ -1,10 +1,10 @@
 package project.main.webstore.domain.cart.dto;
 
-import lombok.Getter;
-import project.main.webstore.domain.cart.entity.Cart;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import project.main.webstore.domain.cart.entity.Cart;
 
 @Getter
 public class CartGetResponseDto {
@@ -18,7 +18,7 @@ public class CartGetResponseDto {
     public CartGetResponseDto(Cart cart) {
         this.cartId = cart.getId();
         this.userId = cart.getUser().getId();
-        this.itemList = cart.getCartItemList().stream().map(OptionDto::new).collect(Collectors.toList());
+        this.itemList = cart.getCartItemList() != null?cart.getCartItemList().stream().map(OptionDto::new).collect(Collectors.toList()) : new ArrayList<>();
         this.deliveryPrice = cart.getDeliveryPrice();
         this.totalPrice = cart.getOriginalTotalPrice();
         this.discountedPrice = cart.getDiscountedTotalPrice();

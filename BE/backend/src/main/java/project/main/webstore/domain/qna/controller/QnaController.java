@@ -4,14 +4,27 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import project.main.webstore.domain.qna.dto.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import project.main.webstore.domain.qna.dto.AnswerPostRequestDto;
+import project.main.webstore.domain.qna.dto.QuestionDto;
+import project.main.webstore.domain.qna.dto.QuestionIdResponseDto;
+import project.main.webstore.domain.qna.dto.QuestionPatchDto;
+import project.main.webstore.domain.qna.dto.QuestionPostRequestDto;
 import project.main.webstore.domain.qna.entity.Answer;
 import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.qna.mapper.QnaMapper;
@@ -21,8 +34,6 @@ import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
-
-import java.net.URI;
 
 
 @RestController
@@ -81,8 +92,9 @@ public class QnaController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByStatus(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable) {
-        Page<Question> result = getService.findQuestionByStatus(pageable);
+    public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByStatus(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable,
+                                                                         @RequestParam("status") String status) {
+        Page<Question> result = getService.findQuestionByStatus(pageable,status);
         Page<QuestionDto> response = mapper.toResponsePage(result);
         var responseDto = ResponseDto.<Page<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);

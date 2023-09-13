@@ -1,17 +1,17 @@
 package project.main.webstore.domain.cart.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CartPatchRequestDto {
-    private List<CartItemDto> itemList = new ArrayList<>();
+    private List<CartItemDto> patchItemList = new ArrayList<>();
+    private List<Long> deleteOptionId = new ArrayList<>();
 
-    public CartPatchRequestDto(List<CartItemDto> itemList) {
-        this.itemList = itemList;
-    }
+
 }

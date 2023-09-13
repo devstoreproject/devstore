@@ -1,6 +1,30 @@
 package project.main.webstore.domain.order.entity;
 
-import lombok.*;
+import static javax.persistence.FetchType.LAZY;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.item.exception.ItemExceptionCode;
@@ -11,15 +35,6 @@ import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.valueObject.Address;
-
-import javax.persistence.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @Entity
@@ -69,7 +84,6 @@ public class Orders extends Auditable {
     @Embedded
     private PaymentType paymentType;
 
-    //TODO : 작업 중인 아이 지불 정보를 알고 있어야하는가 서버가?
     @Builder
     public Orders(String message, Cart cart, User user, ShippingInfo info) {
         this.orderNumber = createOrderNumber();
@@ -81,6 +95,17 @@ public class Orders extends Auditable {
         this.user = user;
         this.deliveryPrice = cart.getDeliveryPrice();
     }
+    public Orders(String message, List<OrderedItem> orderedItemList,int deliveryPrice, User user, ShippingInfo info) {
+        this.orderNumber = createOrderNumber();
+        this.message = message;
+        this.ordersStatus = OrdersStatus.ORDER_COMPLETE;
+        this.recipient = info.getRecipient();
+        this.address = info.getAddress();
+        this.orderedItemList = orderedItemList;
+        this.user = user;
+        this.deliveryPrice = deliveryPrice;
+    }
+
 
 
     public Orders(Long orderId, String message, int deliveryPrice, String trackingNumber, String deliveryCompany, OrdersStatus ordersStatus, String recipient, Address address, List<OrderedItem> orderedItemList, User user, PaymentType paymentType) {
@@ -119,7 +144,6 @@ public class Orders extends Auditable {
         this.trackingNumber = trackingNumber;
     }
 
-    //TODO: orderNumber -> entity method
     public String createOrderNumber() {
         Calendar cal = Calendar.getInstance();
 
@@ -155,7 +179,6 @@ public class Orders extends Auditable {
     }
 
     private int itemCountPlus(OrderedItem orderedItem) {
-        int result = orderedItem.getOption().getItemCount() + orderedItem.getItemCount();
-        return result;
+        return orderedItem.getOption().getItemCount() + orderedItem.getItemCount();
     }
 }

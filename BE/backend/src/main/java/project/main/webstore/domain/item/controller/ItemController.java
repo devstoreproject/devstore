@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.net.URI;
+import java.util.List;
+import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +20,23 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
-import project.main.webstore.domain.item.dto.*;
+import project.main.webstore.domain.item.dto.ItemIdResponseDto;
+import project.main.webstore.domain.item.dto.ItemPatchDto;
+import project.main.webstore.domain.item.dto.ItemPostDto;
+import project.main.webstore.domain.item.dto.ItemResponseDto;
+import project.main.webstore.domain.item.dto.PickedItemDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.mapper.ItemMapper;
@@ -31,10 +46,6 @@ import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
 
-import javax.validation.constraints.Positive;
-import java.net.URI;
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/items")
 @RequiredArgsConstructor
@@ -42,7 +53,7 @@ import java.util.List;
 @Tag(name = "상품 API")
 public class ItemController {
     private static final String ITEM_DEFAULT_URL = "items";
-    private final String UPLOAD_DIR = "item";
+    private static final String UPLOAD_DIR = "item";
     private final ItemService itemService;
     private final ItemMapper itemMapper;
     private final ImageMapper imageMapper;
@@ -91,7 +102,7 @@ public class ItemController {
             imageInfoDtoList = imageMapper.toLocalDtoList(imageList, patch.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
         }
 
-        Item result = itemService.patchItem(imageInfoDtoList, requestDeleteOptionIdList, request,requestDeleteImageList);
+        Item result = itemService.patchItem(imageInfoDtoList, requestDeleteImageList, request,requestDeleteOptionIdList);
 
         ItemIdResponseDto response = itemMapper.toIdResponse(result);
         URI uri = UriCreator.createUri(ITEM_DEFAULT_URL, result.getItemId());
