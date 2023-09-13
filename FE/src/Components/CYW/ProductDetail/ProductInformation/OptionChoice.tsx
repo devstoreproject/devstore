@@ -1,15 +1,13 @@
-import type { OptionListType, SpecListType } from 'Pages/CYW/ProductDetail';
+import type { OptionListType } from 'Pages/CYW/ProductDetail';
 
 interface OwnProps {
   option: OptionListType[];
-  spec: SpecListType[];
   selectedValue: any;
   setSelectedValue: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export default function OptionChoice({
   option,
-  spec,
   selectedValue,
   setSelectedValue,
 }: OwnProps) {

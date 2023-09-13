@@ -1,6 +1,6 @@
 import ProductTab from './ProductTab/ProductTab';
 import ReviewTab from './ReviewTab/ReviewTab';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import InquiryTab from './InquiryTab/InquiryTab';
 import type { ProductType } from '../../../../Pages/CYW/ProductDetail';
 import fetchInquiry from 'utils/productDetail/fetchInquiry';
@@ -98,6 +98,10 @@ export default function Tab({ product, tab }: ProductTypeProps) {
   const dispatch = useDispatch();
   const [review, setReview] = useState<ReviewContentType[] | null>(null);
   const [inquiry, setInquiry] = useState<InquiryContentType[] | null>(null);
+  const [reviewPage, setReviewPage] = useState<number>(0);
+  const [inquiryPage, setInquiryPage] = useState<number>(0);
+  const [reviewTotalPage, setReviewTotalPage] = useState<number>(0);
+  const [inquiryTotalPage, setInquiryTotalPage] = useState<number>(0);
   const { id } = useParams();
 
   const handleClick = (event: React.MouseEvent<HTMLParagraphElement>) => {
@@ -108,15 +112,17 @@ export default function Tab({ product, tab }: ProductTypeProps) {
     if (event.currentTarget.textContent === '상품 리뷰') {
       if (tab === 1) return;
       dispatch(setTab(1));
-
-      fetchReview(id as string, setReview);
     }
     if (event.currentTarget.textContent === '상품 문의') {
       if (tab === 2) return;
       dispatch(setTab(2));
-      fetchInquiry(id as string, setInquiry);
     }
   };
+
+  useEffect(() => {
+    fetchReview(id as string, setReview, reviewPage, setReviewTotalPage);
+    fetchInquiry(id as string, setInquiry, inquiryPage, setInquiryTotalPage);
+  }, [reviewPage, inquiryPage]);
 
   return (
     <div className="w-3/4 pt-12">
@@ -148,8 +154,22 @@ export default function Tab({ product, tab }: ProductTypeProps) {
       </div>
       <div>
         <ProductTab tab={tab} description={product.description} />
-        <ReviewTab tab={tab} review={review} setReview={setReview} />
-        <InquiryTab tab={tab} inquiry={inquiry} setInquiry={setInquiry} />
+        <ReviewTab
+          tab={tab}
+          review={review}
+          setReview={setReview}
+          page={reviewPage}
+          setPage={setReviewPage}
+          totalPage={reviewTotalPage}
+        />
+        <InquiryTab
+          tab={tab}
+          inquiry={inquiry}
+          setInquiry={setInquiry}
+          page={inquiryPage}
+          setPage={setInquiryPage}
+          totalPage={inquiryTotalPage}
+        />
       </div>
     </div>
   );
