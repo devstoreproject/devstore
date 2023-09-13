@@ -2,10 +2,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 interface ProductProp {
   postData: any;
-  // patchData: any;
+  patchData: any;
 }
 
-export default function Button({ postData }: ProductProp) {
+export default function Button({ postData, patchData }: ProductProp) {
   const navigate = useNavigate();
   const prevHandler = () => {
     navigate('/admin/productlist');
@@ -46,7 +46,7 @@ export default function Button({ postData }: ProductProp) {
               type={btn.name === '취소' ? 'button' : 'submit'}
               key={btn.id}
               className={classnames}
-              onClick={btn.name === '취소' ? prevHandler : prevHandler}
+              onClick={btn.name === '취소' ? prevHandler : patchData}
             >
               {btn.name}
             </button>
