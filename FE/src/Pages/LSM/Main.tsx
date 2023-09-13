@@ -16,7 +16,7 @@ export default function Main() {
   const fetchData = async () => {
     try {
       const bestItemRes = await api.get(
-        '/api/items?page=0&size=10&sort=createdAt'
+        '/api/items?page=0&size=10&sort=salesQuantity'
       );
       setBestItemsData(bestItemRes?.data?.data?.content);
 
