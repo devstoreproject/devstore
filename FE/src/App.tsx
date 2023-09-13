@@ -20,8 +20,6 @@ import ProductEdit from 'Pages/LSM/Product/ProductEdit';
 import Cart from 'Pages/KHJ/Cart';
 import PurchaseMain from 'Pages/KHJ/PurchaseMain';
 import Purchase from 'Pages/KHJ/Purchase';
-import PurComplete from 'Pages/KHJ/PurComplete';
-import PurComDetail from 'Pages/KHJ/PurComDetail';
 import AdminMain from 'Components/KYH/admin/AdminMain/AdminMain';
 import BasicLayout from 'Pages/LSM/BasicLayout';
 import ProductDetail from 'Pages/CYW/ProductDetail';
@@ -54,8 +52,6 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/purchase" element={<PurchaseMain />}>
             <Route path="order" element={<Purchase />} />
-            <Route path="complete" element={<PurComplete />} />
-            <Route path="detail" element={<PurComDetail />} />
           </Route>
           <Route path="/complete/:id" element={<OrderCom />} />
           <Route path="/complete/detail/:id" element={<OrderComDetail />} />
@@ -72,7 +68,7 @@ function App() {
           <Route path="productlist" element={<ProductList />} />
           <Route path="productinquiry" element={<ProductInquiry />} />
           <Route path="productlist/post" element={<ProductPost />} />
-          <Route path="productlist/edit" element={<ProductEdit />} />
+          <Route path="productlist/edit/:id" element={<ProductEdit />} />
           <Route path="reviewmanagement" element={<ReviewManagement />} />
           <Route path="orderedlist" element={<OrderedList />} />
           <Route path="sales" element={<Sales />} />

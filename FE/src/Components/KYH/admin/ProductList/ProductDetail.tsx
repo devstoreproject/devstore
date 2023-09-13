@@ -1,7 +1,7 @@
 import ProductDetailTitle from './ProductDetailTitle';
 import ProductDetailContents from './ProductDetailContents';
 import useFetchProductDetail from 'hooks/admin/product/useFetchProductDetail';
-import { CgCloseR } from 'react-icons/cg';
+import CloseBtn from './CloseBtn';
 
 interface productDetail {
   productId: number;
@@ -15,16 +15,8 @@ export default function ProductDetail({
   const product = useFetchProductDetail(productId);
   return (
     <div className="absolute z-10 flex flex-col pt-2.5 pl-8 bg-gray-300 rounded-lg w-200 top-14 left-52">
-      <div className="flex justify-end mb-2 mr-3">
-        <button
-          onClick={() => {
-            setIsDetailModalOpen(false);
-          }}
-        >
-          <CgCloseR className="w-6 h-6 text-gray-600 hover:text-black" />
-        </button>
-      </div>
-      <div className="flex">
+      <CloseBtn setIsDetailModalOpen={setIsDetailModalOpen} />
+      <div className="flex mb-6">
         <ProductDetailTitle />
         <ProductDetailContents product={product} />
       </div>

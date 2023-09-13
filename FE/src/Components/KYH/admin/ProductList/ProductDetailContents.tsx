@@ -30,7 +30,7 @@ export default function ProductDetailContents({ product }: OwnProps) {
         {product.totalCount}
       </div>
       <div className="flex items-center h-10 pl-4 text-sm bg-gray-100 border border-gray-300">
-        데이터 필요
+        {product.salesQuantity}
       </div>
       <div className="flex flex-col text-sm bg-gray-100 border border-gray-300 rounded-br-lg">
         <OptionTitle />

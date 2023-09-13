@@ -9,19 +9,15 @@ export default function OptionContents({
 }: Option) {
   const price = addCommasToPrice(additionalPrice);
   return (
-    <div className="flex border-b-2 border-gray-300">
-      <div className="flex items-center justify-center h-8 border-r-2 border-gray-300 w-36">
+    <div className="flex h-8 border-b-2 border-gray-300">
+      <p className="p-1 px-4 text-center truncate border-r-2 border-r-gray-300 w-36">
         {optionName}
-      </div>
-      <div className="flex items-center justify-center w-40 h-8">
-        {optionDetail}
-      </div>
-      <div className="flex items-center justify-center w-40 h-8 border-gray-300 border-x-2">
+      </p>
+      <p className="w-40 p-1 px-4 text-center truncate">{optionDetail}</p>
+      <p className="w-40 p-1 px-4 text-center truncate border-gray-300 border-x-2">
         {price}
-      </div>
-      <div className="flex items-center justify-center h-8 w-28">
-        {itemCount}
-      </div>
+      </p>
+      <p className="p-1 px-4 text-center truncate w-28">{itemCount}</p>
     </div>
   );
 }

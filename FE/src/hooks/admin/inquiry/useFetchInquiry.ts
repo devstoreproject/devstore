@@ -7,7 +7,7 @@ const useFetchInquiry = () => {
 
   useEffect(() => {
     api
-      .get(`/api/qna/admin?sort=createdAt,desc`)
+      .get(`/api/qna/admin?status=REGISTER&sort=createdAt,desc`)
       .then((res) => {
         setInquiry(res.data.data.content);
       })

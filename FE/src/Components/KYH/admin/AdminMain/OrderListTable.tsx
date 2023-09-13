@@ -8,9 +8,10 @@ export default function OrderListTable() {
   return (
     <>
       <OrderListTableTitle />
-      {orders.map((order) => (
+      {orders.map((order, idx) => (
         <OrderListTableContents
           key={order.orderId}
+          idx={idx}
           orderNumber={order.orderNumber}
           ordersStatus={order.ordersStatus}
           createdAt={order.createdAt}
