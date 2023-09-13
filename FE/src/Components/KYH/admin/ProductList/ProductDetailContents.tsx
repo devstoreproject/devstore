@@ -38,8 +38,7 @@ export default function ProductDetailContents({ product }: OwnProps) {
           return (
             <OptionContents
               key={option.optionId}
-              optionName={option.optionName}
-              optionDetail={option.optionName}
+              optionDetail={option.optionDetail}
               additionalPrice={option.additionalPrice}
               itemCount={option.itemCount}
             />

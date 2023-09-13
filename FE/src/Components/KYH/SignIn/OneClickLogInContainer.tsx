@@ -1,6 +1,5 @@
-// import naverCircleIcon from 'Assets/naverCircleIcon.png';
-// import kakaoCircleIcon from 'Assets/kakaoCircleIcon.png';
-import googleCircleIcon from 'Assets/googleCircleIcon.png';
+import naverCircleIcon from 'Assets/naverCircleIcon.png';
+import kakaoCircleIcon from 'Assets/kakaoCircleIcon.png';
 
 export default function OneClickLogInContainer() {
   return (
@@ -11,15 +10,13 @@ export default function OneClickLogInContainer() {
         <div className="w-1/3 mt-4 border-b-2 border-gray-500" />
       </div>
       <div className="flex items-center mt-2">
-        {/* <img src={naverCircleIcon} className="w-10 h-10 mr-4" />
-        <img src={kakaoCircleIcon} className="w-12 h-12 mr-4" /> */}
+        <img src={naverCircleIcon} className="w-10 h-10 mr-4" />
+        <img src={kakaoCircleIcon} className="w-12 h-12" />
         <a
           href={`${String(
             process.env.REACT_APP_BASE_URL
           )}api/oauth2/authorization/google`}
-        >
-          <img src={googleCircleIcon} className="cursor-pointer w-11 h-11" />
-        </a>
+        ></a>
       </div>
     </>
   );
