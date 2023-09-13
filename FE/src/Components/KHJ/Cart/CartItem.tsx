@@ -11,11 +11,6 @@ interface CartItemProps {
   setIsCart: React.Dispatch<React.SetStateAction<any>>;
 }
 
-interface itemBody {
-  optionId: number;
-  itemCount: number;
-}
-
 function CartItem({
   item,
   userId,
@@ -38,31 +33,33 @@ function CartItem({
   const priceComma = item.defaultPrice.toString().replace(regexComma, ',');
 
   // 장바구니 변겅 API
-  const fetchCartCount = (userId: number, itemBody: itemBody) => {
-    const item = {
-      itemList: [itemBody],
+  const fetchCartCount = (
+    itemCount: number,
+    itemDelCount: number,
+    optionId: number
+  ) => {
+    const data = {
+      patchItemList: [
+        {
+          optionId,
+          itemCount,
+        },
+      ],
+      deleteOptionId: [itemDelCount],
     };
-    api.patch(`api/cart/users/${userId}`, item).catch((err) => {
+    api.patch(`api/cart`, data).catch((err) => {
       console.log(err);
     });
   };
 
   // 장바구니 삭제 API
-  const fetchDelCart = (itemId: number) => {
-    const dataBody = {
-      deleteIdList: [itemId],
+  const fetchCartDel = (itemDelCount: number) => {
+    const data = {
+      deleteOptionId: [itemDelCount],
     };
-    api
-      .patch(`api/cart/users/${userId}/del`, dataBody)
-      .then(() => {
-        const userId = Number(localStorage.getItem('userId'));
-        getCart(userId);
-        setIsOptOpen(false);
-        setIsOptName('옵션 목록');
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    api.patch(`api/cart`, data).catch((err) => {
+      console.log(err);
+    });
   };
 
   // 수량 다운
@@ -71,26 +68,19 @@ function CartItem({
     if (isQuantity === 1) {
       const answer = confirm('장바구니에서 삭제하시겠습니까?');
       if (answer) {
-        fetchDelCart(item.optionId);
+        fetchCartDel(item.optionId);
+        getCart(userId);
       }
     }
     if (isQuantity > 1) {
-      const patchBody = {
-        optionId: item.optionId,
-        itemCount: isQuantity - 1,
-      };
-      fetchCartCount(userId, patchBody);
+      fetchCartCount(isQuantity - 1, item.optionId, item.optionId);
       setIsQuantity(isQuantity - 1);
     }
   };
 
   // 수량 업
   const handleQuantityUp = () => {
-    const patchBody = {
-      optionId: item.optionId,
-      itemCount: isQuantity + 1,
-    };
-    fetchCartCount(userId, patchBody);
+    fetchCartCount(isQuantity + 1, item.optionId, item.optionId);
     setIsQuantity(isQuantity + 1);
   };
 
@@ -101,26 +91,6 @@ function CartItem({
       .then((res) => {
         const data = res.data.data;
         setIsOpt(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  // 옵션 수량 변경
-  const fetchOptChange = (optionId: number, itemCount: number) => {
-    const userId = Number(localStorage.getItem('userId'));
-    const data = {
-      itemList: [
-        {
-          optionId,
-          itemCount,
-        },
-      ],
-    };
-    api
-      .post(`api/cart/users/${userId}`, data)
-      .then(() => {
-        fetchDelCart(optionId);
       })
       .catch((err) => {
         console.log(err);
@@ -191,16 +161,13 @@ function CartItem({
         </div>
         {item.optionName !== null ? (
           <CartItemOpt
-            setIsCart={setIsCart}
             isOptOpen={isOptOpen}
-            isOptName={isOptName}
             setIsOptName={setIsOptName}
-            fetchOptChange={fetchOptChange}
             itemCount={item.count}
-            itemId={item.itemId}
+            getCart={getCart}
+            optName={item.optionDetail}
             isOpt={isOpt}
-            inCartId={inCartId}
-            fetchDelCart={fetchDelCart}
+            itemOptId={item.optionId}
           />
         ) : null}
       </div>
