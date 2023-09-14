@@ -50,10 +50,7 @@ public class UserController {
         User result = service.postUser(user, infoDto);
         UserIdResponseDto response = userMapper.toDto(result);
         var responseDto = ResponseDto.<UserIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
-<<<<<<<<< Temporary merge branch 1
-=========
-//        URI location = UriCreator.createUri("/users", responseDto.getData().getUserId());
->>>>>>>>> Temporary merge branch 2
+
         URI location = UriCreator.createUri("/users", response.getUserId());
 
         return ResponseEntity.created(location).body(responseDto);
@@ -143,7 +140,6 @@ public class UserController {
         var responseDto = ResponseDto.<UserGetPasswordResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
-<<<<<<<<< Temporary merge branch 1
 
     @PostMapping("/set-default")
     public ResponseEntity setDefault() {
@@ -153,6 +149,4 @@ public class UserController {
         service.patchUser(user,null);
         return ResponseEntity.noContent().build();
     }
-=========
->>>>>>>>> Temporary merge branch 2
 }

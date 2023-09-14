@@ -128,12 +128,7 @@ public class QnaControllerTest {
         QnaStatus complete = QnaStatus.ANSWER_COMPLETE;
         Page<Question> qnaPage = qnaStub.getQnaPage(10L);
         MultiValueMap pageParam = utils.getPageParam();
-<<<<<<<<< Temporary merge branch 1
         given(getService.findQuestionByStatus(any(Pageable.class),anyString())).willReturn(qnaPage);
-=========
-
-        given(getService.findQuestionByStatus(any(Pageable.class), any(QnaStatus.class), any(QnaStatus.class))).willReturn(qnaPage);
->>>>>>>>> Temporary merge branch 2
         // when
         ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/admin")
             .params(pageParam)
@@ -147,7 +142,6 @@ public class QnaControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.content[0].questionId").value(content.get(0).getId()));
     }
-
 
     @Test
     @DisplayName("등록 테스트")
