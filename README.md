@@ -7,7 +7,7 @@
 
 ## 📎 관련 링크
 
-- S3(배포) : http://devstore-dev-deploy.s3-website.ap-northeast-2.amazonaws.com/
+- S3(클라이언트) : http://devstore-dev-deploy.s3-website.ap-northeast-2.amazonaws.com/
 - EC2(서버) : http://storedve.shop
 
 <br/>
