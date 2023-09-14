@@ -61,6 +61,7 @@ springdoc:
 iamport:
   api-key: ${IAMPORT_API_KEY}
   secret-key: ${SECRET_KEY}
+  merchant_uid: ${MERCHANT_UID}
 
 mail:
   address:
