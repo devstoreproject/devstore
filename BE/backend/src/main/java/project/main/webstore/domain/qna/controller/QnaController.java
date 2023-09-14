@@ -27,7 +27,6 @@ import project.main.webstore.domain.qna.dto.QuestionPatchDto;
 import project.main.webstore.domain.qna.dto.QuestionPostRequestDto;
 import project.main.webstore.domain.qna.entity.Answer;
 import project.main.webstore.domain.qna.entity.Question;
-import project.main.webstore.domain.qna.enums.QnaStatus;
 import project.main.webstore.domain.qna.mapper.QnaMapper;
 import project.main.webstore.domain.qna.service.QnaGetService;
 import project.main.webstore.domain.qna.service.QnaService;
@@ -36,8 +35,6 @@ import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
 
-import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/qna")
@@ -56,7 +53,7 @@ public class QnaController {
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
     public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByItemId(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable,
-                                                                         @PathVariable Long itemId) {
+            @PathVariable Long itemId) {
         Page<Question> findQna = getService.findQnaByItemId(pageable, itemId);
         Page<QuestionDto> response = mapper.toResponsePage(findQna);
         var responseDto = ResponseDto.<Page<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
@@ -71,7 +68,7 @@ public class QnaController {
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
     public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByUserId(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable,
-                                                                         @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+            @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         Page<Question> findQna = getService.findQnaByUserId(pageable, userId);
         Page<QuestionDto> response = mapper.toResponsePage(findQna);
@@ -96,7 +93,7 @@ public class QnaController {
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
     public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByStatus(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable,
-                                                                         @RequestParam("status") String status) {
+            @RequestParam(value = "status", required = false) String status) {
         Page<Question> result = getService.findQuestionByStatus(pageable,status);
         Page<QuestionDto> response = mapper.toResponsePage(result);
         var responseDto = ResponseDto.<Page<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
@@ -106,8 +103,8 @@ public class QnaController {
     @PostMapping("/items/{itemId}")
     @ApiResponse(responseCode = "201", description = "질문 등록")
     public ResponseEntity<ResponseDto<QuestionIdResponseDto>> postQuestion(@PathVariable Long itemId,
-                                                                           @RequestBody QuestionPostRequestDto postDto,
-                                                                           @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+            @RequestBody QuestionPostRequestDto postDto,
+            @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         Question request = mapper.toEntity(postDto);
         Question result = service.postQuestion(request,userId,itemId);
@@ -120,9 +117,9 @@ public class QnaController {
     @PatchMapping("/items/{itemId}/{questionId}")
     @ApiResponse(responseCode = "200", description = "질문 수정")
     public ResponseEntity<ResponseDto<QuestionIdResponseDto>> patchQuestion(@PathVariable Long questionId,
-                                                                            @PathVariable Long itemId,
-                                                                            @RequestBody QuestionPatchDto patchDto,
-                                                                            @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+            @PathVariable Long itemId,
+            @RequestBody QuestionPatchDto patchDto,
+            @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         Question request = mapper.toEntity(patchDto, questionId);
         Question result = service.patchQuestion(request,userId);
@@ -135,7 +132,7 @@ public class QnaController {
     @DeleteMapping("/{questionId}")
     @ApiResponse(responseCode = "204", description = "질문 삭제")
     public ResponseEntity deleteQuestion(@PathVariable Long questionId,
-                                         @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
+            @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         service.deleteQuestion(questionId, userId);
         return ResponseEntity.noContent().build();
@@ -144,8 +141,8 @@ public class QnaController {
     @PostMapping("/{questionId}/answer")
     @ApiResponse(responseCode = "201", description = "답변 등록")
     public ResponseEntity<ResponseDto<QuestionIdResponseDto>> postAnswer(@PathVariable Long questionId,
-                                                                         @RequestBody AnswerPostRequestDto postDto,
-                                                                         @Parameter(hidden = true)@AuthenticationPrincipal Object principal){
+            @RequestBody AnswerPostRequestDto postDto,
+            @Parameter(hidden = true)@AuthenticationPrincipal Object principal){
         Long userId = CheckLoginUser.getContextIdx(principal);
         Answer request = mapper.toEntity(postDto, questionId,userId);
         Answer result = service.postAnswer(request,userId);
