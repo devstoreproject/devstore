@@ -26,24 +26,30 @@ export default function Table({
       ) : null}
       <TableTitle />
       <ul>
-        {products.map((product, idx) => {
-          return (
-            <TableContents
-              idx={idx}
-              key={product.itemId}
-              itemId={product.itemId}
-              name={product.name}
-              totalCount={product.totalCount}
-              optionList={product.optionList}
-              itemPrice={product.itemPrice}
-              salesQuantity={product.salesQuantity}
-              setIsDetailModalOpen={setIsDetailModalOpen}
-              setProductId={setProductId}
-              setCheckedId={setCheckedId}
-              page={page}
-            />
-          );
-        })}
+        {products.length === 0 ? (
+          <span className="flex items-center justify-center h-120 w-300">
+            등록된 상품이 없습니다.
+          </span>
+        ) : (
+          products.map((product, idx) => {
+            return (
+              <TableContents
+                idx={idx}
+                key={product.itemId}
+                itemId={product.itemId}
+                name={product.name}
+                totalCount={product.totalCount}
+                optionList={product.optionList}
+                itemPrice={product.itemPrice}
+                salesQuantity={product.salesQuantity}
+                setIsDetailModalOpen={setIsDetailModalOpen}
+                setProductId={setProductId}
+                setCheckedId={setCheckedId}
+                page={page}
+              />
+            );
+          })
+        )}
       </ul>
     </div>
   );

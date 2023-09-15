@@ -23,23 +23,29 @@ export default function ResultTable({ inquirys, page }: OwnProps) {
         <div className="absolute h-132.8 w-300 bg-black opacity-50 rounded-t-lg" />
       ) : null}
       <ResultTableTitle />
-      {inquirys.map((inquiry, idx) => (
-        <ResultTableContents
-          key={inquiry.questionId}
-          questionId={inquiry.questionId}
-          comment={inquiry.comment}
-          answer={inquiry.answer}
-          idx={idx}
-          page={page}
-          name={
-            products.filter((product) => product.itemId === inquiry.itemId)[0]
-              ?.name
-          }
-          setIsModalOpen={setIsModalOpen}
-          setInquiryId={setInquiryId}
-          setProductName={setProductName}
-        />
-      ))}
+      {inquirys.length === 0 ? (
+        <span className="flex justify-center items-center w-300 h-132.8">
+          등록된 상품문의 내역이 없습니다.
+        </span>
+      ) : (
+        inquirys.map((inquiry, idx) => (
+          <ResultTableContents
+            key={inquiry.questionId}
+            questionId={inquiry.questionId}
+            comment={inquiry.comment}
+            answer={inquiry.answer}
+            idx={idx}
+            page={page}
+            name={
+              products.filter((product) => product.itemId === inquiry.itemId)[0]
+                ?.name
+            }
+            setIsModalOpen={setIsModalOpen}
+            setInquiryId={setInquiryId}
+            setProductName={setProductName}
+          />
+        ))
+      )}
       {isModalOpen ? (
         <InquiryDetail
           setIsModalOpen={setIsModalOpen}
