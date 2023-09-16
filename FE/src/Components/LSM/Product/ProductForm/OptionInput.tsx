@@ -106,7 +106,6 @@ export default function OptionInput({
       );
       setEditOptions(editList);
       setDefaultCount(totalEditItemCount);
-      console.log(editList);
     }
   };
 

@@ -47,7 +47,6 @@ export default function Button({
       Authorization: localStorage.getItem('authorization'),
     },
   };
-  console.log('option', option);
   const likeHandler = () => {
     if (userId === null) {
       alert('로그인 후에 좋아해 주세요.');
@@ -59,7 +58,6 @@ export default function Button({
         .post(`api/items/${id}/favorite?userId=${userId}`, {}, headers)
         .then((res) => {
           setHeart(!heart);
-          console.log(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -68,8 +66,14 @@ export default function Button({
   };
 
   const addCartHandler = () => {
+    console.log(selectedValue);
     if (userId === null) {
       alert('로그인 후에 이용해주세요.');
+      return;
+    }
+
+    if (selectedValue === 0) {
+      alert('옵션을 선택해주세요.');
       return;
     }
 
@@ -88,10 +92,6 @@ export default function Button({
             ? '장바구니에 해당 아이템이 이미 존재합니다. 그래도 추가하시겠습니까?'
             : '해당 제품을 장바구니에 추가하시겠습니까?';
 
-        if (selectedValue === 0) {
-          alert('옵션을 선택해주세요.');
-          return;
-        }
         if (window.confirm(confirmMessage)) {
           const requestBody = {
             itemList: [
@@ -121,7 +121,7 @@ export default function Button({
   };
 
   return (
-    <div className="flex pt-5 items-center justify-end">
+    <div className="flex items-center justify-end pt-5">
       <button onClick={likeHandler}>
         {heart ? (
           <VscHeartFilled size={heartSize} />
@@ -130,12 +130,12 @@ export default function Button({
         )}
       </button>
       <button
-        className="border rounded-full bg-none text-slate-800 py-3 w-48 ml-2 border-slate-800"
+        className="w-48 py-3 ml-2 border rounded-full bg-none text-slate-800 border-slate-800"
         onClick={addCartHandler}
       >
         장바구니 추가
       </button>
-      <button className="border-box rounded-full bg-slate-800 text-slate-200 py-3 w-48 ml-2">
+      <button className="w-48 py-3 ml-2 rounded-full border-box bg-slate-800 text-slate-200">
         구매하기
       </button>
     </div>
