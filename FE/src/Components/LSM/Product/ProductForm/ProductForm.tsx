@@ -44,8 +44,6 @@ export default function ProductForm({ datas, pathName }: ProductEditProp) {
   const [deleteOptions, setDeleteOptions] = useState<any>([]);
   const [editContents, setEditContents] = useState(datas?.description);
 
-  console.log(datas);
-
   const postData = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -83,12 +81,10 @@ export default function ProductForm({ datas, pathName }: ProductEditProp) {
         })
         .then((res) => {
           navigate('/admin/productlist');
-          console.log(res);
         });
     } catch (error) {
       console.log(error);
     }
-    console.log(postDatas);
   };
 
   const patchData = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -116,7 +112,6 @@ export default function ProductForm({ datas, pathName }: ProductEditProp) {
         'patch',
         new Blob([JSON.stringify(patchDatas)], { type: 'application/json' })
       );
-      console.log(patchDatas);
       const res = await api.patch(`/api/items/${getItemId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

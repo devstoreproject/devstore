@@ -55,7 +55,6 @@ function DeliverForm({
         }
         const [data] = res.data.data;
         setIsShippingFormWrite(data);
-        console.log(data);
       })
       .catch(() => {
         alert('기본 배송지가 등록되어있지 않습니다.');
@@ -77,7 +76,7 @@ function DeliverForm({
       {isMe ? (
         <>
           <div className="flex items-center">
-            <p className="h-14 border border-gray-300 rounded-full px-10 flex items-center w-40">
+            <p className="flex items-center w-40 px-10 border border-gray-300 rounded-full h-14">
               {isShippingFormWrite.recipient}
             </p>
             <input
@@ -100,7 +99,7 @@ function DeliverForm({
             </label>
           </div>
           <div className="flex items-center mt-3">
-            {/* <div className="relative h-14 w-40 mr-2">
+            {/* <div className="relative w-40 mr-2 h-14">
               <ul
                 className={`top-0 left-0 border border-gray-300 rounded-full px-10 bg-light-gray w-full absolute z-20 ${
                   mobileOpen
@@ -109,23 +108,23 @@ function DeliverForm({
                 }`}
                 onClick={handleMobileOpen}
               >
-                <li className="h-14 flex items-center">{phoneFront}</li>
+                <li className="flex items-center h-14">{phoneFront}</li>
               </ul>
             </div>
             - */}
-            <p className="h-14 border border-gray-300 rounded-full px-10 flex items-center w-64">
+            <p className="flex items-center w-64 px-10 border border-gray-300 rounded-full h-14">
               {isShippingFormWrite.mobileNumber}
             </p>
           </div>
           <div className="mt-3">
-            <p className="h-14 border border-gray-300 rounded-full px-10 flex items-center w-40">
+            <p className="flex items-center w-40 px-10 border border-gray-300 rounded-full h-14">
               {isShippingFormWrite.zipCode}
             </p>
-            <div className="mt-3 flex gap-2">
-              <p className="h-14 border border-gray-300 rounded-full px-10 flex items-center w-64">
+            <div className="flex gap-2 mt-3">
+              <p className="flex items-center w-64 px-10 border border-gray-300 rounded-full h-14">
                 {isShippingFormWrite.addressSimple}
               </p>
-              <p className="h-14 border border-gray-300 rounded-full px-10 flex items-center w-64">
+              <p className="flex items-center w-64 px-10 border border-gray-300 rounded-full h-14">
                 {isShippingFormWrite.addressDetail}
               </p>
             </div>
@@ -137,7 +136,7 @@ function DeliverForm({
             <input
               type="textarea"
               name="recipient"
-              className="h-14 border border-gray-300 bg-gray-100 rounded-full px-10 w-40"
+              className="w-40 px-10 bg-gray-100 border border-gray-300 rounded-full h-14"
               onChange={handleShippingChange}
             ></input>
             <input
@@ -154,7 +153,7 @@ function DeliverForm({
             </label>
           </div>
           <div className="flex items-center mt-3">
-            {/* <div className="relative h-14 w-40 mr-2">
+            {/* <div className="relative w-40 mr-2 h-14">
               <ul
                 className={`top-0 left-0 border border-gray-300 rounded-full px-10 bg-light-gray w-full absolute z-20 ${
                   mobileOpen
@@ -163,8 +162,8 @@ function DeliverForm({
                 }`}
                 onClick={handleMobileOpen}
               >
-                <li className="h-14 flex items-center">010</li>
-                <li className="h-14 flex items-center">010</li>
+                <li className="flex items-center h-14">010</li>
+                <li className="flex items-center h-14">010</li>
               </ul>
             </div>
             - */}
@@ -172,25 +171,25 @@ function DeliverForm({
               type="textarea"
               name="mobileNumber"
               placeholder="숫자만 입력해주세요"
-              className="h-14 border border-gray-300 bg-gray-100 rounded-full px-10 ml-2 w-64"
+              className="w-64 px-10 ml-2 bg-gray-100 border border-gray-300 rounded-full h-14"
               onChange={handleShippingChange}
             ></input>
           </div>
           <div className="mt-3">
             {addressFinderOn ? (
-              <p className="h-14 border border-gray-300 rounded-full px-10 flex items-center w-40 float-left">
+              <p className="flex items-center float-left w-40 px-10 border border-gray-300 rounded-full h-14">
                 {isShippingFormWrite.zipCode}
               </p>
             ) : (
               <input
                 type="textarea"
                 name="zipCode"
-                className="h-14 border border-gray-300 bg-gray-100 rounded-full px-10 w-40"
+                className="w-40 px-10 bg-gray-100 border border-gray-300 rounded-full h-14"
                 onChange={handleShippingChange}
               ></input>
             )}
             <button
-              className="ml-5 h-14 border border-light-black bg-light-black text-white rounded-full px-10 w-40"
+              className="w-40 px-10 ml-5 text-white border rounded-full h-14 border-light-black bg-light-black"
               onClick={(e) => {
                 e.preventDefault();
                 setAddressFinder(!addressFinder);
@@ -200,14 +199,14 @@ function DeliverForm({
             </button>
             <div className="mt-3">
               {addressFinderOn ? (
-                <p className="h-14 border border-gray-300 rounded-full px-10 flex items-center float-left">
+                <p className="flex items-center float-left px-10 border border-gray-300 rounded-full h-14">
                   {isShippingFormWrite.addressSimple}
                 </p>
               ) : (
                 <input
                   type="textarea"
                   name="addressSimple"
-                  className="h-14 border border-gray-300 bg-gray-100 rounded-full px-10 w-64"
+                  className="w-64 px-10 bg-gray-100 border border-gray-300 rounded-full h-14"
                   onChange={handleShippingChange}
                 ></input>
               )}
@@ -215,35 +214,35 @@ function DeliverForm({
                 type="textarea"
                 name="addressDetail"
                 placeholder="상세주소를 입력하세요"
-                className="h-14 border border-gray-300 bg-gray-100 rounded-full px-10 ml-2 w-64"
+                className="w-64 px-10 ml-2 bg-gray-100 border border-gray-300 rounded-full h-14"
                 onChange={handleShippingChange}
               ></input>
             </div>
             {addressFinder && (
               <>
-                <div className="w-1/2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+                <div className="fixed z-50 w-1/2 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                   <DaumPostcodeEmbed
                     onComplete={onCompletePost}
                     autoClose={true}
                   />
                 </div>
-                <div className="z-40 fixed w-full h-full left-0 top-0 bg-black opacity-30"></div>
+                <div className="fixed top-0 left-0 z-40 w-full h-full bg-black opacity-30"></div>
               </>
             )}
           </div>
         </>
       )}
-      {/* <div className="relative z-10 mr-2 mt-3 h-14 w-128">
+      {/* <div className="relative z-10 mt-3 mr-2 h-14 w-128">
         <ul
           className={`border border-gray-300 px-10 bg-light-gray ${
             requestOpen ? 'rounded-xl' : 'overflow-hidden rounded-full h-14'
           }`}
           onClick={handleRequestOpen}
         >
-          <li className="h-14 flex items-center">
+          <li className="flex items-center h-14">
             배송 시 요청사항을 선택해주세요.
           </li>
-          <li className="h-14 flex items-center">빠른 배송 부탁드립니다.</li>
+          <li className="flex items-center h-14">빠른 배송 부탁드립니다.</li>
         </ul>
       </div> */}
     </div>

@@ -7,7 +7,6 @@ const fetchReview = (
   page: number,
   setReviewTotalPage: React.Dispatch<React.SetStateAction<number>>
 ): void => {
-  console.log(page);
   api
     .get(`api/items/${id}/reviews?page=${page}&size=10`)
     .then((res) => {

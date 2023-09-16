@@ -26,7 +26,6 @@ export default function InquiryAnswerContainer({
         comment,
       })
       .then((res) => {
-        console.log(res);
         setInquiryAnswer(comment);
       })
       .catch((err) => {

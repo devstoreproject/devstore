@@ -80,7 +80,6 @@ export default function ImageInput({
 
     setImages(newImages);
   };
-  console.log(images);
 
   const removeImageHandler = (idx: number) => {
     const filteredInputs = [...imagePreview];
