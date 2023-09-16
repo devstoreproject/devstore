@@ -1,41 +1,40 @@
-import type { OptionListType } from 'Pages/CYW/ProductDetail';
 import { CiCirclePlus, CiCircleMinus } from 'react-icons/ci';
 import { RxCross2 } from 'react-icons/rx';
 
 interface OwnProps {
   name: string;
   price: number;
-  option: OptionListType[];
   productCount: number;
-  selectedValue: number;
   setProductCount: React.Dispatch<React.SetStateAction<number>>;
+  setSelectedValue: React.Dispatch<React.SetStateAction<number>>;
+  selectedOptionDetail: string | null;
 }
 
 export default function SelectedResult({
   name,
   price,
-  option,
   productCount,
   setProductCount,
-  selectedValue,
+  selectedOptionDetail,
+  setSelectedValue,
 }: OwnProps) {
-  const btnSize = 24;
   return (
     <div className="pt-5">
-      <div className="border-box border-2 rounded-[20px] pt-3 pl-5 py-2 bg-slate-50">
+      <div className="flex flex-col border-box border-2 rounded-[20px] pt-3 pl-5 py-2 bg-slate-50">
+        <div className="flex items-center">
+          <span className="mb-2 font-bold">옵션 : {selectedOptionDetail}</span>
+          <button
+            className="ml-auto mr-4 -mt-3"
+            onClick={() => {
+              setSelectedValue(0);
+            }}
+          >
+            <RxCross2 size={18} />
+          </button>
+        </div>
         <div className="flex items-center">
           <p>{name}</p>
-          <div className="ml-auto pr-4">
-            <RxCross2 size={18} />
-          </div>
         </div>
-        {option.map((optionItem, i) => (
-          <div className="flex pt-1" key={i}>
-            <span className="font-light">
-              {optionItem.optionName}: {selectedValue}
-            </span>
-          </div>
-        ))}
         <div className="flex items-center pt-2">
           <button
             onClick={() => {
@@ -62,3 +61,5 @@ export default function SelectedResult({
     </div>
   );
 }
+
+const btnSize = 24;
