@@ -128,9 +128,7 @@ public class QnaControllerTest {
         QnaStatus complete = QnaStatus.ANSWER_COMPLETE;
         Page<Question> qnaPage = qnaStub.getQnaPage(10L);
         MultiValueMap pageParam = utils.getPageParam();
-
         given(getService.findQuestionByStatus(any(Pageable.class),anyString())).willReturn(qnaPage);
-
         // when
         ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/admin")
             .params(pageParam)
@@ -144,7 +142,6 @@ public class QnaControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.content[0].questionId").value(content.get(0).getId()));
     }
-
 
     @Test
     @DisplayName("등록 테스트")
