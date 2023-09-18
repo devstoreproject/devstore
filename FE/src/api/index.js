@@ -1,13 +1,8 @@
 import axios from 'axios';
-
-const Authorization = localStorage.getItem('authorization');
 const Refresh = localStorage.getItem('refresh');
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
-  headers: {
-    Authorization,
-  },
 });
 
 const refreshApi = axios.create({
@@ -58,6 +53,16 @@ api.interceptors.response.use(
     }
 
     throw err;
+  }
+);
+
+api.interceptors.request.use(
+  (req) => {
+    req.headers.authorization = localStorage.getItem('authorization');
+    return req;
+  },
+  (error) => {
+    throw error;
   }
 );
 
