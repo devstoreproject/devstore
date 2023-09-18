@@ -3,7 +3,7 @@ import OrderListBtnContainer from './OrderListBtnContainer';
 import Table from './Table';
 import ProductDetail from './ProductDetail';
 import useFetchProductsPaging from 'hooks/admin/product/useFetchProductsPaging';
-import PaginationContainer from '../ProductInquiry/PaginationContainer';
+import PaginationContainer from '../PaginationContainer';
 
 export default function ProductList() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -11,7 +11,7 @@ export default function ProductList() {
   const [checkedId, setCheckedId] = useState<number[]>([]);
   const [page, setPage] = useState(0);
 
-  const { products, setProducts } = useFetchProductsPaging(page);
+  const { products, setProducts, totalPages } = useFetchProductsPaging(page);
 
   return (
     <div className="relative flex flex-col w-300">
@@ -31,7 +31,11 @@ export default function ProductList() {
         page={page}
       />
       <div className="flex flex-col mt-2">
-        <PaginationContainer page={page} setPage={setPage} />
+        <PaginationContainer
+          page={page}
+          setPage={setPage}
+          totalPages={totalPages}
+        />
         <OrderListBtnContainer
           checkedId={checkedId}
           setProducts={setProducts}

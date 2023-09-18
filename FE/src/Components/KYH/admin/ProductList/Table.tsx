@@ -39,7 +39,6 @@ export default function Table({
                 itemId={product.itemId}
                 name={product.name}
                 totalCount={product.totalCount}
-                optionList={product.optionList}
                 itemPrice={product.itemPrice}
                 salesQuantity={product.salesQuantity}
                 setIsDetailModalOpen={setIsDetailModalOpen}

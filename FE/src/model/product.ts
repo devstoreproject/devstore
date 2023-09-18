@@ -3,7 +3,7 @@ export interface Product {
   name: string;
   itemPrice: number;
   totalCount: number;
-  optionList: Option[];
+  optionList?: Option[];
   salesQuantity: number;
 }
 

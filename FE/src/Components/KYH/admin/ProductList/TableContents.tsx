@@ -1,4 +1,4 @@
-import type { Product, Option } from 'model/product';
+import type { Product } from 'model/product';
 import { useDispatch } from 'react-redux';
 import { setItemId } from 'store/modules/setItemId';
 import addCommasToPrice from 'utils/addCommasToPrice';
@@ -6,7 +6,6 @@ import addCommasToPrice from 'utils/addCommasToPrice';
 interface OwnProps extends Product {
   idx: number;
   page: number;
-  optionList: Option[];
   setIsDetailModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProductId: React.Dispatch<React.SetStateAction<number>>;
   setCheckedId: React.Dispatch<React.SetStateAction<number[]>>;
@@ -17,7 +16,6 @@ export default function TableContents({
   itemId,
   name,
   totalCount,
-  optionList,
   itemPrice,
   salesQuantity,
   setIsDetailModalOpen,

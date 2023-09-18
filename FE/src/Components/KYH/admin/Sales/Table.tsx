@@ -4,12 +4,12 @@ import TableTitle from './TableTitle';
 import calculateTotalSales from 'utils/sales/calculateTotalSales';
 import addCommasToPrice from 'utils/addCommasToPrice';
 import { useState } from 'react';
-import PaginationContainer from '../ProductInquiry/PaginationContainer';
+import PaginationContainer from '../PaginationContainer';
 
 export default function Table() {
   const [page, setPage] = useState(0);
-  const sales = useFetchItemsSalesPaging(page);
-  const totalSales = calculateTotalSales(sales);
+  const { itemSales, totalPages } = useFetchItemsSalesPaging(page);
+  const totalSales = calculateTotalSales(itemSales);
   const commaTotalSales = addCommasToPrice(totalSales);
 
   return (
@@ -21,24 +21,28 @@ export default function Table() {
       <div className="bg-gray-100 border border-gray-400 rounded-t-lg w-300 h-132.8 mb-4">
         <TableTitle />
         <ul>
-          {sales.length === 0 ? (
-            <span className="flex justify-center items-center w-300 h-132.8">
+          {itemSales.length === 0 ? (
+            <span className="flex items-center justify-center w-300 h-120">
               주문된 상품 내역이 없습니다.
             </span>
           ) : (
-            sales.map((salesItem, idx) => (
+            itemSales.map((item, idx) => (
               <TableContents
-                key={salesItem.itemId}
+                key={item.itemId}
                 idx={idx}
-                itemName={salesItem.itemName}
-                itemPrice={salesItem.itemPrice}
+                itemName={item.itemName}
+                itemPrice={item.itemPrice}
                 totalSales={totalSales}
               />
             ))
           )}
         </ul>
       </div>
-      <PaginationContainer page={page} setPage={setPage} />
+      <PaginationContainer
+        page={page}
+        setPage={setPage}
+        totalPages={totalPages}
+      />
     </>
   );
 }
