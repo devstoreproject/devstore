@@ -3,7 +3,8 @@ import type { Inquiry } from 'model/inquiry';
 import { useEffect, useState } from 'react';
 
 const useFetchInquiryPaging = (page: number, checked: boolean[]) => {
-  const [inpuiry, setInquiry] = useState<Inquiry[]>([]);
+  const [inquirys, setInquirys] = useState<Inquiry[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
   useEffect(() => {
     const answerStatus = checked[0] ? 'REGISTER' : 'ANSWER_COMPLETE';
@@ -12,14 +13,15 @@ const useFetchInquiryPaging = (page: number, checked: boolean[]) => {
         `/api/qna/admin?status=${answerStatus}&page=${page}&size=10&sort=createdAt,desc`
       )
       .then((res) => {
-        setInquiry(res.data.data.content);
+        setTotalPages(res.data.data.totalPages);
+        setInquirys(res.data.data.content);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [setInquiry, page, checked]);
+  }, [setInquirys, page, checked]);
 
-  return inpuiry;
+  return { inquirys, totalPages };
 };
 
 export default useFetchInquiryPaging;
