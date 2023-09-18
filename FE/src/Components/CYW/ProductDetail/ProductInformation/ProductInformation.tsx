@@ -14,7 +14,10 @@ interface ProductTypeProps {
 export default function ProductInformation({ product }: ProductTypeProps) {
   const [productCount, setProductCount] = useState<number>(1);
   const [selectedValue, setSelectedValue] = useState<number>(0);
-  console.log(selectedValue);
+  const [selectedOptionDetail, setSelectedOptionDetail] = useState<
+    string | null
+  >('');
+
   return (
     <div className="w-1/4 pt-5 pl-10">
       <ProductName name={product.name} />
@@ -27,15 +30,18 @@ export default function ProductInformation({ product }: ProductTypeProps) {
         option={product.optionList}
         selectedValue={selectedValue}
         setSelectedValue={setSelectedValue}
+        setSelectedOptionDetail={setSelectedOptionDetail}
       />
-      <SelectedResult
-        name={product.name}
-        price={product.itemPrice}
-        option={product.optionList}
-        selectedValue={selectedValue}
-        productCount={productCount}
-        setProductCount={setProductCount}
-      />
+      {selectedValue === 0 ? null : (
+        <SelectedResult
+          name={product.name}
+          price={product.itemPrice}
+          productCount={productCount}
+          setProductCount={setProductCount}
+          selectedOptionDetail={selectedOptionDetail}
+          setSelectedValue={setSelectedValue}
+        />
+      )}
       <Button
         product={product}
         productCount={productCount}

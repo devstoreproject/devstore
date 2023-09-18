@@ -4,11 +4,13 @@ import { useEffect, useState } from 'react';
 
 const useFetchProductsPaging = (page: number) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
   useEffect(() => {
     api
       .get(`/api/items?page=${page}&size=10`)
       .then((res) => {
+        setTotalPages(res.data.data.totalPages);
         setProducts(res.data.data.content);
       })
       .catch((err) => {
@@ -16,7 +18,7 @@ const useFetchProductsPaging = (page: number) => {
       });
   }, [setProducts, page]);
 
-  return { products, setProducts };
+  return { products, setProducts, totalPages };
 };
 
 export default useFetchProductsPaging;

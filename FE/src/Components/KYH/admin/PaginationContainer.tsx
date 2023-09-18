@@ -9,32 +9,41 @@ import {
 interface OwnProps {
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  totalPages: number;
 }
 
-export default function PaginationContainer({ page, setPage }: OwnProps) {
-  const [maxPage, setMaxPage] = useState(0);
+export default function PaginationContainer({
+  page,
+  setPage,
+  totalPages,
+}: OwnProps) {
+  const [maxPages, setMaxPages] = useState(0);
 
   const doubleArrowLeftBtnHandler = () => {
-    if (maxPage === 0) return;
-    setMaxPage((prev) => prev - 5);
-    setPage((prev) => prev - 5);
+    if (page < 5) return;
+    setMaxPages((prev) => prev - 5);
+    setPage(maxPages - 1);
   };
 
   const doubleArrowRightBtnHandler = () => {
-    setMaxPage((prev) => prev + 5);
-    setPage((prev) => prev + 5);
+    if (page + 1 >= totalPages) return;
+    setMaxPages((prev) => prev + 5);
+    setPage(maxPages + 5);
   };
 
   const arrowLeftBtnHandler = () => {
     if (page === 0) return;
-    if (page % 5 === 0) setMaxPage((prev) => prev - 5);
+    if (page % 5 === 0) setMaxPages((prev) => prev - 5);
     setPage((prev) => prev - 1);
   };
 
   const arrowRightBtnHandler = () => {
-    if (page % 5 === 4) setMaxPage((prev) => prev + 5);
+    if (page + 1 === totalPages) return;
+    if (page % 5 === 4) setMaxPages((prev) => prev + 5);
     setPage((prev) => prev + 1);
   };
+
+  if (totalPages === 0) return null;
 
   return (
     <div className="flex items-center justify-center w-300">
@@ -50,18 +59,20 @@ export default function PaginationContainer({ page, setPage }: OwnProps) {
       >
         <MdKeyboardArrowLeft />
       </button>
-      {Array(5 + maxPage)
+      {Array(5)
         .fill('')
-        .slice(maxPage, 5 + maxPage)
         .map((btn, idx) => (
           <button
-            className={`w-5 mr-4 ${page === idx + maxPage ? 'font-bold' : ''}`}
+            className={`w-5 mr-4 ${
+              page === idx + maxPages ? 'font-bold' : ''
+            } ${idx + 1 + maxPages > totalPages ? 'text-gray-300' : ''}`}
             key={idx}
+            disabled={idx + 1 + maxPages > totalPages}
             onClick={() => {
-              setPage(idx + maxPage);
+              setPage(idx);
             }}
           >
-            {idx + maxPage + 1}
+            {idx + 1 + maxPages}
           </button>
         ))}
       <button
