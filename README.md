@@ -7,7 +7,7 @@
 
 ## 📎 관련 링크
 
-- S3(배포) : http://devstore-dev-deploy.s3-website.ap-northeast-2.amazonaws.com/
+- S3(클라이언트) : http://devstore-dev-deploy.s3-website.ap-northeast-2.amazonaws.com/
 - EC2(서버) : http://storedve.shop
 
 <br/>
@@ -86,17 +86,3 @@
 - DB 다이어그램(1)
 - 요구사항 정의서(4)
 - <a href="https://www.figma.com/file/SA3jZaCgtKbwJ3FIvyAeGM/Devstore-%ED%99%94%EB%A9%B4%EC%84%A4%EA%B3%84%EC%84%9C?type=design&node-id=0-1&mode=design&t=nkZOYnR5z8IRKyVK-0">화면설계서</a>
-
-<br/>
-
-### DB 다이어그램(1)
-
--
-
-### 요구사항 정의서(4)
-
--
-
-<br/>
-
-## 📌 주요 기능
