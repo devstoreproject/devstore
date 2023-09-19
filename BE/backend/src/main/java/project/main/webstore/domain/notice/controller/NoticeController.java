@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,11 +18,23 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
-import project.main.webstore.domain.notice.dto.*;
+import project.main.webstore.domain.notice.dto.NoticeGetResponseDto;
+import project.main.webstore.domain.notice.dto.NoticeGetSimpleResponseDto;
+import project.main.webstore.domain.notice.dto.NoticeIdResponseDto;
+import project.main.webstore.domain.notice.dto.NoticePatchRequestDto;
+import project.main.webstore.domain.notice.dto.NoticePostRequestDto;
 import project.main.webstore.domain.notice.entity.Notice;
 import project.main.webstore.domain.notice.mapper.NoticeMapper;
 import project.main.webstore.domain.notice.service.NoticeGetService;
@@ -29,11 +43,10 @@ import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.UriCreator;
 
-import java.net.URI;
-
 @Slf4j
 @RestController
 @RequestMapping("/api/notices")
+@Tag(name = "공지사항 API",description = "공지사항 등록 조회 등의 역할 수행")
 @RequiredArgsConstructor
 public class NoticeController {
     private final String UPLOAD_DIR = "notice";
