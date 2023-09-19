@@ -76,8 +76,8 @@ mail:
       enable: true
   subject:
     user:
-      registration: 가입 환영한다 얼간이들아
-      active: 휴면계정 해제
+      registration: 가입 메시지
+      active: 휴면 계정
   template:
     name:
       user:

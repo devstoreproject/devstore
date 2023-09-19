@@ -1,6 +1,8 @@
 package project.main.webstore.domain.cart.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ import project.main.webstore.utils.UriCreator;
 
 @RequestMapping("/api/cart")
 @RestController
+@Tag(name = "장바구니 API",description = "장바구니 기능")
 @RequiredArgsConstructor
 public class CartController {
     private static final String DEFAULT_URL = "/cart";
@@ -35,6 +38,7 @@ public class CartController {
     private final CartMapper mapper;
 
     @PostMapping
+    @ApiResponse(responseCode = "201", description = "장바구니 등록")
     public ResponseEntity<ResponseDto<CartIdResponseDto>> postCart(@RequestBody CartPostRequestDto post,
                                                                    @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
