@@ -60,7 +60,7 @@ export default function InquiryRegister({ inquiry, setInquiry }: OwnProps) {
   };
 
   return (
-    <form className="flex justify-center pb-4 pt-4" onSubmit={handleSubmit}>
+    <form className="flex justify-center pt-4 pb-4" onSubmit={handleSubmit}>
       <input
         id="inquiryRegister"
         type="text"
@@ -70,7 +70,7 @@ export default function InquiryRegister({ inquiry, setInquiry }: OwnProps) {
         onChange={handleInputChange}
       />
       <button
-        className="px-24 py-3 ml-2 border border-gray bg-slate-800 text-slate-50 rounded-3xl"
+        className="w-40 py-3 ml-2 border border-gray bg-slate-800 text-slate-50 rounded-3xl"
         type="submit"
       >
         문의하기

@@ -32,9 +32,9 @@ export default function InquiryElement({ inquiry, setInquiry }: OwnProps) {
         return (
           <div
             key={inquiryItem.questionId}
-            className="flex flex-col border-box relative"
+            className="relative flex flex-col border-box"
           >
-            <div className="flex pl-8 border-b-2 py-4">
+            <div className="flex py-4 pl-8 border-b-2">
               {edit === i ? (
                 <input
                   type="text"
@@ -50,6 +50,7 @@ export default function InquiryElement({ inquiry, setInquiry }: OwnProps) {
                   onClick={() => {
                     inquiryToggle(i);
                   }}
+                  className="cursor-pointer"
                 >
                   Q. {inquiryItem.comment}
                 </p>

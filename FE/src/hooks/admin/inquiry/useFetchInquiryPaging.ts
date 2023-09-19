@@ -7,7 +7,16 @@ const useFetchInquiryPaging = (page: number, checked: boolean[]) => {
   const [totalPages, setTotalPages] = useState<number>(0);
 
   useEffect(() => {
-    const answerStatus = checked[0] ? 'REGISTER' : 'ANSWER_COMPLETE';
+    let answerStatus = '';
+
+    if (checked[0] && checked[1]) answerStatus = '';
+    if (checked[0] && !checked[1]) answerStatus = 'REGISTER';
+    if (!checked[0] && checked[1]) answerStatus = 'ANSWER_COMPLETE';
+    if (!checked[0] && !checked[1]) {
+      setInquirys([]);
+      return;
+    }
+
     api
       .get(
         `/api/qna/admin?status=${answerStatus}&page=${page}&size=10&sort=createdAt,desc`
