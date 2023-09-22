@@ -1,6 +1,8 @@
 package project.main.webstore.domain.item.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
+import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,15 +10,14 @@ import lombok.Setter;
 import project.main.webstore.domain.image.dto.ImageSortPatchDto;
 import project.main.webstore.domain.item.enums.Category;
 
-import javax.validation.constraints.Pattern;
-import java.util.List;
-
 @Getter
 @Setter
 @Schema(description = "상품 수정 스키마")
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemPatchDto {
+    @Schema(hidden = true)
+    private Long itemId;
     @Schema(example = "COMPUTER", allowableValues = {"COMPUTER", "MONITOR", "MOUSE", "HEADSET", "CHAIR", "DESK"})
     private Category category;
     @Schema(example = "맥북", description = "상품 이름")
