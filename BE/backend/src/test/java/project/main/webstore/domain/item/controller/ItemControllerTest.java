@@ -1,6 +1,13 @@
 package project.main.webstore.domain.item.controller;
 
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyList;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+
 import com.google.gson.Gson;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +29,8 @@ import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.service.ItemService;
 import project.main.webstore.domain.item.stub.ItemStub;
+import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.stub.ImageStub;
-
-import java.nio.charset.StandardCharsets;
-
-import static org.mockito.BDDMockito.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -153,10 +157,20 @@ class ItemControllerTest {
     }
 
     @Test
-    void getItem() {
+    @DisplayName("상품 단건 조회 : 로그인 한 회원")
+    @WithMockCustomUser(userRole = UserRole.CLIENT)
+    void getItem() throws Exception {
+        Item result = itemStub.createItem(1L);
+        given(itemService.getItem(anyLong(),anyLong())).willReturn(result);
 
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.get(DEFAULT_URL + "/{item-Id}", 2L));
+
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.itemId").value(result.getItemId()));
     }
-
 
     @Test
     void searchItem() {
