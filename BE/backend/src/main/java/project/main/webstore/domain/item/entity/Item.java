@@ -219,6 +219,16 @@ public class Item extends Auditable {
         }
         return optionList;
     }
+    public void addOptionList(List<ItemOption> itemOptionList) {
+        for (ItemOption itemOption : itemOptionList) {
+            this.optionList.add(itemOption);
+            itemOption.setItem(this);
+        }
+    }
+    public void addDefaultItem(ItemOption itemOption){
+        this.defaultItem = itemOption;
+        itemOption.setItem(this);
+    }
 }
 
 

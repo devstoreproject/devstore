@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
+import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
 
@@ -28,4 +29,18 @@ class ItemMapperTest {
         Assertions.assertThat(newOne).as("두 값은 동일해야한다.").usingRecursiveComparison()
                 .isEqualTo(oldOne);
     }
+
+    @Test
+    @DisplayName("post DTO 수정을 위한 테스트")
+    void post_trans_test() throws Exception{
+        ItemPostDto post = new ItemPostDto(Category.CHAIR, "의자", 0, "상세 설명", 10000,
+                100, 3000, new ArrayList<>(), new ArrayList<>());
+
+        Item oldOne = mapper.toEntity(post);
+        Item newOne = mapper.toEntityNew(post);
+
+        Assertions.assertThat(newOne).as("두 값은 동일해야한다.").usingRecursiveComparison()
+                .isEqualTo(oldOne);
+    }
+
 }
