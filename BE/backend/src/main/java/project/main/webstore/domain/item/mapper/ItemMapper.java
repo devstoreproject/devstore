@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
+import project.main.webstore.domain.image.dto.ImageDto;
+import project.main.webstore.domain.image.entity.ItemImage;
 import project.main.webstore.domain.item.dto.ItemIdResponseDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.dto.ItemResponseDto;
 import project.main.webstore.domain.item.dto.OptionPatchDto;
 import project.main.webstore.domain.item.dto.OptionPostRequestDto;
+import project.main.webstore.domain.item.dto.OptionResponseDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
 
@@ -47,28 +50,57 @@ public class ItemMapper {
         return result;
     }
 
-    private List<ItemOption> patchToOptionList(List<OptionPatchDto> optionDtoList){
+    private List<ItemOption> patchToOptionList(List<OptionPatchDto> optionDtoList) {
         return optionDtoList.stream().map(dto -> new ItemOption(dto)).collect(Collectors.toList());
     }
-    private List<ItemOption> postToOptionList(List<OptionPostRequestDto> optionDtoList){
-        return optionDtoList.stream().map(option -> new ItemOption(option.getOptionDetail(), option.getAdditionalPrice(), option.getItemCount(),option.getOptionName(), null)).collect(Collectors.toList());
+
+    private List<ItemOption> postToOptionList(List<OptionPostRequestDto> optionDtoList) {
+        return optionDtoList.stream()
+                .map(option -> new ItemOption(option.getOptionDetail(), option.getAdditionalPrice(),
+                        option.getItemCount(), option.getOptionName(), null))
+                .collect(Collectors.toList());
     }
 
-
-    private ItemOption toDefaultItemOption(Integer optionCount){
-        return new ItemOption(0,optionCount,null);
+    private ItemOption toDefaultItemOption(Integer optionCount) {
+        return new ItemOption(0, optionCount, null);
     }
-
 
     public List<Long> checkListEmpty(List<Long> list) {
-        if(list == null)
+        if (list == null) {
             return new ArrayList<>();
+        }
         return list;
     }
+
     public ItemResponseDto toGetResponseDto(Item item) {
         return new ItemResponseDto(item);
     }
 
+    public ItemResponseDto toGetResponseDtoNew(Item item) {
+        return ItemResponseDto.builder()
+                .itemId(item.getItemId())
+                .category(item.getCategory())
+                .name(item.getItemName())
+                .description(item.getDescription())
+                .itemPrice(item.getItemPrice())
+                .deliveryPrice(item.getDeliveryPrice())
+                .defaultCount(item.getDefaultItem().getItemCount())
+                .viewCount(item.getViewCount())
+                .optionList(toOptionResponseDtoList(item))
+                .totalCount(item.getTotalCount())
+                .imageList(toImageResponseDtoList(item.getItemImageList()))
+                .like(item.isLike())
+                .salesQuantity(item.getSalesQuantity())
+                .build();
+    }
+
+    private List<OptionResponseDto> toOptionResponseDtoList(Item item){
+        return item.getOptionListWithOutDefault().stream().map(OptionResponseDto::new).collect(Collectors.toList());
+    }
+
+    private List<ImageDto> toImageResponseDtoList(List<ItemImage> imageList){
+        return imageList.stream().map(ImageDto::new).collect(Collectors.toList());
+    }
 
     public ItemIdResponseDto toIdResponse(Item item) {
         return new ItemIdResponseDto(item.getItemId());
@@ -89,12 +121,13 @@ public class ItemMapper {
         }
         return new Item(itemPostDto);
     }
+
     public Item itemPatchDtoToItem(ItemPatchDto itemPatchDto, Long itemId) {
         if (itemPatchDto == null) {
             return new Item(itemId);
         }
 
-        return new Item(itemPatchDto,itemId);
+        return new Item(itemPatchDto, itemId);
     }
 }
 

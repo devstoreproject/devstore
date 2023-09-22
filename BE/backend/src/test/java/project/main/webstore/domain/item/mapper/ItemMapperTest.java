@@ -7,14 +7,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
+import project.main.webstore.domain.item.dto.ItemResponseDto;
 import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.enums.Category;
 
 
 class ItemMapperTest {
-
     ItemMapper mapper = new ItemMapper();
-
 
     @Test
     @DisplayName("patch DTO 수정을 위한 테스트 : List들이 빈 값이 들어올 떄 처리 로직")
@@ -43,4 +43,20 @@ class ItemMapperTest {
                 .isEqualTo(oldOne);
     }
 
+
+
+
+    @Test
+    @DisplayName("Entity -> DTO 변환 테스트")
+    void entity_trans_to_dto_test() throws Exception{
+        Item entity = new Item(new ArrayList<>(), 1L, "상품", "상품 설명", 30000, 3000, 0, Category.CHAIR,
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>(), new ItemOption(0,1000,null));
+
+        ItemResponseDto newOne = mapper.toGetResponseDtoNew(entity);
+        ItemResponseDto oldOne = mapper.toGetResponseDto(entity);
+
+        Assertions.assertThat(newOne).as("두 값은 동일해야한다.").usingRecursiveComparison()
+                .isEqualTo(oldOne);
+    }
 }
