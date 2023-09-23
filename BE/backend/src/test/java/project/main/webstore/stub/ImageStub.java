@@ -11,6 +11,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
+import project.main.webstore.domain.image.dto.ImageSortPostDto;
 import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.helper.TestUtils;
 
@@ -136,6 +137,13 @@ public class ImageStub extends TestUtils {
             }
         };
         return bytes;
+    }
+
+    protected List<ImageSortPostDto> createImageList(){
+        return List.of(
+                new ImageSortPostDto(0,false),
+                new ImageSortPostDto(1,true)
+        );
     }
 
 }
