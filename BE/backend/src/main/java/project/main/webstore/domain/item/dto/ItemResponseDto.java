@@ -1,6 +1,10 @@
 package project.main.webstore.domain.item.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,13 +13,11 @@ import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class ItemResponseDto {
     @Schema(description = "아이템 식별자")
     private Long itemId;

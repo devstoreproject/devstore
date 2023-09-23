@@ -1,12 +1,11 @@
 package project.main.webstore.domain.item.mapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import project.main.webstore.domain.image.dto.ImageDto;
-import project.main.webstore.domain.image.entity.ItemImage;
+import project.main.webstore.domain.DefaultMapper;
+import project.main.webstore.domain.image.mapper.ImageMapper;
 import project.main.webstore.domain.item.dto.ItemIdResponseDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
@@ -18,7 +17,7 @@ import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
 
 @Component
-public class ItemMapper {
+public class ItemMapper extends ImageMapper implements DefaultMapper {
 
     public Item toEntityNew(ItemPostDto post) {
         Item result = Item.builder()
@@ -65,17 +64,6 @@ public class ItemMapper {
         return new ItemOption(0, optionCount, null);
     }
 
-    public List<Long> checkListEmpty(List<Long> list) {
-        if (list == null) {
-            return new ArrayList<>();
-        }
-        return list;
-    }
-
-    public ItemResponseDto toGetResponseDto(Item item) {
-        return new ItemResponseDto(item);
-    }
-
     public ItemResponseDto toGetResponseDtoNew(Item item) {
         return ItemResponseDto.builder()
                 .itemId(item.getItemId())
@@ -88,7 +76,7 @@ public class ItemMapper {
                 .viewCount(item.getViewCount())
                 .optionList(toOptionResponseDtoList(item))
                 .totalCount(item.getTotalCount())
-                .imageList(toImageResponseDtoList(item.getItemImageList()))
+                .imageList(super.toImageResponseDtoList(item.getItemImageList()))
                 .like(item.isLike())
                 .salesQuantity(item.getSalesQuantity())
                 .build();
@@ -96,10 +84,6 @@ public class ItemMapper {
 
     private List<OptionResponseDto> toOptionResponseDtoList(Item item){
         return item.getOptionListWithOutDefault().stream().map(OptionResponseDto::new).collect(Collectors.toList());
-    }
-
-    private List<ImageDto> toImageResponseDtoList(List<ItemImage> imageList){
-        return imageList.stream().map(ImageDto::new).collect(Collectors.toList());
     }
 
     public ItemIdResponseDto toIdResponse(Item item) {
@@ -128,6 +112,9 @@ public class ItemMapper {
         }
 
         return new Item(itemPatchDto, itemId);
+    }
+    public ItemResponseDto toGetResponseDto(Item item) {
+        return new ItemResponseDto(item);
     }
 }
 
