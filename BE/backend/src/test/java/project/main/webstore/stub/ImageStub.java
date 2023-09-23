@@ -1,5 +1,10 @@
 package project.main.webstore.stub;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -7,14 +12,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
+import project.main.webstore.helper.TestUtils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-public class ImageStub {
+public class ImageStub extends TestUtils {
     private String fileName = "testImage";
     private String ext = "png";
     private String path = "src/test/resources/image/testImage";

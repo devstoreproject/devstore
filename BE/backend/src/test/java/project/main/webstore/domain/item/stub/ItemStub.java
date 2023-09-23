@@ -1,6 +1,6 @@
 package project.main.webstore.domain.item.stub;
 
-import project.main.webstore.domain.image.dto.ImageSortPatchDto;
+import java.util.List;
 import project.main.webstore.domain.image.dto.ImageSortPostDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
@@ -8,10 +8,9 @@ import project.main.webstore.domain.item.dto.OptionPostRequestDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.enums.Category;
+import project.main.webstore.stub.ImageStub;
 
-import java.util.List;
-
-public class ItemStub {
+public class ItemStub extends ImageStub {
 
     public Item createItem(Long itemId){
         return new Item(itemId,"상품 이름","상품 상세 설명",10000,3000,10,Category.CHAIR, createOptionList());
@@ -44,10 +43,13 @@ public class ItemStub {
         return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10);
     }
     public ItemPatchDto createPatchWithImage() {
-        return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L),null,null,List.of(new ImageSortPatchDto(1L,2,false)));
+        //TODO : Mapper 변경 이 후 수정
+//        return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L),null,null,List.of(new ImageSortPatchDto(1L,2,false)));
+        return null;
     }
     public ItemPatchDto createPatchWithImageTwo() {
-        return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L),null,null,List.of(new ImageSortPatchDto(1L,2,false),new ImageSortPatchDto(null,1,true),new ImageSortPatchDto(null,2,false)));
+//        return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L),null,null,List.of(new ImageSortPatchDto(1L,2,false),new ImageSortPatchDto(null,1,true),new ImageSortPatchDto(null,2,false)));
+        return null;
     }
     public ItemPatchDto createPatchChangeDeleteImageId() {
         return new ItemPatchDto(Category.CHAIR,"의자","이것은 의자 상품입니다",100,10000,300,10,List.of(1L));
