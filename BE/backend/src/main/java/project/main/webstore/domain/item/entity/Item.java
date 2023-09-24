@@ -107,6 +107,12 @@ public class Item extends Auditable {
     private List<CartItem> cartItemList = new ArrayList<>();
     public Item(Long itemId) {
         this.itemId = itemId;
+        this.defaultItem = new ItemOption();
+        this.optionList = new ArrayList<>();
+        this.cartItemList = new ArrayList<>();
+        this.reviewList = new ArrayList<>();
+        this.questionList = new ArrayList<>();
+        this.pickedItem = new ArrayList<>();
     }
 
     public Item(ItemPostDto post) {

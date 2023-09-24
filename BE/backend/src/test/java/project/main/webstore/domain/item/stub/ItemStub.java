@@ -12,7 +12,9 @@ import project.main.webstore.domain.item.dto.OptionPostRequestDto;
 import project.main.webstore.domain.item.dto.PickedItemDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
+import project.main.webstore.domain.item.entity.PickedItem;
 import project.main.webstore.domain.item.enums.Category;
+import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.stub.ImageStub;
 
 public class ItemStub extends ImageStub {
@@ -21,6 +23,10 @@ public class ItemStub extends ImageStub {
     }
     public ItemPostDto createPostDtoNoImage(){
         return new ItemPostDto(Category.COMPUTER,"맥북",10,"이것 맥북의 설명입니다.",1000000,100,3000, createOptionPostList());
+    }
+
+    public Item createItemOnlyId(Long itemId) {
+        return new Item(itemId);
     }
 
     //응답 데이터 용으로 사용
@@ -58,6 +64,18 @@ public class ItemStub extends ImageStub {
         Pageable pageInfo = super.getPage();
         return new PageImpl<>(list,pageInfo,30);
     }
+    public Page<Item> createPageItemNameSame(Long limit,String word){
+        List<Item> list = createItemList(limit);
+        for (Item item : list) {
+            item.setItemName(word);
+        }
+        Pageable pageInfo = super.getPage();
+        return new PageImpl<>(list,pageInfo,30);
+    }
+
+    public Page<Item> createEmptyPage(Pageable pageable){
+        return new PageImpl<>(new ArrayList<>(),pageable,0);
+    }
 
     private List<Item> createItemList(Long limit) {
         List<Item> list = new ArrayList<>();
@@ -66,7 +84,7 @@ public class ItemStub extends ImageStub {
         }
         return list;
     }
-    public List<Item> createPickedItemList(Long limit) {
+    public List<Item> createItemWhoPickedList(Long limit) {
         List<Item> list = new ArrayList<>();
         for(long i = 1L; i < limit;i++){
             list.add(createItem(i,true));
@@ -183,4 +201,11 @@ public class ItemStub extends ImageStub {
         return item;
     }
 
+    public List<PickedItem> createPickedList(long limit) {
+        List<PickedItem> list = new ArrayList<>();
+        for(Long i = 1L ; i <= limit ; i++){
+            list.add(new PickedItem(i,new Item(i + 10L),new User(i + 20L)));
+        }
+        return list;
+    }
 }

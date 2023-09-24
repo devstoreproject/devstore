@@ -255,7 +255,7 @@ class ItemControllerTest {
     @WithMockCustomUser
     void get_pick_item_test() throws Exception {
 
-        given(itemService.getPickedItem(anyLong())).willReturn(itemStub.createPickedItemList(4L));
+        given(itemService.getPickedItem(anyLong())).willReturn(itemStub.createItemWhoPickedList(4L));
         ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/favorite"));
 
         perform
