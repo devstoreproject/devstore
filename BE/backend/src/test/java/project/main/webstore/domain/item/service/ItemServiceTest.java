@@ -26,7 +26,9 @@ import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.domain.image.entity.ItemImage;
 import project.main.webstore.domain.image.utils.ImageUtils;
+import project.main.webstore.domain.item.dto.PickedItemDto;
 import project.main.webstore.domain.item.entity.Item;
+import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.exception.ItemExceptionCode;
 import project.main.webstore.domain.item.repository.ItemRepository;
 import project.main.webstore.domain.item.stub.ItemStub;
@@ -298,7 +300,7 @@ class ItemServiceTest {
     }
 
     @Test
-    @DisplayName("상품 검색 : 키워드의 값이 없을 때")
+    @DisplayName("상품 검색 : 키워드의 값의 데이터가 없을 때")
     void search_item_no_data_test() throws Exception{
         // given
         Pageable pageInfo = itemStub.getPage();
@@ -311,5 +313,116 @@ class ItemServiceTest {
         assertThat(result.getContent().isEmpty()).isTrue();
     }
 
-}
+    @Test
+    @DisplayName("상품 카테고리별 조회")
+    void find_by_category_test() throws Exception{
+        // given
+        Pageable page = itemStub.getPage();
+        Category category = Category.CHAIR;
 
+        given(itemRepository.findItemByCategory(category, page)).willReturn(itemStub.createPageItem(4L));
+        given(userValidService.validUser(anyLong())).willReturn(userStub.createUser(1L));
+
+        // when
+        Page<Item> result = service.findItemByCategory(category, page, 1L);
+        // then
+        List<Item> content = result.getContent();
+        content.forEach(item -> Assertions.assertThat(item.getCategory()).isEqualTo(category));
+    }
+
+    @Test
+    @DisplayName("상품 카테고리별 조회 : 결과 데이터 없음")
+    void find_by_category_on_data_test() throws Exception{
+        // given
+        Pageable page = itemStub.getPage();
+        Category category = Category.CHAIR;
+
+        given(itemRepository.findItemByCategory(category, page)).willReturn(itemStub.createEmptyPage(page));
+        given(userValidService.validUser(anyLong())).willReturn(userStub.createUser(1L));
+
+        // when
+        Page<Item> result = service.findItemByCategory(category, page, 1L);
+        // then
+        List<Item> content = result.getContent();
+        Assertions.assertThat(content.isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("상품 조회 : 페이징")
+    void get_item_page_test() throws Exception{
+        // given
+        Pageable page = itemStub.getPage();
+        given(itemRepository.findAll(page)).willReturn(itemStub.createPageItem(4L));
+        given(userValidService.validUser(anyLong())).willReturn(userStub.createUser(1L));
+        // when
+        Page<Item> result = service.findItemPage(page, 1L);
+        // then
+        List<Long> idList = result.getContent().stream().map(Item::getItemId)
+                .collect(Collectors.toList());
+
+        Assertions.assertThat(idList).contains(1L,2L,3L);
+    }
+
+    @Test
+    @DisplayName("상품 찜하기 : 찜취소하기")
+    void pick_item_cancel_test() throws Exception{
+        // given
+
+        Long itemId = 11L;
+        Long userId = 1L;
+        User findUser = userStub.createUser(userId);
+        findUser.setPickedItemList(itemStub.createPickedList(4L));
+        given(itemValidService.validItem(anyLong())).willReturn(itemStub.createItem(itemId));
+        given(userValidService.validUser(anyLong())).willReturn(findUser);
+        // when
+        PickedItemDto result = service.pickItem(itemId, userId);
+        // then
+        Assertions.assertThat(result.getPicked()).isFalse();
+        Assertions.assertThat(result.getItemId()).isEqualTo(itemId);
+    }
+
+    @Test
+    @DisplayName("상품 찜하기 : 찜하기")
+    void pick_item_test() throws Exception{
+        // given
+        Long itemId = 2L;
+        Long userId = 1L;
+        User findUser = userStub.createUser(userId);
+        findUser.setPickedItemList(itemStub.createPickedList(4L));
+        given(itemValidService.validItem(anyLong())).willReturn(itemStub.createItem(itemId));
+        given(userValidService.validUser(anyLong())).willReturn(findUser);
+        // when
+        PickedItemDto result = service.pickItem(itemId, userId);
+        // then
+        Assertions.assertThat(result.getPicked()).isTrue();
+        Assertions.assertThat(result.getItemId()).isEqualTo(itemId);
+    }
+
+    @Test
+    @DisplayName("찜한 상품 리스트 조회")
+    void get_picked_item_list_test() throws Exception{
+        // given
+        Long userId = 2L;
+        User findUser = userStub.createUser(userId);
+        findUser.setPickedItemList(itemStub.createPickedList(4L));
+        given(userValidService.validUser(anyLong())).willReturn(findUser);
+        // when
+        List<Item> pickedItem = service.getPickedItem(userId);
+        // then
+        pickedItem.forEach(item -> Assertions.assertThat(item.isLike()).isTrue());
+    }
+
+    @Test
+    @DisplayName("찜한 상품 리스트 조회 : 조회할 상품이 없을 떄")
+    void get_picked_item_list_no_data_test() throws Exception{
+        // given
+        Long userId = 2L;
+        User findUser = userStub.createUser(userId);
+        given(userValidService.validUser(anyLong())).willReturn(findUser);
+        // when
+        List<Item> pickedItem = service.getPickedItem(userId);
+        // then
+        Assertions.assertThat(pickedItem.isEmpty()).isTrue();
+    }
+
+}
