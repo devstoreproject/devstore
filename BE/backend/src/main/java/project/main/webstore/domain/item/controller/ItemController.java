@@ -198,10 +198,10 @@ public class ItemController {
     @PostMapping("/{itemId}/favorite")
     @ApiResponse(responseCode = "200", description = "상품 좋아요 기능")
     public ResponseEntity<ResponseDto<PickedItemDto>> pickItem(@PathVariable @Positive Long itemId,
-                                                               @RequestParam Long userId,
+                                                               @RequestParam(required = false) Long userId,
                                                                @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
-        PickedItemDto result = service.pickItem(itemId, userId);
+        Long userIdx = CheckLoginUser.getContextIdx(principal);
+        PickedItemDto result = service.pickItem(itemId, userIdx);
 
         var responseDto = ResponseDto.<PickedItemDto>builder().data(result).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
