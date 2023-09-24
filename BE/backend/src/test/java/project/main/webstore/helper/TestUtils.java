@@ -1,8 +1,10 @@
 package project.main.webstore.helper;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -11,8 +13,6 @@ import org.springframework.util.MultiValueMap;
 import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.security.dto.UserInfoDto;
 import project.main.webstore.security.jwt.utils.JwtTokenizer;
-
-import java.util.List;
 
 @Component
 public class TestUtils {
@@ -46,6 +46,19 @@ public class TestUtils {
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
         return headers;
+    }
+    public HttpHeaders getMultipartHeader(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+
+        return headers;
+    }
+    public HttpEntity<String> getJsonRequestHeader(String jsonData){
+
+        HttpHeaders jsonRequest = new HttpHeaders();
+        jsonRequest.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<String>(jsonData, jsonRequest);
     }
 
     public MultiValueMap getPageParam(){

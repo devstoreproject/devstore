@@ -1,169 +1,100 @@
 package project.main.webstore.totalTest;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.net.URI;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.http.*;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
-import project.main.webstore.annotation.WithMockCustomUser;
-import project.main.webstore.domain.image.dto.ImageSortPostDto;
-import project.main.webstore.domain.item.dto.ItemPatchDto;
+import project.main.webstore.domain.item.dto.ItemIdResponseDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
-import project.main.webstore.domain.item.dto.OptionPostRequestDto;
-import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.stub.ItemStub;
-import project.main.webstore.domain.users.enums.UserRole;
-import project.main.webstore.security.dto.UserInfoDto;
-import project.main.webstore.security.jwt.utils.JwtTokenizer;
+import project.main.webstore.dto.ResponseDto;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-
+/*
+* DB에 저장 되어 있는 사용자 ID : 1L 클라이언트 2L 어드민   asdffcx1111
+* 상품 조회 생성 등등의 시나리오는 모두 상품을 생성한 뒤 작업한 후 제거하는 방식으로 진행한다.
+**/
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureMockMvc
 public class ItemControllerTest {
+    final String URL = "http://localhost:";
+    TestRestTemplate clientLoginTest = new TestRestTemplate("client@gmail.com","asdffcx1111");
+    TestRestTemplate adminLoginTest = new TestRestTemplate("admin@gmail.com","asdffcx1111");
+    TestRestTemplate noLoginTest = new TestRestTemplate();
     final String DEFAULT_URL = "/api/items";
-    TestRestTemplate template = new TestRestTemplate();
-    @Autowired
-    Gson gson;
-    @Autowired
-    MockMvc mvc;
-    @Autowired
-    JwtTokenizer jwtTokenizer;
-    ItemStub itemStub = new ItemStub();
+    Long itemId;
     @LocalServerPort
     private int port;
 
+    @Autowired
+    Gson gson;
+    ItemStub itemStub = new ItemStub();
+
+    @AfterEach
+    void after() {
+        String url = URL + port + DEFAULT_URL;
+        System.out.println("### DELETE RESULT ItemId = " + itemId);
+        adminLoginTest.delete(url,itemId);
+    }
+
     @Test
-    @DisplayName("상품 등록")
-    @WithMockCustomUser
-    @Transactional
+    @DisplayName("상품 등록 : 이미지 포함")
     void post_item_test() throws Exception {
-        UserInfoDto userInfo = new UserInfoDto("2", "admin@gmailcom", "김복자", UserRole.ADMIN);
-        String accessToken = jwtTokenizer.delegateAccessToken(userInfo);
+        ItemPostDto post = itemStub.createPostDtoWithImage();
+        String content = gson.toJson(post);
 
-        ItemPostDto imagePostDto = ItemPostDto.builder()
-                .defaultCount(100)
-                .itemPrice(1000000)
-                .deliveryPrice(3000)
-                .category(Category.COMPUTER)
-                .discountRate(10)
-                .name("맥북")
-                .description("이것은 맥북입니다.")
-                .optionList(List.of(new OptionPostRequestDto("옵션 세부 내역", 100, 10000, "옵션 이름"), new OptionPostRequestDto("옵션 세부 내역", 100, 10000, "옵션 이름")))
-                .infoList(List.of(new ImageSortPostDto(1, true)))
-                .build();
-        String content = gson.toJson(imagePostDto);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.setBearerAuth(accessToken);
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-
-        Resource resource = new ClassPathResource("image/testImage.png");
-
-        ByteArrayResource bytes = new ByteArrayResource(resource.getInputStream().readAllBytes()) {
-            public String getFilename() {
-                return "image.png";
-            }
-        };
-
-
-        HttpHeaders partHeaders = new HttpHeaders();
-        partHeaders.setContentType(MediaType.IMAGE_PNG);
-        HttpEntity<ByteArrayResource> bytesPart = new HttpEntity<>(bytes, partHeaders);
-
-        HttpHeaders partHeaders2 = new HttpHeaders();
-        partHeaders2.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> post2 = new HttpEntity<>(content, partHeaders2);
-
-        body.add("post", post2);
-        body.add("image", bytesPart);
-
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
+        HttpEntity<MultiValueMap<String, Object>> requestEntity =
+                                itemStub.getMultipartTwoImageAndJsonDataRequest(content);
 
         String url = "http://localhost:" + port + "/api/items";
-        ResponseEntity<String> responseEntity = template.postForEntity(new URI(url), requestEntity, String.class);
-        String body1 = responseEntity.getBody();
-        System.out.println(body1);
-    }
+        System.out.println("url = " + url);
+        ResponseEntity<String> response = adminLoginTest.postForEntity(new URI(url),
+                requestEntity, String.class);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<ItemIdResponseDto>>() {}.getType();
+        ResponseDto<ItemIdResponseDto> responseDto = gson.fromJson(body, responseType);
+         itemId = responseDto.getData().getItemId();
 
+        Assertions.assertThat(responseDto.getCode()).isEqualTo("C201");
+        Assertions.assertThat(responseDto.getMessage()).isEqualTo("생성 완료");
+        Assertions.assertThat(responseDto.getData().getItemId()).isNotNull();
+        System.out.println("##### itemId = " + itemId);
+    }
     @Test
-    @DisplayName("수정 [이미지 없음] :성공")
-    @WithMockCustomUser
-    void patch_no_image_test() throws Exception {
-        // given
-        ItemPatchDto patch = itemStub.createPatchNoImage();
-        String content = gson.toJson(patch);
-        MockMultipartFile patchItem = new MockMultipartFile("patch", "patch", "application/json", content.getBytes(StandardCharsets.UTF_8));
-        // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH, DEFAULT_URL + "/{itemId}", 1L).file(patchItem).accept(MediaType.APPLICATION_JSON));
-        // then
-        perform
-                .andDo(MockMvcResultHandlers.log())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.itemId").value(1L))
-                .andExpect(MockMvcResultMatchers.header().string("Location", "/api/items/1"));
-    }
+    @DisplayName("상품 등록 : 이미지 없음")
+    void post_item_no_image_test() throws Exception {
+        ItemPostDto post = itemStub.createPostDtoNoImage();
+        String content = gson.toJson(post);
 
-    @Test
-    @DisplayName("수정 :성공")
-    @WithMockCustomUser
-    void patch_image_test() throws Exception {
-        // given
-        ItemPatchDto patch = itemStub.createPatchWithImageTwo();
-        String content = gson.toJson(patch);
-        MockMultipartFile patchItem = new MockMultipartFile("patch", "patch", "application/json", content.getBytes(StandardCharsets.UTF_8));
+        HttpEntity<MultiValueMap<String, Object>> requestEntity =
+                                itemStub.getMultipartJsonDataRequest(content);
 
+        String url = "http://localhost:" + port + "/api/items";
+        System.out.println("url = " + url);
+        ResponseEntity<String> response = adminLoginTest.postForEntity(new URI(url),
+                requestEntity, String.class);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<ItemIdResponseDto>>() {}.getType();
+        ResponseDto<ItemIdResponseDto> responseDto = gson.fromJson(body, responseType);
+         itemId = responseDto.getData().getItemId();
 
-        Resource resource = new ClassPathResource("image/testImage.png");
-        MockMultipartFile file1 = new MockMultipartFile("imageList", "originalFile.png", "png", resource.getInputStream());
-
-        // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH, DEFAULT_URL + "/{itemId}", 1L).file(file1).file(file1).file(patchItem).accept(MediaType.APPLICATION_JSON));
-        // then
-        perform
-                .andDo(MockMvcResultHandlers.log())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.itemId").value(1L))
-                .andExpect(MockMvcResultMatchers.header().string("Location", "/api/items/1"));
+        Assertions.assertThat(responseDto.getCode()).isEqualTo("C201");
+        Assertions.assertThat(responseDto.getMessage()).isEqualTo("생성 완료");
+        Assertions.assertThat(responseDto.getData().getItemId()).isNotNull();
+        System.out.println("##### itemId = " + itemId);
     }
 
 
-    @Test
-    @DisplayName("상품 삭제")
-    @WithMockCustomUser
-    void delete_image_test() throws Exception{
-        // given
-
-        // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.delete(DEFAULT_URL + "/{item-Id}", 1L));
-        // then
-        perform
-                .andDo(MockMvcResultHandlers.log())
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
-    }
 
 }
