@@ -9,6 +9,7 @@ import project.main.webstore.domain.image.dto.ImageSortPatchDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.dto.OptionPostRequestDto;
+import project.main.webstore.domain.item.dto.PickedItemDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.enums.Category;
@@ -37,6 +38,7 @@ public class ItemStub extends ImageStub {
         return item;
     }
 
+
     //요청 데이터로 사용
     public Item createItemNoId(Long index) {
         Item item = Item.builder()
@@ -57,6 +59,20 @@ public class ItemStub extends ImageStub {
         return new PageImpl<>(list,pageInfo,30);
     }
 
+    private List<Item> createItemList(Long limit) {
+        List<Item> list = new ArrayList<>();
+        for(long i = 1L; i < limit;i++){
+            list.add(createItem(i));
+        }
+        return list;
+    }
+    public List<Item> createPickedItemList(Long limit) {
+        List<Item> list = new ArrayList<>();
+        for(long i = 1L; i < limit;i++){
+            list.add(createItem(i,true));
+        }
+        return list;
+    }
 
     public Item createItemByPatchNoImage() {
         Item item = Item.builder()
@@ -113,7 +129,10 @@ public class ItemStub extends ImageStub {
                 .build();
     }
 
-    //리펙토링 필요
+    public PickedItemDto createPickedItemDto(Long userId,Long itemId, boolean isPicked) {
+        return new PickedItemDto(userId,itemId,isPicked);
+    }
+
     private List<OptionPostRequestDto> createOptionPostList(){
         return List.of(
                 new OptionPostRequestDto("옵션 상세 설정1",100,100000,"옵션 이름1"),
@@ -122,7 +141,6 @@ public class ItemStub extends ImageStub {
                 new OptionPostRequestDto("옵션 상세 설정4",400,400000,"옵션 이름4")
         );
     }
-    //리펙토링 필요
     private List<ItemOption> createOptionListNoId() {
         List<ItemOption> list = new ArrayList<>();
         for(Long i = 2L ; i <=4L ; i++){
@@ -150,11 +168,19 @@ public class ItemStub extends ImageStub {
         return new ItemOption(optionId,"",null,100,null);
     }
 
-    private List<Item> createItemList(Long limit) {
-        List<Item> list = new ArrayList<>();
-        for(long i = 1L; i < limit;i++){
-            list.add(createItem(i));
-        }
-        return list;
+    private Item createItem(Long itemId,boolean isPicked) {
+        Item item = Item.builder()
+                .itemId(itemId)
+                .itemName("상품 이름" + itemId)
+                .itemPrice((int)(3000 * (itemId * 1000)))
+                .deliveryPrice((int)(itemId * 1000))
+                .discountRate(0)
+                .like(isPicked)
+                .category(Category.CHAIR)
+                .build();
+        item.addDefaultItem(createDefaultOption(1L));
+        item.addOptionList(createOptionListWithId());
+        return item;
     }
+
 }

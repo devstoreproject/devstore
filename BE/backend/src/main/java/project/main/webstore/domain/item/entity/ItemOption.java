@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ import project.main.webstore.domain.order.entity.OrderedItem;
 @Setter
 @Table(name = "ITEM_OPTION")
 @NoArgsConstructor
+@AllArgsConstructor
 public class ItemOption {
     @Id
     @Column(name = "ITEM_OPTION_ID", updatable = false)

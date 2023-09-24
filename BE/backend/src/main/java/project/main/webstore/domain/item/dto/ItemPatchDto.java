@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import project.main.webstore.domain.item.enums.Category;
 
 @Getter
 @Setter
+@Builder
 @Schema(description = "상품 수정 스키마")
 @NoArgsConstructor
 @AllArgsConstructor

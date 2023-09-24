@@ -1,5 +1,15 @@
 package project.main.webstore.domain.item.service;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyList;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.List;
+import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,15 +29,6 @@ import project.main.webstore.domain.item.stub.ItemStub;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.exception.CommonExceptionCode;
-import project.main.webstore.stub.ImageStub;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith({MockitoExtension.class})
 class ItemServiceTest {
@@ -42,14 +43,13 @@ class ItemServiceTest {
     @Mock
     ImageUtils imageUtils;
     ItemStub itemStub = new ItemStub();
-    ImageStub imageStub = new ImageStub();
 
     @Test
     @DisplayName("상품 등록[이미지 없음] : 성공")
     void post_item_no_image_test() throws Exception {
         // given
         Item item = itemStub.createItem(1L);
-        Item itemNoId = itemStub.createItemNoId();
+        Item itemNoId = itemStub.createItemNoId(1L);
         given(itemRepository.save(ArgumentMatchers.any(Item.class))).willReturn(item);
         // when
         Item result = service.postItem(itemNoId);
@@ -66,9 +66,9 @@ class ItemServiceTest {
     void post_item_test() throws Exception {
         // given
         Item item = itemStub.createItem(1L);
-        Item itemNoId = itemStub.createItemNoId();
-        List<ImageInfoDto> imageInfo = imageStub.createImageInfo(1, true);
-        List<Image> imageList = imageStub.createImageList(2);
+        Item itemNoId = itemStub.createItemNoId(1L);
+        List<ImageInfoDto> imageInfo = itemStub.createImageInfo(1, true);
+        List<Image> imageList = itemStub.createImageList(2);
 
         given(imageUtils.uploadImageList(anyList())).willReturn(imageList);
         given(itemRepository.save(ArgumentMatchers.any(Item.class))).willReturn(item);
@@ -103,8 +103,8 @@ class ItemServiceTest {
     @DisplayName("상품 수정[이미지 및 상품] : 성공")
     void patch_item_delete_image_test() throws Exception {
         // given
-        List<ImageInfoDto> imageInfo = imageStub.createImageInfo(1, true);
-        List<Image> imageList = imageStub.createImageList(2);
+        List<ImageInfoDto> imageInfo = itemStub.createImageInfo(1, true);
+        List<Image> imageList = itemStub.createImageList(2);
         Item itemByPatchNoImage = itemStub.createItemByPatchNoImage();
         itemByPatchNoImage.setItemId(1L);
         Item item = itemStub.createItem(1L);
@@ -147,8 +147,8 @@ class ItemServiceTest {
     @Test
     @DisplayName("상품 수정[이미지 삽입] : 실패")
     void patch_item_image_exception_test() throws Exception {
-        List<ImageInfoDto> imageInfo = imageStub.createImageInfo(1, true);
-        List<Image> imageList = imageStub.createImageList(2);
+        List<ImageInfoDto> imageInfo = itemStub.createImageInfo(1, true);
+        List<Image> imageList = itemStub.createImageList(2);
         Item itemByPatchNoImage = itemStub.createItemByPatchNoImage();
         itemByPatchNoImage.setItemId(1L);
         Item item = itemStub.createItem(1L);
@@ -180,7 +180,7 @@ class ItemServiceTest {
         // given
         Long itemId = 1L;
         Item item = itemStub.createItem(1L);
-        List<Image> imageList = imageStub.createImageList(2);
+        List<Image> imageList = itemStub.createImageList(2);
         List<ItemImage> image = imageList.stream().map(imageE -> new ItemImage(imageE, item)).collect(Collectors.toList());
         item.setItemImageList(image);
 
