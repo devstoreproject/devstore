@@ -121,6 +121,19 @@ public class ItemStub extends ImageStub {
                 .deleteImageId(List.of(1L))
                 .build();
     }
+    public ItemPatchDto createPatchWithImageWithTotal() {
+        return ItemPatchDto.builder()
+                .category(Category.CHAIR)
+                .name("의자")
+                .description("이것은 의자 상품입니다")
+                .itemPrice(10000)
+                .discountRate(0)
+                .deliveryPrice(3000)
+                .defaultCount(100)
+                .imageSortAndRepresentativeInfo(List.of(new ImageSortPatchDto(1L,2,false),new ImageSortPatchDto(2L,1,false),new ImageSortPatchDto(null,3,true),new ImageSortPatchDto(null,4,false)))
+                .deleteImageId(List.of(1L))
+                .build();
+    }
     public ItemPatchDto createPatchWithImageTwo() {
         return ItemPatchDto.builder()
                 .category(Category.CHAIR)

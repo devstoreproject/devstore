@@ -133,18 +133,18 @@ public class ImageStub extends TestUtils {
         );
     }
 
-    public HttpEntity<MultiValueMap<String, Object>> getMultipartTwoImageAndJsonDataRequest(String content)
+    public HttpEntity<MultiValueMap<String, Object>> getMultipartTwoImageAndJsonDataRequest(String method,String content)
             throws IOException {
         HttpHeaders header = getMultipartHeader();
-        MultiValueMap<String, Object> requestBody = createMultipartTwoFileAndJsonRequest(content);
+        MultiValueMap<String, Object> requestBody = createMultipartTwoFileAndJsonRequest(method,content);
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, header);
         return requestEntity;
     }
-    public HttpEntity<MultiValueMap<String, Object>> getMultipartJsonDataRequest(String content)
+    public HttpEntity<MultiValueMap<String, Object>> getMultipartJsonDataRequest(String method,String content)
             throws IOException {
         HttpHeaders header = getMultipartHeader();
-        MultiValueMap<String, Object> requestBody = createMultiPartOnlyJson(content);
+        MultiValueMap<String, Object> requestBody = createMultiPartOnlyJson(method,content);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, header);
         return requestEntity;
     }
@@ -168,7 +168,7 @@ public class ImageStub extends TestUtils {
         return result;
     }
 
-    protected MultiValueMap<String, Object> createMultipartTwoFileAndJsonRequest(String content) throws IOException {
+    protected MultiValueMap<String, Object> createMultipartTwoFileAndJsonRequest(String method,String content) throws IOException {
         HttpEntity<ByteArrayResource> imageOne = getRealFileRequest();
         HttpEntity<ByteArrayResource> imageTwo = getRealFileRequest();
         HttpEntity<String> jsonRequest = super.getJsonRequestHeader(content);
@@ -177,14 +177,14 @@ public class ImageStub extends TestUtils {
 
         requestBody.add("imageList",imageOne);
         requestBody.add("imageList",imageTwo);
-        requestBody.add("post",jsonRequest);
+        requestBody.add(method,jsonRequest);
         return requestBody;
     }
-    protected MultiValueMap<String, Object> createMultiPartOnlyJson(String content) throws IOException {
+    protected MultiValueMap<String, Object> createMultiPartOnlyJson(String method,String content) throws IOException {
         HttpEntity<String> jsonRequest = super.getJsonRequestHeader(content);
 
         MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("post",jsonRequest);
+        requestBody.add(method,jsonRequest);
         return requestBody;
     }
 
