@@ -1,0 +1,16 @@
+<configuration>
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger level="INFO" name="org.testcontainers"/>
+
+  <logger level="INFO" name="tc"/>
+  <logger level="WARN" name="com.github.dockerjava"/>
+  <logger level="OFF" name="com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.wire"/>
+  <root level="info">
+    <appender-ref ref="STDOUT"/>
+  </root>
+</configuration>

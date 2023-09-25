@@ -1,14 +1,14 @@
 
 spring:
   datasource:
-    url: ${DATABASE_TEST}
-    password: ${DATABASE_PASSWORD}
-    username: ${DATABASE_ID}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mysql:8://test
+    username: test_user
+    password: 1234
   jpa:
     database-platform: org.hibernate.dialect.MySQL55Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         highlight_sql: true
@@ -34,6 +34,10 @@ spring:
             scope:
               - email
               - profile
+  sql:
+    init:
+      data-locations: classpath:data/data.sql
+      schema-locations: classpath:data/schema.sql
 logging:
   level:
     org.hibernate.sql: info
@@ -62,6 +66,8 @@ springdoc:
 iamport:
   api-key: ${IAMPORT_API_KEY}
   secret-key: ${SECRET_KEY}
+  merchant_uid: ${MERCHANT_UID}
+
 
 mail:
   address:
