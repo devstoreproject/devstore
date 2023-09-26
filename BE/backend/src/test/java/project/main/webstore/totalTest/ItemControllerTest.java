@@ -13,13 +13,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import project.main.webstore.domain.item.dto.ItemIdResponseDto;
+import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
+import project.main.webstore.domain.item.dto.ItemResponseDto;
 import project.main.webstore.domain.item.stub.ItemStub;
+import project.main.webstore.dto.CustomPage;
 import project.main.webstore.dto.ResponseDto;
 
 
@@ -98,7 +105,82 @@ public class ItemControllerTest {
         System.out.println("##### itemId = " + itemId);
     }
 
+    @Test
+    @DisplayName("상품 수정 : 이미지 없음")
+    void patch_item_no_image_test() throws Exception {
+        Long itemId = 1L;
+        ItemPatchDto patch = itemStub.createPatchNoImage();
+        String content = gson.toJson(patch);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = itemStub.getMultipartJsonDataRequest(
+                "patch", content);
 
+        String url = URL + port + DEFAULT_URL + "/{itemId}";
+        ResponseEntity<String> response = adminLoginTest.exchange(url, HttpMethod.PATCH,
+                requestEntity, String.class, itemId);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<ItemIdResponseDto>>() {
+        }.getType();
+        ResponseDto<ItemIdResponseDto> responseDto = gson.fromJson(body, responseType);
+
+        Assertions.assertThat(responseDto.getCode()).isEqualTo("C200");
+        Assertions.assertThat(responseDto.getMessage()).isEqualTo("작업 완료");
+        Assertions.assertThat(responseDto.getData().getItemId()).isNotNull();
+        System.out.println("##### itemId = " + itemId);
+    }
+
+    @Test
+    @DisplayName("상품 수정 : 이미지 추가 있음")
+    void patch_item_test() throws Exception {
+        Long itemId = 1L;
+        ItemPatchDto patch = itemStub.createPatchWithImageWithTotal();
+        String content = gson.toJson(patch);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = itemStub.getMultipartTwoImageAndJsonDataRequest(
+                "patch", content);
+
+        String url = URL + port + DEFAULT_URL + "/{itemId}";
+        ResponseEntity<String> response = adminLoginTest.exchange(url, HttpMethod.PATCH,
+                requestEntity, String.class, itemId);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<ItemIdResponseDto>>() {
+        }.getType();
+        ResponseDto<ItemIdResponseDto> responseDto = gson.fromJson(body, responseType);
+
+        Assertions.assertThat(responseDto.getCode()).isEqualTo("C200");
+        Assertions.assertThat(responseDto.getMessage()).isEqualTo("작업 완료");
+        Assertions.assertThat(responseDto.getData().getItemId()).isNotNull();
+        System.out.println("##### itemId = " + itemId);
+    }
+
+    @Test
+    @DisplayName("상품 단건 조회")
+    void get_item_test() throws Exception {
+        Long itemId = 2L;
+        String url = URL + port + DEFAULT_URL + "/{item-Id}";
+        ResponseEntity<String> response = noLoginTest.getForEntity(url, String.class, itemId);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<ItemResponseDto>>() {
+        }.getType();
+        ResponseDto<ItemResponseDto> responseDto = gson.fromJson(body, responseType);
+        ItemResponseDto result = responseDto.getData();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(result.getItemId()).isEqualTo(itemId);
+    }
+
+    @Test
+    @DisplayName("상품 전체 조회")
+    void search_item_by_name_test() throws Exception {
+        String url = URL + port + DEFAULT_URL + "/search/itemName";
+
+        MultiValueMap param = itemStub.getPageParam();
+        param.add("itemName", "맥");
+        UriComponents build = UriComponentsBuilder.fromUriString(url).queryParams(param).build();
+        ResponseEntity<String> response = noLoginTest.getForEntity(build.toString(), String.class);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<CustomPage<ItemResponseDto>>>() {}.getType();
+        ResponseDto<CustomPage<ItemResponseDto>> responseDto = gson.fromJson(body, responseType);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
 
 
 }
