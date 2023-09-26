@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ import project.main.webstore.domain.item.dto.ItemIdResponseDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.dto.ItemResponseDto;
+import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.stub.ItemStub;
 import project.main.webstore.dto.CustomPage;
 import project.main.webstore.dto.ResponseDto;
@@ -167,7 +169,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @DisplayName("상품 전체 조회")
+    @DisplayName("상품 이름 검색")
     void search_item_by_name_test() throws Exception {
         String url = URL + port + DEFAULT_URL + "/search/itemName";
 
@@ -182,5 +184,52 @@ public class ItemControllerTest {
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    @DisplayName("상품 전체 조회")
+    void get_item_page_test() throws Exception{
+        // given
+        String url = URL + port + DEFAULT_URL;
+        // when
+        MultiValueMap param = itemStub.getPageParam();
+        UriComponents urlWithParam = UriComponentsBuilder.fromUriString(url).queryParams(param).build();
+        ResponseEntity<String> response = noLoginTest.getForEntity(urlWithParam.toString(),
+                String.class);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<CustomPage<ItemResponseDto>>>() {}.getType();
+        ResponseDto<CustomPage<ItemResponseDto>> responseDto = gson.fromJson(body, responseType);
+        // then
+        CustomPage<ItemResponseDto> result = responseDto.getData();
+        Assertions.assertThat(result.getPageable().getSize()).isEqualTo(30);
+        Assertions.assertThat(result.getPageable().getOffset()).isEqualTo(0);
+        List<ItemResponseDto> content = result.getContent();
+        Assertions.assertThat(content).map(ItemResponseDto::getItemId).contains(1L,2L);
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("상품 카테고리 검색")
+    void search_item_by_category_test() throws Exception {
+        String url = URL + port + DEFAULT_URL + "/search/category";
+
+        MultiValueMap param = itemStub.getPageParam();
+        param.add("category", "COMPUTER");
+        UriComponents build = UriComponentsBuilder.fromUriString(url).queryParams(param).build();
+        ResponseEntity<String> response = noLoginTest.getForEntity(build.toString(), String.class);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<CustomPage<ItemResponseDto>>>() {}.getType();
+        ResponseDto<CustomPage<ItemResponseDto>> responseDto = gson.fromJson(body, responseType);
+        CustomPage<ItemResponseDto> result = responseDto.getData();
+        List<ItemResponseDto> content = result.getContent();
+
+        Assertions.assertThat(result.getPageable().getSize()).isEqualTo(30);
+        Assertions.assertThat(result.getPageable().getOffset()).isZero();
+        Assertions.assertThat(content).map(ItemResponseDto::getCategory).containsOnly(Category.COMPUTER);
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+
+    //상품 좋아요
+
+    //상품 좋아요 조회
 
 }
