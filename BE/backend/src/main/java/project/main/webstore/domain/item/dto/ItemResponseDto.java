@@ -12,13 +12,14 @@ import lombok.Setter;
 import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
+import project.main.webstore.dto.Dto;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemResponseDto {
+public class ItemResponseDto implements Dto {
     @Schema(description = "아이템 식별자")
     private Long itemId;
     @Schema(example = "COMPUTER",allowableValues = {"COMPUTER", "MONITOR", "MOUSE", "HEADSET", "CHAIR", "DESK"})

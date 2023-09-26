@@ -15,6 +15,7 @@ import project.main.webstore.domain.item.dto.OptionPostRequestDto;
 import project.main.webstore.domain.item.dto.OptionResponseDto;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
+import project.main.webstore.dto.CustomPage;
 
 @Component
 public class ItemMapper extends ImageMapper implements DefaultMapper {
@@ -90,8 +91,9 @@ public class ItemMapper extends ImageMapper implements DefaultMapper {
         return new ItemIdResponseDto(item.getItemId());
     }
 
-    public Page<ItemResponseDto> toGetPageResponse(Page<Item> items) {
-        return items.map(ItemResponseDto::new);
+    public CustomPage<ItemResponseDto> toGetPageResponse(Page<Item> items) {
+        Page<ItemResponseDto> map = items.map(ItemResponseDto::new);
+        return transCustomPage(map);
     }
 
     public List<ItemResponseDto> toGetResponseListDto(List<Item> result) {

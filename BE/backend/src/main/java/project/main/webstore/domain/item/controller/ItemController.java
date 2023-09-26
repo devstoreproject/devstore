@@ -40,6 +40,7 @@ import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.mapper.ItemMapper;
 import project.main.webstore.domain.item.service.ItemService;
+import project.main.webstore.dto.CustomPage;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
@@ -136,13 +137,13 @@ public class ItemController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt", description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> searchItem(@RequestParam String itemName,
+    public ResponseEntity<ResponseDto<CustomPage<ItemResponseDto>>> searchItem(@RequestParam String itemName,
                                                                          @Parameter(hidden = true) @PageableDefault Pageable pageable,
                                                                          @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         Page<Item> result = service.searchItem(itemName, pageable, userId);
-        Page<ItemResponseDto> response = mapper.toGetPageResponse(result);
-        var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        CustomPage<ItemResponseDto> response = mapper.toGetPageResponse(result);
+        var responseDto = ResponseDto.<CustomPage<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
@@ -155,13 +156,13 @@ public class ItemController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt", description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByCategory(@RequestParam Category category,
+    public ResponseEntity<ResponseDto<CustomPage<ItemResponseDto>>> getItemByCategory(@RequestParam Category category,
                                                                                 @Parameter(hidden = true) @PageableDefault(sort = "itemId") Pageable pageable,
                                                                                 @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         Page<Item> result = service.findItemByCategory(category, pageable, userId);
-        Page<ItemResponseDto> response = mapper.toGetPageResponse(result);
-        var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        CustomPage<ItemResponseDto> response = mapper.toGetPageResponse(result);
+        var responseDto = ResponseDto.<CustomPage<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
@@ -174,12 +175,12 @@ public class ItemController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt", description = "정렬할 기준이 되는 필드, 기본 값이 itemId 으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemAllByPage(@Parameter(hidden = true) @PageableDefault(sort = "itemId") Pageable pageable,
+    public ResponseEntity<ResponseDto<CustomPage<ItemResponseDto>>> getItemAllByPage(@Parameter(hidden = true) @PageableDefault(sort = "itemId") Pageable pageable,
                                                                                  @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         Page<Item> result = service.findItemPage(pageable, userId);
-        Page<ItemResponseDto> response = mapper.toGetPageResponse(result);
-        var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        CustomPage<ItemResponseDto> response = mapper.toGetPageResponse(result);
+        var responseDto = ResponseDto.<CustomPage<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
