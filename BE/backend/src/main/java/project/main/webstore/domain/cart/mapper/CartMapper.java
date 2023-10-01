@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
+import project.main.webstore.domain.DefaultMapper;
 import project.main.webstore.domain.cart.dto.CartGetResponseDto;
 import project.main.webstore.domain.cart.dto.CartIdResponseDto;
 import project.main.webstore.domain.cart.dto.CartItemDto;
@@ -15,13 +16,15 @@ import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
 
 @Component
-public class CartMapper extends ImageMapper {
+public class CartMapper extends ImageMapper implements DefaultMapper {
 
     public LocalCartDto toLocal(CartItemDto post){
         return new LocalCartDto(post.getOptionId(),post.getItemCount());
     }
 
     public List<LocalCartDto> toLocalList(List<CartItemDto> itemList){
+        if(itemList == null)
+            return new ArrayList<>();
         return itemList.stream().map(this::toLocal).collect(Collectors.toList());
     }
 
@@ -66,7 +69,4 @@ public class CartMapper extends ImageMapper {
                 cartItem.getOption().getItem().getDefaultImage()) : null;
     }
 
-    public List<Long> toList(List<Long> idList) {
-        return idList == null ? new ArrayList<>() : idList;
-    }
 }
