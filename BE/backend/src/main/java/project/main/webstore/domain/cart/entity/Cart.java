@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,6 +36,7 @@ public class Cart extends Auditable {
     //양방향 연관계
     @OneToMany(mappedBy = "cart",orphanRemoval = true,cascade = CascadeType.ALL)
     @Setter
+    @Default
     private List<CartItem> cartItemList = new ArrayList<>();
 
     @Setter

@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import project.main.webstore.domain.item.entity.ItemOption;
 @Getter
 @NoArgsConstructor
 @Entity
+@AllArgsConstructor
 public class CartItem {
     @Id
     @GeneratedValue(strategy = IDENTITY)
