@@ -30,7 +30,7 @@ import project.main.webstore.utils.UriCreator;
 @RestController
 @RequiredArgsConstructor
 public class CartController {
-    private static final String DEFAULT_URL = "/cart";
+    private static final String DEFAULT_URL = "cart";
     private final CartService cartService;
     private final CartMapper mapper;
 
