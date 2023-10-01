@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.main.webstore.domain.cart.dto.CartItemDto;
+import project.main.webstore.domain.cart.dto.CartPatchRequestDto;
 import project.main.webstore.domain.cart.dto.CartPostRequestDto;
 import project.main.webstore.domain.cart.dto.LocalCartDto;
 import project.main.webstore.domain.cart.entity.Cart;
@@ -57,5 +58,16 @@ public class CartStub extends ImageStub {
                 new LocalCartDto(2L,20),
                 new LocalCartDto(3L,30)
         );
+    }
+
+    //상품 수량 변경만 진행
+    public CartPatchRequestDto getCartPatchItemOnlyCountChang() {
+        return new CartPatchRequestDto(List.of(new CartItemDto(1L,5)),null);
+    }
+    public CartPatchRequestDto getCartPatchItemOnlyDelete() {
+        return new CartPatchRequestDto(null,List.of(1L));
+    }
+    public CartPatchRequestDto getCartPatchItem() {
+        return new CartPatchRequestDto(List.of(new CartItemDto(1L,5)),List.of(1L));
     }
 }

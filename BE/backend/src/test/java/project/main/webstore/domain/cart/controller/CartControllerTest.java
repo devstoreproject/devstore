@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import project.main.webstore.annotation.WithMockCustomUser;
+import project.main.webstore.domain.cart.dto.CartPatchRequestDto;
 import project.main.webstore.domain.cart.dto.CartPostRequestDto;
 import project.main.webstore.domain.cart.service.CartService;
 import project.main.webstore.domain.cart.stub.CartStub;
@@ -53,4 +54,65 @@ class CartControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.cartId").value(1L));
     }
+
+    @Test
+    @DisplayName("장바구니 상품 수량 변경 : 성공")
+    @WithMockCustomUser(role = "CLIENT",userRole = UserRole.CLIENT,userId = 1L)
+    void patch_cart_item_count_test() throws Exception{
+        // given
+        CartPatchRequestDto patch = cartStub.getCartPatchItemOnlyCountChang();
+        String content = gson.toJson(patch);
+
+        given(cartService.patchCart(anyLong(),anyList(),anyList())).willReturn(cartStub.getCart(1L));
+        // when
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.patch(DEFAULT_URL).content(content));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.cartId").value(1L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(1L));
+    }
+
+    @Test
+    @DisplayName("장바구니 장바구니 상품 제거 : 성공")
+    @WithMockCustomUser(role = "CLIENT",userRole = UserRole.CLIENT,userId = 1L)
+    void patch_cart_item_delete_test() throws Exception{
+        // given
+        CartPatchRequestDto patch = cartStub.getCartPatchItemOnlyDelete();
+        String content = gson.toJson(patch);
+
+        given(cartService.patchCart(anyLong(),anyList(),anyList())).willReturn(cartStub.getCart(1L));
+        // when
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.patch(DEFAULT_URL).content(content));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.cartId").value(1L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(1L));
+    }
+
+    @Test
+    @DisplayName("장바구니 수정 : 성공")
+    @WithMockCustomUser(role = "CLIENT",userRole = UserRole.CLIENT,userId = 1L)
+    void patch_cart_test() throws Exception{
+        // given
+        CartPatchRequestDto patch = cartStub.getCartPatchItem();
+        String content = gson.toJson(patch);
+
+        given(cartService.patchCart(anyLong(),anyList(),anyList())).willReturn(cartStub.getCart(1L));
+        // when
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.patch(DEFAULT_URL).content(content));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.cartId").value(1L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(1L));
+    }
+
+
+
 }
+
