@@ -1,20 +1,28 @@
 package project.main.webstore.stub;
 
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
-import project.main.webstore.domain.image.dto.ImageInfoDto;
-import project.main.webstore.domain.image.entity.Image;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
+import project.main.webstore.domain.image.dto.ImageInfoDto;
+import project.main.webstore.domain.image.dto.ImageSortPostDto;
+import project.main.webstore.domain.image.entity.Image;
+import project.main.webstore.helper.TestUtils;
 
-public class ImageStub {
+@Component
+public class ImageStub extends TestUtils {
     private String fileName = "testImage";
     private String ext = "png";
     private String path = "src/test/resources/image/testImage";
@@ -127,7 +135,27 @@ public class ImageStub {
         );
     }
 
-    public ByteArrayResource getRealImage() throws IOException {
+    public HttpEntity<MultiValueMap<String, Object>> getMultipartTwoImageAndJsonDataRequest(String method,String content,String accessToken)
+            throws IOException {
+        HttpHeaders header = getMultipartHeader();
+        HttpHeaders jwtAdmin = getLoginHeader(accessToken);
+        header.addAll(jwtAdmin);
+        MultiValueMap<String, Object> requestBody = createMultipartTwoFileAndJsonRequest(method,content);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, header);
+        return requestEntity;
+    }
+    public HttpEntity<MultiValueMap<String, Object>> getMultipartJsonDataRequest(String method,String content,String accessToken)
+            throws IOException {
+        HttpHeaders header = getMultipartHeader();
+        HttpHeaders jwtAdmin = getLoginHeader(accessToken);
+        header.addAll(jwtAdmin);
+        MultiValueMap<String, Object> requestBody = createMultiPartOnlyJson(method,content);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, header);
+        return requestEntity;
+    }
+
+    protected ByteArrayResource getRealImage() throws IOException {
         Resource resource = new ClassPathResource("image/testImage.png");
 
         ByteArrayResource bytes = new ByteArrayResource(resource.getInputStream().readAllBytes()){
@@ -136,6 +164,42 @@ public class ImageStub {
             }
         };
         return bytes;
+    }
+
+    protected HttpEntity<ByteArrayResource> getRealFileRequest() throws IOException {
+        HttpHeaders partHeaders = new HttpHeaders();
+        partHeaders.setContentType(MediaType.IMAGE_PNG);
+        ByteArrayResource image = getRealImage();
+        HttpEntity<ByteArrayResource> result = new HttpEntity<>(image, partHeaders);
+        return result;
+    }
+
+    protected MultiValueMap<String, Object> createMultipartTwoFileAndJsonRequest(String method,String content) throws IOException {
+        HttpEntity<ByteArrayResource> imageOne = getRealFileRequest();
+        HttpEntity<ByteArrayResource> imageTwo = getRealFileRequest();
+        HttpEntity<String> jsonRequest = super.getJsonRequestHeader(content);
+
+        MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
+
+        requestBody.add("imageList",imageOne);
+        requestBody.add("imageList",imageTwo);
+        requestBody.add(method,jsonRequest);
+        return requestBody;
+    }
+    protected MultiValueMap<String, Object> createMultiPartOnlyJson(String method,String content) throws IOException {
+        HttpEntity<String> jsonRequest = super.getJsonRequestHeader(content);
+
+        MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add(method,jsonRequest);
+        return requestBody;
+    }
+
+
+    protected List<ImageSortPostDto> createImageList(){
+        return List.of(
+                new ImageSortPostDto(0,false),
+                new ImageSortPostDto(1,true)
+        );
     }
 
 }

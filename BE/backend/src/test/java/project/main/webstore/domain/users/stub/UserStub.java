@@ -1,14 +1,12 @@
 package project.main.webstore.domain.users.stub;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.security.core.parameters.P;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.users.dto.UserGetResponseDto;
 import project.main.webstore.domain.users.entity.User;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserStub {
     public User createUser(Long id) {
