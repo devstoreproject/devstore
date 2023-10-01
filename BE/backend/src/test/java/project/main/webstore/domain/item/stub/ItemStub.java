@@ -181,14 +181,14 @@ public class ItemStub extends ImageStub {
         }
         return list;
     }
-    private List<ItemOption> createOptionListWithId() {
+    public List<ItemOption> createOptionListWithId() {
         List<ItemOption> list = new ArrayList<>();
         for(Long i = 2L ; i <=4L ; i++){
             list.add(createOption(i));
         }
         return list;
     }
-    private ItemOption createOption(Long optionId) {
+    public ItemOption createOption(Long optionId) {
         return new ItemOption(optionId,"옵션 설명" + optionId,null,100,10000,false,null,new ArrayList<>(), new ArrayList<>());
     }
     private ItemOption createOptionNoId(Long index) {

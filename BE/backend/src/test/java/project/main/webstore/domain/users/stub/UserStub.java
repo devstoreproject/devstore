@@ -10,17 +10,19 @@ import project.main.webstore.domain.users.entity.User;
 
 public class UserStub {
     public User createUser(Long id) {
-        return User.stubBuilder()
-            .cart(new Cart())
-            .userName("김복자")
-            .phone("010-1231-1234")
-            .email("admin@gmail.com")
-            .pickedItemList(new ArrayList<>())
-            .nickName("김순자")
-            .id(id)
-            .password("admin123!!")
-            .profileImage("프로필사진 url")
-            .build();
+        User user = User.stubBuilder()
+                .cart(new Cart())
+                .userName("김복자")
+                .phone("010-1231-1234")
+                .email("admin@gmail.com")
+                .pickedItemList(new ArrayList<>())
+                .nickName("김순자")
+                .id(id)
+                .password("admin123!!")
+                .profileImage("프로필사진 url")
+                .build();
+        user.getCart().setUser(user);
+        return user;
     }
 
     public List<User> users() {

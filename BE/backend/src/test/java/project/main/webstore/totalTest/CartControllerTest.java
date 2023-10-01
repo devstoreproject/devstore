@@ -1,98 +1,154 @@
 package project.main.webstore.totalTest;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.http.*;
-import org.springframework.transaction.annotation.Transactional;
-import project.main.webstore.domain.cart.dto.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import project.main.webstore.domain.cart.dto.CartGetResponseDto;
+import project.main.webstore.domain.cart.dto.CartIdResponseDto;
+import project.main.webstore.domain.cart.dto.CartPatchRequestDto;
+import project.main.webstore.domain.cart.dto.CartPostRequestDto;
+import project.main.webstore.domain.cart.stub.CartStub;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.helper.TestUtils;
-import project.main.webstore.security.jwt.utils.JwtTokenizer;
-
-import java.util.List;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@MockBean(JpaMetamodelMappingContext.class)
-@AutoConfigureMockMvc
-public class CartControllerTest {
+class CartControllerTest {
+    @Container
+    static MySQLContainer mySQLContainer = new MySQLContainer("mysql:8");
     TestRestTemplate template = new TestRestTemplate();
     @Autowired
     Gson gson;
     @Autowired
-    JwtTokenizer jwtTokenizer;
-    @Autowired
     TestUtils testUtils;
     @LocalServerPort
     private int port;
+    final String URL = "http://localhost:";
+    @Autowired
+    private CartStub cartStub;
+    private String DEFAULT_URL = "/api/cart";
 
     @Test
     @DisplayName("카트 추가")
     void post_cart_test(){
-
-        //DTO 생성
-        CartPostRequestDto post = new CartPostRequestDto(List.of(new CartItemDto(1L, 20), new CartItemDto(2L, 20), new CartItemDto(3L, 20)));
-        //URL 설정
-        String url = "http://localhost:" + port + "/api/cart/users/1";
-
+        CartPostRequestDto post = cartStub.getCartPostDto();
+        String url = URL + port + DEFAULT_URL;
         HttpHeaders headers = testUtils.getJWTClient();
-
         HttpEntity<CartPostRequestDto> requestEntity = new HttpEntity<>(post, headers);
 
-        ResponseEntity<ResponseDto> responseEntity = this.template.postForEntity(url,
-                requestEntity,
-                ResponseDto.class);
-        responseEntity.getBody();
+        ResponseEntity<String> response = template.postForEntity(url, requestEntity,
+                String.class);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<CartIdResponseDto>>() {}.getType();
+        ResponseDto<CartIdResponseDto> responseDto = gson.fromJson(body, responseType);
+
+        Assertions.assertThat(responseDto.getData().getCartId()).isNotNull();
+        Assertions.assertThat(responseDto.getData().getUserId()).isEqualTo(1L);
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
+    @Test
+    @DisplayName("장바구니 제품 수량 변경")
+    void cart_patch_chang_item_count_test() throws Exception{
+        // given
+        HttpHeaders headers = testUtils.getJWTClient();
+        CartPatchRequestDto patch = cartStub.getCartPatchItemOnlyCountChang();
 
+        HttpEntity<CartPatchRequestDto> request = new HttpEntity<>(patch,headers);
+        String url = URL + port + DEFAULT_URL;
 
+        // when
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.PATCH, request,
+                String.class);
+        String body = response.getBody();
+
+        Type responseType = new TypeToken<ResponseDto<CartIdResponseDto>>() {}.getType();
+        ResponseDto<CartIdResponseDto> responseDto = gson.fromJson(body, responseType);
+        // then
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(responseDto.getData().getUserId()).isEqualTo(1L);
+        Assertions.assertThat(responseDto.getData().getCartId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("장바구니 제품 수량 변경")
+    void cart_patch_delete_item_test() throws Exception{
+        // given
+        HttpHeaders headers = testUtils.getJWTClient();
+        CartPatchRequestDto patch = cartStub.getCartPatchItemOnlyDelete();
+
+        HttpEntity<CartPatchRequestDto> request = new HttpEntity<>(patch,headers);
+        String url = URL + port + DEFAULT_URL;
+
+        // when
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.PATCH, request,
+                String.class);
+        String body = response.getBody();
+
+        Type responseType = new TypeToken<ResponseDto<CartIdResponseDto>>() {}.getType();
+        ResponseDto<CartIdResponseDto> responseDto = gson.fromJson(body, responseType);
+        // then
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(responseDto.getData().getUserId()).isEqualTo(1L);
+        Assertions.assertThat(responseDto.getData().getCartId()).isNotNull();
+    }
 
     @Test
     @DisplayName("장바구니 제품 수량 변경")
     void cart_patch_test() throws Exception{
         // given
         HttpHeaders headers = testUtils.getJWTClient();
-        CartPatchRequestDto patch = new CartPatchRequestDto(List.of(new CartItemDto(25L, 10), new CartItemDto(26L, 10)));
+        CartPatchRequestDto patch = cartStub.getCartPatchItem();
+
         HttpEntity<CartPatchRequestDto> request = new HttpEntity<>(patch,headers);
-        String url = "http://localhost:" + port + "/api/cart/users/{userId}";
+        String url = URL + port + DEFAULT_URL;
 
         // when
-        ResponseEntity<ResponseDto<CartIdResponseDto>> response = template.exchange(url, HttpMethod.PATCH, request, new ParameterizedTypeReference<>() {}, 1L);
-        // then
-        ResponseDto<CartIdResponseDto> body = response.getBody();
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.PATCH, request,
+                String.class);
+        String body = response.getBody();
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(body.getData().getCartId()).isEqualTo(1L);
+        Type responseType = new TypeToken<ResponseDto<CartIdResponseDto>>() {}.getType();
+        ResponseDto<CartIdResponseDto> responseDto = gson.fromJson(body, responseType);
+        // then
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(responseDto.getData().getUserId()).isEqualTo(1L);
+        Assertions.assertThat(responseDto.getData().getCartId()).isNotNull();
     }
 
-
-
-
     @Test
-    @DisplayName("카트 전체 삭제")
-    @Transactional
-    void cart_all_delete() throws Exception{
+    @DisplayName("장바구니 조회")
+    void cart_get_test() throws Exception{
         // given
         HttpHeaders headers = testUtils.getJWTClient();
-        CartDeleteDto patch = new CartDeleteDto(List.of(1L, 2L));
-        String url = "http://localhost:" + port + "/api/cart/users/{userId}/del";
+        String url = URL + port + DEFAULT_URL + "/users/{userId}";
 
-        HttpEntity<CartDeleteDto> request = new HttpEntity<>(patch,headers);
+        HttpEntity<Object> request = new HttpEntity<>(headers);
         // when
-        ResponseEntity<ResponseDto<CartIdResponseDto>> response = template.exchange(url, HttpMethod.PATCH, request, new ParameterizedTypeReference<>() {
-        }, 2L);
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.GET, request,
+                String.class, 1L);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<CartGetResponseDto>>() {}.getType();
+        ResponseDto<CartGetResponseDto> responseDto = gson.fromJson(body, responseType);
         // then
-        ResponseDto<CartIdResponseDto> body = response.getBody();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(responseDto.getData().getCartId()).isEqualTo(1L);
+        Assertions.assertThat(responseDto.getData().getDeliveryPrice()).isEqualTo(3000);
+        Assertions.assertThat(responseDto.getData().getDiscountedPrice()).isEqualTo(20200000);
+        Assertions.assertThat(responseDto.getData().getItemList()).isNotNull();
+
     }
 }

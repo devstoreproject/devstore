@@ -1,5 +1,18 @@
 package project.main.webstore.domain.cart.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,14 +21,12 @@ import project.main.webstore.domain.item.exception.ItemExceptionCode;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.exception.BusinessLogicException;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Getter
-@NoArgsConstructor
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Cart extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +36,10 @@ public class Cart extends Auditable {
     //양방향 연관계
     @OneToMany(mappedBy = "cart",orphanRemoval = true,cascade = CascadeType.ALL)
     @Setter
+    @Default
     private List<CartItem> cartItemList = new ArrayList<>();
 
+    @Setter
     @OneToOne(mappedBy = "cart")
     private User user;
 

@@ -72,4 +72,8 @@ public class ImageMapper {
     public List<ImageDto> toImageResponseDtoList(List<? extends Image> imageList) {
         return imageList.stream().map(ImageDto::new).collect(Collectors.toList());
     }
+
+    protected ImageDto toResponseDto(Image image){
+        return new ImageDto(image);
+    }
 }
