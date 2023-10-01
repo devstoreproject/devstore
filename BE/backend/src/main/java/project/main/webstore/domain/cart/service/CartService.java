@@ -36,7 +36,9 @@ public class CartService {
         User findUser = userValidService.validUser(userId);
 
         if (findUser.getCart() == null) {
-            findUser.setCart(new Cart(findUser));
+            Cart cart = new Cart(findUser);
+            findUser.setCart(cart);
+            cart.setUser(findUser);
         }
 
         return postCartItem(itemList, findUser.getCart());

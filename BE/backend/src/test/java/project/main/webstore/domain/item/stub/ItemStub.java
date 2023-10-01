@@ -181,7 +181,7 @@ public class ItemStub extends ImageStub {
         }
         return list;
     }
-    private List<ItemOption> createOptionListWithId() {
+    public List<ItemOption> createOptionListWithId() {
         List<ItemOption> list = new ArrayList<>();
         for(Long i = 2L ; i <=4L ; i++){
             list.add(createOption(i));
