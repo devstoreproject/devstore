@@ -93,12 +93,15 @@ public class CartService {
             checkIsDelete.put(deleteId, -1);
         }
         //기존에 있는 상품들이 들어간다.
-        for (int i = 0 ; i < cartItemList.size() ; i++) {
+        int i = 0;
+        while(i < cartItemList.size()){
             CartItem cartItem = cartItemList.get(i);
             Integer itemCount = checkIsDelete.put(cartItem.getOption().getOptionId(), cartItem.getItemCount());
             //만약 데이터가 null이 아니라면 cartItem을 지워버린다.
             if (itemCount != null) {
                 cartItemList.remove(cartItem);
+            } else {
+                i++;
             }
         }
 
