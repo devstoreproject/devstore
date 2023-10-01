@@ -245,4 +245,16 @@ into
 values
     (now(), now(), '.png', 'f239r0f3f3223fr', 0, '이미지 파일 경로2', true, '이미지파일2', '섬네일 경로2', 'f23434f', 2, 'NOTICE');
 
+insert
+into
+    cart_item
+(cart_id, item_count, option_id)
+values
+(1,10,1);
 
+insert
+into
+    cart_item
+(cart_id, item_count, option_id)
+values
+    (1,10,3);

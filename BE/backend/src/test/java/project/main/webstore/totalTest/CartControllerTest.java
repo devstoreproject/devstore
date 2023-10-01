@@ -3,7 +3,6 @@ package project.main.webstore.totalTest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,16 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
-import project.main.webstore.domain.cart.dto.CartDeleteDto;
+import project.main.webstore.domain.cart.dto.CartGetResponseDto;
 import project.main.webstore.domain.cart.dto.CartIdResponseDto;
 import project.main.webstore.domain.cart.dto.CartPatchRequestDto;
 import project.main.webstore.domain.cart.dto.CartPostRequestDto;
@@ -133,19 +130,25 @@ class CartControllerTest {
     }
 
     @Test
-    @DisplayName("카트 전체 삭제")
-    @Transactional
-    void cart_all_delete() throws Exception{
+    @DisplayName("장바구니 조회")
+    void cart_get_test() throws Exception{
         // given
         HttpHeaders headers = testUtils.getJWTClient();
-        CartDeleteDto patch = new CartDeleteDto(List.of(1L, 2L));
-        String url = "http://localhost:" + port + "/api/cart/users/{userId}/del";
+        String url = URL + port + DEFAULT_URL + "/users/{userId}";
 
-        HttpEntity<CartDeleteDto> request = new HttpEntity<>(patch,headers);
+        HttpEntity<Object> request = new HttpEntity<>(headers);
         // when
-        ResponseEntity<ResponseDto<CartIdResponseDto>> response = template.exchange(url, HttpMethod.PATCH, request, new ParameterizedTypeReference<>() {
-        }, 2L);
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.GET, request,
+                String.class, 1L);
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<CartGetResponseDto>>() {}.getType();
+        ResponseDto<CartGetResponseDto> responseDto = gson.fromJson(body, responseType);
         // then
-        ResponseDto<CartIdResponseDto> body = response.getBody();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(responseDto.getData().getCartId()).isEqualTo(1L);
+        Assertions.assertThat(responseDto.getData().getDeliveryPrice()).isEqualTo(3000);
+        Assertions.assertThat(responseDto.getData().getDiscountedPrice()).isEqualTo(20200000);
+        Assertions.assertThat(responseDto.getData().getItemList()).isNotNull();
+
     }
 }

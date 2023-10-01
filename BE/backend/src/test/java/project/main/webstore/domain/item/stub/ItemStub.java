@@ -188,7 +188,7 @@ public class ItemStub extends ImageStub {
         }
         return list;
     }
-    private ItemOption createOption(Long optionId) {
+    public ItemOption createOption(Long optionId) {
         return new ItemOption(optionId,"옵션 설명" + optionId,null,100,10000,false,null,new ArrayList<>(), new ArrayList<>());
     }
     private ItemOption createOptionNoId(Long index) {

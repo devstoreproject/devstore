@@ -35,6 +35,13 @@ public class CartStub extends ImageStub {
                 .user(new User(1L))
                 .build();
     }
+    public Cart getCartWithCartItemId(Long id) {
+        return Cart.builder()
+                .cartItemList(getCartItemListWithId())
+                .id(id)
+                .user(new User(1L))
+                .build();
+    }
 
     public List<CartItem> getCartItemList() {
         return List.of(

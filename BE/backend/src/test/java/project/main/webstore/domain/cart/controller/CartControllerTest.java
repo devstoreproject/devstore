@@ -20,8 +20,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import project.main.webstore.annotation.WithMockCustomUser;
 import project.main.webstore.domain.cart.dto.CartPatchRequestDto;
 import project.main.webstore.domain.cart.dto.CartPostRequestDto;
+import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.cart.service.CartService;
 import project.main.webstore.domain.cart.stub.CartStub;
+import project.main.webstore.domain.item.entity.ItemOption;
+import project.main.webstore.domain.item.stub.ItemStub;
 import project.main.webstore.domain.users.enums.UserRole;
 
 @SpringBootTest
@@ -35,6 +38,8 @@ class CartControllerTest {
     private Gson gson;
     @Autowired
     private CartStub cartStub;
+    @Autowired
+    private ItemStub itemStub;
     @MockBean
     private CartService cartService;
 
@@ -112,6 +117,25 @@ class CartControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(1L));
     }
 
+    @Test
+    @DisplayName("장바구니 조회")
+    void get_cart_test() throws Exception{
+        // given
+
+        Cart cart = cartStub.getCartWithCartItemId(1L);
+        ItemOption option = itemStub.createOption(1L);
+        option.setItem(itemStub.createItem(1L));
+        cart.getCartItemList().forEach(cartItem -> cartItem.setOption(option));
+
+        given(cartService.getCart(anyLong())).willReturn(cart);
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.get(DEFAULT_URL + "/users/{userId}", 1L));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 
 
 }
