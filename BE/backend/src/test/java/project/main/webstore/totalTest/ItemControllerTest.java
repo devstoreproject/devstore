@@ -1,5 +1,6 @@
 package project.main.webstore.totalTest;
 
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ import project.main.webstore.domain.item.dto.ItemIdResponseDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
 import project.main.webstore.domain.item.dto.ItemResponseDto;
+import project.main.webstore.domain.item.dto.PickedItemDto;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.stub.ItemStub;
 import project.main.webstore.dto.CustomPage;
@@ -47,13 +50,12 @@ public class ItemControllerTest {
     static MySQLContainer mySQLContainer = new MySQLContainer("mysql:8");
     final String URL = "http://localhost:";
     final String DEFAULT_URL = "/api/items";
-    TestRestTemplate clientLoginTest = new TestRestTemplate("client@gmail.com", "asdffcx1111");
-    TestRestTemplate adminLoginTest = new TestRestTemplate("admin@gmail.com", "asdffcx1111");
-    TestRestTemplate noLoginTest = new TestRestTemplate();
+    TestRestTemplate template = new TestRestTemplate();
     Long itemId;
     @Autowired
     Gson gson;
-    ItemStub itemStub = new ItemStub();
+    @Autowired
+    ItemStub itemStub;
     @LocalServerPort
     private int port;
 
@@ -64,11 +66,12 @@ public class ItemControllerTest {
         String content = gson.toJson(post);
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity =
-                itemStub.getMultipartTwoImageAndJsonDataRequest("post", content);
+                itemStub.getMultipartTwoImageAndJsonDataRequest("post", content,
+                        itemStub.getJWTAccessTokenAdmin());
 
         String url = "http://localhost:" + port + "/api/items";
         System.out.println("url = " + url);
-        ResponseEntity<String> response = adminLoginTest.postForEntity(new URI(url),
+        ResponseEntity<String> response = template.postForEntity(new URI(url),
                 requestEntity, String.class);
         String body = response.getBody();
         Type responseType = new TypeToken<ResponseDto<ItemIdResponseDto>>() {
@@ -89,11 +92,12 @@ public class ItemControllerTest {
         String content = gson.toJson(post);
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity =
-                itemStub.getMultipartJsonDataRequest("post", content);
+                itemStub.getMultipartJsonDataRequest("post", content,
+                        itemStub.getJWTAccessTokenAdmin());
 
         String url = "http://localhost:" + port + "/api/items";
         System.out.println("url = " + url);
-        ResponseEntity<String> response = adminLoginTest.postForEntity(new URI(url),
+        ResponseEntity<String> response = template.postForEntity(new URI(url),
                 requestEntity, String.class);
         String body = response.getBody();
         Type responseType = new TypeToken<ResponseDto<ItemIdResponseDto>>() {
@@ -114,10 +118,10 @@ public class ItemControllerTest {
         ItemPatchDto patch = itemStub.createPatchNoImage();
         String content = gson.toJson(patch);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = itemStub.getMultipartJsonDataRequest(
-                "patch", content);
+                "patch", content, itemStub.getJWTAccessTokenAdmin());
 
         String url = URL + port + DEFAULT_URL + "/{itemId}";
-        ResponseEntity<String> response = adminLoginTest.exchange(url, HttpMethod.PATCH,
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.PATCH,
                 requestEntity, String.class, itemId);
         String body = response.getBody();
         Type responseType = new TypeToken<ResponseDto<ItemIdResponseDto>>() {
@@ -137,10 +141,10 @@ public class ItemControllerTest {
         ItemPatchDto patch = itemStub.createPatchWithImageWithTotal();
         String content = gson.toJson(patch);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = itemStub.getMultipartTwoImageAndJsonDataRequest(
-                "patch", content);
+                "patch", content, itemStub.getJWTAccessTokenAdmin());
 
         String url = URL + port + DEFAULT_URL + "/{itemId}";
-        ResponseEntity<String> response = adminLoginTest.exchange(url, HttpMethod.PATCH,
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.PATCH,
                 requestEntity, String.class, itemId);
         String body = response.getBody();
         Type responseType = new TypeToken<ResponseDto<ItemIdResponseDto>>() {
@@ -158,7 +162,7 @@ public class ItemControllerTest {
     void get_item_test() throws Exception {
         Long itemId = 2L;
         String url = URL + port + DEFAULT_URL + "/{item-Id}";
-        ResponseEntity<String> response = noLoginTest.getForEntity(url, String.class, itemId);
+        ResponseEntity<String> response = template.getForEntity(url, String.class, itemId);
         String body = response.getBody();
         Type responseType = new TypeToken<ResponseDto<ItemResponseDto>>() {
         }.getType();
@@ -176,9 +180,10 @@ public class ItemControllerTest {
         MultiValueMap param = itemStub.getPageParam();
         param.add("itemName", "맥");
         UriComponents build = UriComponentsBuilder.fromUriString(url).queryParams(param).build();
-        ResponseEntity<String> response = noLoginTest.getForEntity(build.toString(), String.class);
+        ResponseEntity<String> response = template.getForEntity(build.toString(), String.class);
         String body = response.getBody();
-        Type responseType = new TypeToken<ResponseDto<CustomPage<ItemResponseDto>>>() {}.getType();
+        Type responseType = new TypeToken<ResponseDto<CustomPage<ItemResponseDto>>>() {
+        }.getType();
         ResponseDto<CustomPage<ItemResponseDto>> responseDto = gson.fromJson(body, responseType);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -186,23 +191,25 @@ public class ItemControllerTest {
 
     @Test
     @DisplayName("상품 전체 조회")
-    void get_item_page_test() throws Exception{
+    void get_item_page_test() throws Exception {
         // given
         String url = URL + port + DEFAULT_URL;
         // when
         MultiValueMap param = itemStub.getPageParam();
-        UriComponents urlWithParam = UriComponentsBuilder.fromUriString(url).queryParams(param).build();
-        ResponseEntity<String> response = noLoginTest.getForEntity(urlWithParam.toString(),
+        UriComponents urlWithParam = UriComponentsBuilder.fromUriString(url).queryParams(param)
+                .build();
+        ResponseEntity<String> response = template.getForEntity(urlWithParam.toString(),
                 String.class);
         String body = response.getBody();
-        Type responseType = new TypeToken<ResponseDto<CustomPage<ItemResponseDto>>>() {}.getType();
+        Type responseType = new TypeToken<ResponseDto<CustomPage<ItemResponseDto>>>() {
+        }.getType();
         ResponseDto<CustomPage<ItemResponseDto>> responseDto = gson.fromJson(body, responseType);
         // then
         CustomPage<ItemResponseDto> result = responseDto.getData();
         Assertions.assertThat(result.getPageable().getSize()).isEqualTo(30);
-        Assertions.assertThat(result.getPageable().getOffset()).isEqualTo(0);
+        Assertions.assertThat(result.getPageable().getOffset()).isZero();
         List<ItemResponseDto> content = result.getContent();
-        Assertions.assertThat(content).map(ItemResponseDto::getItemId).contains(1L,2L);
+        Assertions.assertThat(content).map(ItemResponseDto::getItemId).contains(1L, 2L);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
@@ -214,22 +221,59 @@ public class ItemControllerTest {
         MultiValueMap param = itemStub.getPageParam();
         param.add("category", "COMPUTER");
         UriComponents build = UriComponentsBuilder.fromUriString(url).queryParams(param).build();
-        ResponseEntity<String> response = noLoginTest.getForEntity(build.toString(), String.class);
+        ResponseEntity<String> response = template.getForEntity(build.toString(), String.class);
         String body = response.getBody();
-        Type responseType = new TypeToken<ResponseDto<CustomPage<ItemResponseDto>>>() {}.getType();
+        Type responseType = new TypeToken<ResponseDto<CustomPage<ItemResponseDto>>>() {
+        }.getType();
         ResponseDto<CustomPage<ItemResponseDto>> responseDto = gson.fromJson(body, responseType);
         CustomPage<ItemResponseDto> result = responseDto.getData();
         List<ItemResponseDto> content = result.getContent();
 
         Assertions.assertThat(result.getPageable().getSize()).isEqualTo(30);
         Assertions.assertThat(result.getPageable().getOffset()).isZero();
-        Assertions.assertThat(content).map(ItemResponseDto::getCategory).containsOnly(Category.COMPUTER);
+        Assertions.assertThat(content).map(ItemResponseDto::getCategory)
+                .containsOnly(Category.COMPUTER);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
 
-    //상품 좋아요
+    @Test
+    @DisplayName("상품 좋아요")
+    void post_item_like_test() throws Exception {
+        Long itemId = 1L;
+        HttpHeaders jwtClient = itemStub.getJWTClient();
+        HttpEntity<Object> requestEntity = new HttpEntity<>(jwtClient);
+        String url = URL + port + DEFAULT_URL + "/{itemId}/favorite";
+        ResponseEntity<String> response = template.postForEntity(url, requestEntity, String.class,
+                itemId);
 
-    //상품 좋아요 조회
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<PickedItemDto>>() {
+        }.getType();
+        ResponseDto<PickedItemDto> responseDto = gson.fromJson(body, responseType);
+        PickedItemDto result = responseDto.getData();
 
+        Assertions.assertThat(result.getPicked()).isTrue();
+    }
+
+    @Test
+    @DisplayName("상품 좋아요 : 좋아요 취소")
+    void post_item_like_cancel_test() throws Exception {
+        Long itemId = 2L;
+        HttpHeaders jwtClient = itemStub.getJWTClient();
+        HttpEntity<Object> requestEntity = new HttpEntity<>(jwtClient);
+        String url = URL + port + DEFAULT_URL + "/{itemId}/favorite";
+        template.postForEntity(url, requestEntity, String.class, itemId);
+
+        ResponseEntity<String> response = template.postForEntity(url, requestEntity, String.class,
+                itemId);
+
+        String body = response.getBody();
+        Type responseType = new TypeToken<ResponseDto<PickedItemDto>>() {
+        }.getType();
+        ResponseDto<PickedItemDto> responseDto = gson.fromJson(body, responseType);
+        PickedItemDto result = responseDto.getData();
+
+        Assertions.assertThat(result.getPicked()).isFalse();
+    }
 }
