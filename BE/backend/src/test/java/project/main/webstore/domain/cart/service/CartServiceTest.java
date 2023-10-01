@@ -118,8 +118,14 @@ class CartServiceTest {
         Assertions.assertThat(cart.getCartItemList().get(0).getItemCount()).isEqualTo(5L);
     }
 
-
-
+    @Test
+    @DisplayName("장바구니 조회")
+    void get_cart_test() throws Exception{
+        // given
+        given(userValidService.validUser(anyLong())).willReturn(userStub.createUser(1L));
+        // when
+        Cart result = cartService.getCart(1L);
+        // then
+        Assertions.assertThat(result).isNotNull();
+    }
 }
-
-
