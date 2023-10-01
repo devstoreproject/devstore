@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 import project.main.webstore.domain.image.dto.ImageSortPatchDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
@@ -17,6 +18,7 @@ import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.stub.ImageStub;
 
+@Component
 public class ItemStub extends ImageStub {
     public ItemPostDto createPostDtoWithImage(){
         return new ItemPostDto(Category.COMPUTER,"맥북",10,"이것 맥북의 설명입니다.",1000000,100,3000, createOptionPostList(),createImageList());

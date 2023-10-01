@@ -17,7 +17,17 @@ import project.main.webstore.security.jwt.utils.JwtTokenizer;
 @Component
 public class TestUtils {
     @Autowired
-    JwtTokenizer jwtTokenizer;
+    private JwtTokenizer jwtTokenizer;
+    public String getJWTAccessTokenAdmin(){
+        UserInfoDto userInfo = new UserInfoDto("2", "admin@gmail.com", "김복자", UserRole.ADMIN);
+        return jwtTokenizer.delegateAccessToken(userInfo);
+
+    }
+    public String getJWTAccessTokenClient(){
+        UserInfoDto userInfo = new UserInfoDto("1", "client@gmail.com", "김복자", UserRole.CLIENT);
+        return jwtTokenizer.delegateAccessToken(userInfo);
+
+    }
     public HttpHeaders getJWTAdmin(){
         UserInfoDto userInfo = new UserInfoDto("2", "admin@gmail.com", "김복자", UserRole.ADMIN);
         String accessToken = jwtTokenizer.delegateAccessToken(userInfo);
@@ -33,6 +43,14 @@ public class TestUtils {
         UserInfoDto userInfo = new UserInfoDto("1", "client@gmail.com", "김복자", UserRole.CLIENT);
         String accessToken = jwtTokenizer.delegateAccessToken(userInfo);
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(accessToken);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+
+        return headers;
+    }
+    public HttpHeaders getLoginHeader(String accessToken){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(accessToken);

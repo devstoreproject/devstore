@@ -12,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import project.main.webstore.domain.image.dto.ImageSortPostDto;
 import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.helper.TestUtils;
 
+@Component
 public class ImageStub extends TestUtils {
     private String fileName = "testImage";
     private String ext = "png";
@@ -133,17 +135,21 @@ public class ImageStub extends TestUtils {
         );
     }
 
-    public HttpEntity<MultiValueMap<String, Object>> getMultipartTwoImageAndJsonDataRequest(String method,String content)
+    public HttpEntity<MultiValueMap<String, Object>> getMultipartTwoImageAndJsonDataRequest(String method,String content,String accessToken)
             throws IOException {
         HttpHeaders header = getMultipartHeader();
+        HttpHeaders jwtAdmin = getLoginHeader(accessToken);
+        header.addAll(jwtAdmin);
         MultiValueMap<String, Object> requestBody = createMultipartTwoFileAndJsonRequest(method,content);
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, header);
         return requestEntity;
     }
-    public HttpEntity<MultiValueMap<String, Object>> getMultipartJsonDataRequest(String method,String content)
+    public HttpEntity<MultiValueMap<String, Object>> getMultipartJsonDataRequest(String method,String content,String accessToken)
             throws IOException {
         HttpHeaders header = getMultipartHeader();
+        HttpHeaders jwtAdmin = getLoginHeader(accessToken);
+        header.addAll(jwtAdmin);
         MultiValueMap<String, Object> requestBody = createMultiPartOnlyJson(method,content);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, header);
         return requestEntity;
