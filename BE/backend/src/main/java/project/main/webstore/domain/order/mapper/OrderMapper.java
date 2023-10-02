@@ -1,20 +1,42 @@
 package project.main.webstore.domain.order.mapper;
 
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
-import project.main.webstore.domain.order.dto.*;
-import project.main.webstore.domain.order.entity.Orders;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
+import project.main.webstore.domain.DefaultMapper;
+import project.main.webstore.domain.order.dto.OrderDBDailyPriceDto;
+import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
+import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
+import project.main.webstore.domain.order.dto.OrderDailyPriceDto;
+import project.main.webstore.domain.order.dto.OrderIdAndStatusDto;
+import project.main.webstore.domain.order.dto.OrderIdResponseDto;
+import project.main.webstore.domain.order.dto.OrderItemResponseDto;
+import project.main.webstore.domain.order.dto.OrderItemSaleDto;
+import project.main.webstore.domain.order.dto.OrderLocalDto;
+import project.main.webstore.domain.order.dto.OrderMonthlyPriceDto;
+import project.main.webstore.domain.order.dto.OrderPatchDto;
+import project.main.webstore.domain.order.dto.OrderPostDto;
+import project.main.webstore.domain.order.dto.OrderResponseDto;
+import project.main.webstore.domain.order.entity.OrderedItem;
+import project.main.webstore.domain.order.entity.Orders;
+import project.main.webstore.domain.users.dto.ShippingAddressInfoDto;
+import project.main.webstore.domain.users.dto.UserOrderDto;
+import project.main.webstore.dto.CustomPage;
 
 @Component
-public class OrderMapper {
-    public OrderLocalDto orderPostDtoToOrder(OrderPostDto postDto) {
-        return new OrderLocalDto(postDto);
+public class OrderMapper implements DefaultMapper {
+
+    public OrderLocalDto orderPostDtoToOrder(OrderPostDto post) {
+        return OrderLocalDto.builder()
+                .message(post.getMessage())
+                .shippingId(post.getShippingInfoId())
+                .orderCartItemIdList(post.getCartItemIdList())
+                .build();
     }
 
-    public OrderLocalDto orderPatchDtoToOrder(OrderPatchDto patchDto,Long orderId) {
+    public OrderLocalDto orderPatchDtoToOrder(OrderPatchDto patchDto, Long orderId) {
         return OrderLocalDto.builder()
                 .shippingId(patchDto.getShippingInfoId())
                 .orderId(orderId)
@@ -22,20 +44,45 @@ public class OrderMapper {
                 .build();
     }
 
-    // 주문 정보 전달 (주문서 + 주문건)
-    // User 추가
-    public OrderResponseDto orderToOrderResponseDto(Orders orders) {
-        return new OrderResponseDto(orders);
+    public OrderResponseDto toResponseDto(Orders order) {
+        return OrderResponseDto.builder()
+                .orderId(order.getOrderId())
+                .orderNumber(order.getOrderNumber())
+                .addressInfo(new ShippingAddressInfoDto(order.getAddress(), order.getRecipient()))
+                .userInfo(new UserOrderDto(order.getUser()))
+                .orderItemList(getOrderItemList(order))
+                .totalPrice(order.getTotalOrderedOriginalPrice())
+                .discountedPrice(order.getTotalOrderedDiscountedPrice())
+                .deliveryPrice(order.getDeliveryPrice())
+                .ordersStatus(order.getOrdersStatus())
+                .message(order.getMessage())
+                .createdAt(order.getCreatedAt())
+                .modifiedAt(order.getModifiedAt())
+                .build();
     }
 
-    public List<OrderResponseDto> orderToOrderResponseDtoList(List<Orders> orderList) {
-        return orderList.stream().map(orders -> orderToOrderResponseDto(orders)).collect(Collectors.toList());
+    private List<OrderItemResponseDto> getOrderItemList(Orders order) {
+        return order.getOrderedItemList() != null ? order.getOrderedItemList().stream()
+                .map(this::getOrderItemResponseDto).collect(Collectors.toList())
+                : new ArrayList<>();
     }
 
-    public Page<OrderResponseDto> orderToOrderResponsePage(Page<Orders> orderPage) {
-        if(orderPage == null)
+    private OrderItemResponseDto getOrderItemResponseDto(OrderedItem orderedItem) {
+        return OrderItemResponseDto.builder()
+                .itemId(orderedItem.getOption().getItem().getItemId())
+                .itemName(orderedItem.getOption().getItem().getItemName())
+                .itemCount(orderedItem.getItemCount())
+                .itemPrice(orderedItem.getPrice())
+                .discountRate(orderedItem.getOption().getItem().getDiscountRate())
+                .discountPrice(orderedItem.getDiscountedPrice())
+                .build();
+    }
+
+    public CustomPage<OrderResponseDto> toResponsePageDto(Page<Orders> orderPage) {
+        if (orderPage == null) {
             return null;
-        return orderPage.map(OrderResponseDto::new);
+        }
+        return transCustomPage(orderPage.map(this::toResponseDto));
     }
 
     public OrderIdResponseDto toIdResponse(Orders order) {
@@ -51,7 +98,7 @@ public class OrderMapper {
     }
 
     public OrderIdAndStatusDto toResponse(Orders result) {
-        return new OrderIdAndStatusDto(result.getOrderId(),result.getOrdersStatus());
+        return new OrderIdAndStatusDto(result.getOrderId(), result.getOrdersStatus());
     }
 
     public List<OrderDailyPriceDto> toDailyAmountResponse(List<OrderDBDailyPriceDto> result) {
