@@ -45,16 +45,16 @@ public class CartStub extends ImageStub {
 
     public List<CartItem> getCartItemList() {
         return List.of(
-            new CartItem(new ItemOption(1L,"상품상세01",new Item(1L),10,"상품 이름01"),new Cart(),10),
-            new CartItem(new ItemOption(2L,"상품상세02",new Item(2L),10,"상품 이름02"),new Cart(),20),
-            new CartItem(new ItemOption(3L,"상품상세03",new Item(3L),10,"상품 이름03"),new Cart(),30)
+            new CartItem(new ItemOption(1L,"상품상세01",new Item(1L,100000,3000,0),10,"상품 이름01",0),new Cart(),10),
+            new CartItem(new ItemOption(2L,"상품상세02",new Item(2L,200000,2000,0),10,"상품 이름02",0),new Cart(),20),
+            new CartItem(new ItemOption(3L,"상품상세03",new Item(3L,300000,1000,0),10,"상품 이름03",0),new Cart(),30)
         );
     }
     public List<CartItem> getCartItemListWithId() {
         return List.of(
-            new CartItem(1L,new ItemOption(1L,"상품상세01",new Item(1L),10,"상품 이름01"),new Cart(),10),
-            new CartItem(2L,new ItemOption(2L,"상품상세02",new Item(2L),10,"상품 이름02"),new Cart(),20),
-            new CartItem(3L,new ItemOption(3L,"상품상세03",new Item(3L),10,"상품 이름03"),new Cart(),30)
+                new CartItem(1L,new ItemOption(1L,"상품상세01",new Item(1L,100000,3000,0),10,"상품 이름01",0),new Cart(),10),
+                new CartItem(2L,new ItemOption(2L,"상품상세02",new Item(2L,200000,2000,0),10,"상품 이름02",0),new Cart(),20),
+                new CartItem(3L,new ItemOption(3L,"상품상세03",new Item(3L,300000,1000,0),10,"상품 이름03",0),new Cart(),30)
         );
     }
     private List<CartItemDto> getCartItemDtoList() {

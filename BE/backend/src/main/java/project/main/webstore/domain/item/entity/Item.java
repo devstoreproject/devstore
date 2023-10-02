@@ -178,6 +178,13 @@ public class Item extends Auditable {
         this.itemStatus = ItemStatus.ON_STACK;
     }
 
+    public Item(Long itemId, Integer itemPrice, Integer deliveryPrice, Integer discountRate) {
+        this.itemId = itemId;
+        this.itemPrice = itemPrice;
+        this.deliveryPrice = deliveryPrice;
+        this.discountRate = discountRate;
+    }
+
     public void item(Long itemId) {
         this.itemId = itemId;
     }

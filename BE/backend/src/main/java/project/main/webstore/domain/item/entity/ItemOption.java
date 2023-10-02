@@ -108,4 +108,14 @@ public class ItemOption {
     public ItemOption(Long optionId) {
         this.optionId = optionId;
     }
+    public ItemOption(Long optionId, String optionDetail, Item item,Integer itemCount,String optionName,int additionalPrice) {
+        this.optionId = optionId;
+        this.itemCount = itemCount;
+        this.optionDetail = optionDetail;
+        this.item = item;
+        this.optionName = optionName;
+        this.cartItemList = new ArrayList<>();
+        this.orderItem = new ArrayList<>();
+        this.additionalPrice = additionalPrice;
+    }
 }
