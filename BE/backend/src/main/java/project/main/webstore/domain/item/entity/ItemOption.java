@@ -104,4 +104,8 @@ public class ItemOption {
         this.itemCount = itemCount;
         this.item = item;
     }
+
+    public ItemOption(Long optionId) {
+        this.optionId = optionId;
+    }
 }

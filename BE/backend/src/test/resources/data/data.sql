@@ -258,3 +258,30 @@ into
 (cart_id, item_count, option_id)
 values
     (1,10,3);
+
+insert
+into
+    shipping_info
+(address_detail, address_simple, phone, zip_code, order_id, recipient, user_id)
+values
+    ('삼성아파트 201호', '서울특별시 관악구', '010-1234-1234', '540404', null, '김복자', 1);
+
+insert
+into
+    shipping_info
+(address_detail, address_simple, phone, zip_code, order_id, recipient, user_id)
+values
+    ('삼성아파트 202호', '서울특별시 서초구', '010-4321-1234', '404000', null, '김숙자', 1);
+
+insert
+into
+    shipping_info
+(address_detail, address_simple, phone, zip_code, order_id, recipient, user_id)
+values
+    ('롯대아파트 101호', '울산시 관악구', '010-4444-1234', '444404', null, '김복자', 2);
+insert
+into
+    shipping_info
+(address_detail, address_simple, phone, zip_code, order_id, recipient, user_id)
+values
+    ('롯대아파트 201호', '울산시 서초구', '010-4444-3333', '333333', null, '김미자', 2);
