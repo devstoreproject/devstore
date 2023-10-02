@@ -55,7 +55,7 @@ import project.main.webstore.utils.UriCreator;
 @Validated
 @RequiredArgsConstructor
 public class OrderController {
-    private final static String ORDER_URL = "/api/orders";
+    private final static String ORDER_URL = "orders";
     private final OrderService orderService;
     private final OrderMapper orderMapper;
 
