@@ -30,6 +30,7 @@ public class OrderMapper implements DefaultMapper {
 
     public OrderLocalDto orderPostDtoToOrder(OrderPostDto post) {
         return OrderLocalDto.builder()
+                .userId(post.getUserId())
                 .message(post.getMessage())
                 .shippingId(post.getShippingInfoId())
                 .orderCartItemIdList(post.getCartItemIdList())

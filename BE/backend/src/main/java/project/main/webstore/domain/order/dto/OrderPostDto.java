@@ -7,13 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderPostDto { // 주문정보 (유저, 배송지, 카트 정보)
+public class OrderPostDto {
+    @Setter
+    private Long userId;
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s]*$", message = "특수문자 제외 20자 이내로 작성하세요")
     @Size(min = 0, max = 20)
     private String message;

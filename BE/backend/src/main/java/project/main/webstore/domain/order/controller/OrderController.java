@@ -64,8 +64,8 @@ public class OrderController {
     public ResponseEntity<ResponseDto<OrderIdResponseDto>> postOrder(@RequestBody @Valid OrderPostDto post,
                                                                      @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
+        post.setUserId(userId);
         OrderLocalDto localOrder = orderMapper.orderPostDtoToOrder(post);
-        localOrder.addUserId(userId);
         Orders createOrder = orderService.createOrder(localOrder);
         OrderIdResponseDto response = orderMapper.toIdResponse(createOrder);
 
