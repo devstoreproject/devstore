@@ -9,6 +9,7 @@ import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.users.dto.UserGetResponseDto;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.valueObject.Address;
 
 public class UserStub {
@@ -25,6 +26,11 @@ public class UserStub {
                 .profileImage("프로필사진 url")
                 .build();
         user.getCart().setUser(user);
+        return user;
+    }
+    public User createUserAdmin() {
+        User user = createUser(10000L);
+        user.changeRole(UserRole.ADMIN);
         return user;
     }
 

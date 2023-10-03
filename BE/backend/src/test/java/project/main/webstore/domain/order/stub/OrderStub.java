@@ -1,5 +1,6 @@
 package project.main.webstore.domain.order.stub;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,11 @@ public class OrderStub extends TestUtils {
                 new User(1L),
                 PaymentType.CARD);
     }
+    public Orders createOrderWithMonth(Long id,int month) {
+        Orders order = createOrder(id);
+        order.setDateByTest(LocalDateTime.of(2022,month,22,00,30));
+        return order;
+    }
 
     public OrderPostDto createOrderPost() {
         return OrderPostDto.builder()
@@ -39,6 +45,13 @@ public class OrderStub extends TestUtils {
         ArrayList<Orders> list = new ArrayList<>();
         for (Long i = 1L; i < 10; i++) {
             list.add(createOrder(i));
+        }
+        return new PageImpl<Orders>(list,super.getPage(),30);
+    }
+    public Page<Orders> createOrderWithMonthPage(int month) {
+        ArrayList<Orders> list = new ArrayList<>();
+        for (Long i = 1L; i < 10; i++) {
+            list.add(createOrderWithMonth(i,month));
         }
         return new PageImpl<Orders>(list,super.getPage(),30);
     }
