@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import project.main.webstore.annotation.WithMockCustomUser;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
+import project.main.webstore.domain.order.dto.OrderPatchDto;
 import project.main.webstore.domain.order.dto.OrderPostDto;
 import project.main.webstore.domain.order.service.OrderService;
 import project.main.webstore.domain.order.stub.OrderStub;
@@ -41,13 +42,14 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("주문 하기 테스트")
-    @WithMockCustomUser(role = "CLIENT",userRole = UserRole.CLIENT,userId = 1L)
-    void post_order_test() throws Exception{
+    @WithMockCustomUser(role = "CLIENT", userRole = UserRole.CLIENT, userId = 1L)
+    void post_order_test() throws Exception {
         // given
         OrderPostDto post = orderStub.createOrderPost();
         String content = gson.toJson(post);
 
-        BDDMockito.given(orderService.createOrder(ArgumentMatchers.any(OrderLocalDto.class))).willReturn(orderStub.createOrder(1L));
+        BDDMockito.given(orderService.createOrder(ArgumentMatchers.any(OrderLocalDto.class)))
+                .willReturn(orderStub.createOrder(1L));
         // when
         ResultActions perform = mvc.perform(
                 MockMvcRequestBuilders.post(DEFAULT_URL).content(content));
@@ -57,7 +59,26 @@ class OrderControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.orderId").value(1L));
     }
-    
+
+    @Test
+    @DisplayName("주문 수정")
+    @WithMockCustomUser(role = "CLIENT", userRole = UserRole.CLIENT, userId = 1L)
+    void order_patch_test() throws Exception {
+        // given
+        OrderPatchDto patch = new OrderPatchDto("수정할 메시지", 1L);
+        String content = gson.toJson(patch);
+        BDDMockito.given(orderService.editOrder(ArgumentMatchers.any(OrderLocalDto.class),
+                ArgumentMatchers.anyLong())).willReturn(orderStub.createOrder(1L));
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.patch(DEFAULT_URL + "/{order-id}", 1L).content(content));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.orderId").value(1L));
+    }
+
 
 }
 
