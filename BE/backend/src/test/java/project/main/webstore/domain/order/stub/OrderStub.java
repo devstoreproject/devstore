@@ -1,6 +1,9 @@
 package project.main.webstore.domain.order.stub;
 
+import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
@@ -32,10 +35,18 @@ public class OrderStub extends TestUtils {
                 .build();
     }
 
+    public Page<Orders> createOrderPage() {
+        ArrayList<Orders> list = new ArrayList<>();
+        for (Long i = 1L; i < 10; i++) {
+            list.add(createOrder(i));
+        }
+        return new PageImpl<Orders>(list,super.getPage(),30);
+    }
+
     private List<OrderedItem> getOrderedItem() {
         return List.of(
-                new OrderedItem(1L,30000,3000,0,10,"상품 상세1","옵션 상세1",new ItemOption(1L),new Item(1L)),
-                new OrderedItem(2L,40000,2000,0,5,"상품 상세2","옵션 상세2",new ItemOption(3L),new Item(2L))
+                new OrderedItem(1L,30000,3000,0,10,"상품 상세1","옵션 상세1",new ItemOption(1L),new Item(1L,100000,3000,0)),
+                new OrderedItem(2L,40000,2000,0,5,"상품 상세2","옵션 상세2",new ItemOption(3L),new Item(2L,200000,1000,0))
         );
 
     }

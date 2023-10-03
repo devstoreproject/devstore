@@ -70,11 +70,11 @@ public class OrderMapper implements DefaultMapper {
 
     private OrderItemResponseDto getOrderItemResponseDto(OrderedItem orderedItem) {
         return OrderItemResponseDto.builder()
-                .itemId(orderedItem.getOption().getItem().getItemId())
-                .itemName(orderedItem.getOption().getItem().getItemName())
+                .itemId(orderedItem.getItem().getItemId())
+                .itemName(orderedItem.getItem().getItemName())
                 .itemCount(orderedItem.getItemCount())
                 .itemPrice(orderedItem.getPrice())
-                .discountRate(orderedItem.getOption().getItem().getDiscountRate())
+                .discountRate(orderedItem.getItem().getDiscountRate())
                 .discountPrice(orderedItem.getDiscountedPrice())
                 .build();
     }
