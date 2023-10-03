@@ -1,8 +1,11 @@
 package project.main.webstore.domain.order.service;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,7 +56,7 @@ class OrderServiceTest {
         OrderLocalDto post = new OrderLocalDto("안녕", 1L, 1L, 1L, 1L,new ArrayList<>());
 
         //when
-        BDDMockito.given(userService.validUserAllInfo(ArgumentMatchers.anyLong())).willReturn(user);
+        BDDMockito.given(userService.validUserAllInfo(anyLong())).willReturn(user);
 
         Assertions.assertThatThrownBy(() -> orderService.createOrder(post)).isInstanceOf(
                 BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_ITEM_NOT_FOUND.getMessage());
@@ -75,7 +78,7 @@ class OrderServiceTest {
         Orders order = new Orders(post.getMessage(), cart, user, info);
 
         //when
-        BDDMockito.given(userService.validUserAllInfo(ArgumentMatchers.anyLong())).willReturn(user);
+        BDDMockito.given(userService.validUserAllInfo(anyLong())).willReturn(user);
 
         Assertions.assertThatThrownBy(() -> orderService.createOrder(post)).isInstanceOf(
                 BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_ITEM_NOT_FOUND.getMessage());
@@ -99,7 +102,7 @@ class OrderServiceTest {
         Orders order = new Orders(post.getMessage(), cart, user, user.getShippingInfo(1L));
 
         //when
-        BDDMockito.given(userService.validUserAllInfo(ArgumentMatchers.anyLong())).willReturn(user);
+        BDDMockito.given(userService.validUserAllInfo(anyLong())).willReturn(user);
         BDDMockito.given(orderRepository.save(ArgumentMatchers.any(Orders.class))).willReturn(order);
 
         Orders result = orderService.createOrder(post);
@@ -108,6 +111,23 @@ class OrderServiceTest {
         Assertions.assertThat(result.getMessage()).isEqualTo(post.getMessage());
         Assertions.assertThat(result.getOrdersStatus()).isEqualTo(OrdersStatus.ORDER_COMPLETE);
     }
+
+
+
+    @Test
+    @DisplayName("주문 수정 테스트 : 성공")
+    void patch_order_test() throws Exception{
+        // given
+        OrderLocalDto patch = new OrderLocalDto("수정한 메시지", 1L, 1L, 1L, 1L, List.of(1L));
+        Orders order = orderStub.createOrder(1L);
+        BDDMockito.given(orderRepository.findAllByOrderId(anyLong())).willReturn(Optional.of(order));
+        // when
+        Orders orders = orderService.editOrder(patch, 1L);
+        // then
+        Assertions.assertThat(orders.getMessage()).isEqualTo("수정한 메시지");
+    }
+
+
 
     private String createOrderNumber() {
         Calendar cal = Calendar.getInstance();
