@@ -108,8 +108,8 @@ public class OrderStub extends TestUtils {
 
     private List<OrderedItem> getOrderedItem() {
         return List.of(
-                new OrderedItem(1L,30000,3000,0,10,"상품 상세1","옵션 상세1",new ItemOption(1L),new Item(1L,100000,3000,0)),
-                new OrderedItem(2L,40000,2000,0,5,"상품 상세2","옵션 상세2",new ItemOption(3L),new Item(2L,200000,1000,0))
+                new OrderedItem(1L,30000,3000,0,10,"상품 상세1","옵션 상세1",new ItemOption(1L,null,new Item(1L),10,null,0),new Item(1L,100000,3000,0)),
+                new OrderedItem(2L,40000,2000,0,5,"상품 상세2","옵션 상세2",new ItemOption(3L,null,new Item(2L),5,null,0),new Item(2L,200000,1000,0))
         );
 
     }

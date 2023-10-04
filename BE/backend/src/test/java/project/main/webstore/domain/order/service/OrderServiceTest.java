@@ -4,6 +4,10 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static project.main.webstore.domain.order.enums.OrdersStatus.DELIVERY_COMPLETE;
+import static project.main.webstore.domain.order.enums.OrdersStatus.ORDER_CANCEL;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -338,6 +342,58 @@ class OrderServiceTest {
         List<OrderDBDailyPriceDto> result = orderService.getDailyPrice();
         // then
         Assertions.assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("주문 취소 테스트")
+    void order_cancel_test() throws Exception{
+        // given
+        given(userService.validUser(anyLong())).willReturn(userStub.createUser(1L));
+        given(orderRepository.findAllByOrderId(anyLong())).willReturn(Optional.of(orderStub.createOrderWithTrackNum(1L)));
+
+        // when
+        orderService.cancelOrder(1L,1L);
+        // then
+        verify(userService, times(1)).validUser(1L);
+        verify(orderRepository, times(1)).findAllByOrderId(1L);
+    }
+
+    @Test
+    @DisplayName("주문 취소 테스트 : 실패[배송완료]")
+    void order_cancel_fail_test() throws Exception{
+        // given
+        given(userService.validUser(anyLong())).willReturn(userStub.createUser(1L));
+        Orders orderWithTrackNum = orderStub.createOrderWithTrackNum(1L);
+        orderWithTrackNum.setOrdersStatus(DELIVERY_COMPLETE);
+        given(orderRepository.findAllByOrderId(anyLong())).willReturn(Optional.of(orderWithTrackNum));
+
+        // when
+        Assertions.assertThatThrownBy(() -> orderService.cancelOrder(1L,1L)).isInstanceOf(BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_CANCEL_FAIL.getMessage());
+    }
+
+    @Test
+    @DisplayName("주문 취소 테스트 : 실패[이미 취소한 상품]")
+    void order_cancel_fail_already_cancel_test() throws Exception{
+        // given
+        given(userService.validUser(anyLong())).willReturn(userStub.createUser(1L));
+        Orders orderWithTrackNum = orderStub.createOrderWithTrackNum(1L);
+        orderWithTrackNum.setOrdersStatus(ORDER_CANCEL);
+        given(orderRepository.findAllByOrderId(anyLong())).willReturn(Optional.of(orderWithTrackNum));
+
+        // when
+        Assertions.assertThatThrownBy(() -> orderService.cancelOrder(1L,1L)).isInstanceOf(BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_ALREADY_CANCEL.getMessage());
+    }
+
+    @Test
+    @DisplayName("주문 취소 테스트 : 실패[이미 취소한 상품]")
+    void order_cancel_fail_user_access_fail_test() throws Exception{
+        // given
+        given(userService.validUser(anyLong())).willReturn(userStub.createUser(2L));
+        Orders orderWithTrackNum = orderStub.createOrderWithTrackNum(1L);
+        given(orderRepository.findAllByOrderId(anyLong())).willReturn(Optional.of(orderWithTrackNum));
+
+        // when
+        Assertions.assertThatThrownBy(() -> orderService.cancelOrder(1L,1L)).isInstanceOf(BusinessLogicException.class).hasMessage(UserExceptionCode.USER_NOT_ACCESS.getMessage());
     }
 
 }

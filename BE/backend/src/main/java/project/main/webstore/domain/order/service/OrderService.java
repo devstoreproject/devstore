@@ -151,7 +151,7 @@ public class OrderService {
         findOrder.getUser().validUserHasAccess(findUser);
 
         //변경할 수 있는 상태라면
-        if (checkStatus(findOrder)) {
+        if (!checkStatus(findOrder)) {
             findOrder.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
             findOrder.transItemCount(TransCondition.PLUS);
         } else if (findOrder.getOrdersStatus() == OrdersStatus.ORDER_CANCEL) {
@@ -196,7 +196,7 @@ public class OrderService {
 
     // 주문 정보 검증
     private boolean checkStatus(Orders order) {
-        return order.getOrdersStatus().getIndex() >= OrdersStatus.ORDER_COMPLETE.getIndex();
+        return order.getOrdersStatus().getIndex() > OrdersStatus.ORDER_COMPLETE.getIndex();
     }
 
     private void validOrderUserSame(Long userId, Orders findOrder) {
