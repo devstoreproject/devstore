@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 
 import com.google.gson.Gson;
 import org.junit.jupiter.api.DisplayName;
@@ -298,6 +299,19 @@ class OrderControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @Test
+    @DisplayName("주문 취소 테스트")
+    @WithMockCustomUser(role = "CLIENT", userRole = UserRole.CLIENT, userId = 1L)
+    void delete_order_test() throws Exception{
+        willDoNothing().given(orderService).cancelOrder(anyLong(),anyLong());
+
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.delete(DEFAULT_URL + "/{order-id}",1L));
+
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 
 }
 
