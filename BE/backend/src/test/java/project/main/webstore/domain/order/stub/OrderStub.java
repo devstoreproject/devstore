@@ -8,6 +8,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.entity.ItemOption;
+import project.main.webstore.domain.order.dto.OrderDBDailyPriceDto;
+import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
+import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
 import project.main.webstore.domain.order.dto.OrderPostDto;
 import project.main.webstore.domain.order.entity.OrderedItem;
 import project.main.webstore.domain.order.entity.Orders;
@@ -54,6 +57,40 @@ public class OrderStub extends TestUtils {
             list.add(createOrderWithMonth(i,month));
         }
         return new PageImpl<Orders>(list,super.getPage(),30);
+    }
+
+    public List<OrderDBMonthlyPriceDto> createMonthlyList(Long totalPrice){
+        List<OrderDBMonthlyPriceDto> list = new ArrayList<>();
+        for(int i = 1 ; i < 13 ; i++){
+            list.add(createMonthlyPrice(i,totalPrice));
+        }
+        return list;
+    }
+    public List<OrderDBDailyPriceDto> createDailyList(Long totalPrice) {
+        List<OrderDBDailyPriceDto> list = new ArrayList<>();
+        for(int i = 1 ; i < 20 ; i++){
+            list.add(createDailyPrice(i,totalPrice));
+        }
+        return list;
+    }
+
+    public List<OrderDBItemSaleDto> createItemPriceList(Long totalPrice) {
+        List<OrderDBItemSaleDto> list = new ArrayList<>();
+        for(Long i = 1L ; i < 20 ; i++){
+            list.add(createItemPrice(i,totalPrice));
+        }
+        return list;
+    }
+
+    public OrderDBItemSaleDto createItemPrice(Long itemId,Long itemPrice) {
+        return new OrderDBItemSaleDto(itemId,"상품" + itemId,itemPrice,itemPrice);
+    }
+    public OrderDBMonthlyPriceDto createMonthlyPrice(int month,Long totalPrice){
+        return new OrderDBMonthlyPriceDto(2022,month,totalPrice,totalPrice);
+    }
+
+    public OrderDBDailyPriceDto createDailyPrice(int day,Long totalPrice){
+        return new OrderDBDailyPriceDto(2022,9,day,totalPrice,totalPrice);
     }
 
     private List<OrderedItem> getOrderedItem() {

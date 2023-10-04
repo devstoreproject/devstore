@@ -23,6 +23,9 @@ import org.springframework.data.domain.Pageable;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.cart.entity.CartItem;
 import project.main.webstore.domain.cart.stub.CartStub;
+import project.main.webstore.domain.order.dto.OrderDBDailyPriceDto;
+import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
+import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.enums.OrdersStatus;
@@ -40,6 +43,7 @@ import project.main.webstore.valueObject.Address;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
+
     @InjectMocks
     private OrderService orderService;
     @Mock
@@ -49,24 +53,27 @@ class OrderServiceTest {
     private UserStub userStub = new UserStub();
     private CartStub cartStub = new CartStub();
     private OrderStub orderStub = new OrderStub();
+
     @Test
     @DisplayName("주문 생성 테스트 : 주문 상품 없음 으로 인한 실패")
     void create_order_fail_test() {
         //given
         User user = userStub.createUser(1L);
-        ShippingInfo info = new ShippingInfo(1L, "김복자", new Address("123-45", "대한민국", "우리집", "010-1234-6789"), user);
+        ShippingInfo info = new ShippingInfo(1L, "김복자",
+                new Address("123-45", "대한민국", "우리집", "010-1234-6789"), user);
         user.getShippingInfoList().add(info);
 
         Cart cart = new Cart(user);
         user.setCart(cart);
 
-        OrderLocalDto post = new OrderLocalDto("안녕", 1L, 1L, 1L, 1L,new ArrayList<>());
+        OrderLocalDto post = new OrderLocalDto("안녕", 1L, 1L, 1L, 1L, new ArrayList<>());
 
         //when
         given(userService.validUserAllInfo(anyLong())).willReturn(user);
 
         Assertions.assertThatThrownBy(() -> orderService.createOrder(post)).isInstanceOf(
-                BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_ITEM_NOT_FOUND.getMessage());
+                        BusinessLogicException.class)
+                .hasMessage(OrderExceptionCode.ORDER_ITEM_NOT_FOUND.getMessage());
     }
 
     @Test
@@ -74,7 +81,8 @@ class OrderServiceTest {
     void create_order_fail_cart_item_not_exist_test() {
         //given
         User user = userStub.createUser(1L);
-        ShippingInfo info = new ShippingInfo(1L, "김복자", new Address("123-45", "대한민국", "우리집", "010-1234-6789"), user);
+        ShippingInfo info = new ShippingInfo(1L, "김복자",
+                new Address("123-45", "대한민국", "우리집", "010-1234-6789"), user);
         user.getShippingInfoList().add(info);
 
         Cart cart = new Cart(user);
@@ -88,7 +96,8 @@ class OrderServiceTest {
         given(userService.validUserAllInfo(anyLong())).willReturn(user);
 
         Assertions.assertThatThrownBy(() -> orderService.createOrder(post)).isInstanceOf(
-                BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_ITEM_NOT_FOUND.getMessage());
+                        BusinessLogicException.class)
+                .hasMessage(OrderExceptionCode.ORDER_ITEM_NOT_FOUND.getMessage());
         //then
     }
 
@@ -114,16 +123,16 @@ class OrderServiceTest {
 
         Orders result = orderService.createOrder(post);
         //then
-        Assertions.assertThat(result.getRecipient()).isEqualTo(user.getShippingInfo(1L).getRecipient());
+        Assertions.assertThat(result.getRecipient())
+                .isEqualTo(user.getShippingInfo(1L).getRecipient());
         Assertions.assertThat(result.getMessage()).isEqualTo(post.getMessage());
         Assertions.assertThat(result.getOrdersStatus()).isEqualTo(OrdersStatus.ORDER_COMPLETE);
     }
 
 
-
     @Test
     @DisplayName("주문 수정 테스트 : 성공")
-    void patch_order_test() throws Exception{
+    void patch_order_test() throws Exception {
         // given
         OrderLocalDto patch = new OrderLocalDto("수정한 메시지", 1L, 1L, 1L, 1L, List.of(1L));
         Orders order = orderStub.createOrder(1L);
@@ -136,10 +145,11 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 id 조회 : 성공")
-    void get_order_by_id_test() throws Exception{
+    void get_order_by_id_test() throws Exception {
         // given
         given(userService.validUser(anyLong())).willReturn(userStub.createUser(1L));
-        given(orderRepository.findById(anyLong())).willReturn(Optional.of(orderStub.createOrder(2L)));
+        given(orderRepository.findById(anyLong())).willReturn(
+                Optional.of(orderStub.createOrder(2L)));
         // when
         Orders order = orderService.getOrder(2L, 1L);
         // then
@@ -147,9 +157,10 @@ class OrderServiceTest {
         Assertions.assertThat(order.getUser().getId()).isEqualTo(1L);
         Assertions.assertThat(order.getMessage()).isEqualTo("메시지");
     }
+
     @Test
     @DisplayName("주문 orderNumber 조회 : 성공")
-    void get_order_by_order_number_test() throws Exception{
+    void get_order_by_order_number_test() throws Exception {
         // given
         given(userService.validUser(anyLong())).willReturn(userStub.createUser(1L));
         Orders orderStub = this.orderStub.createOrder(2L);
@@ -165,19 +176,21 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 orderNumber 조회 : 실패 [본인 / 관리자 아님]")
-    void get_order_by_order_number_fail_test() throws Exception{
+    void get_order_by_order_number_fail_test() throws Exception {
         // given
         Orders orderStub = this.orderStub.createOrder(2L);
 
         given(userService.validUser(anyLong())).willReturn(userStub.createUser(2L));
         given(orderRepository.findAllByOrderNumber(anyString())).willReturn(Optional.of(orderStub));
         // when
-        Assertions.assertThatThrownBy(()-> orderService.getOrder(orderStub.getOrderNumber(), 1L)).isInstanceOf(BusinessLogicException.class).hasMessage(UserExceptionCode.USER_NOT_ACCESS.getMessage());
+        Assertions.assertThatThrownBy(() -> orderService.getOrder(orderStub.getOrderNumber(), 1L))
+                .isInstanceOf(BusinessLogicException.class)
+                .hasMessage(UserExceptionCode.USER_NOT_ACCESS.getMessage());
     }
 
     @Test
     @DisplayName("주문 orderNumber 조회 : 성공[관리자]")
-    void get_order_by_order_number_admin_test() throws Exception{
+    void get_order_by_order_number_admin_test() throws Exception {
         // given
         User userAdmin = userStub.createUserAdmin();
         Orders orderStub = this.orderStub.createOrder(2L);
@@ -195,54 +208,136 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 전체 조회 : 관리자 아님")
-    void get_order_page_not_admin_test() throws Exception{
+    void get_order_page_not_admin_test() throws Exception {
         // given
-        Assertions.assertThatThrownBy(() -> orderService.getOrders(orderStub.getPage(),-1L,null)).isInstanceOf(
-                BusinessLogicException.class).hasMessage(UserExceptionCode.USER_NOT_LOGIN.getMessage());
+        Assertions.assertThatThrownBy(() -> orderService.getOrders(orderStub.getPage(), -1L, null))
+                .isInstanceOf(
+                        BusinessLogicException.class)
+                .hasMessage(UserExceptionCode.USER_NOT_LOGIN.getMessage());
     }
 
     @Test
     @DisplayName("주문 전체 조회 : 관리자")
-    void get_order_page_test() throws Exception{
+    void get_order_page_test() throws Exception {
         int month = 1;
-        given(orderRepository.findByMonth(any(Pageable.class),any(LocalDateTime.class))).willReturn(orderStub.createOrderWithMonthPage(month));
+        given(orderRepository.findByMonth(any(Pageable.class),
+                any(LocalDateTime.class))).willReturn(orderStub.createOrderWithMonthPage(month));
         Page<Orders> orders = orderService.getOrders(orderStub.getPage(), 0L, month);
 
-        Assertions.assertThat(orders.map(order->order.getCreatedAt().getMonth())).containsOnly(
+        Assertions.assertThat(orders.map(order -> order.getCreatedAt().getMonth())).containsOnly(
                 Month.JANUARY);
     }
 
     @Test
     @DisplayName("주문 전체 조회 : 관리자")
-    void get_order_page_all_test() throws Exception{
+    void get_order_page_all_test() throws Exception {
         given(orderRepository.findAll(any(Pageable.class))).willReturn(orderStub.createOrderPage());
         Page<Orders> orders = orderService.getOrders(orderStub.getPage(), 0L, null);
 
-        Assertions.assertThat(orders.getContent().stream().map(Orders::getOrderId)).contains(1L,2L,3L,4L,5L);
+        Assertions.assertThat(orders.getContent().stream().map(Orders::getOrderId))
+                .contains(1L, 2L, 3L, 4L, 5L);
         Assertions.assertThat(orders.getPageable().getPageNumber()).isZero();
         Assertions.assertThat(orders.getPageable().getPageSize()).isEqualTo(30);
     }
 
     @Test
     @DisplayName("주문 월별 조회 : 고객")
-    void get_order_page_client_test() throws Exception{
+    void get_order_page_client_test() throws Exception {
         int month = 1;
-        given(orderRepository.findByMonth(any(Pageable.class),any(LocalDateTime.class))).willReturn(orderStub.createOrderWithMonthPage(month));
+        given(orderRepository.findByMonth(any(Pageable.class),
+                any(LocalDateTime.class))).willReturn(orderStub.createOrderWithMonthPage(month));
         Page<Orders> orders = orderService.getOrders(orderStub.getPage(), 0L, month);
 
-        Assertions.assertThat(orders.map(order->order.getCreatedAt().getMonth())).containsOnly(
+        Assertions.assertThat(orders.map(order -> order.getCreatedAt().getMonth())).containsOnly(
                 Month.JANUARY);
-        Assertions.assertThat(orders.map(order->order.getUser().getId())).containsOnly(1L);
+        Assertions.assertThat(orders.map(order -> order.getUser().getId())).containsOnly(1L);
     }
+
     @Test
     @DisplayName("주문 전체 조회 : 고객")
-    void get_order_page_all_client_test() throws Exception{
+    void get_order_page_all_client_test() throws Exception {
         given(orderRepository.findAll(any(Pageable.class))).willReturn(orderStub.createOrderPage());
         Page<Orders> orders = orderService.getOrders(orderStub.getPage(), 0L, null);
 
-        Assertions.assertThat(orders.map(order->order.getUser().getId())).containsOnly(1L);
+        Assertions.assertThat(orders.map(order -> order.getUser().getId())).containsOnly(1L);
         Assertions.assertThat(orders.getPageable().getPageNumber()).isZero();
         Assertions.assertThat(orders.getPageable().getPageSize()).isEqualTo(30);
+    }
+
+    @Test
+    @DisplayName("월별 상품 조회")
+    void get_month_price_test() throws Exception {
+        // given
+        given(orderRepository.monthlyPrice()).willReturn(orderStub.createMonthlyList(100000L));
+        // when
+        List<OrderDBMonthlyPriceDto> monthlyPrice = orderService.getMonthlyPrice();
+        // then
+        Assertions.assertThat(monthlyPrice.stream().map(OrderDBMonthlyPriceDto::getMonth))
+                .contains(Month.JANUARY.getValue(), Month.FEBRUARY.getValue(),
+                        Month.MARCH.getValue(), Month.APRIL.getValue(), Month.MAY.getValue(),
+                        Month.JUNE.getValue());
+    }
+
+    @Test
+    @DisplayName("일별 상품 조회")
+    void get_daily_price_test() throws Exception {
+        // given
+        given(orderRepository.dailyPrice()).willReturn(orderStub.createDailyList(100000L));
+        // when
+        List<OrderDBDailyPriceDto> result = orderService.getDailyPrice();
+        // then
+        Assertions.assertThat(result.stream().map(OrderDBDailyPriceDto::getDay))
+                .contains(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
+        Assertions.assertThat(result.stream().map(OrderDBDailyPriceDto::getTotalDiscountedPrice))
+                .containsOnly(100000L);
+    }
+
+    @Test
+    @DisplayName("일별 상품 조회")
+    void get_item_price_test() throws Exception {
+        // given
+        given(orderRepository.itemSales()).willReturn(orderStub.createItemPriceList(100000L));
+        // when
+        List<OrderDBItemSaleDto> result = orderService.getItemPrice();
+        // then
+        for (int i = 0; i < 19; i++) {
+            Assertions.assertThat(result.get(i).getItemId()).isEqualTo((long) i + 1);
+        }
+        Assertions.assertThat(result.stream().map(OrderDBItemSaleDto::getItemPrice))
+                .containsOnly(100000L);
+    }
+
+    @Test
+    @DisplayName("일별 상품 조회 : 조회 상품 없음")
+    void get_item_price_null_test() throws Exception {
+        // given
+        given(orderRepository.itemSales()).willReturn(new ArrayList<>());
+        // when
+        List<OrderDBItemSaleDto> result = orderService.getItemPrice();
+        // then
+        Assertions.assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("월별 상품 조회 : 조회 결과 없음")
+    void get_month_price_null_test() throws Exception {
+        // given
+        given(orderRepository.monthlyPrice()).willReturn(new ArrayList<>());
+        // when
+        List<OrderDBMonthlyPriceDto> result = orderService.getMonthlyPrice();
+        // then
+        Assertions.assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("일별 상품 조회 : 조회 결과 없음")
+    void get_daily_price_null_test() throws Exception {
+        // given
+        given(orderRepository.dailyPrice()).willReturn(new ArrayList<>());
+        // when
+        List<OrderDBDailyPriceDto> result = orderService.getDailyPrice();
+        // then
+        Assertions.assertThat(result).isEmpty();
     }
 
 }
