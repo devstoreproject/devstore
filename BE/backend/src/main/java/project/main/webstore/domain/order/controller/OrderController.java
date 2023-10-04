@@ -175,7 +175,7 @@ public class OrderController {
         Orders result = orderService.setTrackingNumber(orderId, trackingInfo.getTrackingNumber(),trackingInfo.getDeliveryCompany());
         OrderIdResponseDto response = orderMapper.toIdResponse(result);
         var responseDto = ResponseDto.<OrderIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
-        URI uri = UriCreator.createUri(ORDER_URL + "/{orderId}", responseDto.getData().getOrderId());
+        URI uri = UriCreator.createUri(ORDER_URL , responseDto.getData().getOrderId());
 
         return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
     }
@@ -187,7 +187,7 @@ public class OrderController {
         Orders result = orderService.refundOrder(userId, orderId,dto.getItemIdList());
         OrderIdAndStatusDto response = orderMapper.toResponse(result);
         var responseDto = ResponseDto.<OrderIdAndStatusDto>builder().customCode(ResponseCode.OK).data(response).build();
-        URI uri = UriCreator.createUri(ORDER_URL + "/{orderId}", responseDto.getData().getOrderId());
+        URI uri = UriCreator.createUri(ORDER_URL, responseDto.getData().getOrderId());
 
         return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
     }

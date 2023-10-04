@@ -3,6 +3,7 @@ package project.main.webstore.domain.order.stub;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,8 @@ import project.main.webstore.domain.order.dto.OrderDBDailyPriceDto;
 import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
 import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
 import project.main.webstore.domain.order.dto.OrderPostDto;
+import project.main.webstore.domain.order.dto.OrderRefundRequestDto;
+import project.main.webstore.domain.order.dto.OrderTrackingInfoDto;
 import project.main.webstore.domain.order.entity.OrderedItem;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.enums.OrdersStatus;
@@ -30,6 +33,12 @@ public class OrderStub extends TestUtils {
                 new User(1L),
                 PaymentType.CARD);
     }
+    public Orders createOrderWithTrackNum(Long id){
+        Orders order = createOrder(id);
+        order.addDelivery(UUID.randomUUID().toString(),"우체국");
+        order.setOrdersStatus(OrdersStatus.DELIVERY_PROGRESS);
+        return order;
+    }
     public Orders createOrderWithMonth(Long id,int month) {
         Orders order = createOrder(id);
         order.setDateByTest(LocalDateTime.of(2022,month,22,00,30));
@@ -42,6 +51,10 @@ public class OrderStub extends TestUtils {
                 .message("메시지")
                 .cartItemIdList(List.of(1L))
                 .build();
+    }
+
+    public OrderRefundRequestDto createOrderRefundRequestDto() {
+        return new OrderRefundRequestDto(List.of(1L));
     }
 
     public Page<Orders> createOrderPage() {
@@ -99,5 +112,9 @@ public class OrderStub extends TestUtils {
                 new OrderedItem(2L,40000,2000,0,5,"상품 상세2","옵션 상세2",new ItemOption(3L),new Item(2L,200000,1000,0))
         );
 
+    }
+
+    public OrderTrackingInfoDto createOrderTrackingInfo() {
+        return new OrderTrackingInfoDto(UUID.randomUUID().toString(),"우체국");
     }
 }

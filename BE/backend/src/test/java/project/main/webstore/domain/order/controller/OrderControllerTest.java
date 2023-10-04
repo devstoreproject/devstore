@@ -2,6 +2,7 @@ package project.main.webstore.domain.order.controller;
 
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -25,7 +26,10 @@ import project.main.webstore.annotation.WithMockCustomUser;
 import project.main.webstore.domain.order.dto.OrderLocalDto;
 import project.main.webstore.domain.order.dto.OrderPatchDto;
 import project.main.webstore.domain.order.dto.OrderPostDto;
+import project.main.webstore.domain.order.dto.OrderRefundRequestDto;
+import project.main.webstore.domain.order.dto.OrderTrackingInfoDto;
 import project.main.webstore.domain.order.entity.Orders;
+import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.service.OrderService;
 import project.main.webstore.domain.order.stub.OrderStub;
 import project.main.webstore.domain.users.enums.UserRole;
@@ -156,6 +160,7 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("월별 매출")
+    @WithMockCustomUser
     void month_sale_test() throws Exception {
         given(orderService.getMonthlyPrice()).willReturn(orderStub.createMonthlyList(100000L));
 
@@ -170,7 +175,8 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("월별 매출")
+    @DisplayName("일별 매출")
+    @WithMockCustomUser
     void daily_sale_test() throws Exception {
         given(orderService.getDailyPrice()).willReturn(orderStub.createDailyList(10000000L));
 
@@ -185,7 +191,8 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("월별 매출")
+    @DisplayName("상품별 매출")
+    @WithMockCustomUser
     void item_sale_test() throws Exception {
         given(orderService.getItemPrice()).willReturn(orderStub.createItemPriceList(10000000L));
 
@@ -200,6 +207,95 @@ class OrderControllerTest {
                         .value(10000000L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].itemId").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].itemId").value(2L));
+    }
+
+    @Test
+    @DisplayName("배송 번호 추가 테스트")
+    @WithMockCustomUser
+    void add_tracking_number_test() throws Exception {
+        // given
+        OrderTrackingInfoDto patch = orderStub.createOrderTrackingInfo();
+        String content = gson.toJson(patch);
+        given(orderService.setTrackingNumber(anyLong(), anyString(), anyString())).willReturn(
+                orderStub.createOrderWithTrackNum(1L));
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.patch(DEFAULT_URL + "/{orderId}/add-tracking-number", 1L)
+                        .content(content));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.orderId").value(1L))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @DisplayName("환불 테스트")
+    @WithMockCustomUser(role = "CLIENT", userRole = UserRole.CLIENT, userId = 1L)
+    void refund_test() throws Exception {
+        // given
+        OrderRefundRequestDto patch = orderStub.createOrderRefundRequestDto();
+        String content = gson.toJson(patch);
+        Orders orderWithTrackNum = orderStub.createOrderWithTrackNum(1L);
+        orderWithTrackNum.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
+        given(orderService.refundOrder(anyLong(), anyLong(), anyList())).willReturn(
+                orderWithTrackNum);
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.patch(DEFAULT_URL + "/{orderId}/refund", 1L)
+                        .content(content));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.orderId").value(1L))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+    }
+
+    @Test
+    @DisplayName("주문 상태 변경 테스트")
+    @WithMockCustomUser
+    void patch_order_status_test() throws Exception {
+        // given
+        Orders orderWithTrackNum = orderStub.createOrderWithTrackNum(1L);
+        orderWithTrackNum.setOrdersStatus(OrdersStatus.ORDER_COMPLETE);
+        given(orderService.changStatus(anyLong(), anyString())).willReturn(
+                orderWithTrackNum);
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.patch(DEFAULT_URL + "/{orderId}/status", 1L)
+                        .param("status", "DELIVERY_COMPLETE"));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.orderId").value(1L))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+    }
+
+    @Test
+    @DisplayName("주문 상태별 조회 테스트")
+    @WithMockCustomUser
+    void get_order_by_order_status_test() throws Exception {
+        // given
+        Orders orderWithTrackNum = orderStub.createOrderWithTrackNum(1L);
+        orderWithTrackNum.setOrdersStatus(OrdersStatus.ORDER_COMPLETE);
+        given(orderService.getOrderByStatus(any(Pageable.class), anyString())).willReturn(
+                orderStub.createOrderPage());
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.get(DEFAULT_URL + "/status")
+                        .param("status", "ORDER_COMPLETE"));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].ordersStatus")
+                        .value("ORDER_COMPLETE"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].ordersStatus")
+                        .value("ORDER_COMPLETE"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].ordersStatus")
+                        .value("ORDER_COMPLETE"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
 

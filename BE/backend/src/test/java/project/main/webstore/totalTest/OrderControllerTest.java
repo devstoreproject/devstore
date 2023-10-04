@@ -16,11 +16,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import project.main.webstore.domain.order.dto.OrderIdResponseDto;
 import project.main.webstore.domain.order.dto.OrderPatchDto;
 import project.main.webstore.domain.order.dto.OrderPostDto;
+import project.main.webstore.domain.order.dto.OrderRefundRequestDto;
+import project.main.webstore.domain.order.dto.OrderTrackingInfoDto;
+import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.order.stub.OrderStub;
 import project.main.webstore.dto.ResponseDto;
 
@@ -96,10 +103,84 @@ class OrderControllerTest {
         ResponseEntity<ResponseDto> response = template.exchange(url, HttpMethod.GET, getRequest,
                 ResponseDto.class, 1L);
         // then
-        //TODO : 프론트와 협의 후 수정 필
         ResponseDto body = response.getBody();
         LinkedHashMap data = (LinkedHashMap) body.getData();
 
         Assertions.assertThat(data.get("message")).isEqualTo("수정할 메시지");
     }
+
+    @Test
+    @DisplayName("송장 추가 테스트")
+    void add_tracking_number_test() throws Exception{
+        // given
+        HttpHeaders headers = orderStub.getLoginHeader(orderStub.getJWTAccessTokenAdmin());
+        OrderTrackingInfoDto patch = orderStub.createOrderTrackingInfo();
+        HttpEntity requestEntity = new HttpEntity(patch, headers);
+        String url = URL+port+DEFAULT_URL+"/{orderId}/add-tracking-number";
+        // when
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.PATCH, requestEntity,
+                String.class, 1L);
+        String body = response.getBody();
+        // then
+        Type responseType = new TypeToken<ResponseDto<OrderIdResponseDto>>() {
+        }.getType();
+        ResponseDto<OrderIdResponseDto> responseDto = gson.fromJson(body, responseType);
+
+        Assertions.assertThat(responseDto.getData().getOrderId()).isEqualTo(1L);
+        Assertions.assertThat(responseDto.getCode()).isEqualTo("C200");
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    }
+
+    @Test
+    @DisplayName("송장 추가 테스트")
+    void refund_order_test() throws Exception{
+        // given
+        HttpHeaders headers = orderStub.getLoginHeader(orderStub.getJWTAccessTokenClient());
+        OrderRefundRequestDto patch = orderStub.createOrderRefundRequestDto();
+        HttpEntity requestEntity = new HttpEntity(patch, headers);
+        String url = URL+port+DEFAULT_URL+"/{orderId}/refund";
+        // when
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.PATCH, requestEntity,
+                String.class, 1L);
+        String body = response.getBody();
+        // then
+        Type responseType = new TypeToken<ResponseDto<OrderIdResponseDto>>() {
+        }.getType();
+        ResponseDto<OrderIdResponseDto> responseDto = gson.fromJson(body, responseType);
+
+        Assertions.assertThat(responseDto.getData().getOrderId()).isEqualTo(1L);
+        Assertions.assertThat(responseDto.getCode()).isEqualTo("C200");
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    }
+
+    @Test
+    @DisplayName("주문 상태 변경 테스트")
+    void order_status_change_test() throws Exception{
+        // given
+        HttpHeaders headers = orderStub.getLoginHeader(orderStub.getJWTAccessTokenAdmin());
+        HttpEntity requestEntity = new HttpEntity(headers);
+        MultiValueMap<String,String> param = new LinkedMultiValueMap<>();
+
+        param.add("status", OrdersStatus.ORDER_COMPLETE.name());
+        String url = URL+port+DEFAULT_URL+"/{orderId}/status";
+
+        UriComponents urlWithParam = UriComponentsBuilder.fromUriString(url).queryParams(param)
+                .build();
+        // when
+        ResponseEntity<String> response = template.exchange(urlWithParam.toString(), HttpMethod.PATCH, requestEntity,
+                String.class, 1L);
+        String body = response.getBody();
+        // then
+        Type responseType = new TypeToken<ResponseDto<OrderIdResponseDto>>() {
+        }.getType();
+        ResponseDto<OrderIdResponseDto> responseDto = gson.fromJson(body, responseType);
+
+        Assertions.assertThat(responseDto.getData().getOrderId()).isEqualTo(1L);
+        Assertions.assertThat(responseDto.getCode()).isEqualTo("C200");
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    }
+
 }
