@@ -140,7 +140,7 @@ into
     review
 (created_date, last_modified_date, best, comment, item_id, rating, user_id,id)
 values
-    (now(), now(), false, '상품 리뷰 본문2', 1, 10, 1,2);
+    (now(), now(), true, '상품 리뷰 본문2', 1, 10, 1,2);
 insert
 into
     review
