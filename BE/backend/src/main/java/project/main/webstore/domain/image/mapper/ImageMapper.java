@@ -50,6 +50,8 @@ public class ImageMapper {
     }
 
     public ImageInfoDto toLocalDto(MultipartFile file, String uploadDir) {
+        if(file == null)
+            return null;
         return ImageInfoDto.dtoBuilder()
                 .multipartFile(file)
                 .order(1)
