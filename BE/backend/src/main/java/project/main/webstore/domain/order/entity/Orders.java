@@ -3,6 +3,7 @@ package project.main.webstore.domain.order.entity;
 import static javax.persistence.FetchType.LAZY;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -106,8 +107,6 @@ public class Orders extends Auditable {
         this.deliveryPrice = deliveryPrice;
     }
 
-
-
     public Orders(Long orderId, String message, int deliveryPrice, String trackingNumber, String deliveryCompany, OrdersStatus ordersStatus, String recipient, Address address, List<OrderedItem> orderedItemList, User user, PaymentType paymentType) {
         this.orderId = orderId;
         this.orderNumber = createOrderNumber();
@@ -168,6 +167,10 @@ public class Orders extends Auditable {
         } else {
             this.getOrderedItemList().forEach(orderedItem -> orderedItem.getOption().setItemCount(itemCountPlus(orderedItem)));
         }
+    }
+
+    public void setDateByTest(LocalDateTime date){
+        super.createdAt = date;
     }
 
     private int itemCountMinus(OrderedItem orderedItem) {

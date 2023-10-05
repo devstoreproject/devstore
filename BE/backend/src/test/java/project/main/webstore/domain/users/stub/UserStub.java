@@ -2,11 +2,15 @@ package project.main.webstore.domain.users.stub;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.users.dto.UserGetResponseDto;
+import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.domain.users.enums.UserRole;
+import project.main.webstore.valueObject.Address;
 
 public class UserStub {
     public User createUser(Long id) {
@@ -22,6 +26,11 @@ public class UserStub {
                 .profileImage("프로필사진 url")
                 .build();
         user.getCart().setUser(user);
+        return user;
+    }
+    public User createUserAdmin() {
+        User user = createUser(10000L);
+        user.changeRole(UserRole.ADMIN);
         return user;
     }
 
@@ -67,5 +76,19 @@ public class UserStub {
 
     public Page<UserGetResponseDto> getUserPage() {
         return new PageImpl<UserGetResponseDto>(getUsers());
+    }
+
+    @NotNull
+    private static ShippingInfo createShippingInfo() {
+        return new ShippingInfo(1L, "김복자", new Address("123-45", "대한민국", "우리집", "010-1234-6789"),
+                null);
+    }
+
+    public User createUserWithShippingInfo(Long id) {
+        User user = createUser(id);
+        ShippingInfo info = createShippingInfo();
+        info.setUser(user);
+        user.getShippingInfoList().add(info);
+        return user;
     }
 }

@@ -258,3 +258,44 @@ into
 (cart_id, item_count, option_id)
 values
     (1,10,3);
+
+insert
+into
+    shipping_info
+(address_detail, address_simple, phone, zip_code, order_id, recipient, user_id)
+values
+    ('삼성아파트 201호', '서울특별시 관악구', '010-1234-1234', '540404', null, '김복자', 1);
+
+insert
+into
+    shipping_info
+(address_detail, address_simple, phone, zip_code, order_id, recipient, user_id)
+values
+    ('삼성아파트 202호', '서울특별시 서초구', '010-4321-1234', '404000', null, '김숙자', 1);
+
+insert
+into
+    shipping_info
+(address_detail, address_simple, phone, zip_code, order_id, recipient, user_id)
+values
+    ('롯대아파트 101호', '울산시 관악구', '010-4444-1234', '444404', null, '김복자', 2);
+insert
+into
+    shipping_info
+(address_detail, address_simple, phone, zip_code, order_id, recipient, user_id)
+values
+    ('롯대아파트 201호', '울산시 서초구', '010-4444-3333', '333333', null, '김미자', 2);
+
+insert
+into
+    orders
+(created_date, last_modified_date, address_detail, address_simple, phone, zip_code, delivery_company, delivery_date, delivery_price, message, order_number, orders_status, recipient, tracking_number, user_id)
+values
+    (now(), now(), '삼성아파트 201호', '서울특별시 관악구', '010-1234-1234', '540404', '우체국', null, 3000, '배달메시지', '20231030951408706', 'ORDER_COMPLETE', '이미자', null, 1);
+
+insert
+into
+    ordered_item
+(created_date, last_modified_date, discount_rate, discounted_price, item_item_id, item_count, item_details, item_option_id, option_details, order_id, price)
+values
+    (now(), now(), 0, 10000000, 1, 10, '상품에 대한 설명1', 1, null, 1, 1000000);

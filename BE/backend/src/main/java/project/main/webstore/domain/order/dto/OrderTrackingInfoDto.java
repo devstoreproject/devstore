@@ -1,11 +1,12 @@
 package project.main.webstore.domain.order.dto;
 
+import javax.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class OrderTrackingInfoDto {
     @NotBlank
