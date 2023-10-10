@@ -10,8 +10,8 @@ import SearchPasswordNavBtn from './SearchPasswordNavBtn';
 export default function SignInForm() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin002@gmail.com');
+  const [password, setPassword] = useState('admin111!!');
 
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);

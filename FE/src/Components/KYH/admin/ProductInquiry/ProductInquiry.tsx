@@ -7,7 +7,6 @@ import useFetchInquiryPaging from 'hooks/admin/inquiry/useFetchInquiryPaging';
 export default function ProductInquiry() {
   const [page, setPage] = useState(0);
   const [checked, setChecked] = useState([true, true]);
-  console.log(checked);
   const { inquirys, totalPages } = useFetchInquiryPaging(page, checked);
 
   return (
