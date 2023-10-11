@@ -85,12 +85,9 @@ public class NoticeController {
                                                                         @RequestPart(required = false) MultipartFile image,
                                                                         @RequestPart(required = false) NoticePatchRequestDto patch) {
         Notice notice = noticeMapper.toEntity(patch, noticeId);
-        ImageInfoDto info ;
-        if(image != null){
-            info = imageMapper.toLocalDto(image, UPLOAD_DIR);
-        }
+        ImageInfoDto info = imageMapper.toLocalDto(image, UPLOAD_DIR);
 
-        Notice responseNotice = service.patchNotice(null, notice);
+        Notice responseNotice = service.patchNotice(info, notice);
 
         NoticeIdResponseDto response = noticeMapper.toResponseDto(responseNotice);
         URI uri = UriCreator.createUri(UPLOAD_DIR, responseNotice.getId());
