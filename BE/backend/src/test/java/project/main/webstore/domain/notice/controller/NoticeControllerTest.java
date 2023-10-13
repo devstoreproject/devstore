@@ -2,6 +2,7 @@ package project.main.webstore.domain.notice.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -23,6 +25,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.MultiValueMap;
 import project.main.webstore.annotation.WithMockCustomUser;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.notice.dto.NoticePatchRequestDto;
@@ -31,7 +34,7 @@ import project.main.webstore.domain.notice.entity.Notice;
 import project.main.webstore.domain.notice.enums.NoticeCategory;
 import project.main.webstore.domain.notice.service.NoticeGetService;
 import project.main.webstore.domain.notice.service.NoticeService;
-import project.main.webstore.helper.TestUtils;
+import project.main.webstore.domain.notice.stub.NoticeStub;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -48,7 +51,7 @@ class NoticeControllerTest {
     @MockBean
     private NoticeGetService getService;
     @Autowired
-    private TestUtils testUtils;
+    private NoticeStub noticeStub;
 
     @Test
     @DisplayName("공지사항 등록 테스트")
@@ -177,7 +180,6 @@ class NoticeControllerTest {
                 .andExpect(MockMvcResultMatchers.header().string("Location", "/api/notice/1"));
     }
 
-
     @Test
     @DisplayName("공지 사항 삭제 테스트")
     @WithMockCustomUser
@@ -192,4 +194,39 @@ class NoticeControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
+    @Test
+    @DisplayName("공지 전체 조회")
+    void get_notice_all_test() throws Exception{
+        // given
+        MultiValueMap<String,String> param = noticeStub.getPageParam();
+        param.add("category",NoticeCategory.EVENT.name());
+
+        given(getService.getSimpleNotice(any(Pageable.class),anyString())).willReturn(noticeStub.createEntityPage(30L,NoticeCategory.EVENT));
+        // when
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL).params(param));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.offset").value(0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.size").value(30))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.totalElements").value(30));
+    }
+
+    @Test
+    @DisplayName("공지 단건 조회")
+    void get_notice_test() throws Exception{
+        // given
+        Notice result = noticeStub.createEntity(1L);
+        given(getService.getNotice(anyLong())).willReturn(result);
+        // when
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/{noticeId}",1L));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.noticeId").value(result.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value(result.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").value(result.getContent()));
+    }
 }
