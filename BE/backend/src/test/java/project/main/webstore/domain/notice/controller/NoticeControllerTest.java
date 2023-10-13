@@ -54,13 +54,12 @@ class NoticeControllerTest {
     private NoticeStub noticeStub;
 
     @Test
-    @DisplayName("공지사항 등록 테스트")
+    @DisplayName("공지사항 등록 테스트 : 이미지 포함")
     @WithMockCustomUser
     void post_notice_test() throws Exception {
-        NoticePostRequestDto post = new NoticePostRequestDto(1L, "title", "content",
-                NoticeCategory.EVENT);
+        NoticePostRequestDto post = noticeStub.createPostDto(1L);
         String content = gson.toJson(post);
-        Notice resultNotice = new Notice(1L, "title", "content", NoticeCategory.EVENT);
+        Notice resultNotice = noticeStub.createEntity(1L);
 
         MockMultipartFile multipartFile = new MockMultipartFile("imageList",
                 "originalFilename1.jpg", "jpg", "TEST Mock".getBytes());
@@ -83,8 +82,7 @@ class NoticeControllerTest {
     @DisplayName("공지사항 등록 테스트")
     @WithMockCustomUser
     void post_notice_no_image_test() throws Exception {
-        NoticePostRequestDto post = new NoticePostRequestDto(1L, "title", "content",
-                NoticeCategory.EVENT);
+        NoticePostRequestDto post = noticeStub.createPostDto(1L);
         String content = gson.toJson(post);
         Notice resultNotice = new Notice(1L, "title", "content", NoticeCategory.EVENT);
 
@@ -107,8 +105,7 @@ class NoticeControllerTest {
     @DisplayName("공지사항 수정 테스트 : 파일만")
     @WithMockCustomUser
     void patch_notice_test() throws Exception {
-        NoticePatchRequestDto patch = new NoticePatchRequestDto(1L, "title", "content",
-                NoticeCategory.EVENT);
+        NoticePatchRequestDto patch = noticeStub.createPatchDto(1L);
         String content = gson.toJson(patch);
         Notice resultNotice = new Notice(1L, "title", "content", NoticeCategory.EVENT);
 
@@ -132,7 +129,7 @@ class NoticeControllerTest {
     @DisplayName("공지사항 수정 테스트 : 이미지만")
     @WithMockCustomUser
     void patch_notice_only_image_test() throws Exception {
-        Notice resultNotice = new Notice(1L, "title", "content", NoticeCategory.EVENT);
+        Notice resultNotice = noticeStub.createEntity(1L);
 
         MockMultipartFile multipartFile = new MockMultipartFile("imageList",
                 "originalFilename1.jpg", "jpg", "TEST Mock".getBytes());
@@ -155,8 +152,7 @@ class NoticeControllerTest {
     @DisplayName("공지사항 수정 테스트 : 이미지와 데이터")
     @WithMockCustomUser
     void patch_notice_with_image_test() throws Exception {
-        NoticePatchRequestDto patch = new NoticePatchRequestDto(1L, "title", "content",
-                NoticeCategory.EVENT);
+        NoticePatchRequestDto patch = noticeStub.createPatchDto(1L);
         String content = gson.toJson(patch);
 
         MockMultipartFile multipartFile = new MockMultipartFile("imageList",

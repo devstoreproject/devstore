@@ -22,6 +22,7 @@ import project.main.webstore.domain.image.utils.ImageUtils;
 import project.main.webstore.domain.notice.entity.Notice;
 import project.main.webstore.domain.notice.enums.NoticeCategory;
 import project.main.webstore.domain.notice.repository.NoticeRepository;
+import project.main.webstore.domain.notice.stub.NoticeStub;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.domain.users.stub.UserStub;
@@ -46,13 +47,14 @@ class NoticeServiceTest {
     UserValidService userValidService;
     ImageStub imageStub = new ImageStub();
     UserStub userStub = new UserStub();
+    NoticeStub noticeStub = new NoticeStub();
 
     @Test
     @DisplayName("공지 등록 : 이미지 없음")
     void post_notice_test() throws Exception {
         // given
         User user = userStub.createUser(1L);
-        Notice notice = new Notice(1L, "타이틀", "컨텐츠", NoticeCategory.EVENT);
+        Notice notice = noticeStub.createEntity(1L);
 
         given(userValidService.validUser(anyLong())).willReturn(user);
         given(repository.save(any(Notice.class))).willReturn(notice);
@@ -71,7 +73,7 @@ class NoticeServiceTest {
         // given
         User user = userStub.createUser(1L);
         Image image = imageStub.createImage(1, true);
-        Notice notice = new Notice(1L, "타이틀", "컨텐츠", NoticeCategory.EVENT);
+        Notice notice = noticeStub.createEntity(1L);
         notice.setNoticeImage(new NoticeImage(image, notice));
 
         given(userValidService.validUser(anyLong())).willReturn(user);
@@ -90,7 +92,7 @@ class NoticeServiceTest {
     @DisplayName("공지 사항 삭제")
     void delete_notice_test() throws Exception {
         // given
-        Notice notice = new Notice(1L, "타이틀", "컨텐츠", NoticeCategory.EVENT);
+        Notice notice = noticeStub.createEntity(1L);
         notice.setNoticeImage(new NoticeImage());
 
         given(noticeGetService.getNotice(anyLong())).willReturn(notice);
@@ -108,9 +110,9 @@ class NoticeServiceTest {
 
     @Test
     @DisplayName("공지 사항 수정 테스트:데이터만 수정")
-    void patch_notice_test() throws Exception{
+    void patch_notice_test() throws Exception {
         // given
-        Notice savedNotice = new Notice(1L, "타이틀", "컨텐츠", NoticeCategory.EVENT);
+        Notice savedNotice = noticeStub.createEntity(1L);
         Notice patch = new Notice(1L, "수정 타이틀", null, null);
 
         given(noticeGetService.getNotice(anyLong())).willReturn(savedNotice);
@@ -123,16 +125,16 @@ class NoticeServiceTest {
 
     @Test
     @DisplayName("공지 사항 수정 테스트:이미지 수정")
-    void patch_notice_with_image_no_saved_image_test() throws Exception{
+    void patch_notice_with_image_no_saved_image_test() throws Exception {
         // given
-        Notice savedNotice = new Notice(1L, "타이틀", "컨텐츠", NoticeCategory.EVENT);
+        Notice savedNotice = noticeStub.createEntity(1L);
         Notice patch = new Notice(1L, "수정 타이틀", null, null);
         ImageInfoDto patchImage = new ImageInfoDto(imageStub.getMockMultipartFile(), 1L, 1, true,
                 "notice");
         Image changedImage = imageStub.createImage(1L, 1, true);
 
         given(noticeGetService.getNotice(anyLong())).willReturn(savedNotice);
-        given(imageUtils.patchImage(any(ImageInfoDto.class),isNull())).willReturn(changedImage);
+        given(imageUtils.patchImage(any(ImageInfoDto.class), isNull())).willReturn(changedImage);
         // when
         Notice result = service.patchNotice(patchImage, patch);
         // then
