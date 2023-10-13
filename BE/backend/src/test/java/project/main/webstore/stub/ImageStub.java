@@ -165,6 +165,10 @@ public class ImageStub extends TestUtils {
         return requestEntity;
     }
 
+    public MockMultipartFile getMockMultipartFile() {
+        return this.mockMultipartFile;
+    }
+
     protected ByteArrayResource getRealImage() throws IOException {
         Resource resource = new ClassPathResource("image/testImage.png");
 

@@ -2,6 +2,7 @@ package project.main.webstore.domain.notice.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.times;
 import static org.mockito.BDDMockito.verify;
@@ -103,6 +104,41 @@ class NoticeServiceTest {
         verify(imageUtils, times(1)).deleteImage(notice.getNoticeImage());
         verify(repository, times(1)).delete(notice);
 
+    }
+
+    @Test
+    @DisplayName("공지 사항 수정 테스트:데이터만 수정")
+    void patch_notice_test() throws Exception{
+        // given
+        Notice savedNotice = new Notice(1L, "타이틀", "컨텐츠", NoticeCategory.EVENT);
+        Notice patch = new Notice(1L, "수정 타이틀", null, null);
+
+        given(noticeGetService.getNotice(anyLong())).willReturn(savedNotice);
+        // when
+        Notice result = service.patchNotice(null, patch);
+        // then
+        Assertions.assertThat(result.getContent()).isEqualTo("컨텐츠");
+        Assertions.assertThat(result.getTitle()).isEqualTo(patch.getTitle());
+    }
+
+    @Test
+    @DisplayName("공지 사항 수정 테스트:이미지 수정")
+    void patch_notice_with_image_no_saved_image_test() throws Exception{
+        // given
+        Notice savedNotice = new Notice(1L, "타이틀", "컨텐츠", NoticeCategory.EVENT);
+        Notice patch = new Notice(1L, "수정 타이틀", null, null);
+        ImageInfoDto patchImage = new ImageInfoDto(imageStub.getMockMultipartFile(), 1L, 1, true,
+                "notice");
+        Image changedImage = imageStub.createImage(1L, 1, true);
+
+        given(noticeGetService.getNotice(anyLong())).willReturn(savedNotice);
+        given(imageUtils.patchImage(any(ImageInfoDto.class),isNull())).willReturn(changedImage);
+        // when
+        Notice result = service.patchNotice(patchImage, patch);
+        // then
+        Assertions.assertThat(result.getContent()).isEqualTo("컨텐츠");
+        Assertions.assertThat(result.getTitle()).isEqualTo(patch.getTitle());
+        Assertions.assertThat(result.getNoticeImage().getId()).isEqualTo(patchImage.getId());
     }
 
 }
