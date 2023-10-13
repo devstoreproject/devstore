@@ -2,12 +2,15 @@ package project.main.webstore.domain.notice.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.willDoNothing;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -50,8 +53,8 @@ class NoticeServiceTest {
         User user = userStub.createUser(1L);
         Notice notice = new Notice(1L, "타이틀", "컨텐츠", NoticeCategory.EVENT);
 
-        BDDMockito.given(userValidService.validUser(anyLong())).willReturn(user);
-        BDDMockito.given(repository.save(any(Notice.class))).willReturn(notice);
+        given(userValidService.validUser(anyLong())).willReturn(user);
+        given(repository.save(any(Notice.class))).willReturn(notice);
         // when
         Notice result = service.postNotice(notice, 1L);
         // then
@@ -70,9 +73,9 @@ class NoticeServiceTest {
         Notice notice = new Notice(1L, "타이틀", "컨텐츠", NoticeCategory.EVENT);
         notice.setNoticeImage(new NoticeImage(image, notice));
 
-        BDDMockito.given(userValidService.validUser(anyLong())).willReturn(user);
-        BDDMockito.given(repository.save(any(Notice.class))).willReturn(notice);
-        BDDMockito.given(fileUploader.uploadImage(any(ImageInfoDto.class))).willReturn(image);
+        given(userValidService.validUser(anyLong())).willReturn(user);
+        given(repository.save(any(Notice.class))).willReturn(notice);
+        given(fileUploader.uploadImage(any(ImageInfoDto.class))).willReturn(image);
         // when
         Notice result = service.postNotice(notice, 1L);
         // then
@@ -82,5 +85,24 @@ class NoticeServiceTest {
         Assertions.assertThat(result.getNoticeImage().getOriginalName()).isEqualTo("testImage1");
     }
 
+    @Test
+    @DisplayName("공지 사항 삭제")
+    void delete_notice_test() throws Exception {
+        // given
+        Notice notice = new Notice(1L, "타이틀", "컨텐츠", NoticeCategory.EVENT);
+        notice.setNoticeImage(new NoticeImage());
+
+        given(noticeGetService.getNotice(anyLong())).willReturn(notice);
+        willDoNothing().given(imageUtils).deleteImage(any(NoticeImage.class));
+        willDoNothing().given(repository).delete(any(Notice.class));
+        // when
+
+        service.deleteNotice(1L);
+        // then
+        verify(noticeGetService, times(1)).getNotice(1L);
+        verify(imageUtils, times(1)).deleteImage(notice.getNoticeImage());
+        verify(repository, times(1)).delete(notice);
+
+    }
 
 }

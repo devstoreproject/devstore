@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 
 import com.google.gson.Gson;
 import java.nio.charset.StandardCharsets;
@@ -176,5 +177,19 @@ class NoticeControllerTest {
                 .andExpect(MockMvcResultMatchers.header().string("Location", "/api/notice/1"));
     }
 
+
+    @Test
+    @DisplayName("공지 사항 삭제 테스트")
+    @WithMockCustomUser
+    void delete_notice_test() throws Exception{
+        // given
+        willDoNothing().given(service).deleteNotice(anyLong());
+        // when
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.delete(DEFAULT_URL));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 
 }
