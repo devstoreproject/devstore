@@ -1,5 +1,88 @@
 package project.main.webstore.domain.users.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+
+import java.util.Optional;
+import java.util.UUID;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import project.main.webstore.domain.image.dto.ImageInfoDto;
+import project.main.webstore.domain.image.entity.Image;
+import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.domain.users.exception.UserExceptionCode;
+import project.main.webstore.domain.users.repository.UserRepository;
+import project.main.webstore.domain.users.stub.UserStub;
+import project.main.webstore.exception.BusinessLogicException;
+import project.main.webstore.redis.RedisUtils;
+import project.main.webstore.stub.ImageStub;
+import project.main.webstore.utils.FileUploader;
+
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
+    @InjectMocks
+    UserService service;
+    UserStub userStub= new UserStub();
+    ImageStub imageStub = new ImageStub();
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private ApplicationEventPublisher publisher;
+    @Mock
+    private FileUploader fileUploader;
+    @Mock
+    private RedisUtils redisUtils;
+
+    @Test
+    @DisplayName("사용자 등록")
+    void post_user_test() throws Exception{
+        // given
+        User post = userStub.createUser(null);
+        ImageInfoDto postImage = imageStub.createImageInfoDto(1, true);
+        Image saveImage = imageStub.createImage(1L, 1, true);
+        User savedUser = userStub.createUser(1L);
+        savedUser.setProfileImage(saveImage.getImagePath());
+
+        given(userRepository.findByEmail(anyString())).willReturn(Optional.empty());
+        given(passwordEncoder.encode(anyString())).willReturn(UUID.randomUUID().toString());
+        given(fileUploader.uploadImage(any(ImageInfoDto.class))).willReturn(saveImage);
+        willDoNothing().given(publisher).publishEvent(any(ApplicationEvent.class));
+        given(userRepository.save(any(User.class))).willReturn(savedUser);
+        // when
+        User result = service.postUser(post, postImage);
+        // then
+        assertThat(result).usingRecursiveComparison().isEqualTo(savedUser);
+    }
+
+    @Test
+    @DisplayName("사용자 등록 : 실패[존재하는 이메일]")
+    void post_user_fail_test() throws Exception{
+        // given
+        User post = userStub.createUser(null);
+        ImageInfoDto postImage = imageStub.createImageInfoDto(1, true);
+        Image saveImage = imageStub.createImage(1L, 1, true);
+        User savedUser = userStub.createUser(1L);
+        savedUser.setProfileImage(saveImage.getImagePath());
+
+        given(userRepository.findByEmail(anyString())).willReturn(Optional.of(savedUser));
+        // when
+        Assertions.assertThatThrownBy(() -> service.postUser(post,postImage)).isInstanceOf(
+                BusinessLogicException.class).hasMessage(UserExceptionCode.USER_EXIST.getMessage());
+    }
+
+
 
 }

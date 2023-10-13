@@ -1,5 +1,6 @@
 package project.main.webstore.domain.users.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -23,8 +24,6 @@ import project.main.webstore.redis.RedisUtils;
 import project.main.webstore.security.dto.LoginDto;
 import project.main.webstore.utils.FileUploader;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 @Transactional
@@ -41,7 +40,7 @@ public class UserService {
         verifyExistsEmail(user.getEmail());
         setEncryptedPassword(user);
         saveProfileImageIfHas(user, imageInfo);
-//        publisher.publishEvent(new UserRegistrationApplicationEvent(this, user, CheckCondition.JOIN));
+        publisher.publishEvent(new UserRegistrationApplicationEvent(this, user, CheckCondition.JOIN));
         return userRepository.save(user);
 
     }
