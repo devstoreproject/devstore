@@ -1,6 +1,13 @@
 package project.main.webstore.domain.review.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+
 import com.google.gson.Gson;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -27,12 +34,6 @@ import project.main.webstore.domain.review.service.ReviewService;
 import project.main.webstore.domain.review.stub.ReviewStub;
 import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.helper.TestUtils;
-
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 
 
 @SpringBootTest
@@ -118,8 +119,8 @@ class ReviewControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].reviewId").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].reviewId").value(3))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].reviewId").value(3))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.pageNumber").value(0))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.pageSize").value(30));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.offset").value(0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.size").value(30));
 
     }
 
@@ -141,8 +142,8 @@ class ReviewControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].itemId").value(itemId))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].itemId").value(itemId))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].itemId").value(itemId))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.pageNumber").value(0))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.pageSize").value(30));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.offset").value(0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.size").value(30));
     }
 
     @Test
@@ -163,8 +164,8 @@ class ReviewControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].userId").value(userId))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].userId").value(userId))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].userId").value(userId))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.pageNumber").value(0))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.pageSize").value(30));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.offset").value(0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.size").value(30));
     }
 
     @Test
