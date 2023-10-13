@@ -1,5 +1,12 @@
 package project.main.webstore.domain.qna.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,18 +20,12 @@ import project.main.webstore.domain.item.service.ItemValidService;
 import project.main.webstore.domain.qna.entity.Answer;
 import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.qna.enums.QnaStatus;
+import project.main.webstore.domain.qna.repository.AnswerRepository;
 import project.main.webstore.domain.qna.repository.QuestionRepository;
 import project.main.webstore.domain.qna.stub.QnaStub;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.exception.BusinessLogicException;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
@@ -33,8 +34,9 @@ class QnaServiceTest {
     @Mock
     QuestionRepository questionRepository;
     @Mock
+    AnswerRepository answerRepository;
+    @Mock
     QnaValidService validService;
-
     @Mock
     UserValidService userValidService;
     @Mock
@@ -169,7 +171,10 @@ class QnaServiceTest {
         Long answerId = 1L;
         Answer answer = qnaStub.getAnswer(answerId);
         given(validService.validAnswer(anyLong())).willReturn(answer);
+        willDoNothing().given(answerRepository).delete(any(Answer.class));
+
         // when
         service.deleteAnswer(answerId);
     }
+
 }
