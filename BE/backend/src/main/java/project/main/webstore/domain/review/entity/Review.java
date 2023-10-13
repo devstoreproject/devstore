@@ -1,5 +1,20 @@
 package project.main.webstore.domain.review.entity;
 
+import static lombok.AccessLevel.PROTECTED;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,18 +26,12 @@ import project.main.webstore.domain.like.entity.Like;
 import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
 import project.main.webstore.domain.users.entity.User;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import static lombok.AccessLevel.PROTECTED;
-
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Review extends Auditable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
     private Long id;
     @Setter

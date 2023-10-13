@@ -215,7 +215,7 @@ create table question
 
 create table review
 (
-    id                 bigint       not null
+    id                  bigint auto_increment
         primary key,
     created_date       datetime     null,
     last_modified_date datetime     null,

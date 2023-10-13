@@ -1,5 +1,20 @@
 package project.main.webstore.domain.notice.entity;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,12 +23,6 @@ import project.main.webstore.audit.Auditable;
 import project.main.webstore.domain.image.entity.NoticeImage;
 import project.main.webstore.domain.notice.enums.NoticeCategory;
 import project.main.webstore.domain.users.entity.User;
-
-import javax.persistence.*;
-
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
@@ -53,6 +62,16 @@ public class Notice extends Auditable {
         this.title = title;
         this.content = content;
         this.noticeCategory = category;
+    }
+
+    public Notice(NoticeImage noticeImage, Long id, String title, String content,
+            NoticeCategory noticeCategory, User user) {
+        this.noticeImage = noticeImage;
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.noticeCategory = noticeCategory;
+        this.user = user;
     }
 
     public Notice(Long noticeId) {

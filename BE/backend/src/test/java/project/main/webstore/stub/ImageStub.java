@@ -145,6 +145,16 @@ public class ImageStub extends TestUtils {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, header);
         return requestEntity;
     }
+    public HttpEntity<MultiValueMap<String, Object>> getMultipartOneImageAndJsonDataRequest(String method,String content,String accessToken)
+            throws IOException {
+        HttpHeaders header = getMultipartHeader();
+        HttpHeaders jwtAdmin = getLoginHeader(accessToken);
+        header.addAll(jwtAdmin);
+        MultiValueMap<String, Object> requestBody = createMultipartOneFileAndJsonRequest(method,content);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, header);
+        return requestEntity;
+    }
     public HttpEntity<MultiValueMap<String, Object>> getMultipartJsonDataRequest(String method,String content,String accessToken)
             throws IOException {
         HttpHeaders header = getMultipartHeader();
@@ -153,6 +163,10 @@ public class ImageStub extends TestUtils {
         MultiValueMap<String, Object> requestBody = createMultiPartOnlyJson(method,content);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, header);
         return requestEntity;
+    }
+
+    public MockMultipartFile getMockMultipartFile() {
+        return this.mockMultipartFile;
     }
 
     protected ByteArrayResource getRealImage() throws IOException {
@@ -183,6 +197,16 @@ public class ImageStub extends TestUtils {
 
         requestBody.add("imageList",imageOne);
         requestBody.add("imageList",imageTwo);
+        requestBody.add(method,jsonRequest);
+        return requestBody;
+    }
+    protected MultiValueMap<String, Object> createMultipartOneFileAndJsonRequest(String method,String content) throws IOException {
+        HttpEntity<ByteArrayResource> imageOne = getRealFileRequest();
+        HttpEntity<String> jsonRequest = super.getJsonRequestHeader(content);
+
+        MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
+
+        requestBody.add("imageList",imageOne);
         requestBody.add(method,jsonRequest);
         return requestBody;
     }
