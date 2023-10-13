@@ -21,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.domain.users.enums.ProviderId;
+import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.domain.users.repository.UserRepository;
 import project.main.webstore.domain.users.stub.UserStub;
@@ -68,7 +70,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("사용자 등록 : 실패[존재하는 이메일]")
+    @DisplayName("사용자 등록 : 실패[존재 하는 이메일]")
     void post_user_fail_test() throws Exception{
         // given
         User post = userStub.createUser(null);
@@ -83,6 +85,86 @@ class UserServiceTest {
                 BusinessLogicException.class).hasMessage(UserExceptionCode.USER_EXIST.getMessage());
     }
 
+    @Test
+    @DisplayName("OAuth2 생성 or 로그인 테스트")
+    void oauth2_create_test() throws Exception{
+        // given
+        User post = userStub.createUser(null);
+        User savedUser = userStub.createUser(1L);
+        savedUser.setProviderId(ProviderId.GOOGLE);
 
+        given(userRepository.findByEmail(anyString())).willReturn(Optional.empty());
+        given(passwordEncoder.encode(anyString())).willReturn(UUID.randomUUID().toString());
+        given(userRepository.save(any(User.class))).willReturn(savedUser);
+        // when
+        User result = service.oAuth2CreateOrGet(post);
+        // then
+        assertThat(result).usingRecursiveComparison().isEqualTo(savedUser);
+    }
+
+    @Test
+    @DisplayName("OAuth2 생성 기존의 계정 정보 변경 테스트")
+    void oauth2_change_test() throws Exception{
+        // given
+        User post = userStub.createUser(null);
+        post.setProviderId(ProviderId.GOOGLE);
+        User savedUser = userStub.createUser(1L);
+        savedUser.setProviderId(ProviderId.GOOGLE);
+        savedUser.setUserStatus(UserStatus.ACTIVE);
+
+        given(userRepository.findByEmail(anyString())).willReturn(Optional.of(savedUser));
+        // when
+        User result = service.oAuth2CreateOrGet(post);
+        // then
+        assertThat(result).usingRecursiveComparison().isEqualTo(savedUser);
+    }
+
+    @Test
+    @DisplayName("OAuth2 생성 기존의 계정 정보 변경 테스트")
+    void oauth2_change_delete_id_test() throws Exception{
+        // given
+        User post = userStub.createUser(null);
+        post.setProviderId(ProviderId.GOOGLE);
+        User savedUser = userStub.createUser(1L);
+        savedUser.setProviderId(ProviderId.GOOGLE);
+        savedUser.setUserStatus(UserStatus.DELETE);
+
+        given(userRepository.findByEmail(anyString())).willReturn(Optional.of(savedUser));
+        // when
+        User result = service.oAuth2CreateOrGet(post);
+        // then
+        assertThat(result).usingRecursiveComparison().isEqualTo(savedUser);
+    }
+    @Test
+    @DisplayName("OAuth2 생성 기존의 계정 정보 변경 테스트")
+    void oauth2_change_sleep_id_test() throws Exception{
+        // given
+        User post = userStub.createUser(null);
+        post.setProviderId(ProviderId.GOOGLE);
+        User savedUser = userStub.createUser(1L);
+        savedUser.setProviderId(ProviderId.GOOGLE);
+        savedUser.setUserStatus(UserStatus.SLEEP);
+
+        given(userRepository.findByEmail(anyString())).willReturn(Optional.of(savedUser));
+        // when
+        User result = service.oAuth2CreateOrGet(post);
+        // then
+        assertThat(result).usingRecursiveComparison().isEqualTo(savedUser);
+    }
+    @Test
+    @DisplayName("OAuth2 생성 기존의 계정 정보 변경 테스트")
+    void oauth2_create_fail_test() throws Exception{
+        // given
+        User post = userStub.createUser(null);
+        post.setProviderId(ProviderId.GOOGLE);
+        User savedUser = userStub.createUser(1L);
+        savedUser.setProviderId(ProviderId.JWT);
+        savedUser.setUserStatus(UserStatus.ACTIVE);
+
+        given(userRepository.findByEmail(anyString())).willReturn(Optional.of(savedUser));
+        // when
+        Assertions.assertThatThrownBy(() -> service.oAuth2CreateOrGet(post)).isInstanceOf(
+                BusinessLogicException.class).hasMessage(UserExceptionCode.USER_JWT_EXIST.getMessage());
+    }
 
 }
