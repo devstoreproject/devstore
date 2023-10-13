@@ -5,14 +5,17 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.stereotype.Component;
 import project.main.webstore.domain.cart.entity.Cart;
 import project.main.webstore.domain.users.dto.UserGetResponseDto;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.enums.UserRole;
+import project.main.webstore.helper.TestUtils;
 import project.main.webstore.valueObject.Address;
 
-public class UserStub {
+@Component
+public class UserStub extends TestUtils {
     public User createUser(Long id) {
         User user = User.stubBuilder()
                 .cart(new Cart())
@@ -32,6 +35,10 @@ public class UserStub {
         User user = createUser(10000L);
         user.changeRole(UserRole.ADMIN);
         return user;
+    }
+
+    public Page<User> userPage() {
+        return new PageImpl(users(),getPage(),30);
     }
 
     public List<User> users() {

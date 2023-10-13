@@ -1,10 +1,14 @@
 package project.main.webstore.domain.users.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static project.main.webstore.domain.users.exception.UserExceptionCode.USER_NOT_FOUND;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
@@ -151,6 +157,7 @@ class UserServiceTest {
         // then
         assertThat(result).usingRecursiveComparison().isEqualTo(savedUser);
     }
+
     @Test
     @DisplayName("OAuth2 생성 기존의 계정 정보 변경 테스트")
     void oauth2_create_fail_test() throws Exception{
@@ -165,6 +172,47 @@ class UserServiceTest {
         // when
         Assertions.assertThatThrownBy(() -> service.oAuth2CreateOrGet(post)).isInstanceOf(
                 BusinessLogicException.class).hasMessage(UserExceptionCode.USER_JWT_EXIST.getMessage());
+    }
+
+    @Test
+    @DisplayName("사용자 제거 테스트")
+    void delete_user_test() throws Exception{
+        // given
+        willDoNothing().given(userRepository).deleteById(anyLong());
+        // when
+        service.deleteUser(1L);
+        // then
+        verify(userRepository,times(1)).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("사용자 정보 단건 조회")
+    void get_user_test() throws Exception{
+        User savedUser = userStub.createUser(1L);
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(savedUser));
+
+        User result = service.getUser(1L);
+
+        Assertions.assertThat(result).usingRecursiveComparison().isEqualTo(savedUser);
+    }
+    @Test
+    @DisplayName("사용자 정보 단건 조회 : 실패")
+    void get_user_fail_test() throws Exception{
+        User savedUser = userStub.createUser(1L);
+        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        Assertions.assertThatThrownBy(()-> service.getUser(1l)).hasMessage(USER_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("사용자 정보 전체 조회")
+    void get_all_user_test() throws Exception{
+        Page<User> pageEntity = userStub.userPage();
+        given(userRepository.findUserPage(any(Pageable.class))).willReturn(pageEntity);
+
+        Page<User>  result = service.getUserPage(userStub.getPage());
+
+        Assertions.assertThat(result).usingRecursiveComparison().isEqualTo(pageEntity);
     }
 
 }
