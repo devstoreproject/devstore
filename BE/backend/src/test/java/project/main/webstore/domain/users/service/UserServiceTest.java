@@ -215,4 +215,38 @@ class UserServiceTest {
         Assertions.assertThat(result).usingRecursiveComparison().isEqualTo(pageEntity);
     }
 
+    @Test
+    @DisplayName("사용자 정보 수정 : 실패 [소셜로그인 시용자]")
+    void patch_user_fail_test() throws Exception{
+        // given
+        User savedUser = userStub.createUser(1L);
+        savedUser.setProviderId(ProviderId.GOOGLE);
+
+        User patch = userStub.createUser(1L);
+
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(savedUser));
+        // when
+        Assertions.assertThatThrownBy(()-> service.patchUser(patch,imageStub.createImageInfoDto(1,true))).hasMessage(UserExceptionCode.USER_NOT_JWT.getMessage());
+    }
+
+    @Test
+    @DisplayName("사용자 정보 수정 : 성공")
+    void patch_user_test() throws Exception{
+        // given
+        User savedUser = userStub.createUser(1L);
+        Image saveImage = imageStub.createImage(1L, 1, true);
+
+        ImageInfoDto patchImage = imageStub.createImageInfoPath(1L, 1, true);
+        User patch = userStub.createUser(1L);
+
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(savedUser));
+        given(fileUploader.uploadImage(any(ImageInfoDto.class))).willReturn(saveImage);
+        // when
+        User result = service.patchUser(patch, patchImage);
+
+        Assertions.assertThat(result.getUserName()).isEqualTo(patch.getUserName());
+        Assertions.assertThat(result.getName()).isEqualTo(patch.getName());
+    }
+
+
 }
