@@ -349,7 +349,7 @@ class OrderServiceTest {
     void order_cancel_test() throws Exception{
         // given
         given(userService.validUser(anyLong())).willReturn(userStub.createUser(1L));
-        given(orderRepository.findAllByOrderId(anyLong())).willReturn(Optional.of(orderStub.createOrderWithTrackNum(1L)));
+        given(orderRepository.findAllByOrderId(anyLong())).willReturn(Optional.of(orderStub.createOrder(1L)));
 
         // when
         orderService.cancelOrder(1L,1L);
