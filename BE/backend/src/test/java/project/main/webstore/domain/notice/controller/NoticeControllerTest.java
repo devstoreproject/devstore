@@ -131,7 +131,7 @@ class NoticeControllerTest {
     void patch_notice_only_image_test() throws Exception {
         Notice resultNotice = noticeStub.createEntity(1L);
 
-        MockMultipartFile multipartFile = new MockMultipartFile("imageList",
+        MockMultipartFile multipartFile = new MockMultipartFile("image",
                 "originalFilename1.jpg", "jpg", "TEST Mock".getBytes());
 
         given(service.patchNotice(any(ImageInfoDto.class), any(Notice.class))).willReturn(
@@ -155,7 +155,7 @@ class NoticeControllerTest {
         NoticePatchRequestDto patch = noticeStub.createPatchDto(1L);
         String content = gson.toJson(patch);
 
-        MockMultipartFile multipartFile = new MockMultipartFile("imageList",
+        MockMultipartFile multipartFile = new MockMultipartFile("image",
                 "originalFilename1.jpg", "jpg", "TEST Mock".getBytes());
         MockMultipartFile patchEntity = new MockMultipartFile("patch", "patch", "application/json",
                 content.getBytes(StandardCharsets.UTF_8));
@@ -183,7 +183,7 @@ class NoticeControllerTest {
         // given
         willDoNothing().given(service).deleteNotice(anyLong());
         // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.delete(DEFAULT_URL));
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.delete(DEFAULT_URL+"/{noticeId}",1L));
         // then
         perform
                 .andDo(MockMvcResultHandlers.log())
