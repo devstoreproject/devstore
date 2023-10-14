@@ -45,7 +45,7 @@ public class ShippingController {
 
         var responseDto = ResponseDto.<ShippingInfoResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
 
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{shipping-info-id}")
