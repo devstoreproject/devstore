@@ -21,7 +21,6 @@ import project.main.webstore.email.enums.CheckCondition;
 import project.main.webstore.email.event.UserRegistrationApplicationEvent;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.redis.RedisUtils;
-import project.main.webstore.security.dto.LoginDto;
 import project.main.webstore.utils.FileUploader;
 
 @Slf4j
@@ -161,14 +160,6 @@ public class UserService {
             Image image = fileUploader.uploadImage(imageInfo);
             user.setProfileImage(image.getImagePath());
         }
-    }
-
-    // tmp 임시
-    public User tmpLogin(LoginDto loginDto) {
-        String encode = passwordEncoder.encode(loginDto.getPassword());
-        Optional<User> byEmail = userRepository.findByEmail(loginDto.getUsername());
-
-        return byEmail.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_LOGIN));
     }
 
     public String getTmpPassword(User user) {
