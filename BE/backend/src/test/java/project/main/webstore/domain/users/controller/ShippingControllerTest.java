@@ -129,7 +129,20 @@ class ShippingControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].addressDetail").isString())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").isArray());
     }
-
+    @Test
+    @DisplayName("배송지 삭제 테스트")
+    @WithMockCustomUser(role = "CLIENT", userRole = UserRole.CLIENT)
+    void delete_ship_info_test() throws Exception{
+        // given
+        BDDMockito.willDoNothing().given(service).deleteAddressInfo(anyLong(),anyLong());
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.delete(DEFAULT_URL+"/{shipping-info-id}",1L));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 
 
 }
