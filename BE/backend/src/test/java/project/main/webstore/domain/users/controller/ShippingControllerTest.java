@@ -84,5 +84,27 @@ class ShippingControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.infoId").isNumber());
     }
 
+    @Test
+    @DisplayName("배송지 조회 테스트")
+    @WithMockCustomUser(role = "CLIENT", userRole = UserRole.CLIENT)
+    void get_ship_info_test() throws Exception{
+        // given
+        ShippingInfo shippingInfo = userStub.createShippingInfo();
+        BDDMockito.given(service.getAddressInfo(anyLong())).willReturn(shippingInfo);
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.get(DEFAULT_URL+"/{shipping-info-id}",1L));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.infoId").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.recipient").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.mobileNumber").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.zipCode").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.addressSimple").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.addressDetail").isString());
+    }
+
 
 }
