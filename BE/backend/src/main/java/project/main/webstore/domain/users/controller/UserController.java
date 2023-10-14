@@ -30,7 +30,6 @@ import project.main.webstore.domain.users.dto.UserIdResponseDto;
 import project.main.webstore.domain.users.dto.UserPatchRequestDto;
 import project.main.webstore.domain.users.dto.UserPostRequestDto;
 import project.main.webstore.domain.users.entity.User;
-import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.mapper.UserMapper;
 import project.main.webstore.domain.users.service.UserService;
 import project.main.webstore.dto.CustomPage;
@@ -153,14 +152,5 @@ public class UserController {
         UserGetPasswordResponseDto response = userMapper.toGetPasswordResponse(result);
         var responseDto = ResponseDto.<UserGetPasswordResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
-    }
-
-    @PostMapping("/set-default")
-    public ResponseEntity setDefault() {
-        User user = new User(1L);
-        user.setPassword("admin111!!");
-        user.setProviderId(ProviderId.JWT);
-        service.patchUser(user,null);
-        return ResponseEntity.noContent().build();
     }
 }
