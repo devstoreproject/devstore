@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 import project.main.webstore.domain.cart.entity.Cart;
+import project.main.webstore.domain.users.dto.ShippingInfoPatchDto;
 import project.main.webstore.domain.users.dto.ShippingInfoPostDto;
 import project.main.webstore.domain.users.dto.UserGetResponseDto;
 import project.main.webstore.domain.users.entity.ShippingInfo;
@@ -112,5 +113,9 @@ public class UserStub extends TestUtils {
 
     public ShippingInfoPostDto createShipInfoPostDto() {
         return new ShippingInfoPostDto("김성자","010-1234-1234","54040","서울시 성북구","세부 정보 주소");
+    }
+
+    public ShippingInfoPatchDto createShipInfoPatchDto() {
+        return new ShippingInfoPatchDto(null,"010-1234-1111",null,"부산시 북위동","아파트 102동 231호");
     }
 }

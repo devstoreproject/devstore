@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.annotation.WithMockCustomUser;
+import project.main.webstore.domain.users.dto.ShippingInfoPatchDto;
 import project.main.webstore.domain.users.dto.ShippingInfoPostDto;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.enums.UserRole;
@@ -61,4 +62,27 @@ class ShippingControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.infoId").isNumber());
     }
+
+    @Test
+    @DisplayName("배송지 수정 테스트")
+    @WithMockCustomUser(role = "CLIENT", userRole = UserRole.CLIENT)
+    void patch_ship_info_test() throws Exception{
+        // given
+        ShippingInfoPatchDto patch = userStub.createShipInfoPatchDto();
+        String content = gson.toJson(patch);
+        ShippingInfo shippingInfo = userStub.createShippingInfo();
+        BDDMockito.given(service.updateAddressInfo(any(ShippingInfo.class), anyLong())).willReturn(
+                shippingInfo);
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.patch(DEFAULT_URL+"/{shipping-info-id}",1L).content(content)
+                        .contentType(MediaType.APPLICATION_JSON));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.infoId").isNumber());
+    }
+
+
 }

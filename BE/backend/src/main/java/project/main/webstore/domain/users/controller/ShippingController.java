@@ -57,7 +57,7 @@ public class ShippingController {
         info.addId(shippingInfoId);
         ShippingInfo editInfo = service.updateAddressInfo(info, userId);
         ShippingInfoResponseDto response = mapper.infoToInfoResponseDto(editInfo);
-        var responseDto = ResponseDto.<ShippingInfoResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<ShippingInfoResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
@@ -67,7 +67,7 @@ public class ShippingController {
         ShippingInfo getInfo = service.getAddressInfo(shippingInfoId);
         ShippingInfoResponseDto response = mapper.infoGetResponseDto(getInfo);
 
-        var responseDto = ResponseDto.<ShippingInfoResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<ShippingInfoResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
@@ -76,7 +76,7 @@ public class ShippingController {
         List<ShippingInfo> result = service.getInfoList(userId);
         List<ShippingInfoResponseDto> response = mapper.InfoResponseDtoList(result);
 
-        var responseDto = ResponseDto.<List<ShippingInfoResponseDto>>builder().data(response).customCode(ResponseCode.CREATED).build();
+        var responseDto = ResponseDto.<List<ShippingInfoResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
