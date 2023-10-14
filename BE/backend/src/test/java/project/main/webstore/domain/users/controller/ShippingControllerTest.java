@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.google.gson.Gson;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -105,6 +106,30 @@ class ShippingControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.addressSimple").isString())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.addressDetail").isString());
     }
+
+    @Test
+    @DisplayName("배송지 사용자별 조회 테스트")
+    @WithMockCustomUser(role = "CLIENT", userRole = UserRole.CLIENT)
+    void get_ship_info_list_test() throws Exception{
+        // given
+        List<ShippingInfo> savedShipInfo = userStub.createShippingInfoLit(20L);
+        BDDMockito.given(service.getInfoList(anyLong())).willReturn(savedShipInfo);
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.get(DEFAULT_URL+"/users/{userId}",1L));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].infoId").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].recipient").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].mobileNumber").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].zipCode").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].addressSimple").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].addressDetail").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isArray());
+    }
+
 
 
 }
