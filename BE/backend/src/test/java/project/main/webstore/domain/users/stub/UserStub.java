@@ -97,4 +97,20 @@ public class UserStub extends TestUtils {
         return user;
     }
 
+    public List<ShippingInfo> createShippingInfoLit(Long index) {
+        List<ShippingInfo> list = new ArrayList<>();
+        for (Long i = 1L; i < index; i++) {
+            list.add(createShippingInfo(i));
+        }
+        return list;
+    }
+    public ShippingInfo createShippingInfo(Long id) {
+
+        ShippingInfo info = new ShippingInfo(id, "김복자",
+                new Address("123-45" + id, "대한민국" + id, "우리집" + id, "010-1234-6789"),
+                null);
+        info.setUser(createUser(1L));
+        return info;
+    }
+
 }
