@@ -2,7 +2,6 @@ package project.main.webstore.domain.users.stub;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
@@ -85,8 +84,7 @@ public class UserStub extends TestUtils {
         return new PageImpl<UserGetResponseDto>(getUsers());
     }
 
-    @NotNull
-    private static ShippingInfo createShippingInfo() {
+    public ShippingInfo createShippingInfo() {
         return new ShippingInfo(1L, "김복자", new Address("123-45", "대한민국", "우리집", "010-1234-6789"),
                 null);
     }
@@ -98,4 +96,5 @@ public class UserStub extends TestUtils {
         user.getShippingInfoList().add(info);
         return user;
     }
+
 }
