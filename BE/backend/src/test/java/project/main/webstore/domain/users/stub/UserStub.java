@@ -59,10 +59,6 @@ public class UserStub extends TestUtils {
         return users;
     }
 
-    public Page<User> getUser() {
-        return new PageImpl<User>(users());
-    }
-
     public List<UserGetResponseDto> getUsers() {
         List<UserGetResponseDto> users = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
@@ -81,7 +77,7 @@ public class UserStub extends TestUtils {
     }
 
     public Page<UserGetResponseDto> getUserPage() {
-        return new PageImpl<UserGetResponseDto>(getUsers());
+        return new PageImpl<UserGetResponseDto>(getUsers(),getPage(),30);
     }
 
     public ShippingInfo createShippingInfo() {

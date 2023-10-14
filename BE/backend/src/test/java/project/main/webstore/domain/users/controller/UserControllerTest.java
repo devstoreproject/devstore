@@ -1,6 +1,18 @@
 package project.main.webstore.domain.users.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.google.gson.Gson;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -9,7 +21,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpMethod;
@@ -36,21 +47,6 @@ import project.main.webstore.helper.TestUtils;
 import project.main.webstore.security.jwt.utils.JwtTokenizer;
 import project.main.webstore.stub.ImageStub;
 import project.main.webstore.utils.FileUploader;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import static junit.framework.TestCase.assertEquals;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willReturn;
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @SpringBootTest
@@ -173,7 +169,7 @@ public class UserControllerTest {
     @WithMockCustomUser(username = "복자", role = "ADMIN", email = "amdin@gmail.com", userId = 2L, userRole = UserRole.ADMIN)
     void getUsersTest() throws Exception {
         //given
-        Page<User> user = userStub.getUser();
+        Page<User> user = userStub.userPage();
         List<UserGetResponseDto> responseDtos = List.of(
             new UserGetResponseDto(1L, "admin001@gmail.com","admin54321","뽀삐킴",null,"010-1234-4321","김삐뽀"),
             new UserGetResponseDto(2L,"admin002@gamil.com","admin12345","이뽀삐",null,"010-1234-4568","이뽀삐")
