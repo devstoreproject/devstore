@@ -44,7 +44,6 @@ import project.main.webstore.domain.users.dto.UserPostRequestDto;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.domain.users.service.UserService;
-import project.main.webstore.domain.users.service.UserValidService;
 import project.main.webstore.domain.users.stub.UserStub;
 import project.main.webstore.helper.TestUtils;
 import project.main.webstore.security.jwt.utils.JwtTokenizer;
@@ -70,8 +69,6 @@ class UserControllerTest {
     FileUploader fileUploader;
     @MockBean
     private UserService userService;
-    @MockBean
-    private UserValidService validUser;
     private UserStub userStub = new UserStub();
     private ImageStub imageStub = new ImageStub();
 
@@ -278,6 +275,7 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").isNumber());
     }
+
 
 
 }
