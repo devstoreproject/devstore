@@ -54,5 +54,38 @@ class CheckLoginUserTest {
         Assertions.assertThat(result).isEqualTo(1L);
     }
 
+    @Test
+    @DisplayName("사용자id 반환 및 관리자 id 반환 테스트")
+    void get_login_id_admin_fail_test() throws Exception{
+        // given
+        String principal = "anonymousUser";
+        // when
+        Long result = CheckLoginUser.getContextIdAdminZero(principal);
+        // then
+        Assertions.assertThat(result).isEqualTo(-1L);
+    }
+
+    @Test
+    @DisplayName("사용자id 반환 및 관리자 id 반환 테스트")
+    void get_login_id_admin_get_user_id_test() throws Exception{
+        // given
+        UserInfoDto principal = new UserInfoDto(1L, "client@gmail.com", "김복자", UserRole.CLIENT);
+        // when
+        Long result = CheckLoginUser.getContextIdAdminZero(principal);
+        // then
+        Assertions.assertThat(result).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("사용자id 반환 및 관리자 id 반환 테스트")
+    void get_login_id_admin_get_admin_id_test() throws Exception{
+        // given
+        UserInfoDto principal = new UserInfoDto(1L, "client@gmail.com", "김복자", UserRole.ADMIN);
+        // when
+        Long result = CheckLoginUser.getContextIdAdminZero(principal);
+        // then
+        Assertions.assertThat(result).isZero();
+    }
+
 
 }
