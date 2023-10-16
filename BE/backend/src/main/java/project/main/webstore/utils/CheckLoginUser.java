@@ -8,20 +8,6 @@ import project.main.webstore.security.dto.UserInfoDto;
 
 public class CheckLoginUser {
 
-    public static String getUserNickname(Object principal) {
-        if (principal instanceof String) {
-             return principal.toString();
-        } else {
-            return ((UserInfoDto) principal).getNickName();
-        }
-    }
-    public static UserInfoDto getUserInfoByContext(Object principal) {
-        if (principal instanceof String) {
-             return null;
-        } else {
-            return ((UserInfoDto) principal);
-        }
-    }
     public static void validUserSame(Object principal, Long userId){
         if(principal instanceof String){
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_LOGIN);
