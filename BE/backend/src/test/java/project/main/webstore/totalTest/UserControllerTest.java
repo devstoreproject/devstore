@@ -29,6 +29,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -40,6 +42,7 @@ import project.main.webstore.domain.users.dto.UserPostRequestDto;
 import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.helper.TestUtils;
+import project.main.webstore.security.dto.LoginDto;
 import project.main.webstore.security.jwt.utils.JwtTokenizer;
 import project.main.webstore.stub.ImageStub;
 
@@ -227,5 +230,25 @@ class UserControllerTest {
             .andDo(log())
             .andExpect(status().isOk())
         ;
+    }
+
+    @Test
+    @DisplayName("로그인 회원 테스트")
+    void post_login_test() throws Exception{
+        // given
+        UserPostRequestDto post = new UserPostRequestDto("client11@gmail.com", "asdffcx1111", "김송모자리", "010-8013-1313", "김송모");
+        String content = gson.toJson(post);
+        MockMultipartFile postUser = new MockMultipartFile("post", "post", "application/json", content.getBytes(StandardCharsets.UTF_8));
+        mvc.perform(MockMvcRequestBuilders.multipart("/api/users").file(postUser).accept(MediaType.APPLICATION_JSON));
+
+        LoginDto data = new LoginDto("client11@gmail.com","asdffcx1111");
+        content = gson.toJson(data);
+        // when
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.post("/api/login").content(content).contentType(MediaType.APPLICATION_JSON));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.header().exists("Authorization"));
     }
 }
