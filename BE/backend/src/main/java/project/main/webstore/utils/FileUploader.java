@@ -85,7 +85,7 @@ public class FileUploader {
             );
         } catch (IOException e) {
             log.error("#### S3 Upload IOException", e.getMessage());
-            e.printStackTrace();
+            log.debug("#### 파일 업로드 에러",e);
         }
 
         return amazonS3Client.getUrl(bucketName, fileName).toString();
