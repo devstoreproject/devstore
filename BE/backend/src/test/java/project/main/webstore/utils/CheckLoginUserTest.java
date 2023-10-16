@@ -1,5 +1,6 @@
 package project.main.webstore.utils;
 
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,28 @@ class CheckLoginUserTest {
         // then
         Assertions.assertThatThrownBy(() -> CheckLoginUser.validAdmin(principal))
                 .hasMessage(UserExceptionCode.NOT_ADMIN.getMessage());
+    }
+
+    @Test
+    @DisplayName("사용자id 반환 테스트")
+    void get_login_id_fail_test() throws Exception{
+        // given
+        String principal = "anonymousUser";
+        // when
+        Long result = CheckLoginUser.getContextIdx(principal);
+        // then
+        Assertions.assertThat(result).isEqualTo(-1L);
+    }
+
+    @Test
+    @DisplayName("사용자id 반환 테스트")
+    void get_login_id_test() throws Exception{
+        // given
+        UserInfoDto principal = new UserInfoDto(1L, "client@gmail.com", "김복자", UserRole.CLIENT);
+        // when
+        Long result = CheckLoginUser.getContextIdx(principal);
+        // then
+        Assertions.assertThat(result).isEqualTo(1L);
     }
 
 
