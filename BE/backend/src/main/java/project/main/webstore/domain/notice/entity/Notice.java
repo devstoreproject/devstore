@@ -64,16 +64,6 @@ public class Notice extends Auditable {
         this.noticeCategory = category;
     }
 
-    public Notice(NoticeImage noticeImage, Long id, String title, String content,
-            NoticeCategory noticeCategory, User user) {
-        this.noticeImage = noticeImage;
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.noticeCategory = noticeCategory;
-        this.user = user;
-    }
-
     public Notice(Long noticeId) {
         this.id = noticeId;
     }
