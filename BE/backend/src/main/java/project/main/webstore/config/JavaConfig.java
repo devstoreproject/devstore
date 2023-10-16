@@ -1,6 +1,7 @@
 package project.main.webstore.config;
 
 import com.siot.IamportRestClient.IamportClient;
+import java.util.Properties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +16,8 @@ import project.main.webstore.email.EmailSendable;
 import project.main.webstore.email.SimpleEmailSendable;
 import project.main.webstore.email.TemplateEmailSendable;
 
-import java.util.Properties;
-
 @Configuration
-public class javaConfig {
+public class JavaConfig {
     @Value("${iamport.api-key}")
     private String apiKey;
     @Value("${iamport.secret-key}")
