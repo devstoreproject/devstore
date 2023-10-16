@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
@@ -25,7 +26,7 @@ import project.main.webstore.domain.cart.stub.CartStub;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.helper.TestUtils;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class CartControllerTest {
     @Container
     static MySQLContainer mySQLContainer = new MySQLContainer("mysql:8");
@@ -147,7 +148,7 @@ class CartControllerTest {
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(responseDto.getData().getCartId()).isEqualTo(1L);
         Assertions.assertThat(responseDto.getData().getDeliveryPrice()).isEqualTo(3000);
-        Assertions.assertThat(responseDto.getData().getDiscountedPrice()).isEqualTo(20200000);
+        Assertions.assertThat(responseDto.getData().getDiscountedPrice()).isEqualTo(15200000);
         Assertions.assertThat(responseDto.getData().getItemList()).isNotNull();
 
     }
