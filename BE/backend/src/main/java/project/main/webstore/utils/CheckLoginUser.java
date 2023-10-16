@@ -47,7 +47,7 @@ public  class CheckLoginUser {
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_LOGIN);
         }
         UserInfoDto info = (UserInfoDto) principal;
-        if(info.getUserId().equals(userId)){
+        if(!info.getUserId().equals(userId)){
             throw new BusinessLogicException(UserExceptionCode.USER_INFO_MISMATCH);
         }
     }
