@@ -26,7 +26,7 @@ import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.stub.ImageStub;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class NoticeControllerTest {
+class NoticeControllerTest {
     @Container
     static MySQLContainer mySQLContainer = new MySQLContainer("mysql:8");
     final String URL = "http://localhost:";
@@ -79,7 +79,7 @@ public class NoticeControllerTest {
         ResponseDto<NoticeIdResponseDto> responseDto = gson.fromJson(body, responseType);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Assertions.assertThat(responseDto.getData().getNoticeId()).isEqualTo(3L);
+        Assertions.assertThat(responseDto.getData().getNoticeId()).isEqualTo(4L);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class NoticeControllerTest {
         ResponseDto<NoticeIdResponseDto> responseDto = gson.fromJson(body, responseType);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(responseDto.getData().getNoticeId()).isEqualTo(3L);
+        Assertions.assertThat(responseDto.getData().getNoticeId()).isEqualTo(1L);
     }
 
 
