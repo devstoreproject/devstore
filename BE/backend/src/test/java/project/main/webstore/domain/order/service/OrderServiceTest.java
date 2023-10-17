@@ -410,7 +410,7 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("주문 완료 변경 테스트")
+    @DisplayName("주문 완료 변경 실패 테스트")
     void order_status_change_complete_fail_test() throws Exception{
         // given
 
@@ -418,5 +418,29 @@ class OrderServiceTest {
         // when
         Assertions.assertThatThrownBy(() -> orderService.orderStatusComplete(1L)).isInstanceOf(BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_NOT_FOUND.getMessage());
     }
+
+    @Test
+    @DisplayName("주문 완료 변경 테스트")
+    void order_status_change_cancel_test() throws Exception{
+        // given
+        Orders mockEntity = orderStub.createOrder(1L);
+
+        given(orderRepository.findById(anyLong())).willReturn(Optional.of(mockEntity));
+        // when
+        Orders result = orderService.orderStatusCancel(1L);
+
+        Assertions.assertThat(result.getOrdersStatus()).isEqualTo(ORDER_CANCEL);
+    }
+
+    @Test
+    @DisplayName("주문 완료 변경 실패 테스트")
+    void order_status_change_cancel_fail_test() throws Exception{
+        // given
+
+        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
+        // when
+        Assertions.assertThatThrownBy(() -> orderService.orderStatusCancel(1L)).isInstanceOf(BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_NOT_FOUND.getMessage());
+    }
+
 
 }
