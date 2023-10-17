@@ -226,7 +226,7 @@ public class ItemStub extends ImageStub {
     }
 
     public ItemOption createItemOption(Long id) {
-        return new ItemOption(1L,"옵션 상세 설명" +id,"옵션 이름" + id,10000,100,false,createItem(1+id),new ArrayList<>(),new ArrayList<>());
+        return new ItemOption(id,"옵션 상세 설명" +id,"옵션 이름" + id,10000,100,false,createItem(1+id),new ArrayList<>(),new ArrayList<>());
     }
     public ItemOption createItemOption() {
         return new ItemOption(null,"옵션 상세 설명" ,createItem(1L),100,"옵션 이름",10000);

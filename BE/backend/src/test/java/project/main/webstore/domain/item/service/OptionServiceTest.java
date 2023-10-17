@@ -3,12 +3,14 @@ package project.main.webstore.domain.item.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -121,5 +123,29 @@ class OptionServiceTest {
         assertThatThrownBy(() -> service.getOption(1L)).hasMessage(OrderExceptionCode.OPTION_NOT_FOUND.getMessage());
     }
 
+    @Test
+    @DisplayName("옵션 리스트 별 조회 조회 테스트")
+    void get_option_list_by_list_test() throws Exception{
+        // given
+        List<ItemOption> mockEntityList = itemStub.createItemOptionList(2L);
+        given(optionRepository.findInId(anyList())).willReturn(mockEntityList);
+        // when
+        List<ItemOption> result = service.getOptions(List.of(1L, 2L));
+        // then
+        Assertions.assertThat(result).hasSize(2);
+        Assertions.assertThat(result.stream().map(ItemOption::getOptionId)).contains(1L,2L);
+    }
+    @Test
+    @DisplayName("옵션 리스트 별 조회 조회 테스트")
+    void get_option_list_by_item_id_test() throws Exception{
+        // given
+        List<ItemOption> mockEntityList = itemStub.createItemOptionList(2L);
+        given(optionRepository.findAllByItemId(anyLong())).willReturn(mockEntityList);
+        // when
+        List<ItemOption> result = service.getOptions(1L);
+        // then
+        Assertions.assertThat(result).hasSize(2);
+        Assertions.assertThat(result.stream().map(ItemOption::getOptionId)).contains(1L,2L);
+    }
 
 }
