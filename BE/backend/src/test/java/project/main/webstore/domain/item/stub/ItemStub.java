@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import project.main.webstore.domain.image.dto.ImageSortPatchDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
+import project.main.webstore.domain.item.dto.OptionPatchDto;
 import project.main.webstore.domain.item.dto.OptionPostRequestDto;
 import project.main.webstore.domain.item.dto.PickedItemDto;
 import project.main.webstore.domain.item.entity.Item;
@@ -226,5 +227,13 @@ public class ItemStub extends ImageStub {
 
     public ItemOption createItemOption(Long id) {
         return new ItemOption(1L,"옵션 상세 설명" +id,new Item(id+1L),100,"옵션 이름"+id);
+    }
+
+    public OptionPostRequestDto createPostItemOptionDto() {
+        return new OptionPostRequestDto("옵션 디테일", 100, 1000, "옵션 이름");
+    }
+
+    public OptionPatchDto creatPatchOptionDto() {
+        return new OptionPatchDto("수정된 상품 디테일","수정된 상품 이름",1000,1000000);
     }
 }

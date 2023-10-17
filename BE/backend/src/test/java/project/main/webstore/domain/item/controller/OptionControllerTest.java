@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 import project.main.webstore.annotation.WithMockCustomUser;
+import project.main.webstore.domain.item.dto.OptionPatchDto;
 import project.main.webstore.domain.item.dto.OptionPostRequestDto;
 import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.service.OptionService;
@@ -46,8 +47,7 @@ class OptionControllerTest {
     @WithMockCustomUser
     void post_option_test() throws Exception{
         // given
-        OptionPostRequestDto post = new OptionPostRequestDto("옵션 디테일", 100, 1000,
-                "옵션 이름");
+        OptionPostRequestDto post = itemStub.createPostItemOptionDto();
         String content = gson.toJson(post);
         ItemOption afterServiceMock = itemStub.createItemOption(1L);
 
@@ -66,5 +66,28 @@ class OptionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").isString())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").isString());
     }
+    @Test
+    @DisplayName("상품 옵션 수정 테스트")
+    @WithMockCustomUser
+    void patch_option_test() throws Exception{
+        // given
+        OptionPatchDto patch = itemStub.creatPatchOptionDto();
+        String content = gson.toJson(patch);
+        ItemOption afterServiceMock = itemStub.createItemOption(1L);
+
+        BDDMockito.given(optionService.editOption(any(ItemOption.class))).willReturn(afterServiceMock);
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.patch(DEFAULT_URL + "/options/{option-Id}", 1L).contentType(
+                        MediaType.APPLICATION_JSON).content(content));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.optionId").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").isString());
+    }
+
 
 }
