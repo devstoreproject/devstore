@@ -396,4 +396,27 @@ class OrderServiceTest {
         Assertions.assertThatThrownBy(() -> orderService.cancelOrder(1L,1L)).isInstanceOf(BusinessLogicException.class).hasMessage(UserExceptionCode.USER_NOT_ACCESS.getMessage());
     }
 
+    @Test
+    @DisplayName("주문 완료 변경 테스트")
+    void order_status_change_complete_test() throws Exception{
+        // given
+        Orders mockEntity = orderStub.createOrder(1L);
+
+        given(orderRepository.findById(anyLong())).willReturn(Optional.of(mockEntity));
+        // when
+        Orders result = orderService.orderStatusComplete(1L);
+
+        Assertions.assertThat(result.getOrdersStatus()).isEqualTo(DELIVERY_COMPLETE);
+    }
+
+    @Test
+    @DisplayName("주문 완료 변경 테스트")
+    void order_status_change_complete_fail_test() throws Exception{
+        // given
+
+        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
+        // when
+        Assertions.assertThatThrownBy(() -> orderService.orderStatusComplete(1L)).isInstanceOf(BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_NOT_FOUND.getMessage());
+    }
+
 }
