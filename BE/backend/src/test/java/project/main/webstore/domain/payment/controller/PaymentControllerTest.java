@@ -56,6 +56,21 @@ class PaymentControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.orderNumber").value(orderNumber));
     }
 
+    @Test
+    @DisplayName("결제 정보 사후 검증 테스트")
+    void after_payment_test() throws Exception{
+        // given
+        String orderNumber = createOrderNumber();
+
+        BDDMockito.given(service.validatePayment(ArgumentMatchers.anyString())).willReturn(10000);
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.get(DEFAULT_URL + "/post-valid/{orderNumber}", orderNumber));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isNumber());
+    }
 
     private String createOrderNumber() {
         Calendar cal = Calendar.getInstance();

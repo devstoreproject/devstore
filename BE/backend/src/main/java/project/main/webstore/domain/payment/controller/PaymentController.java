@@ -41,7 +41,7 @@ public class PaymentController {
     @ApiResponse(responseCode = "200",description = "결제 정보 사후 검증")
     public ResponseEntity validPayment(@PathVariable String orderNumber){  //로그인 성공 시 로직 변경 필요
         Integer amount = paymentService.validatePayment(orderNumber);
-        var responseDto = ResponseDto.builder().data(amount).build();
+        var responseDto = ResponseDto.builder().data(amount).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
 
