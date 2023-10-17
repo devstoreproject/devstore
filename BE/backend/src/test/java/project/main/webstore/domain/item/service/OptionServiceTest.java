@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -72,5 +75,27 @@ class OptionServiceTest {
         assertThatThrownBy(()-> service.editOption(patch)).hasMessage(OrderExceptionCode.OPTION_NOT_FOUND.getMessage());
     }
 
+    @Test
+    @DisplayName("옵션 삭제 테스트 : 실패[조회 불가]")
+    void delete_option_fail_test() throws Exception{
+        // given
+        given(optionRepository.findById(anyLong())).willReturn(Optional.empty());
+        // when
+        // then
+        assertThatThrownBy(()-> service.deleteOption(1L)).hasMessage(OrderExceptionCode.OPTION_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("옵션 삭제 테스트 : 성공")
+    void delete_option_test() throws Exception{
+        // given
+        given(optionRepository.findById(anyLong())).willReturn(Optional.of(itemStub.createItemOption(1L)));
+        willDoNothing().given(optionRepository).delete(any(ItemOption.class));
+        // when
+        service.deleteOption(1L);
+        // then
+        verify(optionRepository,times(1)).findById(anyLong());
+        verify(optionRepository,times(1)).delete(any(ItemOption.class));
+    }
 
 }
