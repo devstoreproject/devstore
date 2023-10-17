@@ -226,7 +226,7 @@ class ItemControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].itemId").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].itemId").value(2L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.pageSize").value(30));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.size").value(30));
 
     }
 
@@ -246,7 +246,7 @@ class ItemControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].itemId").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].itemId").value(2L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.pageSize").value(30));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.pageable.size").value(30));
 
     }
 

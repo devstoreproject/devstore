@@ -169,7 +169,7 @@ public class ImageStub extends TestUtils {
         return this.mockMultipartFile;
     }
 
-    protected ByteArrayResource getRealImage() throws IOException {
+    public ByteArrayResource getRealImage() throws IOException {
         Resource resource = new ClassPathResource("image/testImage.png");
 
         ByteArrayResource bytes = new ByteArrayResource(resource.getInputStream().readAllBytes()){

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import project.main.webstore.domain.image.dto.ImageSortPatchDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
+import project.main.webstore.domain.item.dto.OptionPatchDto;
 import project.main.webstore.domain.item.dto.OptionPostRequestDto;
 import project.main.webstore.domain.item.dto.PickedItemDto;
 import project.main.webstore.domain.item.entity.Item;
@@ -220,6 +221,29 @@ public class ItemStub extends ImageStub {
         List<PickedItem> list = new ArrayList<>();
         for(Long i = 1L ; i <= limit ; i++){
             list.add(new PickedItem(i,new Item(i + 10L),new User(i + 20L)));
+        }
+        return list;
+    }
+
+    public ItemOption createItemOption(Long id) {
+        return new ItemOption(id,"옵션 상세 설명" +id,"옵션 이름" + id,10000,100,false,createItem(1+id),new ArrayList<>(),new ArrayList<>());
+    }
+    public ItemOption createItemOption() {
+        return new ItemOption(null,"옵션 상세 설명" ,createItem(1L),100,"옵션 이름",10000);
+    }
+
+    public OptionPostRequestDto createPostItemOptionDto() {
+        return new OptionPostRequestDto("옵션 디테일", 100, 1000, "옵션 이름");
+    }
+
+    public OptionPatchDto creatPatchOptionDto() {
+        return new OptionPatchDto("수정된 상품 디테일","수정된 상품 이름",1000,1000000);
+    }
+
+    public List<ItemOption> createItemOptionList(Long index) {
+        List<ItemOption> list = new ArrayList<>();
+        for (Long i = 1L; i <= index; i++) {
+            list.add(createItemOption(i));
         }
         return list;
     }

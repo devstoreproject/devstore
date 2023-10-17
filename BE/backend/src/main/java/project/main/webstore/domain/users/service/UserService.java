@@ -1,5 +1,6 @@
 package project.main.webstore.domain.users.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -20,10 +21,7 @@ import project.main.webstore.email.enums.CheckCondition;
 import project.main.webstore.email.event.UserRegistrationApplicationEvent;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.redis.RedisUtils;
-import project.main.webstore.security.dto.LoginDto;
 import project.main.webstore.utils.FileUploader;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -41,7 +39,7 @@ public class UserService {
         verifyExistsEmail(user.getEmail());
         setEncryptedPassword(user);
         saveProfileImageIfHas(user, imageInfo);
-//        publisher.publishEvent(new UserRegistrationApplicationEvent(this, user, CheckCondition.JOIN));
+        publisher.publishEvent(new UserRegistrationApplicationEvent(this, user, CheckCondition.JOIN));
         return userRepository.save(user);
 
     }
@@ -162,14 +160,6 @@ public class UserService {
             Image image = fileUploader.uploadImage(imageInfo);
             user.setProfileImage(image.getImagePath());
         }
-    }
-
-    // tmp 임시
-    public User tmpLogin(LoginDto loginDto) {
-        String encode = passwordEncoder.encode(loginDto.getPassword());
-        Optional<User> byEmail = userRepository.findByEmail(loginDto.getUsername());
-
-        return byEmail.orElseThrow(() -> new BusinessLogicException(UserExceptionCode.USER_NOT_LOGIN));
     }
 
     public String getTmpPassword(User user) {

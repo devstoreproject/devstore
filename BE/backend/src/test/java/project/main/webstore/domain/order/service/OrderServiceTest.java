@@ -349,7 +349,7 @@ class OrderServiceTest {
     void order_cancel_test() throws Exception{
         // given
         given(userService.validUser(anyLong())).willReturn(userStub.createUser(1L));
-        given(orderRepository.findAllByOrderId(anyLong())).willReturn(Optional.of(orderStub.createOrderWithTrackNum(1L)));
+        given(orderRepository.findAllByOrderId(anyLong())).willReturn(Optional.of(orderStub.createOrder(1L)));
 
         // when
         orderService.cancelOrder(1L,1L);
@@ -395,5 +395,52 @@ class OrderServiceTest {
         // when
         Assertions.assertThatThrownBy(() -> orderService.cancelOrder(1L,1L)).isInstanceOf(BusinessLogicException.class).hasMessage(UserExceptionCode.USER_NOT_ACCESS.getMessage());
     }
+
+    @Test
+    @DisplayName("주문 완료 변경 테스트")
+    void order_status_change_complete_test() throws Exception{
+        // given
+        Orders mockEntity = orderStub.createOrder(1L);
+
+        given(orderRepository.findById(anyLong())).willReturn(Optional.of(mockEntity));
+        // when
+        Orders result = orderService.orderStatusComplete(1L);
+
+        Assertions.assertThat(result.getOrdersStatus()).isEqualTo(DELIVERY_COMPLETE);
+    }
+
+    @Test
+    @DisplayName("주문 완료 변경 실패 테스트")
+    void order_status_change_complete_fail_test() throws Exception{
+        // given
+
+        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
+        // when
+        Assertions.assertThatThrownBy(() -> orderService.orderStatusComplete(1L)).isInstanceOf(BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("주문 완료 변경 테스트")
+    void order_status_change_cancel_test() throws Exception{
+        // given
+        Orders mockEntity = orderStub.createOrder(1L);
+
+        given(orderRepository.findById(anyLong())).willReturn(Optional.of(mockEntity));
+        // when
+        Orders result = orderService.orderStatusCancel(1L);
+
+        Assertions.assertThat(result.getOrdersStatus()).isEqualTo(ORDER_CANCEL);
+    }
+
+    @Test
+    @DisplayName("주문 완료 변경 실패 테스트")
+    void order_status_change_cancel_fail_test() throws Exception{
+        // given
+
+        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
+        // when
+        Assertions.assertThatThrownBy(() -> orderService.orderStatusCancel(1L)).isInstanceOf(BusinessLogicException.class).hasMessage(OrderExceptionCode.ORDER_NOT_FOUND.getMessage());
+    }
+
 
 }

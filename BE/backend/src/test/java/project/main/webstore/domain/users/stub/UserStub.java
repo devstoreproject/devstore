@@ -2,17 +2,21 @@ package project.main.webstore.domain.users.stub;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.stereotype.Component;
 import project.main.webstore.domain.cart.entity.Cart;
+import project.main.webstore.domain.users.dto.ShippingInfoPatchDto;
+import project.main.webstore.domain.users.dto.ShippingInfoPostDto;
 import project.main.webstore.domain.users.dto.UserGetResponseDto;
 import project.main.webstore.domain.users.entity.ShippingInfo;
 import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.enums.UserRole;
+import project.main.webstore.helper.TestUtils;
 import project.main.webstore.valueObject.Address;
 
-public class UserStub {
+@Component
+public class UserStub extends TestUtils {
     public User createUser(Long id) {
         User user = User.stubBuilder()
                 .cart(new Cart())
@@ -34,6 +38,10 @@ public class UserStub {
         return user;
     }
 
+    public Page<User> userPage() {
+        return new PageImpl(users(),getPage(),30);
+    }
+
     public List<User> users() {
         List<User> users = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
@@ -51,10 +59,6 @@ public class UserStub {
             users.add(user);
         }
         return users;
-    }
-
-    public Page<User> getUser() {
-        return new PageImpl<User>(users());
     }
 
     public List<UserGetResponseDto> getUsers() {
@@ -75,11 +79,10 @@ public class UserStub {
     }
 
     public Page<UserGetResponseDto> getUserPage() {
-        return new PageImpl<UserGetResponseDto>(getUsers());
+        return new PageImpl<UserGetResponseDto>(getUsers(),getPage(),30);
     }
 
-    @NotNull
-    private static ShippingInfo createShippingInfo() {
+    public ShippingInfo createShippingInfo() {
         return new ShippingInfo(1L, "김복자", new Address("123-45", "대한민국", "우리집", "010-1234-6789"),
                 null);
     }
@@ -90,5 +93,29 @@ public class UserStub {
         info.setUser(user);
         user.getShippingInfoList().add(info);
         return user;
+    }
+
+    public List<ShippingInfo> createShippingInfoLit(Long index) {
+        List<ShippingInfo> list = new ArrayList<>();
+        for (Long i = 1L; i < index; i++) {
+            list.add(createShippingInfo(i));
+        }
+        return list;
+    }
+    public ShippingInfo createShippingInfo(Long id) {
+
+        ShippingInfo info = new ShippingInfo(id, "김복자",
+                new Address("123-45" + id, "대한민국" + id, "우리집" + id, "010-1234-6789"),
+                null);
+        info.setUser(createUser(1L));
+        return info;
+    }
+
+    public ShippingInfoPostDto createShipInfoPostDto() {
+        return new ShippingInfoPostDto("김성자","010-1234-1234","54040","서울시 성북구","세부 정보 주소");
+    }
+
+    public ShippingInfoPatchDto createShipInfoPatchDto() {
+        return new ShippingInfoPatchDto(null,"010-1234-1111",null,"부산시 북위동","아파트 102동 231호");
     }
 }

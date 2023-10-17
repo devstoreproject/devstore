@@ -160,24 +160,6 @@ public class Item extends Auditable {
         this.itemImageList = itemImageList;
     }
 
-    public Item(Long itemId, String itemName, String description,Integer itemPrice, Integer deliveryPrice, Integer discountRate, Category category, List<ItemOption> optionList) {
-        this.itemId = itemId;
-        this.itemName = itemName;
-        this.description = description;
-        this.viewCount = 0L;
-        this.itemPrice = itemPrice;
-        this.deliveryPrice = deliveryPrice;
-        this.discountRate = discountRate;
-        this.category = category;
-        this.optionList = optionList;
-        this.cartItemList = new ArrayList<>();
-        this.reviewList = new ArrayList<>();
-        this.questionList = new ArrayList<>();
-        this.pickedItem = new ArrayList<>();
-        this.defaultItem = new ItemOption(0,1000,this);
-        this.itemStatus = ItemStatus.ON_STACK;
-    }
-
     public Item(Long itemId, Integer itemPrice, Integer deliveryPrice, Integer discountRate) {
         this.itemId = itemId;
         this.itemPrice = itemPrice;

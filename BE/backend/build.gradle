@@ -78,7 +78,7 @@ tasks.named('test') {
 }
 sonar {
 	properties {
-		property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/report.JacocoXML.xml")
+		property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/report/JacocoXML.xml")
 		property("sonar.projectKey", "user-service-token")
 		property("sonar.organization", "myOrganization")
 		property("sonar.host.url", "$sonar_url")

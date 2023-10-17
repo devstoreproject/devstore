@@ -75,12 +75,13 @@ class NoticeServiceTest {
         Image image = imageStub.createImage(1, true);
         Notice notice = noticeStub.createEntity(1L);
         notice.setNoticeImage(new NoticeImage(image, notice));
+        ImageInfoDto postImage = imageStub.createImageInfoPath(1L, 1, true);
 
         given(userValidService.validUser(anyLong())).willReturn(user);
         given(repository.save(any(Notice.class))).willReturn(notice);
         given(fileUploader.uploadImage(any(ImageInfoDto.class))).willReturn(image);
         // when
-        Notice result = service.postNotice(notice, 1L);
+        Notice result = service.postNotice(notice,postImage ,1L);
         // then
         Assertions.assertThat(result.getNoticeCategory()).isEqualTo(NoticeCategory.EVENT);
         Assertions.assertThat(result.getId()).isEqualTo(1L);
@@ -119,7 +120,7 @@ class NoticeServiceTest {
         // when
         Notice result = service.patchNotice(null, patch);
         // then
-        Assertions.assertThat(result.getContent()).isEqualTo("컨텐츠");
+        Assertions.assertThat(result.getContent()).isEqualTo("컨텐츠1");
         Assertions.assertThat(result.getTitle()).isEqualTo(patch.getTitle());
     }
 
@@ -138,7 +139,7 @@ class NoticeServiceTest {
         // when
         Notice result = service.patchNotice(patchImage, patch);
         // then
-        Assertions.assertThat(result.getContent()).isEqualTo("컨텐츠");
+        Assertions.assertThat(result.getContent()).isEqualTo("컨텐츠1");
         Assertions.assertThat(result.getTitle()).isEqualTo(patch.getTitle());
         Assertions.assertThat(result.getNoticeImage().getId()).isEqualTo(patchImage.getId());
     }
