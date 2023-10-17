@@ -88,6 +88,21 @@ class OptionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").isString())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").isString());
     }
+    @Test
+    @DisplayName("상품 옵션 삭제 테스트")
+    @WithMockCustomUser
+    void delete_option_test() throws Exception{
+        // given
+        long optionId = 1L;
+        BDDMockito.willDoNothing().given(optionService).deleteOption(optionId);
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.delete(DEFAULT_URL + "/options/{option-Id}", optionId));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 
 
 }
