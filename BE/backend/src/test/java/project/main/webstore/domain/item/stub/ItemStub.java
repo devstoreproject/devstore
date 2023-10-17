@@ -223,4 +223,8 @@ public class ItemStub extends ImageStub {
         }
         return list;
     }
+
+    public ItemOption createItemOption(Long id) {
+        return new ItemOption(1L,"옵션 상세 설명" +id,new Item(id+1L),100,"옵션 이름"+id);
+    }
 }
