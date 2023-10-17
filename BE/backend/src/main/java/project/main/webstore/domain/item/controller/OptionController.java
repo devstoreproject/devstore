@@ -55,10 +55,10 @@ public class OptionController {
 
     @PatchMapping(path = "/options/{optionId}")
     @ApiResponse(responseCode = "200", description = "상품 옵션 수정 성공")
-    public ResponseEntity<ResponseDto<ItemOption>> editItemOption(@PathVariable @Positive Long OptionId,
+    public ResponseEntity<ResponseDto<ItemOption>> editItemOption(@PathVariable @Positive Long optionId,
                                                                   @RequestBody OptionPatchDto patch) {
         ItemOption request = optionMapper.toEntity(patch);
-        request.setOptionId(OptionId);
+        request.setOptionId(optionId);
         ItemOption result = optionService.editOption(request);
 
         ItemOption response = optionMapper.optionResponseToOption(result);

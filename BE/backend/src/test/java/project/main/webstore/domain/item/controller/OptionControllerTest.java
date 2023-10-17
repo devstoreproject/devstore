@@ -83,7 +83,7 @@ class OptionControllerTest {
                 .willReturn(afterServiceMock);
         // when
         ResultActions perform = mvc.perform(
-                MockMvcRequestBuilders.patch(DEFAULT_URL + "/options/{option-Id}", 1L).contentType(
+                MockMvcRequestBuilders.patch(DEFAULT_URL + "/options/{optionId}", 1L).contentType(
                         MediaType.APPLICATION_JSON).content(content));
         // then
         perform
@@ -103,7 +103,7 @@ class OptionControllerTest {
         BDDMockito.willDoNothing().given(optionService).deleteOption(optionId);
         // when
         ResultActions perform = mvc.perform(
-                MockMvcRequestBuilders.delete(DEFAULT_URL + "/options/{option-Id}", optionId));
+                MockMvcRequestBuilders.delete(DEFAULT_URL + "/options/{optionId}", optionId));
         // then
         perform
                 .andDo(MockMvcResultHandlers.log())
