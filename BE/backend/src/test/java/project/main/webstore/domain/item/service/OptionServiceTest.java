@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -97,5 +98,28 @@ class OptionServiceTest {
         verify(optionRepository,times(1)).findById(anyLong());
         verify(optionRepository,times(1)).delete(any(ItemOption.class));
     }
+
+    @Test
+    @DisplayName("옵션 단건 조회 테스트 : 성공")
+    void get_option_test() throws Exception{
+        // given
+        ItemOption mockEntity = itemStub.createItemOption(1L);
+        given(optionRepository.findById(anyLong())).willReturn(Optional.of(mockEntity));
+        // when
+        ItemOption result = service.getOption(1L);
+        // then
+        Assertions.assertThat(result).usingRecursiveComparison().isEqualTo(mockEntity);
+    }
+
+    @Test
+    @DisplayName("옵션 단건 조회 테스트 : 실패")
+    void get_option_fail_test() throws Exception{
+        // given
+        given(optionRepository.findById(anyLong())).willReturn(Optional.empty());
+        // when
+        // then
+        assertThatThrownBy(() -> service.getOption(1L)).hasMessage(OrderExceptionCode.OPTION_NOT_FOUND.getMessage());
+    }
+
 
 }
