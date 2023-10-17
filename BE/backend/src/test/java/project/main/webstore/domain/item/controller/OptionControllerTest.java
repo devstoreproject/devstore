@@ -32,6 +32,7 @@ import project.main.webstore.domain.item.stub.ItemStub;
 @AutoConfigureMockMvc
 @Transactional
 class OptionControllerTest {
+
     @Autowired
     MockMvc mvc;
     @Autowired
@@ -46,13 +47,14 @@ class OptionControllerTest {
     @Test
     @DisplayName("상품 옵션 등록 테스트")
     @WithMockCustomUser
-    void post_option_test() throws Exception{
+    void post_option_test() throws Exception {
         // given
         OptionPostRequestDto post = itemStub.createPostItemOptionDto();
         String content = gson.toJson(post);
         ItemOption afterServiceMock = itemStub.createItemOption(1L);
 
-        BDDMockito.given(optionService.writeOption(any(ItemOption.class),anyLong())).willReturn(afterServiceMock);
+        BDDMockito.given(optionService.writeOption(any(ItemOption.class), anyLong()))
+                .willReturn(afterServiceMock);
         // when
         ResultActions perform = mvc.perform(
                 MockMvcRequestBuilders.post(DEFAULT_URL + "/{itemId}/options", 1L).contentType(
@@ -67,16 +69,18 @@ class OptionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").isString())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").isString());
     }
+
     @Test
     @DisplayName("상품 옵션 수정 테스트")
     @WithMockCustomUser
-    void patch_option_test() throws Exception{
+    void patch_option_test() throws Exception {
         // given
         OptionPatchDto patch = itemStub.creatPatchOptionDto();
         String content = gson.toJson(patch);
         ItemOption afterServiceMock = itemStub.createItemOption(1L);
 
-        BDDMockito.given(optionService.editOption(any(ItemOption.class))).willReturn(afterServiceMock);
+        BDDMockito.given(optionService.editOption(any(ItemOption.class)))
+                .willReturn(afterServiceMock);
         // when
         ResultActions perform = mvc.perform(
                 MockMvcRequestBuilders.patch(DEFAULT_URL + "/options/{option-Id}", 1L).contentType(
@@ -89,10 +93,11 @@ class OptionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").isString())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").isString());
     }
+
     @Test
     @DisplayName("상품 옵션 삭제 테스트")
     @WithMockCustomUser
-    void delete_option_test() throws Exception{
+    void delete_option_test() throws Exception {
         // given
         long optionId = 1L;
         BDDMockito.willDoNothing().given(optionService).deleteOption(optionId);
@@ -107,7 +112,7 @@ class OptionControllerTest {
 
     @Test
     @DisplayName("상품 옵션 단건 조회 테스트")
-    void get_option_test() throws Exception{
+    void get_option_test() throws Exception {
         // given
         Long itemId = 1L;
         Long optionId = 1L;
@@ -116,7 +121,8 @@ class OptionControllerTest {
         BDDMockito.given(optionService.getOption(anyLong())).willReturn(afterServiceMock);
         // when
         ResultActions perform = mvc.perform(
-                MockMvcRequestBuilders.get(DEFAULT_URL + "/{itemId}/options/{optionId}", itemId,optionId));
+                MockMvcRequestBuilders.get(DEFAULT_URL + "/{itemId}/options/{optionId}", itemId,
+                        optionId));
         // then
         perform
                 .andDo(MockMvcResultHandlers.log())
@@ -133,7 +139,7 @@ class OptionControllerTest {
 
     @Test
     @DisplayName("상품별 옵션 전체 조회 테스트")
-    void get_option_list_test() throws Exception{
+    void get_option_list_test() throws Exception {
         // given
         Long itemId = 1L;
         List<ItemOption> afterServiceMockList = itemStub.createItemOptionList(10L);
