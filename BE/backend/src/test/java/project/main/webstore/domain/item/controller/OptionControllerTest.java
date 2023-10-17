@@ -104,5 +104,32 @@ class OptionControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
+    @Test
+    @DisplayName("상품 옵션 단건 조회 테스트")
+    @WithMockCustomUser
+    void get_option_test() throws Exception{
+        // given
+        Long itemId = 1L;
+        Long optionId = 1L;
+        ItemOption afterServiceMock = itemStub.createItemOption(1L);
+
+        BDDMockito.given(optionService.getOption(anyLong())).willReturn(afterServiceMock);
+        // when
+        ResultActions perform = mvc.perform(
+                MockMvcRequestBuilders.get(DEFAULT_URL + "/{itemId}/options/{optionId}", itemId,optionId));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.itemId").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.optionId").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.optionDetail").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.additionalPrice").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.itemCount").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.optionName").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").isString())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").isString());
+    }
+
 
 }
