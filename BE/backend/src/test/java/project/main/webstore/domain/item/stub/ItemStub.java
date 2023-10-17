@@ -236,4 +236,12 @@ public class ItemStub extends ImageStub {
     public OptionPatchDto creatPatchOptionDto() {
         return new OptionPatchDto("수정된 상품 디테일","수정된 상품 이름",1000,1000000);
     }
+
+    public List<ItemOption> createItemOptionList(Long index) {
+        List<ItemOption> list = new ArrayList<>();
+        for (Long i = 1L; i <= index; i++) {
+            list.add(createItemOption(i));
+        }
+        return list;
+    }
 }
