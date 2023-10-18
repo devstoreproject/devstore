@@ -3,40 +3,27 @@ package project.main.webstore.domain.users.controller;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.mapper.ImageMapper;
-import project.main.webstore.domain.users.dto.UserGetPasswordRequestDto;
-import project.main.webstore.domain.users.dto.UserGetPasswordResponseDto;
-import project.main.webstore.domain.users.dto.UserGetResponseDto;
-import project.main.webstore.domain.users.dto.UserIdResponseDto;
-import project.main.webstore.domain.users.dto.UserPatchRequestDto;
-import project.main.webstore.domain.users.dto.UserPostRequestDto;
+import project.main.webstore.domain.users.dto.*;
 import project.main.webstore.domain.users.entity.User;
+import project.main.webstore.domain.users.enums.ProviderId;
 import project.main.webstore.domain.users.mapper.UserMapper;
 import project.main.webstore.domain.users.service.UserService;
-import project.main.webstore.dto.CustomPage;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/users")
@@ -107,12 +94,12 @@ public class UserController {
 
     @GetMapping
     @ApiResponse(responseCode = "200", description = "사용자 정보 리스트 조회\n 관리자만 가능한 코드")
-    public ResponseEntity<ResponseDto<CustomPage<UserGetResponseDto>>> getUserPage(@AuthenticationPrincipal Object principal,
+    public ResponseEntity<ResponseDto<Page<UserGetResponseDto>>> getUserPage(@AuthenticationPrincipal Object principal,
                                                                              Pageable pageable) {
         CheckLoginUser.validAdmin(principal);
         Page<User> result = service.getUserPage(pageable);
-        CustomPage<UserGetResponseDto> response = userMapper.toGetDtoResponse(result);
-        var responseDto = ResponseDto.<CustomPage<UserGetResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        Page<UserGetResponseDto> response = userMapper.toGetDtoResponse(result);
+        var responseDto = ResponseDto.<Page<UserGetResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
@@ -129,7 +116,7 @@ public class UserController {
 
     @GetMapping("/valid-nick")
     @ApiResponse(responseCode = "200", description = "닉네임 중복 검사")
-    public ResponseEntity<ResponseDto<Boolean>> validNickName(@Parameter(description = "닉네임", example = "김성자") @RequestParam("nickName") String nickName) {
+    public ResponseEntity<ResponseDto<Boolean>> validNickName(@Parameter(description = "닉네임", example = "김성자의생활") @RequestParam("nickName") String nickName) {
         boolean result = service.checkNickName(nickName);
         ResponseDto<Boolean> responseDto = ResponseDto.<Boolean>builder().data(result).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
@@ -152,5 +139,14 @@ public class UserController {
         UserGetPasswordResponseDto response = userMapper.toGetPasswordResponse(result);
         var responseDto = ResponseDto.<UserGetPasswordResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/set-default")
+    public ResponseEntity setDefault() {
+        User user = new User(1L);
+        user.setPassword("admin111!!");
+        user.setProviderId(ProviderId.JWT);
+        service.patchUser(user,null);
+        return ResponseEntity.noContent().build();
     }
 }

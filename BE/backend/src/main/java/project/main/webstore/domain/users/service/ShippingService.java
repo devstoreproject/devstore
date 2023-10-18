@@ -1,7 +1,5 @@
 package project.main.webstore.domain.users.service;
 
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,6 +10,9 @@ import project.main.webstore.domain.users.entity.User;
 import project.main.webstore.domain.users.repository.ShippingRepository;
 import project.main.webstore.exception.BusinessLogicException;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Slf4j
 @Transactional
@@ -20,15 +21,15 @@ public class ShippingService {
     private final ShippingRepository shippingRepository;
     private final UserValidService userValidService;
 
-    public ShippingInfo postAddressInfo(ShippingInfo info, Long userId) {
+    public ShippingInfo writeInfo(ShippingInfo info, Long userId) {
         User findUser = userValidService.validUser(userId);
         findUser.addShipInfo(info);
         return info;
     }
 
-    public ShippingInfo updateAddressInfo(ShippingInfo info, Long userId) {
+    public ShippingInfo editInfo(ShippingInfo info, Long userId) {
         User findUser = userValidService.validUser(userId);
-        ShippingInfo findInfo = validAddressInfo(info.getInfoId());
+        ShippingInfo findInfo = findVerifiedInfo(info.getInfoId());
 
         Optional.ofNullable(info.getRecipient()).ifPresent(findInfo::setRecipient);
         Optional.ofNullable(info.getAddress()).ifPresent(findInfo::setAddress);
@@ -38,21 +39,21 @@ public class ShippingService {
         return findInfo;
     }
 
-    public ShippingInfo getAddressInfo(Long infoId) {
-        return validAddressInfo(infoId);
+    public ShippingInfo getInfo(Long infoId) {
+        return findVerifiedInfo(infoId);
     }
     public List<ShippingInfo> getInfoList(Long userId) {
         User findUser = userValidService.validUser(userId);
         return findUser.getShippingInfoList();
     }
 
-    public void deleteAddressInfo(Long infoId, Long userId) {
+    public void deleteInfo(Long infoId, Long userId) {
         User findUser = userValidService.validUser(userId);
-        ShippingInfo findInfo = validAddressInfo(infoId);
+        ShippingInfo findInfo = findVerifiedInfo(infoId);
         findInfo.setUser(findUser);
         shippingRepository.delete(findInfo);
     }
-    private ShippingInfo validAddressInfo(Long infoId) {
+    private ShippingInfo findVerifiedInfo(Long infoId) {
         Optional<ShippingInfo> findByInfoId = shippingRepository.findByInfoId(infoId);
         return findByInfoId.orElseThrow(() -> new BusinessLogicException(OrderExceptionCode.SHIPPING_INFO_NOT_FOUND));
     }

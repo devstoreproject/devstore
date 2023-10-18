@@ -1,8 +1,5 @@
 package project.main.webstore.domain.order.repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -15,12 +12,17 @@ import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 public interface OrderRepository extends JpaRepository<Orders, Long> {
     Optional<Orders> findByOrderNumber(String orderNumber);
     @EntityGraph(attributePaths = {"user","coupons","orderedItemList"})
     Optional<Orders> findAllByOrderNumber(String orderNumber);
     @EntityGraph(attributePaths = {"user"})
     Optional<Orders> findUserByOrderNumber(String orderNumber);
+    @EntityGraph
     Optional<Orders> findAllByOrderId(Long orderId);
     @EntityGraph(attributePaths = {"user"})
     Optional<Orders> findByOrderId(Long orderId);

@@ -51,7 +51,6 @@ public class OrderService {
         
        List<OrderedItem> orderedItemList = requestOrderItemList.stream().map(OrderedItem::new).collect(Collectors.toList());
 
-       //구매 수량 추가
         for (OrderedItem orderedItem : orderedItemList) {
             Item item = orderedItem.getItem();
             item.addSalesQuantity(orderedItem.getItemCount());
@@ -59,7 +58,7 @@ public class OrderService {
 
         int deliveryPrice = requestOrderItemList.stream()
                 .mapToInt(cartItem -> cartItem.getOption().getItem().getDeliveryPrice()).max()
-                .orElseThrow(() -> new BusinessLogicException(OrderExceptionCode.ORDER_ITEM_PRICE_NOT_FOUND));
+                .getAsInt();
 
         Orders order = new Orders(post.getMessage(),orderedItemList,deliveryPrice,user,shippingInfo);
         order.transItemCount(TransCondition.MINUS);
@@ -70,7 +69,6 @@ public class OrderService {
     }
 
     private List<CartItem> seperateOrderedItem(List<CartItem> cartItemList, List<Long> cartItemIdList) {
-        validCartItemExist(cartItemList, cartItemIdList);
         List<CartItem> requestOrderedItemList = new ArrayList<>();
 
         Map<Long,CartItem> seperateOrderedItemMap = new ConcurrentHashMap();
@@ -87,11 +85,6 @@ public class OrderService {
             }
         }
         return requestOrderedItemList;
-    }
-
-    private void validCartItemExist(List<CartItem> cartItemList, List<Long> cartItemIdList) {
-        if(cartItemList.isEmpty() || cartItemIdList.isEmpty())
-            throw new BusinessLogicException(OrderExceptionCode.ORDER_ITEM_NOT_FOUND);
     }
 
     // 주문 양식만 수정 요청 사항만 수정이 가능하다.
@@ -151,7 +144,7 @@ public class OrderService {
         findOrder.getUser().validUserHasAccess(findUser);
 
         //변경할 수 있는 상태라면
-        if (!checkStatus(findOrder)) {
+        if (checkStatus(findOrder)) {
             findOrder.setOrdersStatus(OrdersStatus.ORDER_CANCEL);
             findOrder.transItemCount(TransCondition.PLUS);
         } else if (findOrder.getOrdersStatus() == OrdersStatus.ORDER_CANCEL) {
@@ -196,7 +189,7 @@ public class OrderService {
 
     // 주문 정보 검증
     private boolean checkStatus(Orders order) {
-        return order.getOrdersStatus().getIndex() > OrdersStatus.ORDER_COMPLETE.getIndex();
+        return order.getOrdersStatus().getIndex() >= OrdersStatus.ORDER_COMPLETE.getIndex();
     }
 
     private void validOrderUserSame(Long userId, Orders findOrder) {

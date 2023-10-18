@@ -1,17 +1,13 @@
 package project.main.webstore.domain.cart.dto;
 
+import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.util.stream.Collectors;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import project.main.webstore.domain.cart.entity.Cart;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class CartGetResponseDto {
-
     private Long cartId;
     private Long userId;
     private int deliveryPrice;
@@ -19,5 +15,13 @@ public class CartGetResponseDto {
     private int discountedPrice;
     private List<OptionDto> itemList;
 
+    public CartGetResponseDto(Cart cart) {
+        this.cartId = cart.getId();
+        this.userId = cart.getUser().getId();
+        this.itemList = cart.getCartItemList() != null?cart.getCartItemList().stream().map(OptionDto::new).collect(Collectors.toList()) : new ArrayList<>();
+        this.deliveryPrice = cart.getDeliveryPrice();
+        this.totalPrice = cart.getOriginalTotalPrice();
+        this.discountedPrice = cart.getDiscountedTotalPrice();
+    }
 }
 

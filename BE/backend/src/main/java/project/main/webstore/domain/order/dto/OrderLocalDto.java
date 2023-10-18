@@ -20,4 +20,17 @@ public class OrderLocalDto {
     private Long cartId;
     private Long orderId;
     private List<Long> orderCartItemIdList;
+
+    public void addUserId(Long userId){
+        this.userId = userId;
+    }
+    public OrderLocalDto(OrderPostDto post) {
+        this.message = post.getMessage();
+        this.shippingId = post.getShippingInfoId();
+        this.orderCartItemIdList = post.getCartItemIdList();
+    }
+    public OrderLocalDto(OrderPatchDto patch) {
+        this.message = patch.getMessage();
+        this.shippingId = patch.getShippingInfoId();
+    }
 }

@@ -4,10 +4,6 @@ package project.main.webstore.domain.order.controller;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.net.URI;
-import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,37 +13,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import project.main.webstore.domain.order.dto.OrderDBDailyPriceDto;
-import project.main.webstore.domain.order.dto.OrderDBItemSaleDto;
-import project.main.webstore.domain.order.dto.OrderDBMonthlyPriceDto;
-import project.main.webstore.domain.order.dto.OrderDailyPriceDto;
-import project.main.webstore.domain.order.dto.OrderIdAndStatusDto;
-import project.main.webstore.domain.order.dto.OrderIdResponseDto;
-import project.main.webstore.domain.order.dto.OrderItemSaleDto;
-import project.main.webstore.domain.order.dto.OrderLocalDto;
-import project.main.webstore.domain.order.dto.OrderMonthlyPriceDto;
-import project.main.webstore.domain.order.dto.OrderPatchDto;
-import project.main.webstore.domain.order.dto.OrderPostDto;
-import project.main.webstore.domain.order.dto.OrderRefundRequestDto;
-import project.main.webstore.domain.order.dto.OrderResponseDto;
-import project.main.webstore.domain.order.dto.OrderTrackingInfoDto;
+import org.springframework.web.bind.annotation.*;
+import project.main.webstore.domain.order.dto.*;
 import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.mapper.OrderMapper;
 import project.main.webstore.domain.order.service.OrderService;
-import project.main.webstore.dto.CustomPage;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import java.net.URI;
+import java.util.List;
 
 @Tag(name = "주문 API", description = "주문 관련 API")
 @RestController
@@ -55,7 +34,7 @@ import project.main.webstore.utils.UriCreator;
 @Validated
 @RequiredArgsConstructor
 public class OrderController {
-    private final static String ORDER_URL = "orders";
+    private final String ORDER_URL = "/api/orders";
     private final OrderService orderService;
     private final OrderMapper orderMapper;
 
@@ -64,8 +43,8 @@ public class OrderController {
     public ResponseEntity<ResponseDto<OrderIdResponseDto>> postOrder(@RequestBody @Valid OrderPostDto post,
                                                                      @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        post.setUserId(userId);
         OrderLocalDto localOrder = orderMapper.orderPostDtoToOrder(post);
+        localOrder.addUserId(userId);
         Orders createOrder = orderService.createOrder(localOrder);
         OrderIdResponseDto response = orderMapper.toIdResponse(createOrder);
 
@@ -98,7 +77,7 @@ public class OrderController {
 
         Long userId = CheckLoginUser.getContextIdx(principal);
         Orders order = orderService.getOrder(orderId, userId);
-        OrderResponseDto response = orderMapper.toResponseDto(order);
+        OrderResponseDto response = orderMapper.orderToOrderResponseDto(order);
 
         var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
@@ -111,7 +90,7 @@ public class OrderController {
         Long userId = CheckLoginUser.getContextIdAdminZero(principal);
 
         Orders order = orderService.getOrder(orderNumber,userId);
-        OrderResponseDto response = orderMapper.toResponseDto(order);
+        OrderResponseDto response = orderMapper.orderToOrderResponseDto(order);
 
         var responseDto = ResponseDto.<OrderResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
@@ -120,14 +99,14 @@ public class OrderController {
 
     @ApiResponse(responseCode = "200", description = "전체 주문정보 가져오기 페이지")
     @GetMapping
-    public ResponseEntity<ResponseDto<CustomPage<OrderResponseDto>>> getOrders(@Parameter(hidden = true) @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity<ResponseDto<Page<OrderResponseDto>>> getOrders(@Parameter(hidden = true) @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                                                          @RequestParam(value = "month",required = false) Integer month,
                                                                          @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdAdminZero(principal);
         Page<Orders> ordersPage = orderService.getOrders(pageable,userId,month);
-        CustomPage<OrderResponseDto> response = orderMapper.toResponsePageDto(ordersPage);
+        Page<OrderResponseDto> response = orderMapper.orderToOrderResponsePage(ordersPage);
 
-        var responseDto = ResponseDto.<CustomPage<OrderResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        var responseDto = ResponseDto.<Page<OrderResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
@@ -175,7 +154,7 @@ public class OrderController {
         Orders result = orderService.setTrackingNumber(orderId, trackingInfo.getTrackingNumber(),trackingInfo.getDeliveryCompany());
         OrderIdResponseDto response = orderMapper.toIdResponse(result);
         var responseDto = ResponseDto.<OrderIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
-        URI uri = UriCreator.createUri(ORDER_URL , responseDto.getData().getOrderId());
+        URI uri = UriCreator.createUri(ORDER_URL + "/{orderId}", responseDto.getData().getOrderId());
 
         return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
     }
@@ -186,8 +165,8 @@ public class OrderController {
         Long userId = CheckLoginUser.getContextIdx(principal);
         Orders result = orderService.refundOrder(userId, orderId,dto.getItemIdList());
         OrderIdAndStatusDto response = orderMapper.toResponse(result);
-        var responseDto = ResponseDto.<OrderIdAndStatusDto>builder().customCode(ResponseCode.OK).data(response).build();
-        URI uri = UriCreator.createUri(ORDER_URL, responseDto.getData().getOrderId());
+        ResponseDto<OrderIdAndStatusDto> responseDto = ResponseDto.<OrderIdAndStatusDto>builder().customCode(ResponseCode.OK).data(response).build();
+        URI uri = UriCreator.createUri(ORDER_URL + "/{orderId}", responseDto.getData().getOrderId());
 
         return ResponseEntity.ok().header("Location",uri.toString()).body(responseDto);
     }
@@ -195,16 +174,16 @@ public class OrderController {
     public ResponseEntity<ResponseDto<OrderIdResponseDto>> deliveryCompleteOrder(@PathVariable Long orderId,@RequestParam("status") String status){
         Orders result = orderService.changStatus(orderId, status);
         OrderIdResponseDto response = orderMapper.toIdResponse(result);
-        var responseDto = ResponseDto.<OrderIdResponseDto>builder().customCode(ResponseCode.OK).data(response).build();
+        ResponseDto<OrderIdResponseDto> responseDto = ResponseDto.<OrderIdResponseDto>builder().customCode(ResponseCode.OK).data(response).build();
 
         return ResponseEntity.ok().body(responseDto);
     }
 
     @GetMapping("/status")
-    public ResponseEntity<ResponseDto<CustomPage<OrderResponseDto>>> getOrderByStatus(Pageable pageable,@RequestParam("status") String status){
+    public ResponseEntity<ResponseDto<Page<OrderResponseDto>>> getOrderByStatus(Pageable pageable,@RequestParam("status") String status){
         Page<Orders> result = orderService.getOrderByStatus(pageable, status);
-        CustomPage<OrderResponseDto> response = orderMapper.toResponsePageDto(result);
-        var responseDto = ResponseDto.<CustomPage<OrderResponseDto>>builder().customCode(ResponseCode.OK).data(response).build();
+        Page<OrderResponseDto> response = orderMapper.orderToOrderResponsePage(result);
+        ResponseDto<Page<OrderResponseDto>> responseDto = ResponseDto.<Page<OrderResponseDto>>builder().customCode(ResponseCode.OK).data(response).build();
 
         return ResponseEntity.ok().body(responseDto);
     }

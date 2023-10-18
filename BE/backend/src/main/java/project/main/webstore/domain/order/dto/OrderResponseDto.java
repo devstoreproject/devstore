@@ -1,23 +1,21 @@
 package project.main.webstore.domain.order.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project.main.webstore.domain.order.entity.Orders;
 import project.main.webstore.domain.order.enums.OrdersStatus;
 import project.main.webstore.domain.users.dto.ShippingAddressInfoDto;
 import project.main.webstore.domain.users.dto.UserOrderDto;
-import project.main.webstore.dto.Dto;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-public class OrderResponseDto implements Dto { // 주문서 총 정보
+public class OrderResponseDto { // 주문서 총 정보
     private Long orderId;
     private String orderNumber;
 
@@ -36,4 +34,18 @@ public class OrderResponseDto implements Dto { // 주문서 총 정보
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
+    public OrderResponseDto(Orders order) {
+        this.orderId = order.getOrderId();
+        this.orderNumber = order.getOrderNumber();
+        this.addressInfo = new ShippingAddressInfoDto(order.getAddress(), order.getRecipient());
+        this.userInfo = new UserOrderDto(order.getUser());
+        this.orderItemList = order.getOrderedItemList() != null ? order.getOrderedItemList().stream().map(OrderItemResponseDto::new).collect(Collectors.toList()) : null;
+        this.totalPrice = order.getTotalOrderedOriginalPrice();
+        this.discountedPrice = order.getTotalOrderedDiscountedPrice();
+        this.deliveryPrice = order.getDeliveryPrice();
+        this.ordersStatus = order.getOrdersStatus();
+        this.message = order.getMessage();
+        this.createdAt = order.getCreatedAt();
+        this.modifiedAt = order.getModifiedAt();
+    }
 }

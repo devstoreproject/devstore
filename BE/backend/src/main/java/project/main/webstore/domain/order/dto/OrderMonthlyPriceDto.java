@@ -1,9 +1,10 @@
 package project.main.webstore.domain.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
@@ -14,7 +15,7 @@ public class OrderMonthlyPriceDto {
     private Long totalOriginalPrice;
 
     public OrderMonthlyPriceDto(OrderDBMonthlyPriceDto dto) {
-        this.localDate = LocalDate.of(dto.getYear(),dto.getMonth(),20);
+        this.localDate = LocalDate.of(dto.getYear(),dto.getMonth(),30);
         this.totalDiscountedPrice = dto.getTotalDiscountedPrice();
         this.totalOriginalPrice = dto.getTotalOriginalPrice();
     }

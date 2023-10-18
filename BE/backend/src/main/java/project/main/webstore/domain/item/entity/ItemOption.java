@@ -14,7 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +27,6 @@ import project.main.webstore.domain.order.entity.OrderedItem;
 @Setter
 @Table(name = "ITEM_OPTION")
 @NoArgsConstructor
-@AllArgsConstructor
 public class ItemOption {
     @Id
     @Column(name = "ITEM_OPTION_ID", updatable = false)
@@ -103,19 +101,5 @@ public class ItemOption {
         this.additionalPrice = additionalPrice;
         this.itemCount = itemCount;
         this.item = item;
-    }
-
-    public ItemOption(Long optionId) {
-        this.optionId = optionId;
-    }
-    public ItemOption(Long optionId, String optionDetail, Item item,Integer itemCount,String optionName,int additionalPrice) {
-        this.optionId = optionId;
-        this.itemCount = itemCount;
-        this.optionDetail = optionDetail;
-        this.item = item;
-        this.optionName = optionName;
-        this.cartItemList = new ArrayList<>();
-        this.orderItem = new ArrayList<>();
-        this.additionalPrice = additionalPrice;
     }
 }

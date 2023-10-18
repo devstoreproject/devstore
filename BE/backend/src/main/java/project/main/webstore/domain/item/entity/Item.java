@@ -1,27 +1,6 @@
 package project.main.webstore.domain.item.entity;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.IDENTITY;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,15 +15,22 @@ import project.main.webstore.domain.item.enums.ItemStatus;
 import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.review.entity.Review;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Getter
 @Entity
-@Builder
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = "itemId")})
 @NoArgsConstructor
-@AllArgsConstructor
 public class Item extends Auditable {
     @Setter
-    @Default
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
     private List<ItemImage> itemImageList = new ArrayList<>();
     @Id
@@ -62,7 +48,6 @@ public class Item extends Auditable {
     private long viewCount;
 
     @Setter
-    @Default
     @Enumerated(STRING)
     private ItemStatus itemStatus = ItemStatus.ON_STACK;
 
@@ -84,17 +69,14 @@ public class Item extends Auditable {
     private boolean like;
 
     // 연관관계 매핑 //
-    @Default
     @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = ALL)
     private List<ItemOption> optionList = new ArrayList<>();
-    @Default
+
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
     private List<Review> reviewList = new ArrayList<>();
-    @Default
     @OneToMany(mappedBy = "item", cascade = ALL, orphanRemoval = true)
     private List<Question> questionList = new ArrayList<>();
     //PickedItem 연관관계 매핑
-    @Default
     @OneToMany(fetch = LAZY, cascade = ALL, mappedBy = "item")
     private List<PickedItem> pickedItem = new ArrayList<>();
 
@@ -102,17 +84,10 @@ public class Item extends Auditable {
     @Setter
     private ItemOption defaultItem;
     @Setter
-    @Default
     @OneToMany(cascade = ALL,orphanRemoval = true)
     private List<CartItem> cartItemList = new ArrayList<>();
     public Item(Long itemId) {
         this.itemId = itemId;
-        this.defaultItem = new ItemOption();
-        this.optionList = new ArrayList<>();
-        this.cartItemList = new ArrayList<>();
-        this.reviewList = new ArrayList<>();
-        this.questionList = new ArrayList<>();
-        this.pickedItem = new ArrayList<>();
     }
 
     public Item(ItemPostDto post) {
@@ -141,6 +116,7 @@ public class Item extends Auditable {
 
 
 
+    @Builder(builderMethodName = "stub")
     public Item(List<ItemImage> itemImageList, Long itemId, String itemName, String description, Integer itemPrice, Integer deliveryPrice, Integer discountRate, Category category, List<ItemOption> optionList, List<CartItem> cartItemList, List<Review> reviewList, List<Question> questionList, List<PickedItem> pickedItem, ItemOption defaultItem) {
         this.itemId = itemId;
         this.itemName = itemName;
@@ -160,11 +136,22 @@ public class Item extends Auditable {
         this.itemImageList = itemImageList;
     }
 
-    public Item(Long itemId, Integer itemPrice, Integer deliveryPrice, Integer discountRate) {
+    public Item(Long itemId, String itemName, String description,Integer itemPrice, Integer deliveryPrice, Integer discountRate, Category category, List<ItemOption> optionList) {
         this.itemId = itemId;
+        this.itemName = itemName;
+        this.description = description;
+        this.viewCount = 0L;
         this.itemPrice = itemPrice;
         this.deliveryPrice = deliveryPrice;
         this.discountRate = discountRate;
+        this.category = category;
+        this.optionList = optionList;
+        this.cartItemList = new ArrayList<>();
+        this.reviewList = new ArrayList<>();
+        this.questionList = new ArrayList<>();
+        this.pickedItem = new ArrayList<>();
+        this.defaultItem = new ItemOption(0,1000,this);
+        this.itemStatus = ItemStatus.ON_STACK;
     }
 
     public void item(Long itemId) {
@@ -213,16 +200,6 @@ public class Item extends Auditable {
             }
         }
         return optionList;
-    }
-    public void addOptionList(List<ItemOption> itemOptionList) {
-        for (ItemOption itemOption : itemOptionList) {
-            this.optionList.add(itemOption);
-            itemOption.setItem(this);
-        }
-    }
-    public void addDefaultItem(ItemOption itemOption){
-        this.defaultItem = itemOption;
-        itemOption.setItem(this);
     }
 }
 

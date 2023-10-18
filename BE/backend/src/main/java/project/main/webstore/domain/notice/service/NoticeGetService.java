@@ -19,22 +19,17 @@ public class NoticeGetService {
 
     //단순하게 조회하는 것
     public Notice getNotice(Long noticeId) {
-        Notice notice = validNotice(noticeId);
+        Notice notice = repository.findNotice(noticeId).orElseThrow(() -> new BusinessLogicException(NoticeException.NOTICE_NOT_FOUND));
         notice.addViewCount();
         return notice;
     }
 
     //공지사항 전체 리스트 조회
-
     public Page<Notice> getSimpleNotice(Pageable pageable,String category) {
             if (category == null) {
                 return repository.findNoticePage(pageable);
             }
         NoticeCategory noticeCategory =NoticeCategory.of(category);
         return repository.findNoticePageByCategory(pageable,noticeCategory);
-    }
-    private Notice validNotice(Long noticeId) {
-        return repository.findNotice(noticeId)
-                .orElseThrow(() -> new BusinessLogicException(NoticeException.NOTICE_NOT_FOUND));
     }
 }

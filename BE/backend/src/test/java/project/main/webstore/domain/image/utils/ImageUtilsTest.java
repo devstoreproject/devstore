@@ -1,10 +1,5 @@
 package project.main.webstore.domain.image.utils;
 
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.mockito.BDDMockito.given;
-
-import java.util.List;
-import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +12,12 @@ import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.stub.ImageStub;
 import project.main.webstore.utils.FileUploader;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ImageUtilsTest {
@@ -54,7 +55,7 @@ class ImageUtilsTest {
         // given
         List<ImageInfoDto> imageInfo = stub.createImageInfo(0, true);
         // when
-        Throwable exceptionImageOrderConflict = catchThrowable(() -> imageUtils.imageValidDTOOrder(imageInfo));
+        Throwable exceptionImageOrderConflict = catchThrowable(() -> imageUtils.imageValid(imageInfo));
 
         // then
         Assertions.assertThat(exceptionImageOrderConflict).as("이미지 순서는 중복될 수 없습니다.")

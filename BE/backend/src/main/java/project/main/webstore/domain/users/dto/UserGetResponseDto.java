@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import project.main.webstore.domain.users.entity.User;
-import project.main.webstore.dto.Dto;
 
 @Getter
 @Builder
 @AllArgsConstructor
-public class UserGetResponseDto implements Dto {
+public class UserGetResponseDto {
     private Long userId;
     private String email;
     private String password;

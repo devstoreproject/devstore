@@ -5,11 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.qna.enums.QnaStatus;
-import project.main.webstore.dto.Dto;
 
 @Getter
 @NoArgsConstructor
-public class QuestionDto implements Dto {
+public class QuestionDto {
     @Schema(description = "질문글 식별자")
     private Long questionId;
     @Schema(description = "질문 본문")

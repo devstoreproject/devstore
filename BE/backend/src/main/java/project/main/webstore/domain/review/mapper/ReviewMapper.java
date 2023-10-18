@@ -1,22 +1,16 @@
 package project.main.webstore.domain.review.mapper;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
-import project.main.webstore.domain.DefaultMapper;
-import project.main.webstore.domain.review.dto.ReviewBestResponseDto;
-import project.main.webstore.domain.review.dto.ReviewGetResponseDto;
-import project.main.webstore.domain.review.dto.ReviewIdResponseDto;
-import project.main.webstore.domain.review.dto.ReviewLikeResponseDto;
-import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
-import project.main.webstore.domain.review.dto.ReviewUpdateRequestDto;
+import project.main.webstore.domain.review.dto.*;
 import project.main.webstore.domain.review.entity.Review;
-import project.main.webstore.dto.CustomPage;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
-public class ReviewMapper implements DefaultMapper {
+public class ReviewMapper {
     public Review toEntity(ReviewPostRequestDto post){
         return Review.postBuilder()
                 .rating(post.getRating())
@@ -52,9 +46,8 @@ public class ReviewMapper implements DefaultMapper {
                 .dtoBuild();
     }
 
-    public CustomPage<ReviewGetResponseDto> toGetPageResponse(Page<Review> reviewPage){
-        Page<ReviewGetResponseDto> page = reviewPage.map(ReviewGetResponseDto::new);
-        return transCustomPage(page);
+    public Page<ReviewGetResponseDto> toGetPageResponse(Page<Review> reviewPage){
+        return reviewPage.map(ReviewGetResponseDto::new);
     }
     public List<ReviewGetResponseDto> toGetListResponse(List<Review> reviewList){
         return reviewList.stream().map(ReviewGetResponseDto::new).collect(Collectors.toList());

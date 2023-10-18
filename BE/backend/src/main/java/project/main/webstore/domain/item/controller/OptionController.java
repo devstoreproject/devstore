@@ -3,21 +3,11 @@ package project.main.webstore.domain.item.controller;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.net.URI;
-import java.util.List;
-import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import project.main.webstore.domain.item.dto.OptionIdResponseDto;
 import project.main.webstore.domain.item.dto.OptionPatchDto;
 import project.main.webstore.domain.item.dto.OptionPostRequestDto;
@@ -29,6 +19,10 @@ import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
+
+import javax.validation.constraints.Positive;
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/items")
@@ -53,12 +47,12 @@ public class OptionController {
         return ResponseEntity.created(uri).body(responseDto);
     }
 
-    @PatchMapping(path = "/options/{optionId}")
+    @PatchMapping(path = "/options/{option-Id}")
     @ApiResponse(responseCode = "200", description = "상품 옵션 수정 성공")
-    public ResponseEntity<ResponseDto<ItemOption>> editItemOption(@PathVariable @Positive Long optionId,
+    public ResponseEntity<ResponseDto<ItemOption>> editItemOption(@PathVariable("option-Id") @Positive Long OptionId,
                                                                   @RequestBody OptionPatchDto patch) {
         ItemOption request = optionMapper.toEntity(patch);
-        request.setOptionId(optionId);
+        request.setOptionId(OptionId);
         ItemOption result = optionService.editOption(request);
 
         ItemOption response = optionMapper.optionResponseToOption(result);
@@ -66,19 +60,19 @@ public class OptionController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("/options/{optionId}")
+    @DeleteMapping("/options/{option-Id}")
     @ApiResponse(responseCode = "204", description = "상품 옵션 삭제 성공")
-    public ResponseEntity deleteItemOption(@PathVariable @Positive Long optionId) {
+    public ResponseEntity deleteItemOption(@PathVariable("option-Id") @Positive Long optionId) {
         optionService.deleteOption(optionId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     // 단일
-    @GetMapping("/{itemId}/options/{optionId}")
+    @GetMapping("/{item-id}/options/{option-Id}")
     @ApiResponse(responseCode = "200", description = "상품 옵션 단건 조회 성공")
-    public ResponseEntity<ResponseDto<OptionResponseDto>> getItemOption(@PathVariable @Positive Long itemId,
-                                                                        @PathVariable @Positive Long optionId) {
+    public ResponseEntity<ResponseDto<OptionResponseDto>> getItemOption(@PathVariable("item-id") @Positive Long itemId,
+                                                                        @PathVariable("option-id") @Positive Long optionId) {
         ItemOption result = optionService.getOption(optionId);
         OptionResponseDto response = optionMapper.optionToGetResponse(result);
         var responseDto = ResponseDto.<OptionResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
@@ -88,9 +82,9 @@ public class OptionController {
 
 
     // 리스트
-    @GetMapping("/{itemId}/options")
+    @GetMapping("/{item-id}/options")
     @ApiResponse(responseCode = "200", description = "상품 옵션 리스트 조회 성공")
-    public ResponseEntity<ResponseDto<List<OptionResponseDto>>> getOptionList(@PathVariable Long itemId) {
+    public ResponseEntity<ResponseDto<List<OptionResponseDto>>> getOptionList(@PathVariable("item-id") Long itemId) {
         List<ItemOption> result = optionService.getOptions(itemId);
         List<OptionResponseDto> response = optionMapper.optionToGetListResponse(result);
 

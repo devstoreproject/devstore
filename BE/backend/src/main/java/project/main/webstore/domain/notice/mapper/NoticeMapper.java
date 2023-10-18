@@ -2,17 +2,11 @@ package project.main.webstore.domain.notice.mapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import project.main.webstore.domain.DefaultMapper;
-import project.main.webstore.domain.notice.dto.NoticeGetResponseDto;
-import project.main.webstore.domain.notice.dto.NoticeGetSimpleResponseDto;
-import project.main.webstore.domain.notice.dto.NoticeIdResponseDto;
-import project.main.webstore.domain.notice.dto.NoticePatchRequestDto;
-import project.main.webstore.domain.notice.dto.NoticePostRequestDto;
+import project.main.webstore.domain.notice.dto.*;
 import project.main.webstore.domain.notice.entity.Notice;
-import project.main.webstore.dto.CustomPage;
 
 @Component
-public class NoticeMapper implements DefaultMapper {
+public class NoticeMapper {
     public Notice toEntity(NoticePostRequestDto dto) {
         return new Notice(dto.getTitle(),dto.getContent(),dto.getCategory());
     }
@@ -30,9 +24,8 @@ public class NoticeMapper implements DefaultMapper {
         return new NoticeIdResponseDto(notice.getId());
     }
 
-    public CustomPage<NoticeGetSimpleResponseDto> toGetSimplePageResponse (Page<Notice> notice) {
-        Page<NoticeGetSimpleResponseDto> map = notice.map(NoticeGetSimpleResponseDto::new);
-        return transCustomPage(map);
+    public Page<NoticeGetSimpleResponseDto> toGetSimplePageResponse (Page<Notice> notice) {
+        return notice.map(NoticeGetSimpleResponseDto::new);
     }
 
     public NoticeGetResponseDto toGetRseponseGetDto(Notice notice) {

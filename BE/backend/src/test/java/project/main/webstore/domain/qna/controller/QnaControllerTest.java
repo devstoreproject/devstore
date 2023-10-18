@@ -61,7 +61,7 @@ public class QnaControllerTest {
     String DEFAULT_URL = "/api/qna";
 
     @Test
-    @DisplayName("상품Qna조회 : 상품별")
+    @DisplayName("상품Qna조회")
     @WithMockCustomUser
     void qna_get_by_item_test() throws Exception {
         // given
@@ -81,12 +81,13 @@ public class QnaControllerTest {
     }
 
     @Test
-    @DisplayName("상품Qna조회 : 사용자별")
+    @DisplayName("상품Qna조회")
     @WithMockCustomUser(role = "CLIENT", userRole = UserRole.CLIENT)
     void qna_get_by_user_test() throws Exception {
         // given
         MultiValueMap pageParam = utils.getPageParam();
         Long userId = 1L;
+        Pageable page = utils.getPage();
         Page<Question> qnaPage = qnaStub.getQnaPage(10L);
         given(getService.findQnaByUserId(any(Pageable.class), anyLong())).willReturn(qnaPage);
         // when
@@ -99,7 +100,7 @@ public class QnaControllerTest {
     }
 
     @Test
-    @DisplayName("상품Qna조회 : 단건조회")
+    @DisplayName("상품Qna조회")
     @WithMockCustomUser
     void qna_get_single_test() throws Exception {
         // given
@@ -121,33 +122,18 @@ public class QnaControllerTest {
     @WithMockCustomUser
     void qna_get_admin_test() throws Exception {
         // given
-        Page<Question> qnaPage = qnaStub.getQnaPage(10L);
-        MultiValueMap pageParam = utils.getPageParam();
-        given(getService.findQuestionByStatus(any(Pageable.class),any())).willReturn(qnaPage);
-        // when
-        ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/admin")
-            .params(pageParam)
-            .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
-        // then
-        List<Question> content = qnaPage.getContent();
-        perform
-            .andDo(log())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.content[0].questionId").value(content.get(0).getId()));
-    }
-
-    @Test
-    @DisplayName("상품Qna조회")
-    @WithMockCustomUser
-    void qna_get_admin_status_test() throws Exception {
-        // given
+        Long questionId = 1L;
+        //TODO: Qna 상태별 로직 추가
+        QnaStatus register = QnaStatus.REGISTER;
+        QnaStatus complete = QnaStatus.ANSWER_COMPLETE;
         Page<Question> qnaPage = qnaStub.getQnaPage(10L);
         MultiValueMap pageParam = utils.getPageParam();
         given(getService.findQuestionByStatus(any(Pageable.class),anyString())).willReturn(qnaPage);
         // when
         ResultActions perform = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URL + "/admin")
             .params(pageParam)
-            .param("status", QnaStatus.REGISTER.name())
+            .param("register", QnaStatus.REGISTER.name())
+            .param("complete", QnaStatus.ANSWER_COMPLETE.name())
             .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
         // then
         List<Question> content = qnaPage.getContent();

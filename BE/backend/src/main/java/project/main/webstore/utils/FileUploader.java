@@ -2,19 +2,10 @@ package project.main.webstore.utils;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import marvin.image.MarvinImage;
@@ -29,6 +20,14 @@ import project.main.webstore.domain.image.dto.ImageInfoDto;
 import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.exception.BusinessLogicException;
 import project.main.webstore.exception.CommonExceptionCode;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -59,6 +58,8 @@ public class FileUploader {
         List<MultipartFile> thumList = infoList.stream().map(info -> resizeImage(info.getMultipartFile(), info.getFileName(), info.getExt(), 300)).collect(Collectors.toList());
         List<String> hashList = thumList.stream().map(this::createHashByMD5).collect(Collectors.toList());
 
+        //검증 TODO: 같은 이미지 중복 저장 가능한지 상의 필요
+//        validImageAlreadyHas(hashList);
 
         //저장 로직 실행
         for (int i = 0; i < infoList.size(); i++) {
@@ -76,19 +77,20 @@ public class FileUploader {
     
 
     public String saveImage(MultipartFile uploadFile, String fileName, String bucketName) {
-        ObjectMetadata metadata = createMetadata(uploadFile);
-        try {
-            amazonS3Client.putObject(
-                    new PutObjectRequest(
-                            bucketName, fileName, uploadFile.getInputStream(), metadata
-                    ).withCannedAcl(CannedAccessControlList.PublicRead)
-            );
-        } catch (IOException e) {
-            log.error("#### S3 Upload IOException", e.getMessage());
-            log.debug("#### 파일 업로드 에러",e);
-        }
+//        ObjectMetadata metadata = createMetadata(uploadFile);
+//        try {
+//            amazonS3Client.putObject(
+//                    new PutObjectRequest(
+//                            bucketName, fileName, uploadFile.getInputStream(), metadata
+//                    ).withCannedAcl(CannedAccessControlList.PublicRead)
+//            );
+//        } catch (IOException e) {
+//            log.error("#### S3 Upload IOException", e.getMessage());
+//            e.printStackTrace();
+//        }
 
-        return amazonS3Client.getUrl(bucketName, fileName).toString();
+//        return amazonS3Client.getUrl(bucketName, fileName).toString();
+        return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz7rUlbKGMcXKcNkWGw6CnN_CRBz1hYjrsKXFVio9s26u7nQEILnX8EGV8e5UEIdGdsI0&usqp=CAU";
     }
 
     private ObjectMetadata createMetadata(MultipartFile multipartFile) {
@@ -99,12 +101,18 @@ public class FileUploader {
         return metadata;
     }
 
+    private String extractExt(String originalFileName) {
+        int idx = originalFileName.lastIndexOf(".");
+
+        return originalFileName.substring(idx);
+    }
+
     public void deleteS3Image(String imagePath) {
-        String objectKey = getImageKey(imagePath);
-        String thumbKey = objectKey.replace("origin", "resized");
+        String object_key = getImageKey(imagePath);
+        String thum_key = object_key.replace("origin", "resized");
         try {
-            amazonS3Client.deleteObject(bucketOrigin, objectKey);
-            amazonS3Client.deleteObject(bucketResizing, thumbKey);
+//            amazonS3Client.deleteObject(bucketOrigin, object_key);
+//            amazonS3Client.deleteObject(bucketResizing, thum_key);
         } catch (AmazonServiceException e) {
             log.error("#### S3 Delete AmazonServiceException", e.getMessage());
         }
@@ -145,8 +153,8 @@ public class FileUploader {
 
 
             MultipartFile file = new MockMultipartFile(fileName, baos.toByteArray());
-            log.info("### print size =  {}",file.getSize());
-            log.info("#### {}" ,file.getInputStream());
+            System.out.println("print size = ### " + file.getSize());
+            System.out.println("#### " + file.getInputStream());
             return file;
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 리사이즈에 실패했습니다.");
@@ -158,12 +166,21 @@ public class FileUploader {
         try {
             byte[] bytes = file.getBytes();
             ByteSource byteSource = ByteSource.wrap(bytes);
-            HashCode hash = byteSource.hash(Hashing.sha256());
+            HashCode hash = byteSource.hash(Hashing.md5());
             return hash.toString();
         } catch (IOException e) {
             log.error("#### TransByte Error ####");
             e.printStackTrace();
             throw new BusinessLogicException(CommonExceptionCode.IMAGE_ERROR);
         }
+    }
+
+    public boolean checkImageAllHas(List<String> uploadHashList) {
+        return uploadHashList.size() == uploadHashList.stream().distinct().collect(Collectors.toList()).size();
+    }
+
+    public void validImageAlreadyHas(List<String> hashList){
+        if(!checkImageAllHas(hashList))
+            throw new BusinessLogicException(CommonExceptionCode.IMAGE_ALREADY_HAS);
     }
 }

@@ -1,12 +1,10 @@
 package project.main.webstore.domain.item.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
 public class PickedItemDto {
     private Long userId;
     private Long itemId;

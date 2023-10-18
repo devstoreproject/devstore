@@ -30,7 +30,6 @@ import project.main.webstore.domain.qna.entity.Question;
 import project.main.webstore.domain.qna.mapper.QnaMapper;
 import project.main.webstore.domain.qna.service.QnaGetService;
 import project.main.webstore.domain.qna.service.QnaService;
-import project.main.webstore.dto.CustomPage;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
@@ -53,11 +52,11 @@ public class QnaController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<CustomPage<QuestionDto>>> getQnaByItemId(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable,
+    public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByItemId(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable,
             @PathVariable Long itemId) {
         Page<Question> findQna = getService.findQnaByItemId(pageable, itemId);
-        CustomPage<QuestionDto> response = mapper.toResponsePage(findQna);
-        var responseDto = ResponseDto.<CustomPage<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        Page<QuestionDto> response = mapper.toResponsePage(findQna);
+        var responseDto = ResponseDto.<Page<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
 
@@ -68,12 +67,12 @@ public class QnaController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<CustomPage<QuestionDto>>> getQnaByUserId(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable,
+    public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByUserId(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable,
             @Parameter(hidden = true)@AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         Page<Question> findQna = getService.findQnaByUserId(pageable, userId);
-        CustomPage<QuestionDto> response = mapper.toResponsePage(findQna);
-        var responseDto = ResponseDto.<CustomPage<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        Page<QuestionDto> response = mapper.toResponsePage(findQna);
+        var responseDto = ResponseDto.<Page<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
 
@@ -93,11 +92,11 @@ public class QnaController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<CustomPage<QuestionDto>>> getQnaByStatus(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable,
+    public ResponseEntity<ResponseDto<Page<QuestionDto>>> getQnaByStatus(@Parameter(hidden = true)@PageableDefault(sort = "id") Pageable pageable,
             @RequestParam(value = "status", required = false) String status) {
         Page<Question> result = getService.findQuestionByStatus(pageable,status);
-        CustomPage<QuestionDto> response = mapper.toResponsePage(result);
-        var responseDto = ResponseDto.<CustomPage<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        Page<QuestionDto> response = mapper.toResponsePage(result);
+        var responseDto = ResponseDto.<Page<QuestionDto>>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
 

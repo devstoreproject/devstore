@@ -2,18 +2,11 @@ package project.main.webstore.domain.users.mapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import project.main.webstore.domain.DefaultMapper;
-import project.main.webstore.domain.users.dto.UserGetPasswordRequestDto;
-import project.main.webstore.domain.users.dto.UserGetPasswordResponseDto;
-import project.main.webstore.domain.users.dto.UserGetResponseDto;
-import project.main.webstore.domain.users.dto.UserIdResponseDto;
-import project.main.webstore.domain.users.dto.UserPatchRequestDto;
-import project.main.webstore.domain.users.dto.UserPostRequestDto;
+import project.main.webstore.domain.users.dto.*;
 import project.main.webstore.domain.users.entity.User;
-import project.main.webstore.dto.CustomPage;
 
 @Component
-public class UserMapper implements DefaultMapper {
+public class UserMapper {
     public User toEntity(UserPostRequestDto post) {
         return new User(post);
     }
@@ -34,9 +27,8 @@ public class UserMapper implements DefaultMapper {
         return new UserGetResponseDto(user);
     }
 
-    public CustomPage<UserGetResponseDto> toGetDtoResponse(Page<User> userPage) {
-        Page<UserGetResponseDto> map = userPage.map(UserGetResponseDto::new);
-        return transCustomPage(map);
+    public Page<UserGetResponseDto> toGetDtoResponse(Page<User> userPage) {
+        return userPage.map(UserGetResponseDto::new);
     }
 
     public User toEntity(UserGetPasswordRequestDto dto) {

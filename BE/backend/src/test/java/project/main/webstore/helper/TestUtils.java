@@ -1,10 +1,8 @@
 package project.main.webstore.helper;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -14,20 +12,12 @@ import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.security.dto.UserInfoDto;
 import project.main.webstore.security.jwt.utils.JwtTokenizer;
 
+import java.util.List;
+
 @Component
 public class TestUtils {
     @Autowired
-    private JwtTokenizer jwtTokenizer;
-    public String getJWTAccessTokenAdmin(){
-        UserInfoDto userInfo = new UserInfoDto("2", "admin@gmail.com", "김복자", UserRole.ADMIN);
-        return jwtTokenizer.delegateAccessToken(userInfo);
-
-    }
-    public String getJWTAccessTokenClient(){
-        UserInfoDto userInfo = new UserInfoDto("1", "client@gmail.com", "김복자", UserRole.CLIENT);
-        return jwtTokenizer.delegateAccessToken(userInfo);
-
-    }
+    JwtTokenizer jwtTokenizer;
     public HttpHeaders getJWTAdmin(){
         UserInfoDto userInfo = new UserInfoDto("2", "admin@gmail.com", "김복자", UserRole.ADMIN);
         String accessToken = jwtTokenizer.delegateAccessToken(userInfo);
@@ -50,33 +40,12 @@ public class TestUtils {
 
         return headers;
     }
-    public HttpHeaders getLoginHeader(String accessToken){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(accessToken);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-
-        return headers;
-    }
     public HttpHeaders getDefaultHeader(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
         return headers;
-    }
-    public HttpHeaders getMultipartHeader(){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-
-        return headers;
-    }
-    public HttpEntity<String> getJsonRequestHeader(String jsonData){
-
-        HttpHeaders jsonRequest = new HttpHeaders();
-        jsonRequest.setContentType(MediaType.APPLICATION_JSON);
-        return new HttpEntity<String>(jsonData, jsonRequest);
     }
 
     public MultiValueMap getPageParam(){
