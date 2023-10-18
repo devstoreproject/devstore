@@ -4,25 +4,39 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import project.main.webstore.domain.review.dto.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import project.main.webstore.domain.review.dto.ReviewBestRequestDto;
+import project.main.webstore.domain.review.dto.ReviewBestResponseDto;
+import project.main.webstore.domain.review.dto.ReviewGetResponseDto;
+import project.main.webstore.domain.review.dto.ReviewIdResponseDto;
+import project.main.webstore.domain.review.dto.ReviewLikeResponseDto;
+import project.main.webstore.domain.review.dto.ReviewPostRequestDto;
+import project.main.webstore.domain.review.dto.ReviewUpdateRequestDto;
 import project.main.webstore.domain.review.entity.Review;
 import project.main.webstore.domain.review.mapper.ReviewMapper;
 import project.main.webstore.domain.review.service.ReviewGetService;
 import project.main.webstore.domain.review.service.ReviewService;
+import project.main.webstore.dto.CustomPage;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
 import project.main.webstore.utils.UriCreator;
-
-import java.net.URI;
-import java.util.List;
 
 @Tag(name = "리뷰 API", description = "리뷰 관련 API")
 @RestController
@@ -67,10 +81,10 @@ public class ReviewController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewAllPage(@Parameter(hidden = true)@PageableDefault(sort = "id")Pageable pageable) {
+    public ResponseEntity<ResponseDto<CustomPage<ReviewGetResponseDto>>> getReviewAllPage(@Parameter(hidden = true)@PageableDefault(sort = "id")Pageable pageable) {
         Page<Review> reviewPage = getService.getReviewPage(pageable);
-        Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
-        var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
+        CustomPage<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
+        var response = ResponseDto.<CustomPage<ReviewGetResponseDto>>builder()
                 .customCode(ResponseCode.OK)
                 .data(responsePageDto)
                 .build();
@@ -85,11 +99,11 @@ public class ReviewController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewPageByItemId(@Parameter(hidden = true)@PageableDefault(sort = "id")Pageable pageable,
+    public ResponseEntity<ResponseDto<CustomPage<ReviewGetResponseDto>>> getReviewPageByItemId(@Parameter(hidden = true)@PageableDefault(sort = "id")Pageable pageable,
                                                                                          @PathVariable Long itemId) {
         Page<Review> reviewPage = getService.getReviewPageByItemId(pageable, itemId);
-        Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
-        var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
+        CustomPage<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
+        var response = ResponseDto.<CustomPage<ReviewGetResponseDto>>builder()
                 .customCode(ResponseCode.OK)
                 .data(responsePageDto)
                 .build();
@@ -104,11 +118,11 @@ public class ReviewController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt",description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ReviewGetResponseDto>>> getReviewListByUserId(@Parameter(hidden = true)@PageableDefault(sort = "id")Pageable pageable,
+    public ResponseEntity<ResponseDto<CustomPage<ReviewGetResponseDto>>> getReviewListByUserId(@Parameter(hidden = true)@PageableDefault(sort = "id")Pageable pageable,
                                                                                          @PathVariable Long userId) {
         Page<Review> reviewPage = getService.getReviewPageByUserId(pageable, userId);
-        Page<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
-        var response = ResponseDto.<Page<ReviewGetResponseDto>>builder()
+        CustomPage<ReviewGetResponseDto> responsePageDto = reviewMapper.toGetPageResponse(reviewPage);
+        var response = ResponseDto.<CustomPage<ReviewGetResponseDto>>builder()
                 .customCode(ResponseCode.OK)
                 .data(responsePageDto)
 

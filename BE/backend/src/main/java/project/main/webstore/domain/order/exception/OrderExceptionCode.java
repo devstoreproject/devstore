@@ -14,8 +14,8 @@ public enum OrderExceptionCode implements ExceptionCode {
     ORDER_CANCEL_FAIL(HttpStatus.NOT_FOUND,"주문 취소를 실패했습니다."),
     ORDER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND,"주문한 아이템 정보가 존재하지 않습니다."),
     SPEC_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 스펙이 존재하지 않습니다."),
-    OPTION_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 옵션이 존재하지 않습니다.")
-    ;
+    OPTION_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 옵션이 존재하지 않습니다."),
+    ORDER_ITEM_PRICE_NOT_FOUND(HttpStatus.NOT_FOUND, "주문 상품 가격 정보가 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

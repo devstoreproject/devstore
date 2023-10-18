@@ -1,14 +1,16 @@
 package project.main.webstore.domain.order.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import project.main.webstore.domain.order.entity.OrderedItem;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderItemResponseDto { // 주문할 아이템 정보 결과
     private Long itemId;
     private Long optionId;
@@ -20,13 +22,4 @@ public class OrderItemResponseDto { // 주문할 아이템 정보 결과
     private int discountPrice;
     private int discountRate;
 
-    @Builder
-    public OrderItemResponseDto(OrderedItem item) {
-        this.itemId = item.getOption().getItem().getItemId();
-        this.itemName = item.getOption().getItem().getItemName();
-        this.itemCount = item.getItemCount();
-        this.itemPrice = item.getPrice();
-        this.discountRate = item.getOption().getItem().getDiscountRate();
-        this.discountPrice = item.getDiscountedPrice();
-    }
 }

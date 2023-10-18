@@ -1,15 +1,15 @@
 package project.main.webstore.domain.notice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.notice.entity.Notice;
 import project.main.webstore.domain.notice.enums.NoticeCategory;
-
-import java.time.LocalDateTime;
+import project.main.webstore.dto.Dto;
 
 @Getter
-public class NoticeGetSimpleResponseDto {
+public class NoticeGetSimpleResponseDto implements Dto {
     private Long noticeId;
     private String title;
     private String content;
