@@ -2,14 +2,22 @@ package project.main.webstore.domain.qna.mapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import project.main.webstore.domain.qna.dto.*;
+import project.main.webstore.domain.DefaultMapper;
+import project.main.webstore.domain.qna.dto.AnswerDto;
+import project.main.webstore.domain.qna.dto.AnswerPostRequestDto;
+import project.main.webstore.domain.qna.dto.QuestionDto;
+import project.main.webstore.domain.qna.dto.QuestionIdResponseDto;
+import project.main.webstore.domain.qna.dto.QuestionPatchDto;
+import project.main.webstore.domain.qna.dto.QuestionPostRequestDto;
 import project.main.webstore.domain.qna.entity.Answer;
 import project.main.webstore.domain.qna.entity.Question;
+import project.main.webstore.dto.CustomPage;
 
 @Component
-public class QnaMapper {
-    public Page<QuestionDto> toResponsePage(Page<Question> questionPage) {
-        return questionPage.map(QuestionDto::new);
+public class QnaMapper implements DefaultMapper {
+    public CustomPage<QuestionDto> toResponsePage(Page<Question> questionPage) {
+        Page<QuestionDto> map = questionPage.map(QuestionDto::new);
+        return transCustomPage(map);
     }
 
     public QuestionDto toResponseDto(Question question) {

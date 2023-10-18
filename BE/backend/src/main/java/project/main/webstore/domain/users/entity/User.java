@@ -1,5 +1,25 @@
 package project.main.webstore.domain.users.entity;
 
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
+import static project.main.webstore.domain.users.enums.ProviderId.JWT;
+
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,18 +36,6 @@ import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.domain.users.enums.UserStatus;
 import project.main.webstore.domain.users.exception.UserExceptionCode;
 import project.main.webstore.exception.BusinessLogicException;
-
-import javax.persistence.*;
-import java.security.Principal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
-import static project.main.webstore.domain.users.enums.ProviderId.JWT;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -83,10 +91,13 @@ public class User extends Auditable implements Principal {
         this.shippingInfoList.add(shippingInfo);
         shippingInfo.setUser(this);
     }
+    public void changeRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
 
     //TODO:ValidService 구현 이후 변경 필요
     public void validUserHasAccess(User user){
-        if (!user.getId().equals(this.id) || !user.getUserRole().equals(UserRole.ADMIN)) {
+        if (!user.getId().equals(this.id) && !user.getUserRole().equals(UserRole.ADMIN)) {
             throw new BusinessLogicException(UserExceptionCode.USER_NOT_ACCESS);
         }
     }

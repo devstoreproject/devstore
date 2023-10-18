@@ -1,5 +1,7 @@
 package project.main.webstore.domain.item.service;
 
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,9 +11,6 @@ import project.main.webstore.domain.item.entity.ItemOption;
 import project.main.webstore.domain.item.repository.OptionRepository;
 import project.main.webstore.domain.order.exception.OrderExceptionCode;
 import project.main.webstore.exception.BusinessLogicException;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -33,6 +32,7 @@ public class OptionService {
         ItemOption findOption= findVerifiedOption(itemOption.getOptionId());
         Optional.ofNullable(itemOption.getItemCount()).ifPresent(findOption::setItemCount);
         Optional.ofNullable(itemOption.getOptionDetail()).ifPresent(findOption::setOptionDetail);
+        Optional.ofNullable(itemOption.getOptionName()).ifPresent(findOption::setOptionName);
         return findOption;
     }
 

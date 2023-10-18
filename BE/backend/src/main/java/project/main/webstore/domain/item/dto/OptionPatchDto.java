@@ -19,4 +19,11 @@ public class OptionPatchDto {
     private Integer itemCount;
     private Integer additionalPrice;
 
+    public OptionPatchDto(String optionDetail, String optionName, Integer itemCount,
+            Integer additionalPrice) {
+        this.optionDetail = optionDetail;
+        this.optionName = optionName;
+        this.itemCount = itemCount;
+        this.additionalPrice = additionalPrice;
+    }
 }
