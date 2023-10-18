@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import project.main.webstore.domain.image.dto.ImageInfoDto;
-import project.main.webstore.domain.image.mapper.ImageMapper;
 import project.main.webstore.domain.item.dto.ItemIdResponseDto;
 import project.main.webstore.domain.item.dto.ItemPatchDto;
 import project.main.webstore.domain.item.dto.ItemPostDto;
@@ -41,6 +40,7 @@ import project.main.webstore.domain.item.entity.Item;
 import project.main.webstore.domain.item.enums.Category;
 import project.main.webstore.domain.item.mapper.ItemMapper;
 import project.main.webstore.domain.item.service.ItemService;
+import project.main.webstore.dto.CustomPage;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.CheckLoginUser;
@@ -54,9 +54,8 @@ import project.main.webstore.utils.UriCreator;
 public class ItemController {
     private static final String ITEM_DEFAULT_URL = "items";
     private static final String UPLOAD_DIR = "item";
-    private final ItemService itemService;
-    private final ItemMapper itemMapper;
-    private final ImageMapper imageMapper;
+    private final ItemService service;
+    private final ItemMapper mapper;
 
     //상품과 스펙, 옵션을 모두 등록
     @PostMapping(
@@ -67,15 +66,15 @@ public class ItemController {
                                                                      @Parameter(description = "Image files", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
                                                                              array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))), style = ParameterStyle.FORM, explode = Explode.TRUE)
                                                                      @RequestPart(required = false) List<MultipartFile> imageList) {
-        Item request = itemMapper.toEntity(post);
+        Item request = mapper.toEntity(post);
         Item result;
         if (imageList != null) {
-            List<ImageInfoDto> imageInfoList = imageMapper.toLocalDtoList(imageList, post.getInfoList(), UPLOAD_DIR);
-            result = itemService.postItem(request, imageInfoList);
+            List<ImageInfoDto> imageInfoList = mapper.toLocalDtoList(imageList, post.getInfoList(), UPLOAD_DIR);
+            result = service.postItem(request, imageInfoList);
         } else {
-            result = itemService.postItem(request);
+            result = service.postItem(request);
         }
-        ItemIdResponseDto response = itemMapper.toIdResponse(result);
+        ItemIdResponseDto response = mapper.toIdResponse(result);
         URI location = UriCreator.createUri(ITEM_DEFAULT_URL, result.getItemId());
         var responseDto = ResponseDto.<ItemIdResponseDto>builder().data(response).customCode(ResponseCode.CREATED).build();
 
@@ -92,32 +91,32 @@ public class ItemController {
                                                                     @RequestPart(required = false) ItemPatchDto patch,
                                                                     @RequestPart(required = false) List<MultipartFile> imageList) {
 
-        Item request = itemMapper.itemPatchDtoToItem(patch,itemId);
-        List<Long> requestDeleteOptionIdList = itemMapper.checkListEmpty(patch.getDeleteOptionId());
-        List<Long> requestDeleteImageList = itemMapper.checkListEmpty(patch.getDeleteImageId());
+        Item request = mapper.itemPatchDtoToItem(patch,itemId);
+        List<Long> requestDeleteOptionIdList = mapper.checkListEmpty(patch.getDeleteOptionId());
+        List<Long> requestDeleteImageList = mapper.checkListEmpty(patch.getDeleteImageId());
 
         List<ImageInfoDto> imageInfoDtoList = null;
 
         if (patch.getImageSortAndRepresentativeInfo() != null) {
-            imageInfoDtoList = imageMapper.toLocalDtoList(imageList, patch.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
+            imageInfoDtoList = mapper.toLocalDtoList(imageList, patch.getImageSortAndRepresentativeInfo(), UPLOAD_DIR);
         }
 
-        Item result = itemService.patchItem(imageInfoDtoList, requestDeleteImageList, request,requestDeleteOptionIdList);
+        Item result = service.patchItem(imageInfoDtoList, requestDeleteImageList, request,requestDeleteOptionIdList);
 
-        ItemIdResponseDto response = itemMapper.toIdResponse(result);
+        ItemIdResponseDto response = mapper.toIdResponse(result);
         URI uri = UriCreator.createUri(ITEM_DEFAULT_URL, result.getItemId());
         var responseDto = ResponseDto.<ItemIdResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok().header("Location", uri.toString()).body(responseDto);
     }
 
-    @DeleteMapping("/{item-Id}")
-    @ApiResponse(responseCode = "204", description = "상품 삭제 성공")
-    public ResponseEntity deleteItem(@PathVariable("item-Id") @Positive Long itemId) {
-        itemService.deleteItem(itemId);
-        URI location = UriCreator.createUri(ITEM_DEFAULT_URL);
-        return ResponseEntity.noContent().header("Location", location.toString()).build();
-    }
+        @DeleteMapping("/{item-Id}")
+        @ApiResponse(responseCode = "204", description = "상품 삭제 성공")
+        public ResponseEntity deleteItem(@PathVariable("item-Id") @Positive Long itemId) {
+            service.deleteItem(itemId);
+            URI location = UriCreator.createUri(ITEM_DEFAULT_URL);
+            return ResponseEntity.noContent().header("Location", location.toString()).build();
+        }
 
     // 단일 아이템 조회
     @GetMapping("/{item-Id}")
@@ -125,8 +124,8 @@ public class ItemController {
     public ResponseEntity<ResponseDto<ItemResponseDto>> getItem(@PathVariable("item-Id") @Positive Long itemId,
                                                                 @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        Item item = itemService.getItem(itemId, userId);
-        ItemResponseDto response = itemMapper.toGetResponseDto(item);
+        Item item = service.getItem(itemId, userId);
+        ItemResponseDto response = mapper.toGetResponseDto(item);
         var responseDto = ResponseDto.<ItemResponseDto>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
@@ -138,13 +137,13 @@ public class ItemController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt", description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> searchItem(@RequestParam String itemName,
+    public ResponseEntity<ResponseDto<CustomPage<ItemResponseDto>>> searchItem(@RequestParam String itemName,
                                                                          @Parameter(hidden = true) @PageableDefault Pageable pageable,
                                                                          @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        Page<Item> result = itemService.searchItem(itemName, pageable, userId);
-        Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
-        var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        Page<Item> result = service.searchItem(itemName, pageable, userId);
+        CustomPage<ItemResponseDto> response = mapper.toGetPageResponse(result);
+        var responseDto = ResponseDto.<CustomPage<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
@@ -157,13 +156,13 @@ public class ItemController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt", description = "정렬할 기준이 되는 필드, 기본 값이 createdAt으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemByCategory(@RequestParam Category category,
+    public ResponseEntity<ResponseDto<CustomPage<ItemResponseDto>>> getItemByCategory(@RequestParam Category category,
                                                                                 @Parameter(hidden = true) @PageableDefault(sort = "itemId") Pageable pageable,
                                                                                 @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        Page<Item> result = itemService.findItemByCategory(category, pageable, userId);
-        Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
-        var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        Page<Item> result = service.findItemByCategory(category, pageable, userId);
+        CustomPage<ItemResponseDto> response = mapper.toGetPageResponse(result);
+        var responseDto = ResponseDto.<CustomPage<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
@@ -176,12 +175,12 @@ public class ItemController {
             @Parameter(name = "size", example = "20", description = "한번에 전달될 데이터 크기, 사이즈 기본 값 존재 생략 가능"),
             @Parameter(name = "sort", example = "createdAt", description = "정렬할 기준이 되는 필드, 기본 값이 itemId 으로 설정되어있다. 생략 가능")
     })
-    public ResponseEntity<ResponseDto<Page<ItemResponseDto>>> getItemAllByPage(@Parameter(hidden = true) @PageableDefault(sort = "itemId") Pageable pageable,
+    public ResponseEntity<ResponseDto<CustomPage<ItemResponseDto>>> getItemAllByPage(@Parameter(hidden = true) @PageableDefault(sort = "itemId") Pageable pageable,
                                                                                  @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        Page<Item> result = itemService.findItemPage(pageable, userId);
-        Page<ItemResponseDto> response = itemMapper.toGetPageResponse(result);
-        var responseDto = ResponseDto.<Page<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
+        Page<Item> result = service.findItemPage(pageable, userId);
+        CustomPage<ItemResponseDto> response = mapper.toGetPageResponse(result);
+        var responseDto = ResponseDto.<CustomPage<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
 
         return ResponseEntity.ok(responseDto);
     }
@@ -190,8 +189,8 @@ public class ItemController {
     @ApiResponse(responseCode = "200", description = "상품 좋아요 기능")
     public ResponseEntity<ResponseDto<List<ItemResponseDto>>> pickItem(@Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         Long userId = CheckLoginUser.getContextIdx(principal);
-        List<Item> result = itemService.getPickedItem(userId);
-        List<ItemResponseDto> response = itemMapper.toGetResponseListDto(result);
+        List<Item> result = service.getPickedItem(userId);
+        List<ItemResponseDto> response = mapper.toGetResponseListDto(result);
         var responseDto = ResponseDto.<List<ItemResponseDto>>builder().data(response).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
@@ -200,10 +199,10 @@ public class ItemController {
     @PostMapping("/{itemId}/favorite")
     @ApiResponse(responseCode = "200", description = "상품 좋아요 기능")
     public ResponseEntity<ResponseDto<PickedItemDto>> pickItem(@PathVariable @Positive Long itemId,
-                                                               @RequestParam Long userId,
+                                                               @RequestParam(required = false) Long userId,
                                                                @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
-        CheckLoginUser.validUserSame(principal, userId);
-        PickedItemDto result = itemService.pickItem(itemId, userId);
+        Long userIdx = CheckLoginUser.getContextIdx(principal);
+        PickedItemDto result = service.pickItem(itemId, userIdx);
 
         var responseDto = ResponseDto.<PickedItemDto>builder().data(result).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);

@@ -30,7 +30,7 @@ import project.main.webstore.utils.UriCreator;
 @RestController
 @RequiredArgsConstructor
 public class CartController {
-    private static final String DEFAULT_URL = "/cart";
+    private static final String DEFAULT_URL = "cart";
     private final CartService cartService;
     private final CartMapper mapper;
 
@@ -52,7 +52,7 @@ public class CartController {
                                                                     @RequestBody CartPatchRequestDto patch) {
         Long userId = CheckLoginUser.getContextIdx(principal);
         List<LocalCartDto> request = mapper.toLocalList(patch.getPatchItemList());
-        List<Long> deleteOptionRequestId = mapper.toList(patch.getDeleteOptionId());
+        List<Long> deleteOptionRequestId = mapper.checkListEmpty(patch.getDeleteOptionId());
         Cart result = cartService.patchCart(userId,request,deleteOptionRequestId);
         CartIdResponseDto response = mapper.toResponseId(result);
         URI location = UriCreator.createUri(DEFAULT_URL + "/userId", response.getUserId());

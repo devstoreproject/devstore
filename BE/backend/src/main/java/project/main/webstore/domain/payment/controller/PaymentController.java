@@ -20,7 +20,7 @@ import project.main.webstore.enums.ResponseCode;
 import project.main.webstore.utils.UriCreator;
 
 @RestController
-@RequestMapping("api/payment")
+@RequestMapping("/api/payment")
 @RequiredArgsConstructor
 @Tag(name = "주문 API",description = "결제 검증 API")
 public class PaymentController {
@@ -33,7 +33,7 @@ public class PaymentController {
         PrePareResponseDto prePareResponseDto = new PrePareResponseDto(
                 resultPrepare.getMerchant_uid(), resultPrepare.getAmount().longValue());
         var responseDto = ResponseDto.<PrePareResponseDto>builder().data(prePareResponseDto).customCode(ResponseCode.CREATED).build();
-        URI location = UriCreator.createUri("api/payment/pre-valid/{orderNumber}", resultPrepare.getMerchant_uid());
+        URI location = UriCreator.createUri("payment/pre-valid/", resultPrepare.getMerchant_uid());
         return ResponseEntity.created(location).body(responseDto);
     }
 
@@ -41,7 +41,7 @@ public class PaymentController {
     @ApiResponse(responseCode = "200",description = "결제 정보 사후 검증")
     public ResponseEntity validPayment(@PathVariable String orderNumber){  //로그인 성공 시 로직 변경 필요
         Integer amount = paymentService.validatePayment(orderNumber);
-        var responseDto = ResponseDto.builder().data(amount).build();
+        var responseDto = ResponseDto.builder().data(amount).customCode(ResponseCode.OK).build();
         return ResponseEntity.ok(responseDto);
     }
 

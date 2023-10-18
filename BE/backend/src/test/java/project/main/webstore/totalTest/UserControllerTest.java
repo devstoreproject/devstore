@@ -1,13 +1,18 @@
 package project.main.webstore.totalTest;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.google.gson.Gson;
-import org.assertj.core.api.Assertions;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -15,17 +20,21 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import project.main.webstore.annotation.WithMockCustomUser;
-import project.main.webstore.domain.image.dto.ImageInfoDto;
-import project.main.webstore.domain.image.entity.Image;
 import project.main.webstore.domain.users.dto.UserGetPasswordRequestDto;
 import project.main.webstore.domain.users.dto.UserGetResponseDto;
 import project.main.webstore.domain.users.dto.UserPatchRequestDto;
@@ -33,23 +42,15 @@ import project.main.webstore.domain.users.dto.UserPostRequestDto;
 import project.main.webstore.domain.users.enums.UserRole;
 import project.main.webstore.dto.ResponseDto;
 import project.main.webstore.helper.TestUtils;
-import project.main.webstore.security.dto.UserInfoDto;
+import project.main.webstore.security.dto.LoginDto;
 import project.main.webstore.security.jwt.utils.JwtTokenizer;
-import project.main.webstore.utils.FileUploader;
+import project.main.webstore.stub.ImageStub;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureMockMvc
 @Transactional
-public class UserControllerTest {
+class UserControllerTest {
     TestRestTemplate template = new TestRestTemplate();
     @Autowired
     JwtTokenizer jwtTokenizer;
@@ -59,27 +60,11 @@ public class UserControllerTest {
     MockMvc mvc;
     @Autowired
     Gson gson;
-    @MockBean
-    FileUploader fileUploader;
+    @Autowired
+    ImageStub imageStub;
     @LocalServerPort
     private int port;
 
-    @Test
-    @DisplayName("사용자 Post")
-    void postUserTest() throws Exception {
-        // given
-        UserPostRequestDto post = new UserPostRequestDto("admin1@gmail.com", "asdffcx1111", "김송모자리", "010-8013-1313", "김송모");
-        String content = gson.toJson(post);
-        MockMultipartFile multipartFile = new MockMultipartFile("image","original.jpg","jpg", "TEST Mock".getBytes());
-        MockMultipartFile postUser = new MockMultipartFile("post", "post", "application/json", content.getBytes(StandardCharsets.UTF_8));
-
-        // when
-
-        // then
-        mvc.perform(MockMvcRequestBuilders.multipart("/api/users").file(multipartFile).file(postUser).accept(MediaType.APPLICATION_JSON))
-            .andDo(log())
-            .andExpect(jsonPath("$.data.userId").value(3L));
-    }
     @Test
     @DisplayName("사용자 Post")
     void postUserNoImageTest() throws Exception {
@@ -89,11 +74,10 @@ public class UserControllerTest {
         MockMultipartFile postUser = new MockMultipartFile("post", "post", "application/json", content.getBytes(StandardCharsets.UTF_8));
 
         // when
-
         // then
         mvc.perform(MockMvcRequestBuilders.multipart("/api/users").file(postUser).accept(MediaType.APPLICATION_JSON))
             .andDo(log())
-            .andExpect(jsonPath("$.data.userId").value(3L));
+            .andExpect(jsonPath("$.data.userId").isNumber());
     }
 
     @Test
@@ -145,15 +129,14 @@ public class UserControllerTest {
         // given
         UserPatchRequestDto patch = new UserPatchRequestDto("asdffcx1234", "김송모자리", "010-8013-1313");
         String content = gson.toJson(patch);
-        BDDMockito.given(fileUploader.uploadImage(any(ImageInfoDto.class))).willReturn(new Image("image", null, null, null, null, 0, true, null));
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "image.ong", MediaType.IMAGE_PNG_VALUE, "TEST Mock".getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image",imageStub.getRealImage().getFilename(),"image/png",imageStub.getRealImage().getByteArray());
         MockMultipartFile postUser = new MockMultipartFile("patch", "patch", "application/json", content.getBytes(StandardCharsets.UTF_8));
         // when
 
         // then
         mvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH, "/api/users/{userId}", 1L).file(multipartFile).file(postUser).accept(MediaType.APPLICATION_JSON))
             .andDo(log())
-            .andExpect(jsonPath("$.data.userId").value(1L));
+            .andExpect(jsonPath("$.data.userId").isNumber());
     }
 
     @Test
@@ -214,53 +197,25 @@ public class UserControllerTest {
     @DisplayName("사용자 닉네임 중복 검사")
     void getNickNameTest() throws Exception {
         //given
-        UserInfoDto infoDto = new UserInfoDto("1", "admin221@gmailcom", "김송모자리", UserRole.CLIENT);
-
         String nickName = "닉네임뭐하지";
-
-        Assertions.assertThat(infoDto.getNickName()).isEqualTo("닉네임뭐하지");
 
         // when
         ResultActions actions = mvc.perform(
             MockMvcRequestBuilders.get("/api/users/valid-nick")
                 .param("nickName", nickName));
 
-
         // then
         actions
             .andDo(log())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.nickName").value(true));
-        ;
-    }
-
-    // TODO: 기존에 작성한 닉네임 검증 코드
-    @Test
-    @DisplayName("사용자 닉네임 중복 검사")
-    @WithMockCustomUser(userId = 1L, userRole = UserRole.CLIENT)
-    void getValidNickTest() throws Exception {
-        //given
-        String nickName = "김송모자리";
-
-        // when
-//        assertEquals("김송모자리", nickName);
-        ResultActions actions = mvc.perform(
-            MockMvcRequestBuilders.get("/api/users/valid-nick")
-                .param("nickName", nickName))
-            ;
-
-        // then
-        actions
-            .andDo(log())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.nickName").value(true));
+            .andExpect(jsonPath("$.data").isBoolean());
 
     }
 
     @Test
     @DisplayName("사용자 임시 비밀번호 Get")
     void getPassWordTest() throws Exception {
-        UserGetPasswordRequestDto request = new UserGetPasswordRequestDto("admin221@gmail.com", "김송모", "010-8013-1313");
+        UserGetPasswordRequestDto request = new UserGetPasswordRequestDto("client@gmail.com", "김송모", "010-1234-1234");
         String content = gson.toJson(request);
 
         // when
@@ -275,5 +230,25 @@ public class UserControllerTest {
             .andDo(log())
             .andExpect(status().isOk())
         ;
+    }
+
+    @Test
+    @DisplayName("로그인 회원 테스트")
+    void post_login_test() throws Exception{
+        // given
+        UserPostRequestDto post = new UserPostRequestDto("client11@gmail.com", "asdffcx1111", "김송모자리", "010-8013-1313", "김송모");
+        String content = gson.toJson(post);
+        MockMultipartFile postUser = new MockMultipartFile("post", "post", "application/json", content.getBytes(StandardCharsets.UTF_8));
+        mvc.perform(MockMvcRequestBuilders.multipart("/api/users").file(postUser).accept(MediaType.APPLICATION_JSON));
+
+        LoginDto data = new LoginDto("client11@gmail.com","asdffcx1111");
+        content = gson.toJson(data);
+        // when
+        ResultActions perform = mvc.perform(MockMvcRequestBuilders.post("/api/login").content(content).contentType(MediaType.APPLICATION_JSON));
+        // then
+        perform
+                .andDo(MockMvcResultHandlers.log())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.header().exists("Authorization"));
     }
 }

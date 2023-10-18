@@ -2,16 +2,16 @@ package project.main.webstore.domain.review.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import project.main.webstore.domain.image.dto.ImageDto;
 import project.main.webstore.domain.review.entity.Review;
-
-import java.time.LocalDateTime;
+import project.main.webstore.dto.Dto;
 
 @Schema(description = "리뷰 단건 조회")
 @Getter
-public class ReviewGetResponseDto {
+public class ReviewGetResponseDto implements Dto {
 
     @Schema(description = "리뷰 식별자")
     private Long reviewId;
