@@ -1,6 +1,7 @@
 package project.main.webstore.domain.cart.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import project.main.webstore.utils.UriCreator;
 @RequestMapping("/api/cart")
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "장바구니 API")
 public class CartController {
     private static final String DEFAULT_URL = "cart";
     private final CartService cartService;

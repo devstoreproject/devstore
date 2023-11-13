@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,7 @@ import project.main.webstore.utils.UriCreator;
 @RestController
 @RequestMapping("/api/notices")
 @RequiredArgsConstructor
+@Tag(name = "공지사항 API")
 public class NoticeController {
     private final String UPLOAD_DIR = "notice";
     private final NoticeService service;

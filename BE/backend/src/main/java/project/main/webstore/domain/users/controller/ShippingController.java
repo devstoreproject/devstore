@@ -1,6 +1,7 @@
 package project.main.webstore.domain.users.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -31,6 +32,7 @@ import project.main.webstore.utils.CheckLoginUser;
 @RequestMapping("/api/address")
 @Validated
 @RequiredArgsConstructor
+@Tag(name = "배송지 정보 API")
 public class ShippingController {
     private final ShippingService service;
     private final ShippingMapper mapper;

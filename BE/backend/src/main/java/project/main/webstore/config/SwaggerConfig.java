@@ -6,12 +6,18 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.media.*;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.GroupedOpenApi;
 import org.springdoc.core.customizers.OpenApiCustomiser;
@@ -24,20 +30,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 import project.main.webstore.security.jwt.filter.JwtAuthenticationFilter;
 
-import java.util.Map;
-import java.util.Optional;
-
-//@OpenAPIDefinition(
-//        info = @Info(
-//                title = "devstore API 명세",
-//                description = "API 명세서",
-//                version = "v1",
-//                contact = @Contact(
-//                        name = "devstore BE developer",
-//                        email = "siglee2247@gmail.com"
-//                )
-//        )
-//)
 @Configuration
 @RequiredArgsConstructor
 public class SwaggerConfig {
@@ -94,7 +86,7 @@ public class SwaggerConfig {
                     apiResponses.addApiResponse(String.valueOf(HttpStatus.BAD_REQUEST.value()),
                             new ApiResponse().description(HttpStatus.BAD_REQUEST.getReasonPhrase()));
                     operation.responses(apiResponses);
-                    operation.addTagsItem("회원 로그인 & 로그아웃");
+                    operation.addTagsItem("로그인 관련 API");
                     PathItem pathItem = new PathItem().post(operation);
                     openAPI.getPaths().addPathItem("/api/login", pathItem);
                 }
