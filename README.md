@@ -91,6 +91,43 @@
 
 <br/>
 
+# Swagger 사용 방법
+- Login 이 후 Authoriztion header에 있는 token key 값을  아래의 화면에 입력 (자물쇠 모양)
+<img width="1222" alt="image" src="https://github.com/devstoreproject/devstore/assets/116015708/8ce249e7-ce4d-450d-bf5a-f5a80a2ad1bb">
+
+- 상품 등록 관련
+삭제할 이미지 or 삭제할 option이 없다면 해당 배열을 빈 배열로 넘겨줘야합니다.
+이미지를 등록할 때는 이미지의 순서 제어를 위해 대표값을 true, 나머자는 false, 이미지의 순서를 정해서 전달해 줘야합니다.
+```json
+{
+  "deleteImageId": [
+  ],
+  "deleteOptionId": [
+  ],
+  "updateOptionList": [
+    {
+      "optionId": 1,
+      "optionDetail": "string",
+      "optionName": "string",
+      "itemCount": 0,
+      "additionalPrice": 0
+    }
+  ],
+  "imageSortAndRepresentativeInfo": [
+    {
+      "imageId": 1,
+      "orderNumber": 1,
+      "representative": true
+    }
+  ]
+}
+```
+상품 수정 시 삭제할 이미지 및 옵션이 없으며, 이미지를 추가할 때의 JSON
+id들은 기본값이 모두 0으로 되어 있기 때문에 해당 부분을 수정하고 싶지 않다면 빈 배열로 전달해주시며 됩니다.
+아래의 imageSortAndRepresentativeInfo 에서 이미 존재하는 이미지의 경우는 id값을 적어주고 새로 추가 등록하게 되면 null로 전달해 주시면 됩ㄴ디ㅏ.
+
+
+
 # 작업 내용 (백엔드 개발자 - 이기호)
 
 ## AWS 배포
